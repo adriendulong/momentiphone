@@ -1,0 +1,461 @@
+//
+//  MomentCoreData+Model.m
+//  Moment
+//
+//  Created by Mathieu PIERAGGI on 04/01/13.
+//  Copyright (c) 2013 Mathieu PIERAGGI. All rights reserved.
+//
+
+#import "MomentCoreData+Model.h"
+#import "Config.h"
+#import "NSDate+NSDateAdditions.h"
+#import "UserCoreData+Model.h"
+#import "MomentClass+Mapping.h"
+#import "MomentClass+Server.h"
+#import "UserClass+Mapping.h"
+
+#define NB_MOMENTS_STORED 20
+
+@implementation MomentCoreData (Model)
+
+#pragma mark - Setup
+
+- (void)setupWithMoment:(MomentClass*)moment
+{
+    self.titre = moment.titre;
+    self.state = moment.state;
+    self.imageString = moment.imageString;
+    self.adresse = moment.adresse;
+    self.dateDebut = moment.dateDebut;
+    self.dateFin = moment.dateFin;
+    self.descriptionString = moment.descriptionString;
+    self.facebookId = moment.facebookId;
+    self.hashtag = moment.hashtag;
+    self.infoLieu = moment.infoLieu;
+    self.infoMetro = moment.infoMetro;
+    self.momentId = moment.momentId;
+    self.nomLieu = moment.nomLieu;
+    [self setDataImageWithUIImage:moment.uimage];
+    self.guests_coming = moment.guests_coming;
+    self.guests_not_coming = moment.guests_not_coming;
+    self.guests_number = moment.guests_number;
+    self.isOpen = moment.isOpen;
+    self.isSponso = moment.isSponso;
+    self.owner = [UserCoreData requestUserAsCoreDataWithUser:moment.owner];
+}
+
+- (void)setupWithAttributes:(NSDictionary*)attributes
+{
+    self.momentId = attributes[@"momentId"];
+    self.titre = attributes[@"titre"];
+    self.dateDebut = attributes[@"dateDebut"];
+    self.dateFin = attributes[@"dateFin"];
+    
+    /*
+     if(attributes[@"facebookId"])
+     moment.facebookId = attributes[@"facebookId"];
+     */
+    
+    if(attributes[@"guests_number"]) {
+        self.guests_number = attributes[@"guests_number"];
+        self.guests_coming = attributes[@"guests_coming"];
+        self.guests_not_coming = attributes[@"guests_not_coming"];
+    }
+    
+    if(attributes[@"hashtag"])
+        self.hashtag = attributes[@"hashtag"];
+    
+    if(attributes[@"adresse"])
+        self.adresse = attributes[@"adresse"];
+    
+    if(attributes[@"descriptionString"])
+        self.descriptionString = attributes[@"descriptionString"];
+    
+    if(attributes[@"infoLieu"])
+        self.infoLieu = attributes[@"infoLieu"];
+    
+    if(attributes[@"nomLieu"])
+        self.nomLieu = attributes[@"nomLieu"];
+    
+    if(attributes[@"dataImage"])
+        self.dataImage = attributes[@"dataImage"];
+    
+    if(attributes[@"imageString"])
+        self.imageString = attributes[@"imageString"];
+    
+    if(attributes[@"state"])
+        self.state = attributes[@"state"];
+    
+    if(attributes[@"isOpen"])
+        self.isOpen = attributes[@"isOpen"];
+    
+    if(attributes[@"isSponso"])
+        self.isSponso = attributes[@"isSponso"];
+    
+    if(attributes[@"owner"]) {
+        UserCoreData *owner = nil;
+        NSDictionary *dico = [UserClass mappingToLocalAttributes:attributes[@"owner"]];
+        owner = [UserCoreData requestUserAsCoreDataWithAttributes:dico];
+        
+        //NSLog(@"owner = %@", owner);
+        self.owner = owner;
+    }
+}
+
+#pragma mark - Persist
+
++ (MomentCoreData*)insertMoment:(MomentClass*)moment
+{
+    MomentCoreData* storedMoment = [NSEntityDescription insertNewObjectForEntityForName:@"MomentCoreData" inManagedObjectContext:[Config sharedInstance].managedObjectContext];
+    
+    [storedMoment setupWithMoment:moment];
+    
+    [[Config sharedInstance] saveContext];
+    
+    return storedMoment;
+}
+
++ (MomentCoreData*)insertWithMemoryReleaseNewMoment:(MomentClass*)moment
+{
+    // Store new moment
+    MomentCoreData *storedMoment = [self insertMoment:moment];
+    
+    // Release old moment if needed
+    [self releaseMomentsAfterIndex:NB_MOMENTS_STORED];
+    
+    return storedMoment;
+}
+
++ (MomentClass*)newMomentWithAttributesFromLocal:(NSDictionary*)attributes
+{    
+    MomentClass *moment = [[MomentClass alloc] initWithAttributesFromLocal:attributes];
+    [self insertWithMemoryReleaseNewMoment:moment];
+    
+    return moment;
+}
+
++ (MomentClass*)newMomentWithAttributesFromWeb:(NSDictionary*)attributes
+{
+    MomentClass *moment = [[MomentClass alloc] initWithAttributesFromWeb:attributes];
+    [self insertWithMemoryReleaseNewMoment:moment];
+    
+    return moment;
+}
+
++ (MomentClass*)newMomentWithFacebookEvent:(FacebookEvent*)event
+{
+    if(!event)
+        return nil;
+    
+    MomentClass *moment = [[MomentClass alloc] initWithFacebookEvent:event];
+    [self insertWithMemoryReleaseNewMoment:moment];
+    
+    return moment;
+}
+
+
+#pragma mark - Local Gestion
+
+- (MomentClass*)localCopy
+{
+    MomentClass *moment = [[MomentClass alloc] init];
+    moment.titre = self.titre;
+    moment.state = self.state;
+    moment.imageString = self.imageString;
+    moment.adresse = self.adresse;
+    moment.dateDebut = self.dateDebut;
+    moment.dateFin = self.dateFin;
+    moment.descriptionString = self.descriptionString;
+    moment.facebookId = self.facebookId;
+    moment.hashtag = self.hashtag;
+    moment.infoLieu = self.infoLieu;
+    moment.infoMetro = self.infoMetro;
+    moment.momentId = self.momentId;
+    moment.nomLieu = self.nomLieu;
+    moment.uimage = self.uimage;
+    moment.guests_number = self.guests_number;
+    moment.guests_not_coming = self.guests_not_coming;
+    moment.guests_coming = self.guests_coming;
+    moment.isOpen = self.isOpen;
+    moment.isSponso = self.isSponso;
+    moment.owner = [self.owner localCopy];
+    //moment.notifications = self.notifications;
+    
+    return moment;
+}
+
++ (NSArray*)localCopyOfArray:(NSArray*)stored {
+    if(stored) {
+        NSMutableArray *array = [[NSMutableArray alloc] initWithCapacity:[stored count]];
+        for( MomentCoreData* data in stored ) {
+            [array addObject:[data localCopy]];
+        }
+        return array;
+    }
+    return nil;
+}
+
+#pragma mark - Count
+
++ (NSInteger)count {
+    NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"MomentCoreData"];
+    [request setIncludesSubentities:NO];
+    
+    NSError *error = NULL;
+    NSInteger count = [[Config sharedInstance].managedObjectContext countForFetchRequest:request error:&error];
+    
+    if(error || (count == NSNotFound) ) {
+        NSLog(@"Error Count Moments : %@", error.localizedDescription);
+        abort();
+    }
+    
+    return count;
+}
+
++ (NSArray*)getMomentsAsCoreDataWithLimit:(NSInteger)limit {
+    NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"MomentCoreData"];
+    NSSortDescriptor *sort = [NSSortDescriptor sortDescriptorWithKey:@"dateDebut" ascending:YES];
+    request.sortDescriptors = @[sort];
+    if(limit > 0)
+        request.fetchLimit = limit;
+    
+    NSError *error = nil;
+    NSArray *matches = [[Config sharedInstance].managedObjectContext executeFetchRequest:request error:&error];
+    
+    //NSLog(@"Local moments = %@", matches);
+    
+    if( !matches )
+    {
+        NSLog(@"Error GetMoments : %@", error.localizedDescription);
+        abort();
+    }
+    else {
+        //NSLog(@"matches = %@", matches);
+        return matches;
+    }
+    
+    
+    return nil;
+}
+
+#pragma mark - Getters & Setters
+
+- (UIImage*)uimage {
+    return [UIImage imageWithData:self.dataImage];
+}
+
+- (void)setDataImageWithUIImage:(UIImage *)image {
+    self.dataImage = UIImagePNGRepresentation(image);
+}
+
+#pragma mark - Get moment
+
++ (MomentCoreData*)requestMomentAsCoreDataWithAttributes:(NSDictionary*)attributes
+{
+    // Vérifier si le moment existe déjà
+    NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"MomentCoreData"];
+    //NSSortDescriptor *sort = [NSSortDescriptor sortDescriptorWithKey:@"momentId" ascending:YES];
+    //request.sortDescriptors = @[sort];
+    request.predicate = [NSPredicate predicateWithFormat:@"momentId = %@", attributes[@"momentId"] ];
+    
+    
+    NSError *error = nil;
+    NSArray *matches = [[Config sharedInstance].managedObjectContext executeFetchRequest:request error:&error];
+    
+    if( !matches ) {
+        NSLog(@"Error RequestMomentWithAttriubtes : %@", error.localizedDescription);
+        abort();
+    }
+    // --- Aucun résultat -> Création du moment ---
+    else if ([matches count] == 0) {
+        
+        if(attributes[@"momentId"])
+        {
+            MomentClass *moment = [[MomentClass alloc] initWithAttributesFromLocal:attributes];
+            
+            // Si les informations passées en paramètres sont complètes -> Retourne Nouveau Moment initialisé
+            if(attributes[@"dateDebut"] && attributes[@"dateFin"] && attributes[@"adresse"]) {
+                return [self insertWithMemoryReleaseNewMoment:moment];
+            }
+            
+            /* * * * * * * * * * * * * * * * * * * * *
+             * * * * * * PEUT ETRE INUTILE * * * * * *
+             * * * * * * * * * * * * * * * * * * * * */
+            
+            // Sinon récupère informations depuis le server
+            [moment updateMomentFromServerWithEnded:^(BOOL success) {
+
+            } waitUntilFinished:YES];
+            return [self insertWithMemoryReleaseNewMoment:moment];
+        }
+
+    }
+    
+    // --- Moment trouvé ---
+    
+    // Si les informations du moment sont complètes -> Retourne moment
+    MomentCoreData *moment = matches[0];
+    if(moment.momentId && moment.dateDebut && moment.dateFin && moment.adresse) {
+        return moment;
+    }
+    
+    // Sinon récupère informations depuis le server
+    [MomentClass getInfosMomentWithId:moment.momentId.intValue withEnded:^(NSDictionary *attributes) {
+        [moment setupWithAttributes:attributes];
+        [[Config sharedInstance] saveContext];
+        NSLog(@"3");
+    } waitUntilFinished:YES];
+    NSLog(@"4");
+    
+    return moment;
+}
+
++ (MomentClass*)requestMomentWithAttributes:(NSDictionary *)attributes {
+    return [[self requestMomentAsCoreDataWithAttributes:attributes] localCopy];
+}
+
++ (MomentCoreData*)requestMomentAsCoreDataWithFacebookEvent:(FacebookEvent*)event
+{
+    // Vérifier si le moment existe déjà
+    NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"MomentCoreData"];
+    //NSSortDescriptor *sort = [NSSortDescriptor sortDescriptorWithKey:@"momentId" ascending:YES];
+    //request.sortDescriptors = @[sort];
+    request.predicate = [NSPredicate predicateWithFormat:@"facebookId = %@", event.eventId ];
+    
+    
+    NSError *error = nil;
+    NSArray *matches = [[Config sharedInstance].managedObjectContext executeFetchRequest:request error:&error];
+    
+    if( !matches ) {
+        NSLog(@"Error RequestMomentWithAttriubtes : %@", error.localizedDescription);
+        abort();
+    }
+    else if ([matches count] == 0) {
+        MomentClass *moment = [[MomentClass alloc] initWithFacebookEvent:event];
+        return [self insertWithMemoryReleaseNewMoment:moment];
+    }
+    
+    return matches[0];
+}
+
++ (MomentClass*)requestMomentWithFacebookEvent:(FacebookEvent *)event {
+    return [[self requestMomentAsCoreDataWithFacebookEvent:event] localCopy];
+}
+
++ (MomentCoreData*)requestMomentAsCoreDataWithMoment:(MomentClass *)moment
+{
+    // Vérifier si le moment existe déjà
+    NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"MomentCoreData"];
+    //NSSortDescriptor *sort = [NSSortDescriptor sortDescriptorWithKey:@"momentId" ascending:YES];
+    //request.sortDescriptors = @[sort];
+    request.predicate = [NSPredicate predicateWithFormat:@"momentId = %@", moment.momentId ];
+    
+    NSError *error = nil;
+    NSArray *matches = [[Config sharedInstance].managedObjectContext executeFetchRequest:request error:&error];
+    
+    if( !matches ) {
+        NSLog(@"Error RequestMomentWithAttriubtes : %@", error.localizedDescription);
+        abort();
+    }
+    else if ([matches count] == 0) {
+        return [self insertWithMemoryReleaseNewMoment:moment];
+    }
+    
+    return matches[0];
+}
+
++ (NSArray*)getMomentsAsCoreData
+{
+    return [self getMomentsAsCoreDataWithLimit:MOMENTS_NO_LIMIT];
+}
+
++ (NSArray*)getMoments
+{
+    return [self localCopyOfArray:[self getMomentsAsCoreData]];
+}
+
+#pragma mark - Update
+
++ (void)updateMoment:(MomentClass*)moment
+{
+    MomentCoreData *momentCoreData = [MomentCoreData requestMomentAsCoreDataWithMoment:moment];
+    [momentCoreData setupWithMoment:moment];
+    [[Config sharedInstance] saveContext];
+}
+
++ (void)updateMomentsWithArray:(NSArray*)array 
+{
+    // Construction de la requete
+    NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"MomentCoreData"];
+    NSError *error = nil;
+    NSArray *match = nil;
+    
+    //NSLog(@"Array = %@", array);
+    
+    // On traite tous les moments passés en paramètres
+    for(NSDictionary *attributes in array)
+    {
+        request.predicate = [NSPredicate predicateWithFormat:@"momentId = %@", attributes[@"id"] ];
+        match = [[Config sharedInstance].managedObjectContext executeFetchRequest:request error:&error];
+        
+        if( !match ){
+            NSLog(@"Error updateMomentsWithArray : %@", error.localizedDescription);
+            abort();
+        }
+        else {
+            
+            // Update les données CoreData d'après les données reçus
+            MomentClass *moment = [[MomentClass alloc] initWithAttributesFromWeb:attributes];
+            [self updateMoment:moment];
+            
+        }
+        
+    }
+    
+}
+
+#pragma mark - Release
+
++ (void)releaseMomentsAfterIndex:(NSInteger)max
+{
+    NSArray *moments = [self getMomentsAsCoreData];
+    
+    int taille = [moments count];
+    for(int i=0; i<taille ; i++) {
+        if(i >= max) {
+            NSLog(@"delete moment = %@", [moments[i] titre]);
+            [[Config sharedInstance].managedObjectContext deleteObject:moments[i]];
+        }
+        i++;
+    }
+    
+    [[Config sharedInstance] saveContext];
+}
+
++ (void)resetMomentsLocal
+{
+    NSArray *moments = [MomentCoreData getMomentsAsCoreData];
+    
+    for( MomentCoreData *m in moments ) {
+        //NSLog(@"Delete Moment : %@", m);
+        [[Config sharedInstance].managedObjectContext deleteObject:m];
+    }
+    
+    [[Config sharedInstance] saveContext];
+}
+
++ (void)deleteMoment:(MomentClass*)moment
+{
+    MomentCoreData *m = [MomentCoreData requestMomentAsCoreDataWithMoment:moment];
+    [[Config sharedInstance].managedObjectContext deleteObject:m];
+    [[Config sharedInstance] saveContext];
+}
+
+#pragma mark - Debug
+
+-(NSString*)description
+{
+    return [NSString stringWithFormat:@"{ moment id = %@ - titre = %@ - description = %@ - infoLieu = %@ - hastag = %@ - image = %@ - imageString = %@ - facebookId = %@\n}", self.momentId, self.titre, self.descriptionString, self.infoLieu, self.hashtag, self.uimage, self.imageString, self.facebookId];
+}
+
+@end

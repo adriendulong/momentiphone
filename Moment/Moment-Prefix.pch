@@ -1,0 +1,31 @@
+//
+// Prefix header for all source files of the 'Moment' target in the 'Moment' project
+//
+
+#import <Availability.h>
+
+#ifndef __IPHONE_3_0
+#warning "This project uses features only available in iOS SDK 3.0 and later."
+#endif
+
+#ifdef __OBJC__
+    #import <UIKit/UIKit.h>
+    #import <Foundation/Foundation.h>
+    #import <MobileCoreServices/MobileCoreServices.h>
+    #import <SystemConfiguration/SystemConfiguration.h>
+    #import "AppDelegate.h"
+    #import "vendors/PrettyKit/PrettyKit.h"
+    #import "CustomNavigationController.h"
+    #import "MBProgressHUD.h"
+    #import "CustomUIImageView.h"
+    #import "VersionControl.h"
+
+// ---- Test Flight API
+#import "TestFlight.h"
+
+//#ifndef NSLog
+//#define NSLog(__FORMAT__, ...) TFLog((@"%s [Line %d] " __FORMAT__), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__)
+//#endif
+// ----
+
+#endif

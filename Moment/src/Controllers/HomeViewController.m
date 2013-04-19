@@ -1,0 +1,490 @@
+//
+//  HomeViewController.m
+//  Moment
+//
+//  Created by Charlie FANCELLI on 20/09/12.
+//  Copyright (c) 2012 Go and Up. All rights reserved.
+//
+
+#import "HomeViewController.h"
+
+#import "Config.h"
+#import "AFMomentAPIClient.h"
+#import "TextFieldAutocompletionManager.h"
+#import "PushNotificationManager.h"
+
+#import "RootTimeLineViewController.h"
+#import "RootTimeLineViewController.h"
+#import "CustomNavigationController.h"
+#import "CreationPage1ViewController.h"
+#import "VoletViewController.h"
+
+#import "UserCoreData+Model.h"
+#import "UserClass+Server.h"
+#import "MomentCoreData+Model.h"
+#import "MomentClass+Server.h"
+
+#import "CreationPage2ViewController.h"
+
+@interface HomeViewController ()
+
+@end
+
+@implementation HomeViewController
+
+@synthesize boxView = _boxView;
+@synthesize logoView = _logoView;
+
+@synthesize inscriptionButton = _inscriptionButton;
+@synthesize loginButton = _loginButton;
+
+@synthesize scrollView = _scrollView;
+@synthesize forgotPassword = _forgotPassword;
+
+@synthesize loginTextField = _loginTextField;
+@synthesize passwordTextField = _passwordTextField;
+@synthesize backButton = _backButton;
+
+@synthesize isShowFormLogin = _isShowFormLogin;
+@synthesize bgBox = _bgBox;
+
+@synthesize user = _user;
+
+#pragma mark - Init & load
+
+- (id)initWithXib
+{
+    self = [super initWithNibName:@"HomeViewController" bundle:nil];
+    if(self) {
+        _isShowFormLogin = NO;        
+    }
+    return self;
+}
+
+
+#pragma mark - placement
+
+- (void)moveView:(UIView*)view toYPosition:(NSInteger)position
+{
+    view.frame = CGRectMake(view.frame.origin.x, position, view.frame.size.width, view.frame.size.height);
+}
+
+- (void) placerHauteurView:(UIView *)view after:(UIView *)before withMargin:(NSInteger) margin{
+    [self moveView:view toYPosition:(before.frame.origin.y + before.frame.size.height + margin)];
+}
+
+- (void) caculateHeightBox {
+    //calcul de la nouvelle taille de la boxViex
+    CGRect frame = _boxView.frame;
+    frame.size.height = _loginButton.frame.size.height + _loginButton.frame.origin.y + 10;
+    _boxView.frame = frame;    
+    _bgBox.frame = CGRectMake(0, 0, _boxView.frame.size.width, _boxView.frame.size.height);
+}
+
+#pragma mark - View cycle life
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    
+    //on check si autologin actif et utilisateur fourni
+    UserClass *currentUser = [UserCoreData getCurrentUser];
+    if( currentUser ){
+        
+        // Si un cookie de connexion existe, on le charge et on logue le user
+        [[AFMomentAPIClient sharedClient] checkConnexionCookieWithEnded:^{
+            [self entrerDansMomentAnimated:NO];
+        }];
+    }
+}
+
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    
+    // iPhone 5 support
+    NSInteger allElementsHeight =  (self.boxView.frame.origin.y + self.boxView.frame.size.height) - self.logoView.frame.origin.y;
+    NSInteger espacementTop = ([[VersionControl sharedInstance] screenHeight] - allElementsHeight)/2.0;
+    NSInteger espacementMiddle = self.boxView.frame.origin.y - (self.logoView.frame.origin.y + self.logoView.frame.size.height);
+    NSInteger espacementBouton = self.backButton.frame.origin.y - self.boxView.frame.origin.y;
+    
+    // Autocomplete TextField
+    self.loginTextField.autocompleteType = TextFieldAutocompletionTypeEmail|TextFieldAutocompletionTypeEmailFavoris;
+    self.loginTextField.autocompleteDisabled = NO;
+    
+    // Move 
+    [self moveView:self.logoView toYPosition:espacementTop];
+    [self moveView:self.boxView toYPosition:(espacementTop + self.logoView.frame.size.height + espacementMiddle)];
+    [self moveView:self.backButton toYPosition:(self.boxView.frame.origin.y + espacementBouton)];
+    
+    // Init
+    self.view.autoresizesSubviews = YES;
+    self.view.autoresizingMask = (UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth);
+    _scrollView.autoresizingMask=(UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth);
+    
+    // Texte du bouton Inscription
+    [_inscriptionButton setButtonWithText:NSLocalizedString(@"HomeViewController_InscriptionButtonLabel", nil)];
+    
+    // Texte du bouton Login   ==>  On accentue le 'C'
+    //NSArray *ranges = @[[NSValue valueWithRange:NSMakeRange(3, 1)]];
+    [_loginButton setButtonWithText:NSLocalizedString(@"HomeViewController_LoginButtonLabel", nil)];
+
+        
+    // top bar 
+    UIImageView* img = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"logo.png"]];
+    self.navigationItem.titleView = img;
+    
+    //mettre le fond
+    self.view.backgroundColor = [[UIColor alloc] initWithPatternImage:[UIImage imageNamed:@"login-bg.jpg"]];
+    
+    //mettre le fond de la box
+    UIImage *image = [UIImage imageNamed:@"bg-box.png"];
+    //image = [image resizableImageWithCapInsets:UIEdgeInsetsMake(15, 5, 5, 5)];
+    
+    image = [[VersionControl sharedInstance] resizableImageFromImage:image withCapInsets:UIEdgeInsetsMake(15, 5, 5, 5)  stretchableImageWithLeftCapWidth:0 topCapHeight:15];
+        
+    _bgBox = [[UIImageView alloc] initWithImage:image];
+    _bgBox.layer.zPosition = -2;
+    [_boxView addSubview:_bgBox];
+    
+    //on resize la box
+    [self caculateHeightBox];
+}
+
+- (void)viewDidUnload {
+    [self setBoxView:nil];
+    [self setInscriptionButton:nil];
+    [self setBgBox:nil];
+    [self setLoginButton:nil];
+    [self setLoginTextField:nil];
+    [self setPasswordTextField:nil];
+    [self setLogoView:nil];
+    [self setForgotPassword:nil];
+    [self setBackButton:nil];
+    [self setUser:nil];
+    [self setScrollView:nil];
+    [super viewDidUnload];
+}
+
+- (void)didReceiveMemoryWarning
+{
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+- (void)reinit
+{
+    [self showLoginForm:NO];
+    self.loginTextField.text = @"";
+    self.passwordTextField.text = @"";
+}
+
+- (void)viewDidDisappear:(BOOL)animated
+{
+    [super viewDidDisappear:animated];
+    
+    // Si on s'est connecté, on réinitialise les champs de connection
+    if(self.isShowFormLogin)
+       [self reinit];
+}
+
+#pragma mark - Show Views
+- (void) entrerDansMomentAnimated:(BOOL)animated {
+    
+    // Vérifier la dernière date de modification
+    if(1)
+    {
+        MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+        hud.labelText = NSLocalizedString(@"MBProgressHUD_Loading_Moments", nil);
+        
+        [MomentClass getMomentsServerWithEnded:^(BOOL success) {
+            
+            if(success) {
+                
+                /* ------ Local Notifications Subscribe ------- */
+                [[PushNotificationManager sharedInstance] addNotificationObservers];
+                
+                
+                /* ----------------- TIMELINE ----------------- */
+                // create the content view controller
+                RootTimeLineViewController *timeLineRoot = [[RootTimeLineViewController alloc]
+                                                            initWithUser:[UserCoreData getCurrentUser]
+                                                            withSize:CGSizeMake(320, [VersionControl sharedInstance].screenHeight - TOPBAR_HEIGHT)
+                                                            withStyle:TimeLineStyleComplete
+                                                            withNavigationController:nil];
+                
+                
+                // Navigation controller
+                CustomNavigationController *navController = [[CustomNavigationController alloc] initWithRootViewController:timeLineRoot];
+                
+                navController.view.frame = CGRectMake(0, 0, 320, [[VersionControl sharedInstance] screenHeight] );
+                
+                /* ------------------ DDMENU ------------------- */
+                // create a DDMenuController setting the content as the root
+                DDMenuController *menuController = [[DDMenuController alloc] initWithRootViewController:navController];
+                timeLineRoot.ddMenuViewController = menuController;
+                
+                // set the left view controller property of the menu controller
+                VoletViewController *leftController = [[VoletViewController alloc]
+                                                       initWithDDMenuDelegate:menuController
+                                                       withRootTimeLine:timeLineRoot];
+                menuController.leftViewController = leftController;
+                menuController.delegate = leftController;
+                
+                /* ------------------- PUSH ------------------- */
+                [MBProgressHUD hideHUDForView:self.view animated:YES];
+                [self.navigationController pushViewController:menuController animated:animated];
+                
+            }else {
+                [MBProgressHUD hideHUDForView:self.view animated:YES];
+                
+                [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"HomeViewController_AlertView_LoadMomentsFail_Title", nil)
+                                            message:NSLocalizedString(@"HomeViewController_AlertView_LoadMomentsFail_Message", nil)
+                                           delegate:nil
+                                  cancelButtonTitle:NSLocalizedString(@"AlertView_Button_OK", nil)
+                                  otherButtonTitles:nil]
+                 show];
+            }
+            
+        }];
+        
+    }
+    
+    
+}
+
+- (void) showLoginForm:(BOOL)isDisplay{
+    
+    
+    if( isDisplay ){
+        _isShowFormLogin = YES;
+        _backButton.enabled = YES;
+
+        //on ajoute les textfield
+        _loginTextField.alpha = 0;
+        _passwordTextField.alpha = 0;
+        _forgotPassword.alpha = 0;
+                
+        // Placement LoginTextField
+        CGRect frame = _loginTextField.frame;
+        frame.origin.y = 20; //marginTop
+        frame.origin.x = _loginButton.frame.origin.x;
+        _loginTextField.frame = frame;
+                
+        // Placement passwordTextField
+        frame = _passwordTextField.frame;
+        frame.origin.x = _loginTextField.frame.origin.x;
+        _passwordTextField.frame = frame;
+        
+        // Placement forgotPasswordLabel
+        frame = _forgotPassword.frame;
+        frame.origin.x = _loginButton.frame.origin.x + 5;
+        _forgotPassword.frame = frame;
+        
+        [_boxView addSubview:_loginTextField];
+        [_boxView addSubview:_passwordTextField];
+        [_boxView addSubview:_forgotPassword];
+        
+        [UIView beginAnimations:@"showLoginForm" context:NULL]; // Begin animation
+        
+        //on retire le bouton inscription
+        _inscriptionButton.alpha = 0;
+        
+        [self placerHauteurView:_passwordTextField after:_loginTextField withMargin:5];
+        [self placerHauteurView:_forgotPassword after:_passwordTextField withMargin:2];
+        [self placerHauteurView:_loginButton after:_forgotPassword withMargin:15];
+        
+        //on resize la box
+        [self caculateHeightBox];
+        
+		[UIView commitAnimations]; // End animations
+        
+        [UIView beginAnimations:@"showAlphaLoginForm" context:NULL]; // Begin animation
+        [_inscriptionButton removeFromSuperview];
+        _loginTextField.alpha = 1;
+        _passwordTextField.alpha = 1;
+        _forgotPassword.alpha = 1;
+        _backButton.alpha = 1;
+        [UIView commitAnimations]; // End animations
+    }
+    else{
+        _isShowFormLogin = NO;
+        _backButton.enabled = NO;
+        _inscriptionButton.alpha = 0;
+        
+        // Placement bouton inscription
+        CGRect frame = _inscriptionButton.frame;
+        frame.origin.y = 45; //marginTop
+        frame.origin.x = _loginButton.frame.origin.x;
+        _inscriptionButton.frame = frame;
+        
+        [_boxView addSubview:_inscriptionButton];
+        
+        [UIView beginAnimations:@"hideAlphaLoginForm" context:nil];
+        _forgotPassword.alpha = 0;
+        _loginTextField.alpha = 0;
+        _passwordTextField.alpha = 0;
+        
+        [UIView commitAnimations];
+        
+        
+        [UIView beginAnimations:@"hideLoginForm" context:NULL]; // Begin animation
+        
+        [_forgotPassword removeFromSuperview];
+        [_loginTextField removeFromSuperview];
+        [_passwordTextField removeFromSuperview];
+        _backButton.alpha = 0;
+        _inscriptionButton.alpha = 1;
+        
+        [self placerHauteurView:self.loginButton after:self.inscriptionButton withMargin:8];
+        
+        //on resize la box
+        [self caculateHeightBox];
+        
+		[UIView commitAnimations]; // End animations
+    }
+    
+}
+
+
+#pragma mark - Actions
+
+- (IBAction)clicCreateUser {
+    CreationPage1ViewController *creationPage = [[CreationPage1ViewController alloc] initWithNibName:@"CreationPage1ViewController" bundle:nil];
+    
+    [self.navigationController pushViewController:creationPage animated:YES];
+}
+
+- (IBAction)clicLogin {
+    
+    
+    //on valide le formulaire de login
+    if(_isShowFormLogin){
+        
+        //on check si les champs sont remplis
+        if( _loginTextField.text.length == 0 || _loginTextField.text.length == 0){
+            UIAlertView *message = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"HomeViewController_AlertView_IncompleteForm_Title", nil)
+                    message:NSLocalizedString(@"HomeViewController_AlertView_IncompleteForm_Message", nil)
+                                                             delegate:nil
+                                                    cancelButtonTitle:NSLocalizedString(@"AlertView_Button_OK", nil)
+                                                    otherButtonTitles:nil];
+            [message show];
+        }
+        //on se connect
+        else{
+            //on descend le clavier si besoin
+            [_loginTextField resignFirstResponder];
+            [_passwordTextField resignFirstResponder];
+            
+            MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+            hud.labelText = NSLocalizedString(@"MBProgressHUD_Loading_Login", nil);
+            
+            
+            //on lance le login et si c'est bon on lance la timeLine            
+            [UserClass loginUserWithUsername:_loginTextField.text withPassword:_passwordTextField.text withEnded:^(NSInteger status){
+                
+                switch (status) {
+                        
+                    // Si on est logué
+                    case 200: {
+                        UserClass *currentUser = [UserCoreData getCurrentUser];
+                        [[TextFieldAutocompletionManager sharedInstance] addEmailToFavoriteEmails:currentUser.email];
+                        [MBProgressHUD hideHUDForView:self.view animated:YES];
+                        [self entrerDansMomentAnimated:YES];
+                    }
+                    break;
+                        
+                    // Mauvais Mot de passe | Utilisateur n'existe pas
+                    case 401: {
+                        [MBProgressHUD hideHUDForView:self.view animated:YES];
+                        [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"HomeViewController_AlertView_AuthentificationFail_Title", nil)
+                                                    message:NSLocalizedString(@"HomeViewController_AlertView_AuthentificationFail_Message", nil)
+                                                   delegate:nil
+                                          cancelButtonTitle:NSLocalizedString(@"AlertView_Button_OK", nil)
+                                          otherButtonTitles:nil]
+                         show];
+                    }
+                    break;
+                        
+                    // Erreur 500 ou autre
+                    default: {
+                        [MBProgressHUD hideHUDForView:self.view animated:YES];
+                        [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error_Title", nil)
+                                                    message:NSLocalizedString(@"Error_Server", nil)
+                                                   delegate:nil
+                                          cancelButtonTitle:NSLocalizedString(@"AlertView_Button_OK", nil)
+                                          otherButtonTitles:nil]
+                         show];
+                    }
+                    break;
+                }
+             
+            }];
+            
+        }
+    }
+    //on affiche le formulaire de login
+    else{
+        [self showLoginForm:YES];
+    }
+    
+}
+
+- (IBAction)clicForgotPassword {
+    //NSLog(@"Forgot Password");
+    
+    
+    [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"HomeViewController_AlertView_ForgotPassword_Title", nil)
+                                message:NSLocalizedString(@"HomeViewController_AlertView_ForgotPassword_Message", nil)
+                               delegate:nil
+                      cancelButtonTitle:NSLocalizedString(@"AlertView_Button_OK", nil)
+                      otherButtonTitles:nil] 
+     show];
+     
+    
+    //CreationPage2ViewController *page2 = [[CreationPage2ViewController alloc] initWithDelegate:self];
+    //[self.navigationController pushViewController:page2 animated:YES];
+}
+
+- (IBAction)clicBackButton {
+    [self showLoginForm:NO];
+}
+
+#pragma mark - SCROLL VIEW DELEGATE
+-(BOOL)textFieldShouldReturn:(UITextField *)textField {
+    
+    if (textField == _loginTextField) {
+        [_passwordTextField becomeFirstResponder];
+    }
+    else {
+        [textField resignFirstResponder];
+        
+        if( _loginTextField.text.length > 0 && _passwordTextField.text.length > 0 )
+            [self clicLogin];
+    }
+    
+    return YES;
+}
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView
+{
+    // Centrer view même quand le clavier monte
+    // (Sur écran non iPhone 5)
+    if( ([VersionControl sharedInstance].screenHeight == 480) && [_loginTextField isFirstResponder]) {
+        
+        [UIView animateWithDuration:0.2 animations:^{
+            [scrollView scrollRectToVisible:CGRectMake(0, -125, scrollView.contentSize.width, scrollView.contentSize.height) animated:NO];
+        }];
+    }
+}
+
+-(void)textFieldDidBeginEditing:(UITextField *)textField
+{
+    [_scrollView adjustOffsetToIdealIfNeeded];
+}
+
+- (BOOL)textFieldShouldClear:(UITextField *)textField {
+    return YES;
+}
+
+@end
