@@ -43,11 +43,15 @@
 @property (nonatomic, unsafe_unretained) id<NLImageShowcaseCellDelegate> cellDelegate;
 @property (nonatomic, readwrite) NSInteger index;
 @property (nonatomic, readwrite) BOOL deleteMode;
-@property (nonatomic, readwrite) BOOL printSelected;
-@property (nonatomic, strong) UIImageView *printSelectView;
 @property (nonatomic, strong) UIButton *mainImage;
 @property (nonatomic, readonly) BOOL isSpecial;
+
+#ifdef ACTIVE_PRINT_MODE
+@property (nonatomic, readwrite) BOOL printSelected;
+@property (nonatomic, strong) UIImageView *printSelectView;
 - (void)togglePrintSelect ;
+#endif
+
 - (id)initWithImage:(UIImage*)image;
 - (id)setMainImage:(UIImage*)image isPlusButton:(BOOL)plusButton isPrintButton:(BOOL)printButton;
 - (IBAction)buttonClicked;

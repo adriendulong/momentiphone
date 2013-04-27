@@ -13,6 +13,8 @@ enum PhotoViewControllerStyle {
     PhotoViewControllerStyleProfil = 1
     };
 
+// Si la constante ACTIVE_PRINT_MODE est défini, le mode print est activé
+//#define ACTIVE_PRINT_MODE
 #define PHOTOVIEW_PRINT_BUTTON_INDEX 5
 
 #import "NLImageShowCase.h"
@@ -25,13 +27,13 @@ enum PhotoViewControllerStyle {
 #import "BigPhotoViewController.h"
 
 
+
 @interface PhotoViewController : UIViewController <NLImageViewDataSource, OngletViewController, QBImagePickerControllerDelegate, UIActionSheetDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate, MTStatusBarOverlayDelegate>
 
 
 @property (nonatomic, strong) UserClass *user;
 @property (nonatomic, strong) MomentClass *moment;
 
-@property (nonatomic, strong) NSMutableArray *printSelectedCells;
 @property (nonatomic, strong) NSMutableArray *photos;
 @property (nonatomic, weak) RootOngletsViewController *rootViewController;
 @property (nonatomic) enum PhotoViewControllerStyle style;
@@ -39,6 +41,11 @@ enum PhotoViewControllerStyle {
 // ImageShowCase
 @property (nonatomic, strong) BigPhotoViewController *bigPhotoViewController;
 @property (nonatomic, strong) NLImageShowCase *imageShowCase;
+
+// Print Mode
+#ifdef ACTIVE_PRINT_MODE
+@property (nonatomic, strong) NSMutableArray *printSelectedCells;
+#endif
 
 // Bandeau
 @property (strong, nonatomic) IBOutlet UIView *bandeauView;
@@ -58,6 +65,8 @@ withRootViewController:(UIViewController *)rootViewController
 withRootViewController:(UIViewController *)rootViewController
             withSize:(CGSize)size;
 
+#ifdef ACTIVE_PRINT_MODE
 - (void)desactiverPrintMode;
+#endif
 
 @end

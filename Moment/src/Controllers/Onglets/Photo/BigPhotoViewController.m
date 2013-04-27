@@ -16,6 +16,10 @@
 #import "Three20/Three20.h"
 #import "RotationNavigationControllerViewController.h"
 
+#import "DEFacebookComposeViewController.h"
+#import <Twitter/Twitter.h>
+#import <Social/Social.h>
+
 @interface BigPhotoViewController () {
     @private
     BOOL backgroundNeedsUpdate;
@@ -630,23 +634,114 @@ withDelegate:(PhotoViewController*)photoViewController
 }
 
 - (IBAction)clicFacebook {
+        
+    // Paramètres
+    Photos *photo = self.photos[self.selectedIndex];
+    UIImage *image = photo.imageOriginal;
+    NSString *initialText = [NSString stringWithFormat:@"Bon Moment @[%@] !\n", self.moment.titre];
+    NSURL *url = [NSURL URLWithString:photo.urlOriginal];
     
-    if(!shareActionSheet)
+    // iOS 6 -> Social Framework
+    if ( (NSClassFromString(@"SLComposeViewController") != nil) && [SLComposeViewController isAvailableForServiceType:SLServiceTypeFacebook])
     {
-        shareActionSheet = [[UIActionSheet alloc] initWithTitle:NSLocalizedString(@"BigPhotoViewController_ShareActionSheet_Title", nil)
-                 delegate:self
-        cancelButtonTitle:NSLocalizedString(@"AlertView_Button_Cancel", nil)
-   destructiveButtonTitle:nil
-        otherButtonTitles:@"Facebook", @"Twitter", @"Mail", nil];
-        shareActionSheet.actionSheetStyle = UIActionSheetStyleBlackTranslucent;
+        SLComposeViewController *fbSheet = [SLComposeViewController
+                                               composeViewControllerForServiceType:SLServiceTypeFacebook];
+        [fbSheet setInitialText:initialText];
+        [fbSheet addImage:image];
+        [fbSheet addURL:url];
+        
+        [self presentViewController:fbSheet animated:YES completion:nil];
+    }
+    // iOS 5
+    else
+    {
+        /*
+        DEFacebookComposeViewControllerCompletionHandler completionHandler = ^(DEFacebookComposeViewControllerResult result) {
+            switch (result) {
+                case DEFacebookComposeViewControllerResultCancelled:
+                    NSLog(@"Facebook Result: Cancelled - iOS 5");
+                    break;
+                case DEFacebookComposeViewControllerResultDone:
+                    NSLog(@"Facebook Result: Sent - iOS 5");
+                    break;
+            }
+            
+            [self dismissModalViewControllerAnimated:YES];
+        };
+         */
+        
+        DEFacebookComposeViewController *facebookViewComposer = [[DEFacebookComposeViewController alloc] init];
+        self.modalPresentationStyle = UIModalPresentationCurrentContext;
+        [facebookViewComposer setInitialText:initialText];
+        [facebookViewComposer addImage:image];
+        [facebookViewComposer addURL:url];
+        //facebookViewComposer.completionHandler = completionHandler;
+        [self presentViewController:facebookViewComposer animated:YES completion:nil];
     }
     
-    [shareActionSheet showInView:self.view];
+    /*
+    // iOS 6 -> Native Share Dialog View
+    BOOL displayedNativeDialog =
+    [FBNativeDialogs
+     presentShareDialogModallyFrom:self
+     initialText:initialText
+     image:image
+     url:url
+     handler:^(FBNativeDialogResult result, NSError *error) {
+         
+         if (error) {
+             // handle failure
+             NSLog(@"Facebook Result: Fail - iOS 6");
+         } else {
+             if (result == FBNativeDialogResultSucceeded) {
+                 // handle success 
+                 NSLog(@"Facebook Result: Sent - iOS 6");
+             } else {
+                 // handle user cancel
+                 NSLog(@"Facebook Result: Cancelled - iOS 6");
+             }
+         }
+     }];
     
+    // iOS 5
+    if (!displayedNativeDialog) {
+       
+    }
+    
+     */
 }
 
 - (IBAction)clicTwitter {
-    NSLog(@"Twitter");
+    
+    // Paramètres
+    Photos *photo = self.photos[self.selectedIndex];
+    UIImage *image = photo.imageOriginal;
+    NSString *initialText = [NSString stringWithFormat:@"Bon Moment @[%@] !\n", self.moment.titre];
+    NSURL *url = [NSURL URLWithString:photo.urlOriginal];
+    
+    // iOS 6 -> Social Framework
+    if( (NSClassFromString(@"SLComposeViewController") != nil) && [SLComposeViewController isAvailableForServiceType:SLServiceTypeTwitter])
+    {
+        SLComposeViewController *tweetSheet = [SLComposeViewController
+                                               composeViewControllerForServiceType:SLServiceTypeTwitter];
+        [tweetSheet setInitialText:initialText];
+        [tweetSheet addImage:image];
+        [tweetSheet addURL:url];
+        
+        [self presentViewController:tweetSheet animated:YES completion:nil];
+    }
+    // iOS 5 -> Twitter Framework
+    else
+    {
+        TWTweetComposeViewController *twitterViewComposer = [[TWTweetComposeViewController alloc] init];
+        self.modalPresentationStyle = UIModalPresentationCurrentContext;
+        [twitterViewComposer setInitialText:initialText];
+        [twitterViewComposer addImage:image];
+        [twitterViewComposer addURL:url];
+        
+        [self presentViewController:twitterViewComposer animated:YES completion:nil];
+    }
+    
 }
 
 - (IBAction)clicDownload {
@@ -679,6 +774,7 @@ withDelegate:(PhotoViewController*)photoViewController
 // Index réelle (dans le tableau des photos NSArray <Photos*>
 - (NSInteger)convertIndexForDataForCurrentStyle:(NSInteger)index
 {
+#ifdef ACTIVE_PRINT_MODE
     switch (self.delegate.style) {
         case PhotoViewControllerStyleComplete:
             if(index>=PHOTOVIEW_PRINT_BUTTON_INDEX-1)
@@ -690,6 +786,8 @@ withDelegate:(PhotoViewController*)photoViewController
             return index+1;
             break;
     }
+#endif
+    return index;
 }
 
 - (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
@@ -716,7 +814,13 @@ withDelegate:(PhotoViewController*)photoViewController
                     [self.delegate.imageShowCase deleteImage:self.delegate.imageShowCase.itemsInShowCase[index] imageIndex:index];
                     
                      NSInteger count = [self.photos count];
-                    [self.delegate.imageShowCase updateItemsShowCaseWithSize:(count+1>=PHOTOVIEW_PRINT_BUTTON_INDEX)?count+2 : count+1];
+                    NSInteger deleteIndex;
+#ifdef ACTIVE_PRINT_MODE
+                    deleteIndex = (count+1>=PHOTOVIEW_PRINT_BUTTON_INDEX)?count+2 : count+1;
+#else
+                    deleteIndex = count+1;
+#endif
+                    [self.delegate.imageShowCase updateItemsShowCaseWithSize:deleteIndex];
                     //[self updateBackground];
                     
                     // Scroll or close
@@ -750,26 +854,6 @@ withDelegate:(PhotoViewController*)photoViewController
                 
             }];
 
-        }
-    }
-    else
-    {
-        switch (buttonIndex) {
-            case 0:
-                NSLog(@"Facebook");
-                break;
-                
-            case 1:
-                NSLog(@"Twitter");
-                break;
-                
-            case 2:
-                NSLog(@"Mail");
-                break;
-                
-            default:
-                NSLog(@"Annuler");
-                break;
         }
     }
 }

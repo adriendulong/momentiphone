@@ -49,7 +49,10 @@
     CGFloat _lastYPos;
     int lastIndex;
 }
+
+#ifdef ACTIVE_PRINT_MODE
 @property (nonatomic) BOOL printMode;
+#endif
 @property (nonatomic) enum PhotoViewControllerStyle photoViewControllerStyle;
 @property (nonatomic, strong) NSMutableArray* itemsInShowCase;
 @property (nonatomic, readwrite) BOOL deleteMode;

@@ -32,7 +32,9 @@
     NSInteger lastIndexFull;
 }
 
+#ifdef ACTIVE_PRINT_MODE
 @synthesize printMode = _printMode;
+#endif
 @synthesize deleteMode = _deleteMode;
 @synthesize scrollView = _scrollView;
 @synthesize itemsInShowCase = itemsInShowCase;
@@ -182,10 +184,13 @@
     if(size > taille) {
         
         BOOL printButton = NO;
+        
+#ifdef ACTIVE_PRINT_MODE
         // Si on passe par le Bouton Print, on l'ajoute
         if( (self.photoViewControllerStyle == PhotoViewControllerStyleComplete) && (size >= PHOTOVIEW_PRINT_BUTTON_INDEX) && (taille < PHOTOVIEW_PRINT_BUTTON_INDEX) ) {
             printButton = YES;
         }
+#endif
         
         // Array avec cellules preload
         NSArray *newArray = [self itemsInShowCaseWithSize:size];
@@ -218,6 +223,7 @@
 // Index réelle (dans le tableau des photos NSArray <Photos*>
 - (NSInteger)convertIndexForDataForCurrentStyle:(NSInteger)index
 {
+#ifdef ACTIVE_PRINT_MODE
     switch (self.photoViewControllerStyle) {
         case PhotoViewControllerStyleComplete:
             if(index>PHOTOVIEW_PRINT_BUTTON_INDEX)
@@ -229,11 +235,18 @@
             return index;
             break;
     }
+#endif
+    return index;
 }
 
 // Ajoute un image à l'index "index"
 - (BOOL)addImage:(UIImage*)image atIndex:(NSInteger)index isPlusButton:(BOOL)plusButton isPrintButton:(BOOL)printButton
-{   
+{
+    
+#ifndef ACTIVE_PRINT_MODE
+    printButton = NO;
+#endif
+    
     // Position de l'image
     CGFloat xPos, yPos;
     [self positonsForIndex:index xPos:&xPos yPos:&yPos];

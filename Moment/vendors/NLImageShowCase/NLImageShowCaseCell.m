@@ -33,17 +33,21 @@
 @synthesize index = _index;
 @synthesize image = _image;
 @synthesize cellDelegate = _cellDelegate;
+#ifdef ACTIVE_PRINT_MODE
 @synthesize printSelected = _printSelected;
 @synthesize printSelectView = _printSelectView;
+#endif
 @synthesize mainImage = _mainImage;
 @synthesize isSpecial = _isSpecial;
 
+#ifdef ACTIVE_PRINT_MODE
 - (void)togglePrintSelect {
     if(!_isSpecial) {
         self.printSelectView.hidden = !self.printSelectView.hidden;
         self.printSelected = !self.printSelected;
     }
 }
+#endif
 
 - (id)initWithFrame:(CGRect)frame
 {
@@ -56,7 +60,9 @@
     _deleteButton.center = CGPointMake(0, 0);
     _deleteButton.backgroundColor = [UIColor clearColor];
     _isSpecial = NO;
+#ifdef ACTIVE_PRINT_MODE
     self.printSelected = NO;
+#endif
     
     [_deleteButton setImage: [UIImage imageNamed:@"delete.png"] forState:UIControlStateNormal];
     _deleteButton.hidden = YES;
@@ -76,6 +82,7 @@
     _mainImage.imageView.clipsToBounds = NO;
     _mainImage.userInteractionEnabled = YES;
     
+#ifdef ACTIVE_PRINT_MODE
     // Print Select View
     UIImage *check = [UIImage imageNamed:@"Check_photo"];
     _printSelectView = [[UIImageView alloc] initWithImage:check];
@@ -84,6 +91,7 @@
     _printSelectView.backgroundColor = [UIColor clearColor];
     [_mainImage addSubview:_printSelectView];
     _printSelectView.frame = CGRectMake(0, 0, _mainImage.frame.size.width, _mainImage.frame.size.height);
+#endif
     
     [_mainImage addTarget:self action:@selector(buttonClicked) forControlEvents:UIControlEventTouchUpInside];
 

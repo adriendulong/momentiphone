@@ -624,6 +624,7 @@
 - (void)getPhotosWithEnded:( void (^) (NSArray* photos) )block
 {
     NSString *path = [NSString stringWithFormat:@"photosmoment/%d", self.momentId.intValue];
+    NSLog(@"path tried = %@", path);
     
     [[AFMomentAPIClient sharedClient] getPath:path parameters:nil encoding:AFFormURLParameterEncoding success:^(AFHTTPRequestOperation *operation, id JSON) {
                         

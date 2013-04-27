@@ -14,7 +14,8 @@
 //@"http://ec2-54-228-139-53.eu-west-1.compute.amazonaws.com";
 //@"http://api.appmoment.fr/";
 //@"http://92.146.87.91:5000";
-static NSString * const kAFBaseURLString = @"http://api.appmoment.fr";//@"http://apitest.appmoment.fr";
+//@"http://apitest.appmoment.fr";
+static NSString * const kAFBaseURLString = @"http://api.appmoment.fr";
 static NSString * const kAFLastHeaderResponse = @"lastHeaderResponse";
 
 @implementation AFMomentAPIClient
