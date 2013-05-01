@@ -56,6 +56,7 @@
     self.view.frame = frame;
     self.tableView.frame = frame;
     self.tableView.tag = TABLEVIEW_SCROLLVIEW_TAG_IDENTIFER;
+    self.tableView.scrollsToTop = YES; // Scroll to tap on clic on navigation bar
     
     self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg"]];
     

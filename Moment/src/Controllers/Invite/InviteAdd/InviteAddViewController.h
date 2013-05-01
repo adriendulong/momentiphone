@@ -10,8 +10,9 @@
 
 @protocol InviteAddViewControllerDelegate <NSObject>
 
-- (void)addNewSelectedFriend:(NSMutableDictionary*)friend;
-- (void)removeSelectedFriend:(NSMutableDictionary*)friend;
+@property (nonatomic, weak) IBOutlet UITextField *searchTextField;
+- (void)addNewSelectedFriend:(UserClass*)friend;
+- (void)removeSelectedFriend:(UserClass*)friend;
 - (BOOL)selectedFriendsEmpty;
 
 @end
@@ -21,12 +22,13 @@
 #import "InfoMomentSeparateurView.h"
 #import "InviteAddTableViewController.h"
 #import "TTTAttributedLabel.h"
+#import <MessageUI/MessageUI.h>
 
 @class InviteAddTableViewController;
-@interface InviteAddViewController : UIViewController <UITextFieldDelegate, InviteAddViewControllerDelegate>
+@interface InviteAddViewController : UIViewController <UITextFieldDelegate, InviteAddViewControllerDelegate, UIAlertViewDelegate, MFMessageComposeViewControllerDelegate>
 
-@property (nonatomic, weak) UserClass *owner;
-@property (nonatomic, weak) MomentClass *moment;
+@property (nonatomic, strong) UserClass *owner;
+@property (nonatomic, strong) MomentClass *moment;
 @property (nonatomic, strong) NSMutableArray *selectedFriends;
 @property (nonatomic, weak) IBOutlet UIScrollView *scrollView;
 @property (nonatomic) NSInteger selectedOnglet;

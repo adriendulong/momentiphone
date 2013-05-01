@@ -20,6 +20,8 @@
 @property (weak, nonatomic) IBOutlet CustomTextField *phoneTextField;
 @property (weak, nonatomic) IBOutlet TPKeyboardAvoidingScrollView *scrollView;
 @property (weak, nonatomic) IBOutlet UIButton *boutonValider;
+@property (weak, nonatomic) IBOutlet UIView *toolbar;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *sendButton;
 
 - (id)initWithDelegate:(id <HomeViewControllerDelegate>)delegate;
 

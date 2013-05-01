@@ -83,6 +83,9 @@
     self.descriptionLabel2.font = font;
     [self addShadowToView:self.descriptionLabel1];
     [self addShadowToView:self.descriptionLabel2];
+    
+    // Accessory View
+    self.phoneTextField.inputAccessoryView = self.toolbar;
 }
 
 - (void)didReceiveMemoryWarning
@@ -106,14 +109,25 @@
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
 {
-    return ( (string.length == 0) || [[Config sharedInstance] isNumeric:string] || ([string isEqualToString:@"-"]) || ([string isEqualToString:@" "]) );
+    BOOL result = ( (string.length == 0) || [[Config sharedInstance] isNumeric:string] || ([string isEqualToString:@"-"]) || ([string isEqualToString:@" "]) );
+    
+    // Activation / Desactivation bouton envoyer
+    if(result) {
+        
+        NSString *newString = [textField.text stringByReplacingCharactersInRange:range withString:string];
+        
+        // Si valide -> Activer bouton
+        BOOL enable = (newString.length == 0 ||
+                                   [[Config sharedInstance] isValidPhoneNumber:newString]);
+        self.sendButton.enabled = enable;
+        self.boutonValider.enabled = enable;
+    }
+    
+    return result;
 }
 
-- (BOOL)textFieldShouldReturn:(UITextField *)textField
-{
-    if(textField.text.length > 0) {
-        [self clicValider];
-    }
+- (BOOL)textFieldShouldClear:(UITextField *)textField {
+    self.sendButton.enabled = self.boutonValider.enabled = YES;
     return YES;
 }
 
@@ -138,6 +152,27 @@
     }
     else
     {
+        // Envoi
+        [UserClass updateCurrentUserInformationsOnServerWithAttributes:@{@"phone":[[Config sharedInstance] formatedPhoneNumber:self.phoneTextField.text]} withEnded:^(BOOL success) {
+            
+            // Informe user of success
+            [MBProgressHUD hideHUDForView:self.view animated:YES];
+            
+            if(success)
+            {
+                [self login];
+            }
+            else
+            {
+                [[MTStatusBarOverlay sharedInstance]
+                 postImmediateErrorMessage:NSLocalizedString(@"Error", nil)
+                 duration:1
+                 animated:YES];
+            }
+            
+        }];
+        
+        /*
         // Vérification
         if([[Config sharedInstance] isValidPhoneNumber:self.phoneTextField.text])
         {
@@ -172,6 +207,7 @@
             
             [self.phoneTextField becomeFirstResponder];
         }
+         */
     }
 }
 

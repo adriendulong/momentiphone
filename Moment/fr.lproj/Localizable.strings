@@ -18,7 +18,16 @@
 // AlertView Invite Success
 "InviteAddTableViewController_AlertView_InviteSuccess_Title" = "Inivtations envoyées";
 "InviteAddTableViewController_AlertView_InviteSuccess_Message" = "Les invitations ont bien été envoyées à vos contacts";
-
+// NewUser AlertView
+"InviteAddViewController_NewUser_Invalide_Title" = "Invalide";
+"InviteAddViewController_NewUser_Invalide_Email" = "Email invalide";
+"InviteAddViewController_NewUser_Invalide_Phone" = "Numéro de téléphone invalide";
+// Envoi SMS
+"InviteAddViewController_SendSMS_Message" = "Je viens de t'inviter à : %@ sur l'application Moment : %@.\n%@";
+"InviteAddViewController_SendSMS_Fail" = "L'envoi des sms à échoué";
+// Notifs Facebook
+"InviteAddViewController_NotifsFB_Message" = "%@ t'invites à l'évènement : %@ sur l'application Moment.";
+"InviteAddViewController_NotifsFB_Fail" = "L'envoi d'invitations Facebook a échoué";
 
 /* ---------------- InvitePresentsViewController ------------------ */
 // AlertView Loading Fail

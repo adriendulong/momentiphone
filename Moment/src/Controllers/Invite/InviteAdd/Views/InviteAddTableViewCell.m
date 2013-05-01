@@ -59,7 +59,6 @@ enum InviteAddTTLabel {
         // Set Nom
         self.nomText = [user.nom uppercaseString];
         self.prenomText = [user.prenom uppercaseString];
-        [self setNomLabelTextWithColor:[[Config sharedInstance] textColor] ];
         
         // Téléphone & Email
         self.phoneText = user.numeroMobile;;
@@ -68,6 +67,9 @@ enum InviteAddTTLabel {
         // Set Adresse
 #warning Manque addresse
         self.adresseText = nil;
+        
+        // Update view
+        [self setNomLabelTextWithColor:[[Config sharedInstance] textColor] ];
         [self setAdresseLabelTextWithColor:[[Config sharedInstance] textColor]];
         
         // Set image
@@ -106,8 +108,20 @@ enum InviteAddTTLabel {
 
 - (void)setAdresseLabelTextWithColor:(UIColor*)color
 {
-    if(self.adresseText) {
-        [self setCustomLabelText:self.adresseLabel withTTLabel:InviteAddTTLabelAdresse withColor:color withText:self.adresseText withBigSize:InviteAddFontSizeBig-2 withSmallSize:InviteAddFontSizeSmall-2];
+    NSString *text = nil;
+    
+    if( self.nomText || self.prenomText )
+    {
+        if(self.emailText)
+            text = self.emailText;
+        else if(self.adresseText)
+            text = self.adresseText;
+        else if(self.phoneText)
+            text = self.phoneText;
+    }
+    
+    if(text) {
+        [self setCustomLabelText:self.adresseLabel withTTLabel:InviteAddTTLabelAdresse withColor:color withText:text withBigSize:InviteAddFontSizeBig-2 withSmallSize:InviteAddFontSizeSmall-2];
     } else {
         self.adresseLabel.hidden = YES;
     }
@@ -124,7 +138,7 @@ enum InviteAddTTLabel {
         [self setCustomLabelText:self.nomLabel withTTLabel:InviteAddTTLabelNom withColor:color withText:self.nomText withBigSize:InviteAddFontSizeBig withSmallSize:InviteAddFontSizeSmall];
     }
     else if(self.emailText) {
-        [self setCustomLabelText:self.nomLabel withTTLabel:InviteAddTTLabelNom withColor:color withText:self.phoneText withBigSize:InviteAddFontSizeBig withSmallSize:InviteAddFontSizeSmall];
+        [self setCustomLabelText:self.nomLabel withTTLabel:InviteAddTTLabelNom withColor:color withText:self.emailText withBigSize:InviteAddFontSizeBig withSmallSize:InviteAddFontSizeSmall];
     }
     else if(self.phoneText) {
         [self setCustomLabelText:self.nomLabel withTTLabel:InviteAddTTLabelNom withColor:color withText:self.phoneText withBigSize:InviteAddFontSizeBig withSmallSize:InviteAddFontSizeSmall];

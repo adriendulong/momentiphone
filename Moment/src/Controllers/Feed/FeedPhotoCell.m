@@ -86,6 +86,7 @@
         self.scrollView.contentSize = CGSizeMake(2*BIGFEED_SCROLL_OFFSET + [self.feed.photos count]*(BIGFEED_SCROLL_OFFSET+BIGFEED_SCROLL_WIDTH+1), self.scrollView.frame.size.height);
         self.scrollView.delegate = self.delegate;
         self.scrollView.tag = [self.feed.photos count]-1;
+        self.scrollView.scrollsToTop = NO;
         
         if([self.feed.photos count] == 1) {
             self.scrollView.scrollEnabled = NO;

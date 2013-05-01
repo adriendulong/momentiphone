@@ -803,9 +803,6 @@ static FacebookManager *sharedInstance = nil;
         case FBErrorNonTextMimeTypeReturned:{
             return @"FBErrorNonTextMimeTypeReturned";
         }
-        case FBErrorNativeDialog:{
-            return @"FBErrorNativeDialog";
-        }
         default:
             return @"[Unknown]";
     }

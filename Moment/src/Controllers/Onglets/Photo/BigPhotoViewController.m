@@ -679,36 +679,6 @@ withDelegate:(PhotoViewController*)photoViewController
         [self presentViewController:facebookViewComposer animated:YES completion:nil];
     }
     
-    /*
-    // iOS 6 -> Native Share Dialog View
-    BOOL displayedNativeDialog =
-    [FBNativeDialogs
-     presentShareDialogModallyFrom:self
-     initialText:initialText
-     image:image
-     url:url
-     handler:^(FBNativeDialogResult result, NSError *error) {
-         
-         if (error) {
-             // handle failure
-             NSLog(@"Facebook Result: Fail - iOS 6");
-         } else {
-             if (result == FBNativeDialogResultSucceeded) {
-                 // handle success 
-                 NSLog(@"Facebook Result: Sent - iOS 6");
-             } else {
-                 // handle user cancel
-                 NSLog(@"Facebook Result: Cancelled - iOS 6");
-             }
-         }
-     }];
-    
-    // iOS 5
-    if (!displayedNativeDialog) {
-       
-    }
-    
-     */
 }
 
 - (IBAction)clicTwitter {
@@ -716,7 +686,11 @@ withDelegate:(PhotoViewController*)photoViewController
     // Paramètres
     Photos *photo = self.photos[self.selectedIndex];
     UIImage *image = photo.imageOriginal;
-    NSString *initialText = [NSString stringWithFormat:@"Bon Moment @[%@] !\n", self.moment.titre];
+    NSMutableString *initialText = [NSMutableString stringWithFormat:@"Bon Moment @[%@] !", self.moment.titre];
+    if(self.moment.hashtag)
+        [initialText appendFormat:@" #%@\n", self.moment.hashtag];
+    else
+        [initialText appendString:@"\n"];
     NSURL *url = [NSURL URLWithString:photo.urlOriginal];
     
     // iOS 6 -> Social Framework

@@ -117,16 +117,28 @@
     
     // User
     UserClass *user = self.visibleFriends[indexPath.row][@"user"];
+    UITableViewCell *cell = nil;
     
-    // Cell ID
-    CellIdentifier = [NSString stringWithFormat:@"InviteAddTableViewCell_%@_%@_%@_%@", user.userId, user.facebookId, user.prenom, user.nom];
-    
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
-    if (cell == nil) {
+    // Si on est en train de créé un user
+    if( !(user.userId || user.facebookId || user.nom || user.prenom) ) {
+        // On recréé les cellules à chaque fois
         cell = [[InviteAddTableViewCell alloc] initWithUser:user
                                                   withStyle:indexPath.row%2
                                    withNavigationController:self.delegate.navigationController
                                             reuseIdentifier:CellIdentifier];
+    }
+    else
+    {
+        // Cell ID
+        CellIdentifier = [NSString stringWithFormat:@"InviteAddTableViewCell_%@_%@_%@_%@_%@_%@", user.userId, user.facebookId, user.prenom, user.nom, user.email, user.numeroMobile];
+        
+        cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+        if (cell == nil) {
+            cell = [[InviteAddTableViewCell alloc] initWithUser:user
+                                                      withStyle:indexPath.row%2
+                                       withNavigationController:self.delegate.navigationController
+                                                reuseIdentifier:CellIdentifier];
+        }
     }
     
     return cell;
@@ -154,16 +166,82 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if(!isEmpty) {
-
+        
         NSMutableDictionary *person = self.visibleFriends[indexPath.row];
         
-        if(![person[@"isSelected"] boolValue]) {
+        // Si on est sur une personne ajoutée manuellement
+        if(person[@"newUser"])
+        {
+            // On est en train de l'ajouter
+            if(![person[@"isSelected"] boolValue])
+            {
+                // Email
+                if([person[@"newUser"] isEqualToString:@"email"]){
+                    
+                    // Valide ?
+                    if([[Config sharedInstance] isValidEmail:[(UserClass*)person[@"user"] email]]) {
+                        // Ajout
+                        person[@"isSelected"] = @(YES);
+                        NSMutableArray *friends = self.friends.mutableCopy;
+                        [friends addObject:person];
+                        self.friends = friends;
+                        [self.delegate addNewSelectedFriend:person[@"user"]];
+                        // Vide la barre de recherche
+                        [self.delegate.searchTextField setText:@""];
+                        self.visibleFriends = friends;
+                        [self.tableView reloadData];
+                    }
+                    else {
+                        // Invalide
+                        [[[UIAlertView alloc]
+                          initWithTitle:NSLocalizedString(@"InviteAddViewController_NewUser_Invalide_Title", nil)
+                          message:NSLocalizedString(@"InviteAddViewController_NewUser_Invalide_Email", nil)
+                          delegate:nil
+                          cancelButtonTitle:NSLocalizedString(@"AlertView_Button_OK", nil)
+                          otherButtonTitles:nil]
+                         show];
+                        [self.tableView deselectRowAtIndexPath:indexPath animated:NO];
+                    }
+                    
+                }
+                // Phone
+                else {
+                    
+                    // Valide ?
+                    if([[Config sharedInstance] isValidPhoneNumber:[(UserClass*)person[@"user"] numeroMobile]]) {
+                        // Ajout
+                        person[@"isSelected"] = @(YES);
+                        NSMutableArray *friends = self.friends.mutableCopy;
+                        [friends addObject:person];
+                        self.friends = friends;
+                        [self.delegate addNewSelectedFriend:person[@"user"]];
+                        // Vide la barre de recherche
+                        [self.delegate.searchTextField setText:@""];
+                        self.visibleFriends = friends;
+                        [self.tableView reloadData];
+                    }
+                    else {
+                        // Invalide
+                        [[[UIAlertView alloc]
+                          initWithTitle:NSLocalizedString(@"InviteAddViewController_NewUser_Invalide_Title", nil)
+                          message:NSLocalizedString(@"InviteAddViewController_NewUser_Invalide_Phone", nil)
+                          delegate:nil
+                          cancelButtonTitle:NSLocalizedString(@"AlertView_Button_OK", nil)
+                          otherButtonTitles:nil]
+                         show];
+                        [self.tableView deselectRowAtIndexPath:indexPath animated:NO];
+                    }
+                    
+                }
+            }
+        }
+        // Sinon, si on selectionne le user si il n'est pas déjà selectionné
+        else if(![person[@"isSelected"] boolValue]) {
             NSLog(@"Select Cell %d", indexPath.row);
             person[@"isSelected"] = @(YES);
             [self.delegate addNewSelectedFriend:person[@"user"]];
         }
     }
-    
 }
 
 - (void)tableView:(UITableView*)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath

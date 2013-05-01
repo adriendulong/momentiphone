@@ -11,6 +11,7 @@
 #import "NSMutableAttributedString+FontAndTextColor.h"
 #import "UILabel+BottomAlign.h"
 #import "UserClass+Server.h"
+#import <FacebookSDK/FacebookSDK.h>
 
 #define headerSize 100 
 
@@ -251,13 +252,13 @@ enum InviteAddFontSize {
 
 #pragma mark - InviteViewController Delegate
 
-- (void)addNewSelectedFriend:(NSMutableDictionary*)friend
+- (void)addNewSelectedFriend:(UserClass*)friend
 {
     [self.selectedFriends addObject:friend];
     [self updateSelectedFriendsLabel];
 }
 
-- (void)removeSelectedFriend:(NSMutableDictionary*)friend
+- (void)removeSelectedFriend:(UserClass*)friend
 {
     if([self.selectedFriends containsObject:friend]) {
         [self.selectedFriends removeObject:friend];
@@ -442,15 +443,21 @@ enum InviteAddFontSize {
             
             [MBProgressHUD hideHUDForView:self.view animated:YES];
             
-#warning Pas très ergonomique
-            [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"InviteAddTableViewController_AlertView_InviteSuccess_Title", nil)
-                                        message:NSLocalizedString(@"InviteAddTableViewController_AlertView_InviteSuccess_Message", nil)
-                                       delegate:nil
-                              cancelButtonTitle:NSLocalizedString(@"AlertView_Button_OK", nil)
-                              otherButtonTitles:nil]
-             show];
+            if(success)
+            {                
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"InviteAddTableViewController_AlertView_InviteSuccess_Title", nil)
+                                                                message:NSLocalizedString(@"InviteAddTableViewController_AlertView_InviteSuccess_Message", nil)
+                                                               delegate:self
+                                                      cancelButtonTitle:NSLocalizedString(@"AlertView_Button_OK", nil)
+                                                      otherButtonTitles:nil];
+                [alert show];
+                
+            }
+            else
+            {
+                [[[UIAlertView alloc] initWithTitle:@"ERREUR" message:@"ERREUR" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
+            }
             
-            [self.navigationController popViewControllerAnimated:YES];
         }];
     }
     else {
@@ -526,25 +533,31 @@ enum InviteAddFontSize {
     if(searchBar.text.length > 1) {
         
         NSMutableArray *temp = [[NSMutableArray alloc] init];
-                
+        
+        // NSDictionary* de la forme
+        // @{
+        //      @"user":[UserClass]
+        //      @"isSelected" : [BOOL]
+        //  }
         for( NSDictionary *person in self.actualTableViewController.friends )
         {
             BOOL add = NO;
             
             UserClass *user = person[@"user"];
             
+            // Cherche Prénom
             if(user.prenom) {
                 NSRange prenomRange = [user.prenom rangeOfString:searchBar.text options:NSCaseInsensitiveSearch|NSDiacriticInsensitiveSearch];
                 if(prenomRange.location != NSNotFound)
                     add = YES;
             }
-            
+            // Cherche Nom
             if(!add && user.nom) {
                 NSRange nomRange = [user.nom rangeOfString:searchBar.text options:NSCaseInsensitiveSearch|NSDiacriticInsensitiveSearch];
                 if( nomRange.location != NSNotFound )
                     add = YES;
             }
-            
+            // Cherche Prénom et Nom
             if(!add && user.prenom && user.nom) {
                 NSString *fullName = [NSString stringWithFormat:@"%@ %@", user.prenom, user.nom];
                 NSRange fullNameRange = [fullName rangeOfString:searchBar.text options:NSCaseInsensitiveSearch|NSDiacriticInsensitiveSearch];
@@ -562,16 +575,186 @@ enum InviteAddFontSize {
                 
             }
             
+            // Si trouvé
             if(add) {
                 [temp addObject:person];
             }
         }
         
+        if([temp count] == 0)
+        {
+            // On vérifie si c'est un début de numéro de téléphone
+            NSString *regex = @"0[1-9]([0-9]*)";
+            NSPredicate *test = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", regex];
+            BOOL phone = [test evaluateWithObject:searchBar.text];
+            
+            // User attributes
+            NSMutableDictionary *attr = [[NSMutableDictionary alloc] init];
+            if(phone)
+                attr[@"numeroMobile"] = searchBar.text;
+            else
+                attr[@"email"] = searchBar.text;
+            
+            // Création du user à inviter
+            UserClass *user = [[UserClass alloc] initWithAttributesFromLocal:attr];
+            
+            attr = @{
+                     @"user":user,
+                     @"isSelected":@(NO),
+                     @"newUser":(phone ? @"numeroMobile" : @"email") // Cellule Email ou Phone
+                     }.mutableCopy;
+            
+            // Ajout
+            [temp addObject:attr];
+            
+        }
+    
         [self.actualTableViewController updateVisibleFriends:temp];
     }
     else {
         [self.actualTableViewController updateVisibleFriends:self.actualTableViewController.friends];
     }
+}
+
+#pragma mark - UIAlertView Delegate
+
+- (void)sendNotifToFacebookFriends
+{
+    // Liste les id facebook
+    NSMutableSet *fbId = [[NSMutableSet alloc] init];
+    for( UserClass* user in self.selectedFriends )
+    {
+        if(user.facebookId)
+            [fbId addObject:user.facebookId];
+    }
+    
+    if([fbId count] > 0)
+    {
+        // Destinataires
+        NSDictionary* params = @{@"to" : [fbId.allObjects componentsJoinedByString:@","]};
+        
+        // Message
+        NSString *message = [NSString stringWithFormat:NSLocalizedString(@"InviteAddViewController_NotifsFB_Message", nil),  [self currentUserName], self.moment.titre];
+                
+        [FBWebDialogs presentRequestsDialogModallyWithSession:nil
+                                                      message:message
+                                                        title:@"Invitations"
+                                                   parameters:params
+                                                      handler:^(FBWebDialogResult result, NSURL *resultURL, NSError *error) {
+                                                          
+                                                          NSLog(@"HANDLER CALLED");
+                                                          if (error) {
+                                                              
+                                                              [[[UIAlertView alloc]
+                                                                initWithTitle:NSLocalizedString(@"Error_Classic", nil)
+                                                                message:NSLocalizedString(@"InviteAddViewController_NotifsFB_Fail", nil)
+                                                                delegate:nil
+                                                                cancelButtonTitle:NSLocalizedString(@"AlertView_Button_OK", nil)
+                                                                otherButtonTitles:nil]
+                                                               show];
+                                                              
+                                                              
+                                                          }
+                                                          
+                                                          // Retour à la vue info
+                                                          [self.navigationController popViewControllerAnimated:YES];
+                                                      }];
+    }
+    else
+    {
+        // Retour à la vue info
+        [self.navigationController popViewControllerAnimated:YES];
+    }
+    
+   
+}
+
+// Envoi des notifs SMS
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    BOOL smsSend = NO;
+    
+	if([MFMessageComposeViewController canSendText])
+	{
+        // Empeche les doublons
+        NSMutableSet *smsList = [[NSMutableSet alloc] init];
+        for(UserClass *user in self.selectedFriends)
+        {
+            if(user.numeroMobile)
+                [smsList addObject:[user.numeroMobile stringByReplacingOccurrencesOfString:@" " withString:@""]];
+            if(user.secondPhone)
+                [smsList addObject:[user.secondPhone stringByReplacingOccurrencesOfString:@" " withString:@""]];
+        }
+        
+        if([smsList count] > 0)
+        {
+            // SMS Composer
+            MFMessageComposeViewController *controller = [[MFMessageComposeViewController alloc] init];
+            
+            // SMS body
+            controller.body =
+            [NSString stringWithFormat:
+             NSLocalizedString(@"InviteAddViewController_SendSMS_Message", nil),
+             self.moment.titre, @"http://www.appmoment.fr",
+             [self currentUserName]];
+            
+            // Numéros de téléphones
+            controller.recipients = smsList.allObjects;
+            
+            // Delegate
+            controller.messageComposeDelegate = self;
+            smsSend = YES;
+            [self presentModalViewController:controller animated:YES];
+        }
+	}
+    else {
+        [TestFlight passCheckpoint:@"DEVICE CAN'T SEND SMS"];
+    }
+    
+    if(!smsSend) {
+        [self sendNotifToFacebookFriends];
+    }
+}
+
+#pragma mark - MFMessageComposeViewController Delegate
+
+- (void)messageComposeViewController:(MFMessageComposeViewController *)controller didFinishWithResult:(MessageComposeResult)result
+{
+    
+    if(result == MessageComposeResultFailed) {
+        // L'envoi a échoué
+        [[[UIAlertView alloc]
+          initWithTitle:NSLocalizedString(@"Error_Classic", nil)
+          message:NSLocalizedString(@"InviteAddViewController_SendSMS_Fail", nil)
+          delegate:nil
+          cancelButtonTitle:NSLocalizedString(@"AlertView_Button_OK", nil)
+          otherButtonTitles: nil]
+         show];
+    }
+    
+    // Send Facebook Notif
+    [self sendNotifToFacebookFriends];
+    
+	[self dismissModalViewControllerAnimated:YES];
+}
+
+#pragma mark - Util
+
+- (NSString*)currentUserName {
+    // Nom de l'expéditeur
+    UserClass *current = [UserCoreData getCurrentUser];
+    NSString *username = nil;
+    if(current.nom && current.prenom) {
+        username = [NSString stringWithFormat:@"%@ %@", current.prenom.uppercaseString, current.nom.uppercaseString];
+    }
+    else if(current.nom || current.prenom) {
+        if(current.prenom)
+            username = current.prenom.uppercaseString;
+        else
+            username = current.nom.uppercaseString;
+    }
+    
+    return username ?: @"";
 }
 
 @end
