@@ -13,6 +13,7 @@
 #import "MTStatusBarOverlay.h"
 #import "FacebookManager.h"
 #import "VoletViewController.h"
+#import "ImporterFBViewController.h"
 
 enum PhotoPickerDestination {
     PhotoPickerDestinationCover = 0,
@@ -348,9 +349,13 @@ enum PhotoPickerDestination {
             if(self.profilePictureImage) {
                 [modifications setValue:self.profilePictureImage forKey:@"photo"];
             }
+            // Password
+            // -> Manque vérification de l'ancien mot de passe
+            if([self.modifications containsObject:self.nouveauPasswordTextField]) {
+                [modifications setValue:self.nouveauPasswordTextField forKey:@"password"];
+            }
             
             // Manque Cover
-            // Manque Mot de passe
             //  ---
             // ...
             //  ---
@@ -460,9 +465,37 @@ enum PhotoPickerDestination {
 #pragma mark - Actions
 
 - (IBAction)clicFacebookBadge {
-    NSLog(@"GET PERMISSIONS");
-    [[FacebookManager sharedInstance] getPublishPermissions];
+    //NSLog(@"GET PERMISSIONS");
+    //[[FacebookManager sharedInstance] getPublishPermissions];
+    
+    [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"CreationHomeViewController_importFBAlertView_Title", nil)
+                                message:NSLocalizedString(@"CreationHomeViewController_importFBAlertView_Message", nil)
+                               delegate:self
+                      cancelButtonTitle:NSLocalizedString(@"AlertView_Button_NO", nil)
+                      otherButtonTitles:NSLocalizedString(@"AlertView_Button_YES", nil), nil]
+     show];
 }
 
+#pragma mark - AlertView Delegate
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    // --- Import FB Alert View ---
+    
+    // Oui -> Importer
+    if(buttonIndex == 1) {
+        ImporterFBViewController *fbViewController = [[ImporterFBViewController alloc] initWithTimeLine:nil];
+        
+        // Remove this view controller
+        // -> On pousse le ImportFB View controller et le bouton BACK retournera à la TimeLine
+        NSMutableArray *viewControllers = self.navigationController.viewControllers.mutableCopy;
+        //[viewControllers removeLastObject];
+        //[viewControllers removeLastObject];
+        [viewControllers addObject:fbViewController];
+        
+        [self.navigationController setViewControllers:viewControllers animated:NO];
+    }
+    
+}
 
 @end

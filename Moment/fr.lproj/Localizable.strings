@@ -71,7 +71,9 @@
 "HomeViewController_AlertView_AuthentificationFail_Message" = "Login et/ou mot de passe invalide";
 // AlertView Forgot Password
 "HomeViewController_AlertView_ForgotPassword_Title" = "Mot de passe oublié";
-"HomeViewController_AlertView_ForgotPassword_Message" = "Bad For You !";
+"HomeViewController_AlertView_ForgotPassword_Message" = "Rentrez votre Email : ";
+// Status Bar Forgot Password
+"HomeViewController_Status_ForgotPassword_Success" = "Un Email vous a été envoyé";
 
 /* ---------------- TimeLineViewController ------------------ */
 // Echelle de temps
@@ -206,6 +208,7 @@
 "AlertView_Button_YES" = "Oui";
 "AlertView_Button_NO" = "Non";
 "AlertView_Button_Continue" = "Continuer";
+"AlertView_Button_Valide" = "Valider";
 
 /* ------------- Peek Photo Action Sheet --------------- */
 "ActionSheet_PeekPhoto_Title" = "Source de la photo";

@@ -23,6 +23,9 @@
 + (void)getLoggedUserFromServerWithEnded:( void (^) (UserClass *user) )block;
 + (void)loginUserWithUsername:(NSString *)username withPassword:(NSString *)password withEnded:(void (^)(NSInteger status))block;
 
+// Lost Password
++ (void)requestNewPasswordAtEmail:(NSString*)email withEnded:(void (^) (BOOL success))block;
+
 // Invites
 + (void)inviteNewGuest:(NSArray*)users toMoment:(MomentClass*)moment withEnded:( void (^) (BOOL success) )block;
 + (void)getInvitedUsersToMoment:(MomentClass*)moment

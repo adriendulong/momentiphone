@@ -159,7 +159,7 @@ static FacebookManager *sharedInstance = nil;
 
 - (void)readPermissions:(NSArray*)permissions withEnded:(void (^) (BOOL success))block
 {
-    [[FBSession activeSession] reauthorizeWithReadPermissions:permissions completionHandler:^(FBSession *session, NSError *error) {
+    [[FBSession activeSession] requestNewReadPermissions:permissions completionHandler:^(FBSession *session, NSError *error) {
         
         if(block) {
             block( error != nil );
@@ -170,7 +170,7 @@ static FacebookManager *sharedInstance = nil;
 
 - (void)publishPermissions:(NSArray*)permissions defaultAudience:(FBSessionDefaultAudience)audience withEnded:(void (^) (BOOL success))block
 {
-    [[FBSession activeSession] reauthorizeWithPublishPermissions:permissions defaultAudience:audience completionHandler:^(FBSession *session, NSError *error) {
+    [[FBSession activeSession] requestNewPublishPermissions:permissions defaultAudience:audience completionHandler:^(FBSession *session, NSError *error) {
         
         if(block) {
             block( error != nil );

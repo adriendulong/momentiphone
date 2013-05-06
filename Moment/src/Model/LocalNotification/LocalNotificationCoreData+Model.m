@@ -15,9 +15,29 @@
 - (void)setupWithAttributesFromWeb:(NSDictionary*)attributes
 {
     if(attributes) {
+        NSLog(@"attributes = %@", attributes);
         self.date = [NSDate dateWithTimeIntervalSince1970:[attributes[@"time"] doubleValue]];
-        self.moment = [MomentCoreData requestMomentAsCoreDataWithAttributes:[MomentClass mappingToLocalWithAttributes:attributes[@"moment"]]];
         self.type = attributes[@"type_id"];
+        
+        enum NotificationType type = self.type.intValue;
+        switch (type) {
+                
+            case NotificationTypeNewFollower: {
+                //UserClass *follower = [[UserClass alloc] initWithAttributesFromWeb:attributes[@"follower"]];
+                
+            } break;
+            
+            case NotificationTypeFollowRequest: {
+                //UserClass *request_follower = [[UserClass alloc] initWithAttributesFromWeb:attributes[@"request_follower"]];
+                
+            } break;
+                
+            default: {
+                self.moment = [MomentCoreData requestMomentAsCoreDataWithAttributes:[MomentClass mappingToLocalWithAttributes:attributes[@"moment"]]];
+            } break;
+        }
+        
+        
     }
 }
 
@@ -142,7 +162,8 @@
 - (NSString*)description {
     
     NSString *type = nil;
-    switch (self.type.intValue) {
+    enum NotificationType val = self.type.intValue;
+    switch (val) {
         case NotificationTypeInvitation:
             type = @"NotificationTypeInvitation";
             break;
@@ -157,6 +178,14 @@
             
         case NotificationTypeNewPhoto:
             type = @"NotificationTypeNewPhoto";
+            break;
+            
+        case NotificationTypeNewFollower:
+            type = @"NotificationTypeNewFollower";
+            break;
+            
+        case NotificationTypeFollowRequest:
+            type = @"NotificationTypeFollowRequest";
             break;
             
         default:

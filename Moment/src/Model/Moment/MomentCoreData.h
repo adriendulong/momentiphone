@@ -2,7 +2,7 @@
 //  MomentCoreData.h
 //  Moment
 //
-//  Created by Mathieu PIERAGGI on 02/04/13.
+//  Created by Mathieu PIERAGGI on 06/05/13.
 //  Copyright (c) 2013 Moment. All rights reserved.
 //
 
@@ -27,11 +27,12 @@
 @property (nonatomic, retain) NSString * infoLieu;
 @property (nonatomic, retain) NSString * infoMetro;
 @property (nonatomic, retain) NSNumber * isOpen;
+@property (nonatomic, retain) NSNumber * isSponso;
 @property (nonatomic, retain) NSNumber * momentId;
 @property (nonatomic, retain) NSString * nomLieu;
 @property (nonatomic, retain) NSNumber * state;
 @property (nonatomic, retain) NSString * titre;
-@property (nonatomic, retain) NSNumber * isSponso;
+@property (nonatomic, retain) NSNumber * privacy;
 @property (nonatomic, retain) NSSet *notifications;
 @property (nonatomic, retain) UserCoreData *owner;
 @end

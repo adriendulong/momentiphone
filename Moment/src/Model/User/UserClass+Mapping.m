@@ -63,8 +63,8 @@
         newAttributes[@"lastname"] = attributes[@"nom"];
     if(attributes[@"prenom"])
         newAttributes[@"firstname"] = attributes[@"prenom"];
-    
-    // Optionnels
+    if(attributes[@"password"])
+        newAttributes[@"password"] = attributes[@"password"];
     if(attributes[@"imageString"])
         newAttributes[@"profile_picture_url"] = attributes[@"imageString"];
     if(attributes[@"numeroMobile"])

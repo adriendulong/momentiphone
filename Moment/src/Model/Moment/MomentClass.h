@@ -34,6 +34,7 @@
 @property (nonatomic, strong) UIImage *uimage;
 @property (nonatomic, strong) NSNumber *isOpen;
 @property (nonatomic, strong) NSNumber *isSponso;
+@property (nonatomic, strong) NSNumber *privacy;
 
 // Init
 - (void)setupWithAttributes:(NSDictionary*)attributes;

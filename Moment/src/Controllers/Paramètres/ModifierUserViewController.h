@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "CustomTextView.h"
 
-@interface ModifierUserViewController : UIViewController <UITextFieldDelegate, UITextViewDelegate, UIActionSheetDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate>
+@interface ModifierUserViewController : UIViewController <UITextFieldDelegate, UITextViewDelegate, UIActionSheetDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate, UIAlertViewDelegate>
 
 @property (strong, nonatomic) NSMutableSet *modifications;
 @property (strong, nonatomic) UIImage *coverImage;

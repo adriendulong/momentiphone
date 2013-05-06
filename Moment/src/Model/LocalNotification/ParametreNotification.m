@@ -11,7 +11,10 @@
 
 @implementation ParametreNotification
 
-// Stockage préférences en local
+/*
+ * Stockage préférences en local
+ * -> Clefs d'enregistrements dans les NSUserDefaults
+ */
 #define kParametreNotificationDefaultKey @"ParametresNotificationsDefaultKey"
 #define kParametreNotificationInvitationPush @"ParametreNotificationInvitation_Push"
 #define kParametreNotificationInvitationEmail @"ParametreNotificationInvitation_Email"

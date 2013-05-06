@@ -179,6 +179,7 @@
     moment.isOpen = self.isOpen;
     moment.isSponso = self.isSponso;
     moment.owner = [self.owner localCopy];
+    moment.privacy = self.privacy;
     //moment.notifications = self.notifications;
     
     return moment;

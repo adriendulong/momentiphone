@@ -6,6 +6,11 @@
 //  Copyright (c) 2013 Moment. All rights reserved.
 //
 
+/*
+ * Gestion des paramètres de notifications
+ * -> Choix de Réception des paramètres par Email/Push Notification
+ */
+
 #import <Foundation/Foundation.h>
 
 enum ParametreNotificationType {
@@ -23,20 +28,29 @@ enum ParametreNotificationMode {
 
 @interface ParametreNotification : NSObject
 
-// Server
+// ----------- Server --------------
+// Récupère les préférences depuis le server
 + (void)getParametres:(void (^) (NSArray* parametres))block;
 
+// Update les préférences sur le server
 + (void)changeParametres:(enum ParametreNotificationType)paramType
                     mode:(enum ParametreNotificationMode)mode
                withEnded:(void (^) (BOOL success))block;
 
-// Local
+// ----------- Local ---------------
+// Retourne YES si des préférences sont stockées en local, NO sinon
 + (BOOL)settingsStoredLocally;
+
+// Enregistre la préférence en local
 + (void)store:(BOOL)value
          type:(enum ParametreNotificationType)type
          mode:(enum ParametreNotificationMode)mode;
+
+// Retourne la préférence stockée en local
 + (BOOL)localValueForType:(enum ParametreNotificationType)type
                      mode:(enum ParametreNotificationMode)mode;
+
+// Vide les préférences stockées en local
 + (void)clearSettingsLocal;
 
 @end

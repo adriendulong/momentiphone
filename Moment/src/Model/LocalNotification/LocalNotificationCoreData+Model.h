@@ -14,7 +14,9 @@ enum NotificationType {
     NotificationTypeInvitation = 0,
     NotificationTypeModification = 1,
     NotificationTypeNewPhoto = 2,
-    NotificationTypeNewChat = 3
+    NotificationTypeNewChat = 3,
+    NotificationTypeNewFollower = 4,
+    NotificationTypeFollowRequest = 5
 };
 
 // Init

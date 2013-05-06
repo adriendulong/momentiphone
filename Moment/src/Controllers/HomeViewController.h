@@ -20,7 +20,7 @@
 @end
 
 
-@interface HomeViewController : UIViewController <UITextFieldDelegate, UIScrollViewDelegate, HomeViewControllerDelegate>
+@interface HomeViewController : UIViewController <UITextFieldDelegate, UIScrollViewDelegate, HomeViewControllerDelegate, UIAlertViewDelegate>
 
 //@property (assign, nonatomic) NSUInteger style;
 @property (nonatomic, weak) IBOutlet IgnoreTouchView *boxView;

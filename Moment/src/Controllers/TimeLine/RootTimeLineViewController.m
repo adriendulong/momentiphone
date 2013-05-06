@@ -81,6 +81,9 @@ withNavigationController:(UINavigationController*)navController
     [self.publicFeedList.view setNeedsDisplay];
     self.publicFeedList.view.alpha = 0;
     
+    // Préload Volet
+    [[VoletViewController volet] loadNotifications];
+    
 }
 
 - (void)didReceiveMemoryWarning

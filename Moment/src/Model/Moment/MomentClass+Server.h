@@ -24,14 +24,14 @@
                                                 withEnded:(void (^) (void))endBlock;
 
 // Get Moments
-+ (void) getMomentsForUser:(UserClass*)user withEnded:(void (^) (NSArray* moments))block;
++ (void)getMomentsForUser:(UserClass*)user withEnded:(void (^) (NSArray* moments))block;
 + (void)getInfosMomentWithId:(NSInteger)momentId
                    withEnded:(void (^) (NSDictionary* attributes) )block
            waitUntilFinished:(BOOL)waitUntilFinished;
 + (void)getInfosMomentWithId:(NSInteger)momentId withEnded:(void (^) (NSDictionary* attributes) )block;
-+ (void) getMomentsServerWithEnded:(void (^)(BOOL success))block waitUntilFinished:(BOOL)waitUntilFinished;
-+ (void) getMomentsServerWithEnded:(void (^)(BOOL success))block;
-+ (void) getMomentsServerAfterDateOfMoment:(MomentClass*)moment withEnded:(void (^) (NSArray* moments))block;
++ (void)getMomentsServerWithEnded:(void (^)(BOOL success))block waitUntilFinished:(BOOL)waitUntilFinished;
++ (void)getMomentsServerWithEnded:(void (^)(BOOL success))block;
++ (void)getMomentsServerAfterDateOfMoment:(MomentClass*)moment withEnded:(void (^) (NSArray* moments))block;
 
 // Facebook Events
 + (void)identifyFacebookEventsOnMoment:(NSArray*)events withEnded:(void (^) (NSDictionary* results))block;

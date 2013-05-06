@@ -22,6 +22,8 @@
 
 @property (nonatomic, strong) UIImage *imageProfile;
 @property (nonatomic, weak) IBOutlet TPKeyboardAvoidingScrollView *scrollView;
+@property (nonatomic, strong) CustomDatePicker *pickerView;
+@property (nonatomic, strong) NSDateFormatter *dateFormatter;
 
 @property (nonatomic, weak) IBOutlet UIView *boxView;
 @property (nonatomic, strong) UIImageView *bgBox;
@@ -34,6 +36,9 @@
 @property (nonatomic, weak) IBOutlet CustomTextField *emailLabel;
 @property (nonatomic, weak) IBOutlet CustomTextField *mdpLabel;
 @property (nonatomic, weak) IBOutlet CustomTextField *nomLabel;
+@property (weak, nonatomic) IBOutlet CustomTextField *birthdayTextField;
+@property (weak, nonatomic) IBOutlet UIButton *maleButton;
+@property (weak, nonatomic) IBOutlet UIButton *femaleButton;
 
 @property (nonatomic, weak) IBOutlet UIButton *backButton;
 @property (nonatomic, weak) IBOutlet UIButton *nextButton;

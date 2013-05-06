@@ -33,6 +33,9 @@
         self.timeLine = timeLine;
         self.switchControlState = NO;
         self.backgroundImage = background;
+        
+        // Default Privacy = Public
+        self.moment.privacy = @(MomentPrivacyPublic);
     }
     return self;
 }
@@ -100,6 +103,9 @@
     [self setTimeLine:nil];
     [self setRootViewController:nil];
     [self setBackgroundImageView:nil];
+    [self setPublicButton:nil];
+    [self setFriendsButton:nil];
+    [self setPrivateButton:nil];
     [super viewDidUnload];
 }
 
@@ -138,6 +144,34 @@
     [UIView animateWithDuration:0.2 animations:^{
         self.switchButton.frame = frame;
     }];
+}
+
+- (IBAction)changePrivacy:(UIButton*)sender
+{
+    if(!sender.isSelected)
+    {
+        // Privacy Ouvert
+        if(sender == self.publicButton)
+        {
+            self.moment.privacy = @(MomentPrivacyOpen);
+            self.publicButton.selected = YES;
+            self.friendsButton.selected = self.privateButton.selected = NO;
+        }
+        // Privacy Public
+        else if(sender == self.friendsButton)
+        {
+            self.moment.privacy = @(MomentPrivacyPublic);
+            self.friendsButton.selected = YES;
+            self.publicButton.selected = self.privateButton.selected = NO;
+        }
+        // Privacy Private
+        else
+        {
+            self.moment.privacy = @(MomentPrivacyPrivate);
+            self.privateButton.selected = YES;
+            self.publicButton.selected = self.friendsButton.selected = NO;
+        }
+    }
 }
 
 @end

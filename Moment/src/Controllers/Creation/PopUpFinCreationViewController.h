@@ -26,6 +26,11 @@
 @property (nonatomic, weak) IBOutlet UIButton *switchButton;
 @property (nonatomic) BOOL switchControlState;
 
+@property (weak, nonatomic) IBOutlet UIButton *publicButton;
+@property (weak, nonatomic) IBOutlet UIButton *friendsButton;
+@property (weak, nonatomic) IBOutlet UIButton *privateButton;
+
+
 
 - (id)initWithRootViewController:(UIViewController*)rootViewController
                       withMoment:(MomentClass*)moment

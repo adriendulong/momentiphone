@@ -12,6 +12,12 @@
 
 #define MOMENTS_NO_LIMIT -1
 
+enum MomentPrivacy {
+    MomentPrivacyPrivate = 0,
+    MomentPrivacyOpen = 1,
+    MomentPrivacyPublic = 2
+    };
+
 @interface MomentCoreData (Model)
 
 // Setup

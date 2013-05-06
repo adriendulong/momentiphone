@@ -58,8 +58,11 @@
 - (IBAction)clicUser;
 - (IBAction)clicParametres;
 
+// Load
 - (void)loadNotifications;
+- (void)loadInvitations;
 
+// Change TimeLine / Feed
 - (void)selectActualitesButton;
 - (void)selectMesMomentsButton;
 - (IBAction)clicChangeTimeLine:(UIButton*)sender;

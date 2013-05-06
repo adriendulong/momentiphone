@@ -64,6 +64,30 @@
     return self;
 }
 
+- (void)initDatePicker
+{
+    // Init
+    self.pickerView = [[CustomDatePicker alloc] init];
+    // Date Max = Aujourd'hui
+    self.pickerView.datePicker.maximumDate = [NSDate date];
+    // Bouton Valider
+    [self.pickerView setButtonStyle:CustomDatePickerButtonStyleDone];
+    
+    // Actions
+    [self.pickerView setValiderButtonTarget:self action:@selector(clicValiderPickerView)];
+    [self.pickerView setDatePickerTarget:self action:@selector(datePickerChangeValue)];
+    
+    // Date Formatter
+    self.dateFormatter = [[NSDateFormatter alloc] init];
+    self.dateFormatter.locale = [NSLocale currentLocale];
+    self.dateFormatter.timeZone = [NSTimeZone systemTimeZone];
+    self.dateFormatter.calendar = [NSCalendar currentCalendar];
+    self.dateFormatter.dateFormat = @"dd'/'MM'/'yyyy";
+    
+    // Set InputViews
+    self.birthdayTextField.inputView = self.pickerView;
+}
+
 - (void) addShadowToView:(UIView*)view
 {
     view.layer.shadowColor = [[UIColor darkTextColor] CGColor];
@@ -84,6 +108,7 @@
 {
     [super viewDidLoad];
     
+    /*
     // iPhone 5 support ==> Layout
     if ( [[VersionControl sharedInstance] screenHeight] == 568 )
     {
@@ -113,28 +138,42 @@
         [self moveView:self.nextButton distance:margin+10];
         
     }
+    */
     
     // Autocomplétion
     self.emailLabel.autocompleteType = TextFieldAutocompletionTypeEmail;
     self.emailLabel.autocompleteDisabled = NO;
     
-    //mettre le fond
+    // Image de fond
     self.view.backgroundColor = [[UIColor alloc] initWithPatternImage:[UIImage imageNamed:@"login-bg.jpg"]];
     
-    //mettre le fond de la box
-    // bg-box.png
+    // Fond de la box
     UIImage *image = [UIImage imageNamed:@"bg_box_inscription.png"];
-    
     image = [[VersionControl sharedInstance] resizableImageFromImage:image withCapInsets:UIEdgeInsetsMake(15, 5, 5, 5) stretchableImageWithLeftCapWidth:0 topCapHeight:0];
-    
     _bgBox = [[UIImageView alloc] initWithImage:image];
     _bgBox.layer.zPosition = -2;
     [_boxView addSubview:_bgBox];
     
+    // Resize
     CGRect frame = _bgBox.frame;
     frame.size.height = _boxView.frame.size.height;
     _bgBox.frame = frame;
     
+    // Boutons
+    UIFont *font = [[Config sharedInstance] defaultFontWithSize:14];
+    self.maleButton.titleLabel.font = font;
+    self.femaleButton.titleLabel.font = font;
+    UIColor *grey = [Config sharedInstance].textColor;
+    UIColor *orange = [Config sharedInstance].orangeColor;
+    [self.maleButton setTitleColor:grey forState:UIControlStateNormal];
+    [self.femaleButton setTitleColor:grey forState:UIControlStateNormal];
+    [self.maleButton setTitleColor:orange forState:UIControlStateSelected];
+    [self.femaleButton setTitleColor:orange forState:UIControlStateSelected];
+    
+    // Picker view
+    [self initDatePicker];
+    
+    // Labels
     NSString *confidialiteLabelString = self.confidentialiteLabel.text;
     NSString *photoProfilString = self.photoProfilLabel.text;
     
@@ -274,6 +313,9 @@
     [self setBgBox:nil];
     [self setBoxView:nil];
     [self setScrollView:nil];
+    [self setBirthdayTextField:nil];
+    [self setMaleButton:nil];
+    [self setFemaleButton:nil];
     [super viewDidUnload];
 }
 
@@ -290,7 +332,8 @@
     if( ([_nomLabel.text length] > 0) &&
        ([_prenomLabel.text length] > 0) &&
        ([_emailLabel.text length] > 0) &&
-       ([_mdpLabel.text length] > 0)
+       ([_mdpLabel.text length] > 0) &&
+       ([_birthdayTextField.text length] > 0)
        )
     {
         if( ![[Config sharedInstance] isValidEmail:_emailLabel.text] )
@@ -332,9 +375,13 @@
     else if (textField == _emailLabel) {
         [_mdpLabel becomeFirstResponder];
     }
+    else if(textField == _mdpLabel) {
+        [_birthdayTextField becomeFirstResponder];
+    }
     else{
         [textField resignFirstResponder];
         
+        // Si on a rempli la photo, on valide automatiquement
         if(self.imageProfile)
             [self clicNext];
     }
@@ -360,14 +407,20 @@
 
 - (void)actionSheet:(UIActionSheet*)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
+    // ------- Change Picture ---------
+    // -> Choix de la source
+    
+    // Bouton Annuler
     if(buttonIndex == 2)
         return;
     
     UIImagePickerController *picker = [[UIImagePickerController alloc] init];
     picker.delegate = self;
-
+    
+    // Bouton Librairie
     if(buttonIndex == 0)
         picker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+    // Bouton Caméra
     else
         picker.sourceType = UIImagePickerControllerSourceTypeCamera;
 
@@ -425,21 +478,43 @@
     
 }
 
+- (IBAction)toggleSexeButtons:(UIButton*)sender
+{
+    if(!sender.isSelected)
+    {
+        if(self.maleButton == sender)
+            self.femaleButton.selected = sender.selected;
+        else
+            self.maleButton.selected = sender.selected;
+        
+        sender.selected = !sender.selected;
+    }
+}
+
 - (IBAction)clicNext {
     
     [_nomLabel resignFirstResponder];
     [_prenomLabel resignFirstResponder];
     [_emailLabel resignFirstResponder];
     [_mdpLabel resignFirstResponder];
+    [_birthdayTextField resignFirstResponder];
     
     if([self validateForm])
     {
+        // Birthday
+        NSNumber *timeStamp = @([self.pickerView.datePicker.date timeIntervalSince1970]);
         
+        // Sexe
+        NSString *sexe = (self.maleButton.isSelected)? @"M" : @"F";
+        
+        // Params
         NSMutableDictionary *attributes = @{
         @"firstname" : _prenomLabel.text,
         @"lastname" : _nomLabel.text,
         @"email" : _emailLabel.text,
-        @"password" : _mdpLabel.text
+        @"password" : _mdpLabel.text,
+        @"birth_date":timeStamp,
+        @"sex": sexe
         }.mutableCopy;
         
         if(_imageProfile)
@@ -493,5 +568,16 @@
 - (IBAction)clicPrev {
     [self.navigationController popViewControllerAnimated:YES];
 }
+
+- (void)clicValiderPickerView
+{
+    [self.birthdayTextField resignFirstResponder];
+}
+
+- (void)datePickerChangeValue
+{
+    self.birthdayTextField.text = [self.dateFormatter stringFromDate:self.pickerView.datePicker.date];
+}
+
 
 @end

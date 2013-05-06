@@ -620,6 +620,7 @@ enum InviteAddFontSize {
 
 - (void)sendNotifToFacebookFriends
 {
+    
     // Liste les id facebook
     NSMutableSet *fbId = [[NSMutableSet alloc] init];
     for( UserClass* user in self.selectedFriends )
@@ -691,12 +692,15 @@ enum InviteAddFontSize {
             // SMS Composer
             MFMessageComposeViewController *controller = [[MFMessageComposeViewController alloc] init];
             
+            // Paramètres
+            NSString *titre = self.moment.titre;
+            NSString *url = @"http://www.appmoment.fr";
+            NSString *currentUserName = [self currentUserName];
+            
             // SMS body
             controller.body =
             [NSString stringWithFormat:
-             NSLocalizedString(@"InviteAddViewController_SendSMS_Message", nil),
-             self.moment.titre, @"http://www.appmoment.fr",
-             [self currentUserName]];
+             NSLocalizedString(@"InviteAddViewController_SendSMS_Message", nil),titre, url, currentUserName];
             
             // Numéros de téléphones
             controller.recipients = smsList.allObjects;

@@ -120,6 +120,9 @@ static NSDateFormatter *smallDateFormatter = nil;
         if(attributes[@"is_sponso"])
             dico[@"isSponso"] = attributes[@"is_sponso"];
         
+        if(attributes[@"privacy"])
+            dico[@"privacy"] = attributes[@"privacy"];
+        
         return dico;
     }
     
@@ -180,6 +183,9 @@ static NSDateFormatter *smallDateFormatter = nil;
         
         if(attributes[@"isSponso"])
             dico[@"is_sponso"] = attributes[@"is_sponso"];
+        
+        if(attributes[@"privacy"])
+            dico[@"privacy"] = attributes[@"privacy"];
         
         return dico;
     }
@@ -273,6 +279,9 @@ static NSDateFormatter *smallDateFormatter = nil;
     
     if(self.isSponso)
         dico[@"is_sponso"] = self.isSponso;
+    
+    if(self.privacy)
+        dico[@"privacy"] = self.privacy;
     
     //NSLog(@"\n--------------------------------------------------------------------------\n--------------------------------------------------------------------------\n");
     

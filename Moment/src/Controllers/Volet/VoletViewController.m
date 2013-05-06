@@ -225,12 +225,28 @@ static VoletViewController *actualVoletViewController;
         
         // Clear
         [self.notifications removeAllObjects];
+        
+        // Init notifications
+        [self.notifications addObjectsFromArray:notifications[@"notifications"]];
+        
+        // Update nb labels
+        [self designNbNotificationsViews];
+        
+        [self.tableView reloadData];
+        
+    }];
+    
+}
+
+- (void)loadInvitations {
+    
+    [LocalNotificationCoreData getInvitationsWithEnded:^(NSDictionary *notifications) {
+        
+        // Clear
         [self.invitations removeAllObjects];
         
         // Init invitations
         [self.invitations addObjectsFromArray:notifications[@"invitations"]];
-        // Init notifications
-        [self.notifications addObjectsFromArray:notifications[@"notifications"]];
         
         // Update nb labels
         [self designNbNotificationsViews];
@@ -392,6 +408,9 @@ static VoletViewController *actualVoletViewController;
 - (IBAction)clicInvitations
 { 
     if(!self.invitationsButton.isSelected) {
+        
+        [self loadInvitations];
+        
         [self.invitationsButton setSelected:YES];
         [self.notificationsButton setSelected:NO];
         
@@ -404,6 +423,9 @@ static VoletViewController *actualVoletViewController;
 - (IBAction)clicNotifications
 {
     if(!self.notificationsButton.isSelected) {
+        
+        [self loadNotifications];
+        
         [self.notificationsButton setSelected:YES];
         [self.invitationsButton setSelected:NO];
         

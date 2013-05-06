@@ -296,6 +296,28 @@
     
 }
 
+#pragma mark - Lost Password
+
++ (void)requestNewPasswordAtEmail:(NSString*)email withEnded:(void (^) (BOOL success))block
+{
+    NSString *path = [NSString stringWithFormat:@"lostpass/%@", email];
+    
+    [[AFMomentAPIClient sharedClient] getPath:path parameters:nil encoding:AFFormURLParameterEncoding success:^(AFHTTPRequestOperation *operation, id JSON) {
+        
+        if(block)
+            block(YES);
+        
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        
+        HTTP_ERROR(operation, error);
+        
+        if(block)
+            block(NO);
+        
+    }];
+    
+}
+
 #pragma mark - Invites
 
 + (void)inviteNewGuest:(NSArray*)users toMoment:(MomentClass*)moment withEnded:( void (^) (BOOL success) )block

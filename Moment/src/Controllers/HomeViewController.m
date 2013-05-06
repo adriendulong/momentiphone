@@ -25,6 +25,7 @@
 #import "MomentClass+Server.h"
 
 #import "CreationPage2ViewController.h"
+#import "MTStatusBarOverlay.h"
 
 @interface HomeViewController ()
 
@@ -431,32 +432,76 @@
 }
 
 - (IBAction)clicForgotPassword {
-    //NSLog(@"Forgot Password");
-    
-    
-    [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"HomeViewController_AlertView_ForgotPassword_Title", nil)
+
+    // Alert View
+    UIAlertView *lostPasswordAlertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"HomeViewController_AlertView_ForgotPassword_Title", nil)
                                 message:NSLocalizedString(@"HomeViewController_AlertView_ForgotPassword_Message", nil)
-                               delegate:nil
-                      cancelButtonTitle:NSLocalizedString(@"AlertView_Button_OK", nil)
-                      otherButtonTitles:nil] 
-     show];
-     
+                               delegate:self
+                      cancelButtonTitle:NSLocalizedString(@"AlertView_Button_Cancel", nil)
+                      otherButtonTitles:NSLocalizedString(@"AlertView_Button_Valide", nil), nil];
     
-    //CreationPage2ViewController *page2 = [[CreationPage2ViewController alloc] initWithDelegate:self];
-    //[self.navigationController pushViewController:page2 animated:YES];
+    // TextField
+    lostPasswordAlertView.alertViewStyle = UIAlertViewStylePlainTextInput;
+    UITextField *textfield = [lostPasswordAlertView textFieldAtIndex:0];
+    textfield.placeholder = @"Email";
+    textfield.delegate = self;
+    
+    [lostPasswordAlertView show];
 }
 
 - (IBAction)clicBackButton {
     [self showLoginForm:NO];
 }
 
-#pragma mark - SCROLL VIEW DELEGATE
--(BOOL)textFieldShouldReturn:(UITextField *)textField {
+#pragma mark - UIAlertView Delegate
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    // ------ LostPassword AlertView ---------
+    // Bouton Valider
+    if(buttonIndex == 1)
+    {
+        NSString *email = [[alertView textFieldAtIndex:0] text];
+        
+        [UserClass requestNewPasswordAtEmail:email withEnded:^(BOOL success) {
+            
+            if(success) {
+                // Success
+                [[MTStatusBarOverlay sharedInstance]
+                 postImmediateFinishMessage:NSLocalizedString(@"HomeViewController_Status_ForgotPassword_Success", nil)
+                 duration:1
+                 animated:YES];
+            }
+            else {
+                // Erreur
+                [[MTStatusBarOverlay sharedInstance]
+                 postImmediateErrorMessage:NSLocalizedString(@"Error_Classic", nil)
+                 duration:1
+                 animated:YES];
+            }
+            
+        }];
+    }
+}
+
+// Enable/Disable Valider Button
+- (BOOL)alertViewShouldEnableFirstOtherButton:(UIAlertView *)alertView
+{
+    NSString *email = [[alertView textFieldAtIndex:0] text];
+    if([[Config sharedInstance] isValidEmail:email]) {
+        return YES;
+    }
+    return NO;
+}
+
+#pragma mark - UITextField Delegate
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
     
     if (textField == _loginTextField) {
         [_passwordTextField becomeFirstResponder];
     }
-    else {
+    else if(textField == _passwordTextField) {
         [textField resignFirstResponder];
         
         if( _loginTextField.text.length > 0 && _passwordTextField.text.length > 0 )
@@ -466,25 +511,24 @@
     return YES;
 }
 
+-(void)textFieldDidBeginEditing:(UITextField *)textField
+{
+    if(textField == _loginTextField || textField == _passwordTextField)
+        [_scrollView adjustOffsetToIdealIfNeeded];
+}
+
+#pragma mark - Scroll View Delegate
+
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
     // Centrer view même quand le clavier monte
     // (Sur écran non iPhone 5)
-    if( ([VersionControl sharedInstance].screenHeight == 480) && [_loginTextField isFirstResponder]) {
+    if( ([VersionControl sharedInstance].screenHeight == 480) && ([_loginTextField isFirstResponder]) ) {
         
         [UIView animateWithDuration:0.2 animations:^{
             [scrollView scrollRectToVisible:CGRectMake(0, -125, scrollView.contentSize.width, scrollView.contentSize.height) animated:NO];
         }];
     }
-}
-
--(void)textFieldDidBeginEditing:(UITextField *)textField
-{
-    [_scrollView adjustOffsetToIdealIfNeeded];
-}
-
-- (BOOL)textFieldShouldClear:(UITextField *)textField {
-    return YES;
 }
 
 @end

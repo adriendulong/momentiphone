@@ -29,6 +29,7 @@
         <attribute name="isSponso" optional="YES" attributeType="Boolean" syncable="YES"/>
         <attribute name="momentId" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
         <attribute name="nomLieu" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="privacy" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
         <attribute name="state" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
         <attribute name="titre" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="notifications" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="LocalNotificationCoreData" inverseName="moment" inverseEntity="LocalNotificationCoreData" syncable="YES"/>
@@ -55,8 +56,8 @@
     </entity>
     <elements>
         <element name="ChatMessageCoreData" positionX="189" positionY="74" width="128" height="105"/>
-        <element name="LocalNotificationCoreData" positionX="9" positionY="-99" width="128" height="90"/>
-        <element name="MomentCoreData" positionX="-216" positionY="-60" width="128" height="360"/>
+        <element name="LocalNotificationCoreData" positionX="9" positionY="-99" width="128" height="88"/>
+        <element name="MomentCoreData" positionX="-216" positionY="-60" width="128" height="373"/>
         <element name="UserCoreData" positionX="16" positionY="45" width="128" height="300"/>
     </elements>
 </model>

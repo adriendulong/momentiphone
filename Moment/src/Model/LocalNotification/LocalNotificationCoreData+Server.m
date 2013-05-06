@@ -23,22 +23,37 @@
         
         //NSLog(@"\n\n-----------\nreponse = \n%@\n\n---------\n", JSON);
         
-        // Web notifications -> Ajouté en local
-        [self arrayWithArrayOfAttributesFromWeb:JSON[@"new_photos"]];
-        [self arrayWithArrayOfAttributesFromWeb:JSON[@"invitations"]];
-        [self arrayWithArrayOfAttributesFromWeb:JSON[@"modif_moment"]];
-        [self arrayWithArrayOfAttributesFromWeb:JSON[@"new_chats"]];
-        
-        // Local Invitations
-        NSArray *localInvitations = [self requestLocalNotificationsWithType:NotificationTypeInvitation];
-        
-        // Local Notifications
-        NSArray *localNotifications = [self requestLocalNotificationsWithTypeDifferentFromType:NotificationTypeInvitation];
+        NSArray *localNotifications = [self arrayWithArrayOfAttributesFromWeb:JSON[@"notifications"]];
         
         if(block) {
             block(@{
-                  @"invitations" : localInvitations,
-                  @"notifications" : localNotifications,
+                  @"notifications" : localNotifications
+                  });
+        }
+        
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        
+        HTTP_ERROR(operation, error);
+        
+        if(block)
+            block(nil);
+        
+    }];
+}
+
++ (void)getInvitationsWithEnded:(void (^) (NSDictionary* notifications))block
+{
+    NSString *path = @"invitations";
+    
+    [[AFMomentAPIClient sharedClient] getPath:path parameters:nil encoding:AFFormURLParameterEncoding success:^(AFHTTPRequestOperation *operation, id JSON) {
+        
+        //NSLog(@"\n\n-----------\nreponse = \n%@\n\n---------\n", JSON);
+        
+        NSArray *localInvitations = [self arrayWithArrayOfAttributesFromWeb:JSON[@"invitations"]];
+                
+        if(block) {
+            block(@{
+                  @"invitations" : localInvitations
                   });
         }
         
