@@ -56,6 +56,14 @@
 @property (nonatomic, strong) TTTAttributedLabel* ttTitreLabel;
 @property (nonatomic, weak) IBOutlet CustomLabel* titreLabel;
 
+/* ----- RSVP View ----- */
+@property (strong, nonatomic) IBOutlet UIView *rsvpView;
+@property (weak, nonatomic) IBOutlet UILabel *rsvpLabel;
+@property (weak, nonatomic) IBOutlet UIButton *rsvpMaybeButton;
+@property (weak, nonatomic) IBOutlet UIButton *rsvpYesButton;
+@property (weak, nonatomic) IBOutlet UIButton *rsvpNoButton;
+
+
 /* ----- Description View ----- */
 @property (nonatomic, strong) IBOutlet UIView *descriptionView;
 @property (nonatomic, weak) IBOutlet UILabel *descriptionLabel;
@@ -115,9 +123,11 @@
 @property (weak, nonatomic) IBOutlet UILabel *cagnotteCompteLabel;
 
 
+
 - (id)initWithMoment:(MomentClass*)moment withRootViewController:(UIViewController*)rootViewController;
 
 - (IBAction)clicInviteButton;
 - (void)reloadData;
+- (IBAction)clicRSVPButton:(UIButton*)sender;
 
 @end

@@ -70,9 +70,14 @@
         //NSLog(@"\n\n-----------\nreponse = \n%@\n\n---------\n", JSON);
         
         NSArray *localNotifications = [self arrayWithArrayOfAttributesFromWeb:JSON[@"notifications"]];
+        NSNumber *total = JSON[@"total_notifs"] ?: @(0);
+        NSNumber *newNotifs = JSON[@"nb_new_notifs"] ?: @(0);
+        
         
         if(block) {
             block(@{
+                  @"nb_new_notifs" : newNotifs,
+                  @"total_notifs" : total,
                   @"notifications" : localNotifications
                   });
         }
@@ -96,9 +101,13 @@
         //NSLog(@"\n\n-----------\nreponse = \n%@\n\n---------\n", JSON);
         
         NSArray *localInvitations = [self arrayWithArrayOfAttributesFromWeb:JSON[@"invitations"]];
+        NSNumber *total = JSON[@"total_notifs"] ?: @(0);
+        NSNumber *newNotifs = JSON[@"nb_new_notifs"] ?: @(0);
         
         if(block) {
             block(@{
+                  @"nb_new_notifs" : newNotifs,
+                  @"total_notifs" : total,
                   @"invitations" : localInvitations
                   });
         }

@@ -26,6 +26,8 @@ static VoletViewController *actualVoletViewController;
     @private
     BOOL isEmpty;
     BOOL isShowingInvitations;
+    int nbNewInvitations;
+    int nbNewNotifications;
 }
 
 @end
@@ -65,6 +67,7 @@ static VoletViewController *actualVoletViewController;
         isShowingInvitations = NO;
         self.notifications = [[NSMutableArray alloc] init];
         self.invitations = [[NSMutableArray alloc] init];
+        nbNewInvitations = nbNewNotifications = 0;
         
         // Accès global au volet pour les Push Notifications
         actualVoletViewController = self;
@@ -178,7 +181,7 @@ static VoletViewController *actualVoletViewController;
     CGRect frame;
     
     // Notifications
-    int taille = [self.notifications count];
+    int taille = nbNewNotifications;//[self.notifications count];
     if(taille == 0)
         self.nbNotificationsView.hidden = YES;
     else
@@ -199,7 +202,7 @@ static VoletViewController *actualVoletViewController;
     }
     
     // Invitations
-    taille = [self.invitations count];
+    taille = nbNewInvitations;//[self.invitations count];
     if(taille == 0)
         self.nbInvitationsView.hidden = YES;
     else
@@ -239,6 +242,8 @@ static VoletViewController *actualVoletViewController;
         [self.notifications addObjectsFromArray:notifications[@"notifications"]];
         
         // Update nb labels
+        nbNewNotifications = [notifications[@"nb_new_notifs"] intValue];
+        nbNewInvitations = [notifications[@"total_notifs"] intValue] - nbNewNotifications;
         [self designNbNotificationsViews];
         
         [self.tableView reloadData];
@@ -258,6 +263,8 @@ static VoletViewController *actualVoletViewController;
         [self.invitations addObjectsFromArray:notifications[@"invitations"]];
         
         // Update nb labels
+        nbNewInvitations = [notifications[@"nb_new_notifs"] intValue];
+        nbNewNotifications = [notifications[@"total_notifs"] intValue] - nbNewInvitations;
         [self designNbNotificationsViews];
         
         [self.tableView reloadData];

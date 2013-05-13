@@ -482,6 +482,63 @@ static CGFloat DescriptionBoxHeightMax = 100;
     }
 }
 
+- (void)initRsvpView
+{
+    // Police
+    self.rsvpLabel.font = [[Config sharedInstance] defaultFontWithSize:12];
+    
+    // Wordings
+    enum UserState state = self.moment.state.intValue;
+    NSString *message = nil;
+    
+    switch (state) {
+            
+        case UserStateAdmin:
+        case UserStateOwner:
+        case UserStateValid:
+            message = @"Je serais présent au moment ...";
+            self.rsvpYesButton.selected = YES;
+            self.rsvpNoButton.selected = NO;
+            self.rsvpMaybeButton.selected = NO;
+            break;
+            
+        case UserStateRefused:
+            message = @"Je ne serais pas présent au moment ...";
+            self.rsvpNoButton.selected = YES;
+            self.rsvpMaybeButton.selected = NO;
+            self.rsvpYesButton.selected = NO;
+            break;
+            
+        case UserStateWaiting:
+            message = @"Je sais pas si je serais présent au moment ...";
+            self.rsvpMaybeButton.selected = YES;
+            self.rsvpYesButton.selected = NO;
+            self.rsvpNoButton.selected = NO;
+            break;
+            
+        // Unknown
+        default:
+            message = @"Serez-vous présent au moment ?";
+            break;
+    }
+    
+    // Text
+    self.rsvpLabel.text = message;
+    
+    // Sparateur
+    InfoMomentSeparateurView *separator = [[InfoMomentSeparateurView alloc] initAtPosition:(70 + 5)];
+    [self.rsvpView addSubview:separator];
+    
+    CGRect frame = self.rsvpView.frame;
+    frame.size.height = separator.frame.origin.y + separator.frame.size.height + 5;
+    self.rsvpView.frame = frame;
+    
+    if(firstLoad)
+        [self addSubviewAtAutomaticPosition:self.rsvpView];
+    
+    
+}
+
 - (void) initDescriptionView
 {
     // Description
@@ -1035,6 +1092,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
      *                   Views                     *
      ***********************************************/
     [self initTitreView];
+    [self initRsvpView];
     [self initDescriptionView];
     [self initMapView];
     [self initInvitesView];
@@ -1137,6 +1195,11 @@ static CGFloat DescriptionBoxHeightMax = 100;
     [self setCagnotteCourseLabel:nil];
     [self setCagnotteCagnotteLabel:nil];
     [self setCagnotteCompteLabel:nil];
+    [self setRsvpView:nil];
+    [self setRsvpLabel:nil];
+    [self setRsvpMaybeButton:nil];
+    [self setRsvpYesButton:nil];
+    [self setRsvpNoButton:nil];
     [super viewDidUnload];
 }
 
@@ -1147,6 +1210,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
         {
             #warning optimiser update !!
             [self initTitreView];
+            [self initRsvpView];
             [self initDescriptionView];
             [self initMapView];
             [self initInvitesView];
@@ -1234,6 +1298,36 @@ static CGFloat DescriptionBoxHeightMax = 100;
     if(self.moment.state.intValue != state) {
         
         //self.moment.state = @(state);
+        // Action
+        [self.moment updateCurrentUserState:state withEnded:^(BOOL success) {
+            expandingBarState = state;
+            expandingBarNeedUpdate = YES;
+            [self.expandButton hideButtonsAnimated:YES];
+            [self reloadData];
+        }];
+    }
+    else
+        [self.expandButton hideButtonsAnimated:YES];
+    
+}
+
+- (IBAction)clicRSVPButton:(UIButton*)sender {
+    
+    if(sender.isSelected)
+        return;
+    
+    enum UserState state;
+    
+    if(sender == self.rsvpMaybeButton) {
+        state = UserStateWaiting;
+    }else if(sender == self.rsvpNoButton) {
+        state = UserStateRefused;
+    }else {
+        state = UserStateValid;
+    }
+    
+    if(self.moment.state.intValue != state) {
+        
         // Action
         [self.moment updateCurrentUserState:state withEnded:^(BOOL success) {
             expandingBarState = state;
@@ -1370,6 +1464,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
     UINavigationController *nav = self.rootViewController.timeLine.navigationController ?: self.rootViewController.navigationController;
     [nav pushViewController:cagnotte animated:YES];
 }
+
 
 
 @end

@@ -48,7 +48,6 @@
 @property (nonatomic, weak) IBOutlet CustomUIImageView *coverView;
 @property (nonatomic, weak) IBOutlet CustomLabel *titreMomentLabel;
 @property (nonatomic, weak) IBOutlet UIButton *changerCoverButton;
-@property (nonatomic, weak) IBOutlet CustomLabel *changerCoverLabel;
 @property (nonatomic, strong) CustomDatePicker *pickerView;
 @property (nonatomic, weak) IBOutlet CustomTextField *startDateTextField;
 @property (nonatomic, weak) IBOutlet CustomTextField *endDateTextField;

@@ -45,7 +45,6 @@
 @synthesize coverView = _coverView;
 @synthesize titreMomentLabel = _titreMomentLabel;
 @synthesize changerCoverButton = _changerCoverButton;
-@synthesize changerCoverLabel = _changerCoverLabel;
 @synthesize pickerView = _pickerView;
 @synthesize startDateTextField = _startDateTextField;
 @synthesize endDateTextField = _endDateTextField;
@@ -355,10 +354,8 @@
     // Label titre
     UIView *titre = [self setLabelText:self.titreMomentLabel text:[self.nomEvent uppercaseString] minFontSize:12 maxFontSize:16 color:[UIColor whiteColor]];
     // Label Changer Cover
-    UIView *changerCover = [self setLabelText:self.changerCoverLabel text:self.changerCoverLabel.text minFontSize:14 maxFontSize:15 color:[UIColor whiteColor]];
     
     [self addShadowToView:titre];
-    [self addShadowToView:changerCover];
     
     [self.step1ScrollView bringSubviewToFront:self.changerCoverButton];
 }
