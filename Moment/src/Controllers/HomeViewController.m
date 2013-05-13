@@ -27,6 +27,8 @@
 #import "CreationPage2ViewController.h"
 #import "MTStatusBarOverlay.h"
 
+#import "TutorialViewController.h"
+
 @interface HomeViewController ()
 
 @end
@@ -102,6 +104,25 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    //Premier lancement de l'application
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    BOOL hasRunOnce = [defaults boolForKey:@"hasRunOnce"];
+    NSLog(hasRunOnce ? @"Yes" : @"No");
+    if (![defaults boolForKey:@"hasRunOnce"])
+    {
+        
+        [self showTutorialAnimated:YES];
+        
+        /*UIAlertView *alert = [[UIAlertView alloc] init];
+        [alert setTitle:@"Premier lancement"];
+        [alert setMessage:@"Bienvenue sur Moment.\nLancement du didacticiel."];
+        [alert setDelegate:self];
+        [alert addButtonWithTitle:@"OK"];
+        
+        [alert show];*/
+    }
+    
     
     // iPhone 5 support
     NSInteger allElementsHeight =  (self.boxView.frame.origin.y + self.boxView.frame.size.height) - self.logoView.frame.origin.y;
@@ -190,6 +211,12 @@
 }
 
 #pragma mark - Show Views
+- (void)showTutorialAnimated:(BOOL)animated
+{    
+    TutorialViewController *tutorialViewController = [[TutorialViewController alloc] init];
+    [self.navigationController pushViewController:tutorialViewController animated:animated];
+}
+
 - (void) entrerDansMomentAnimated:(BOOL)animated {
     
     // Vérifier la dernière date de modification
