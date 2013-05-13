@@ -173,6 +173,7 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
 {
     // -- Echelle Labels
     UIFont *echelleFont = [[Config sharedInstance] defaultFontWithSize:10];
+    CGFloat contentWidth = self.view.frame.size.width;
     CGFloat contentHeight = self.view.frame.size.height;
     CGFloat division = 5.0f;
     CGRect todayRect = [self.tableView rectForRowAtIndexPath:[NSIndexPath indexPathForRow:rowForToday inSection:0]];
@@ -202,7 +203,7 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
     self.echelleFuturLabel.text = NSLocalizedString(@"TimeLineViewController_Echelle_FuturLabel", nil);
     [self.echelleFuturLabel sizeToFit];
     CGRect frame = self.echelleFuturLabel.frame;
-    frame.origin.x = self.view.frame.size.width - frame.size.width - 5;
+    frame.origin.x = contentWidth - frame.size.width - 5;
     frame.origin.y = (division-1)*(contentHeight - frame.size.height)/division + originToday;
     self.echelleFuturLabel.frame = frame;
     
@@ -213,7 +214,7 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
     self.echelleTodayLabel.text = NSLocalizedString(@"TimeLineViewController_Echelle_TodayLabel", nil);
     [self.echelleTodayLabel sizeToFit];
     frame = self.echelleTodayLabel.frame;
-    frame.origin.x = self.view.frame.size.width - frame.size.width - 5;
+    frame.origin.x = contentWidth - frame.size.width - 5;
     frame.origin.y = (contentHeight - frame.size.height)/2.0f + originToday;
     self.echelleTodayLabel.frame = frame;
     
@@ -224,7 +225,7 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
     self.echellePasseLabel.text = NSLocalizedString(@"TimeLineViewController_Echelle_PasseLabel", nil);
     [self.echellePasseLabel sizeToFit];
     frame = self.echellePasseLabel.frame;
-    frame.origin.x = self.view.frame.size.width - frame.size.width - 5;
+    frame.origin.x = contentWidth - frame.size.width - 5;
     frame.origin.y =  (contentHeight - frame.size.height)/division + originToday;
     self.echellePasseLabel.frame = frame;
 }
