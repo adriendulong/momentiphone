@@ -108,6 +108,8 @@
     return array;
 }
 
+#pragma mark - Comparaison
+
 - (BOOL)isEqual:(id)object
 {
     if([object respondsToSelector:@selector(userId)] && [object userId]) {
@@ -115,6 +117,59 @@
     }
     return NO;
 }
+
+#pragma mark - Util
+
+- (NSString*)formatedUsername {
+    return [self formatedUsernameWithStyle:UsernameStyleUppercase];
+}
+
+- (NSString*)formatedUsernameWithStyle:(enum UsernameStyle)style {
+    return [UserClass formatedUsernameWithFirstname:self.prenom lastname:self.nom style:style];
+}
+
++ (NSString*)formatedUsernameWithFirstname:(NSString*)firstname
+                                  lastname:(NSString*)lastname
+                                     style:(enum UsernameStyle)style
+{
+    // Nom de l'expéditeur
+    NSString *username = nil;
+    NSString *prenom = nil;
+    NSString *nom = nil;
+    
+    // Style
+    switch (style) {
+        case UsernameStyleUppercase:
+            prenom = firstname.uppercaseString;
+            nom = lastname.uppercaseString;
+            break;
+            
+        case UsernameStyleCapitalized:
+            prenom = firstname.capitalizedString;
+            nom = lastname.capitalizedString;
+            break;
+            
+        case UsernameStyleUnchanged:
+            prenom = firstname;
+            nom = lastname;
+            break;
+    }
+    
+    // Format
+    if(lastname && firstname) {
+        username = [NSString stringWithFormat:@"%@ %@", prenom, nom];
+    }
+    else if(lastname || firstname) {
+        if(firstname)
+            username = prenom;
+        else
+            username = nom;
+    }
+    
+    return username ?: @"";
+}
+
+#pragma mark - Debug
 
 - (NSString*)description {
     return [NSString stringWithFormat:@"USER %@ :\n{\nnom = %@\nprenom = %@\nfacebookId = %@\npictureString = %@\n}\n", self.userId, self.nom, self.prenom, self.facebookId, self.imageString];

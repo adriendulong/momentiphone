@@ -555,7 +555,7 @@ withDelegate:(PhotoViewController*)photoViewController
     self.selectedIndex = index;
     
     Photos *photo = (Photos*)self.photos[index];
-    self.auteurLabel.text = [NSString stringWithFormat:@"%@ %@", [photo.owner.prenom capitalizedString], [photo.owner.nom capitalizedString]];
+    self.auteurLabel.text = photo.owner.formatedUsername;
     
     // Date    
     self.dateLabel.text = [dateFormatter stringFromDate:photo.date];

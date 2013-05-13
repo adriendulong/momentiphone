@@ -19,6 +19,8 @@
 #import "PushNotificationManager.h"
 #import "Three20/Three20.h"
 #import "FullScreenPhotoViewController.h"
+#import "Harpy.h"
+#import "iRate.h"
 
 @implementation AppDelegate
 
@@ -60,6 +62,23 @@
 
 #pragma mark - AppDelegate
 
++ (void)initialize
+{
+    [super initialize];
+    
+    /* ------------------ iRate ------------------- */
+    /*          ---> Noter l'application <--        */
+    /* -------------------------------------------- */
+    //configure iRate
+    /*
+    iRate *config = [iRate sharedInstance];
+    config.daysUntilPrompt = 5;
+    config.usesUntilPrompt = 15;
+     */
+    [iRate load];
+    
+}
+
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     // ------------ Test Flight API -------------
@@ -71,6 +90,7 @@
     [TestFlight takeOff:@"85ba03e5-22dc-45c5-9810-be2274ed75d1"];
     // ------------------------------------------
     
+    // ---------------- Initialisation -----------------
     [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationFade];
     
     HomeViewController *homeViewController = [[HomeViewController alloc] initWithXib];
@@ -80,15 +100,18 @@
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     self.window.rootViewController = navigationController;
     
-    // Init autocompletion
+    // -------------- Init Autocompletion ----------------
     [HTAutocompleteTextField setDefaultAutocompleteDataSource:[TextFieldAutocompletionManager sharedInstance]];
     
+    
+    // -------------- Default Background -----------------
     // Override point for customization after application launch.
     self.window.backgroundColor = [[UIColor alloc] initWithPatternImage:[UIImage imageNamed:@"bg.png"]];
     self.window.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
     
     [self.window makeKeyAndVisible];
-        
+    
+    // ----------------- SDURLCache ----------------------
     //getsion du cache pour les images
     /*
     SDURLCache *URLCache = [[SDURLCache alloc] initWithMemoryCapacity:1024*1024*2 diskCapacity:1024*1024*20 diskPath:[SDURLCache defaultCachePath]];
@@ -96,7 +119,8 @@
     [NSURLCache setSharedURLCache:URLCache];
     */
         
-    // Push Notification
+    // --------------- Push Notifications ----------------
+    
     // Let the device know we want to receive push notifications
 	[[UIApplication sharedApplication] registerForRemoteNotificationTypes:
      (UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound | UIRemoteNotificationTypeAlert)];
@@ -115,7 +139,8 @@
     // Restore Notification Badge Number
     [[PushNotificationManager sharedInstance] setNbNotifcations:[[UIApplication sharedApplication] applicationIconBadgeNumber]];
     
-    // Facebook
+    // -------------------- Facebook ---------------------
+    
     // FBSample logic
     // See if we have a valid token for the current state.
     [FBSession openActiveSessionWithReadPermissions:[FacebookManager sharedInstance].defaultReadPermissions
@@ -134,9 +159,27 @@
         NSLog(@"Login fail");
     }*/
     
-    // Three20
+    // -------------------- Three20 ----------------------
+    //            ----> Full Screnn Plugin <----
+    // ---------------------------------------------------
     // -> FullScreen (TTPhotoViewController) URL Mapping
     [[TTURLRequestQueue mainQueue] setMaxContentLength:0];
+    
+    
+    // ------------------ Harpy Alert --------------------
+    //    ----> Vérifier version de l'application <----
+    // ---------------------------------------------------
+    
+    // Set the App ID for your app
+    //[[Harpy sharedInstance] setAppID:@""];
+    
+    /* (Optional) Set the Alert Type for your app
+     By default, the Singleton is initialized to HarpyAlertTypeOption */
+    //[[Harpy sharedInstance] setAlertType:HarpyAlertTypeOption];
+    
+    // Perform check for new version of your app
+    //[[Harpy sharedInstance] checkVersion];
+    
         
     return YES;
 }
@@ -166,12 +209,26 @@
 {
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
     
+    // ------------------ Push Notifications -----------------
     // Restore Number Notification Badge Number
     [[PushNotificationManager sharedInstance] setNbNotifcations:[[UIApplication sharedApplication] applicationIconBadgeNumber]];
     
+    // ----------------------- Facebook ----------------------
     // We need to properly handle activation of the application with regards to SSO
     //  (e.g., returning from iOS 6.0 authorization dialog or from fast app switching).
     [FBSession.activeSession handleDidBecomeActive];
+    
+    // ------------------ Harpy Alert --------------------
+    //    ----> Vérifier version de l'application <----
+    // ---------------------------------------------------
+    /*
+     Perform weekly check for new version of your app
+     Useful if user returns to you app from background after extended period of time
+     Place in applicationDidBecomeActive:
+     
+     Also, performs version check on first launch.
+     */
+    [[Harpy sharedInstance] checkVersionWeekly];
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application
@@ -185,6 +242,9 @@
 
 - (void)application:(UIApplication *)application didChangeStatusBarFrame:(CGRect)oldStatusBarFrame
 {
+    // Prvenir d'un changement de frame
+    // ------> Utilisé pour détecter l'apparition de la barre d'appel
+    // ------> Il faut gérer le changement de Frame pour adapter l'écran en conséquence et éviter les bugs graphiques
    NSDictionary *dict = @{@"oldFrame":[NSValue valueWithCGRect:oldStatusBarFrame],
                            @"newFrame":[NSValue valueWithCGRect:[[UIApplication sharedApplication] statusBarFrame]]
                            };

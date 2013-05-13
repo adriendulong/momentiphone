@@ -41,15 +41,7 @@
         [self setSelectionStyle:UITableViewCellSelectionStyleNone];
         
         // User
-        if(self.feed.user.prenom && self.feed.user.nom)
-            self.userLabel.text = [NSString stringWithFormat:@"%@ %@", [self.feed.user.prenom uppercaseString], [self.feed.user.nom uppercaseString]];
-        else if(self.feed.user.prenom || self.feed.user.nom)
-        {
-            if(self.feed.user.prenom)
-                self.userLabel.text = [self.feed.user.prenom uppercaseString];
-            else
-                self.userLabel.text = [self.feed.user.nom uppercaseString];
-        }
+        self.userLabel.text = self.feed.user.formatedUsername;
         self.userLabel.font = [[Config sharedInstance] defaultFontWithSize:11];
                 
         // Moment

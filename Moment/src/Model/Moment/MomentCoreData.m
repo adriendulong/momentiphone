@@ -7,7 +7,6 @@
 //
 
 #import "MomentCoreData.h"
-#import "LocalNotificationCoreData.h"
 #import "UserCoreData.h"
 
 
@@ -30,10 +29,9 @@
 @dynamic isSponso;
 @dynamic momentId;
 @dynamic nomLieu;
+@dynamic privacy;
 @dynamic state;
 @dynamic titre;
-@dynamic privacy;
-@dynamic notifications;
 @dynamic owner;
 
 @end

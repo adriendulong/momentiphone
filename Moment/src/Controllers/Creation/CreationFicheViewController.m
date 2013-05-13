@@ -17,10 +17,12 @@
 #import "NSMutableAttributedString+FontAndTextColor.h"
 #import "TTTAttributedLabel.h"
 #import "PopUpFinCreationViewController.h"
+#import "PlacesViewController.h"
 
 @interface CreationFicheViewController () {
     @private
     BOOL isEdition;
+    BOOL adresseTextFieldShouldClear;
 }
 
 @end
@@ -60,6 +62,7 @@
 @synthesize infoLieuTextField = _infoLieuTextField;
 @synthesize hashtagTextField = _hashtagTextField;
 @synthesize adresseLabel = _adresseLabel;
+@synthesize adresseText = _adresseText;
 @synthesize infoLieuLabel = _infoLieuLabel;
 @synthesize descriptionLabel = _descriptionLabel;
 @synthesize hashtagLabel = _hashtagLabel;
@@ -156,6 +159,7 @@
         self.user = user;
         self.timeLineViewContoller = timeLine;
         viewHeight = [[VersionControl sharedInstance] screenHeight] - TOPBAR_HEIGHT;
+        adresseTextFieldShouldClear = NO;
         
         self.switchControlState = YES;
     }
@@ -842,8 +846,11 @@
         
     }
     
-    if( textField == self.adresseTextField )
+    if( textField == self.adresseTextField ) {
         [self setNavBarSecondButtonEnable:NO];
+        adresseTextFieldShouldClear = YES;
+        self.adresseText = nil;
+    }
     
     return YES;
 }
@@ -898,8 +905,24 @@
             [_step1ScrollView adjustOffsetToIdealIfNeeded];
         
     }
-    else
+    else if(textField == self.adresseTextField) {
+        
+        // Cliquer sur le bouton clear n'affiche pas le PlacesViewController
+        if(adresseTextFieldShouldClear) {
+            adresseTextFieldShouldClear = NO;
+            [textField resignFirstResponder];
+        }
+        else {
+            // Google Places
+            PlacesViewController *places = [[PlacesViewController alloc] initWithDelegate:self];
+            [self.adresseTextField resignFirstResponder];
+            [self.navigationController pushViewController:places animated:YES];
+        }
+        
+    }
+    else {
         [_step2ScrollView adjustOffsetToIdealIfNeeded];
+    }
 }
 
 - (void)updateSecondNavBarEnable
@@ -931,7 +954,7 @@
     
     // Check if textField empty
     if( textField == self.adresseTextField ) {
-        
+        /*
         NSRange textFieldRange = NSMakeRange(0, [textField.text length]);
         if (NSEqualRanges(range, textFieldRange) && [string length] == 0) {
             [self setNavBarSecondButtonEnable:NO];
@@ -939,6 +962,8 @@
         else if(textField.text.length > 0) {
             [self setNavBarSecondButtonEnable:YES];
         }
+         */
+        return NO;
     }
         
     return YES;
@@ -956,7 +981,7 @@
         if (NSEqualRanges(range, textFieldRange) && [text length] == 0) {
             [self setNavBarSecondButtonEnable:NO];
         }
-        else if(textView.text.length > 0) {
+        else if(textView.text.length > 0 && self.adresseTextField.text.length > 0) {
                 [self setNavBarSecondButtonEnable:YES];
         }
     }
@@ -998,7 +1023,7 @@
     [[VersionControl sharedInstance] presentModalViewController:picker fromRoot:self animated:YES];
 }
 
-#pragma mark - Getter
+#pragma mark - Getters & Setters
 
 - (NSDateFormatter*)dateFormatter {
     if(!_dateFormatter) {
@@ -1011,5 +1036,14 @@
     return _dateFormatter;
 }
 
+- (void)setAdresseText:(NSString *)adresseText {
+    _adresseText = adresseText;
+    self.adresseTextField.text = adresseText;
+    
+    // Activer bouton si champs obligatoires remplis
+    if(_currentStep == 2 && adresseText.length > 0 && self.descriptionTextView.text.length > 0) {
+        [self setNavBarSecondButtonEnable:YES];
+    }
+}
 
 @end

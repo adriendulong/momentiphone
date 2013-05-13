@@ -14,6 +14,11 @@
 #import "DeviceModel.h"
 #import "Photos.h"
 
+#import "PushNotificationManager.h"
+#import "LocalNotification.h"
+#import "ParametreNotification.h"
+#import "Config.h"
+
 @implementation UserClass (Server)
 
 #pragma mark - Register
@@ -243,7 +248,11 @@
     [[AFMomentAPIClient sharedClient] postPath:path parameters:params encoding:AFFormURLParameterEncoding success:^(AFHTTPRequestOperation *operation, id JSON) {
         
         if( operation.response.statusCode == 200 ){
-                        
+            
+            // User logged
+            // -> On ne doit pas se déconnecter
+            [DeviceModel setDeviceShouldLogout:NO];
+            
             // On récupère l'id du user
             NSDictionary *attributes = (NSDictionary*)JSON;
             int userId = [attributes[@"id"] intValue];
@@ -293,6 +302,41 @@
         }
     }];
     
+    
+}
+
+#pragma mark - Logout
+
++ (void)logoutCurrentUserWithEnded:(void (^) (void))block
+{
+    NSLog(@"LOGOUT");
+    
+    UserCoreData *user = [UserCoreData getCurrentUserAsCoreData];
+    if(user)
+    {
+        // Delete Current User
+        [[Config sharedInstance].managedObjectContext deleteObject:user];
+        [[Config sharedInstance] saveContext];
+        
+        // Clear data
+        [MomentCoreData resetMomentsLocal];
+        [ChatMessageCoreData resetChatMessagesLocal];
+        
+        // Suppression cookie de connexion automatique
+        [[AFMomentAPIClient sharedClient] clearConnexionCookie];
+        
+        // Unsubscribe to local notifications
+        [[PushNotificationManager sharedInstance] removeNotifications];
+        
+        // Suppression des préférences des push notifications
+        [ParametreNotification clearSettingsLocal];
+        
+        // Prévenir Server d'arreter Push Notifications
+        [DeviceModel logout];
+    }
+    
+    if(block)
+        block();
     
 }
 

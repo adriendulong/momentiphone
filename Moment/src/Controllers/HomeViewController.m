@@ -26,6 +26,7 @@
 
 #import "CreationPage2ViewController.h"
 #import "MTStatusBarOverlay.h"
+#import "DeviceModel.h"
 
 @interface HomeViewController ()
 
@@ -96,6 +97,12 @@
         [[AFMomentAPIClient sharedClient] checkConnexionCookieWithEnded:^{
             [self entrerDansMomentAnimated:NO];
         }];
+    }
+    // Sinon si on doit se déconnecter -> se déconnecter
+    // --> Est appelé si il y a eu une erreur lors de la déconnexion
+    // --> Force déconnexion du server pour ne pas recevoir de push notifications alors qu'on est déconnecté
+    else if([DeviceModel deviceShouldLogout]) {
+        [DeviceModel logout];
     }
 }
 

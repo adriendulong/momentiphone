@@ -778,7 +778,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
     self.nbInvitesValidesLabel.textColor = color;
     
     // Non Admin
-    if( (self.moment.state.intValue != UserStateAdmin) && (self.moment.state.intValue != UserStateOwner) )
+    if( (!self.moment.isOpen) && (self.moment.state.intValue != UserStateAdmin) && (self.moment.state.intValue != UserStateOwner) )
     {
         self.inviteButton.hidden = YES;
         

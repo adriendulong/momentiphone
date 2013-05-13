@@ -11,6 +11,7 @@
 #import "AFMomentAPIClient.h"
 #import "AFJSONRequestOperation.h"
 #import "ChatMessageCoreData+Model.h"
+#import "FacebookManager.h"
 
 @implementation ChatMessage (Server)
 
@@ -83,6 +84,16 @@
         
         // Alloc and persist in CoreData
         ChatMessage* message = [ChatMessageCoreData newMessageWithText:texte];
+        
+#warning FB Notif
+        // Notify Message on Facebook
+        //if(moment.facebookId) {
+            [[FacebookManager sharedInstance] postMessageOnEventWall:moment chat:message withEnded:^(BOOL success) {
+                if(!success) {
+                    [TestFlight passCheckpoint:[NSString stringWithFormat:@"Facebook Notification Fail - Message %@ - Moment %@", message.messageId, moment.momentId]];
+                }
+            }];
+        //}
         
         if(block) {
             block(message);

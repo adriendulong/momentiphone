@@ -746,19 +746,7 @@ enum InviteAddFontSize {
 
 - (NSString*)currentUserName {
     // Nom de l'expéditeur
-    UserClass *current = [UserCoreData getCurrentUser];
-    NSString *username = nil;
-    if(current.nom && current.prenom) {
-        username = [NSString stringWithFormat:@"%@ %@", current.prenom.uppercaseString, current.nom.uppercaseString];
-    }
-    else if(current.nom || current.prenom) {
-        if(current.prenom)
-            username = current.prenom.uppercaseString;
-        else
-            username = current.nom.uppercaseString;
-    }
-    
-    return username ?: @"";
+    return [[UserCoreData getCurrentUser] formatedUsername];
 }
 
 @end

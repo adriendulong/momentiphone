@@ -114,8 +114,8 @@ static NSDateFormatter *smallDateFormatter = nil;
         if(attributes[@"user_state"])
             dico[@"state"] = attributes[@"user_state"];
         
-        if(attributes[@"isOpen"])
-            dico[@"isOpen"] = attributes[@"isOpen"];
+        if(attributes[@"isOpenInvit"])
+            dico[@"isOpenInvit"] = attributes[@"isOpenInvit"];
         
         if(attributes[@"is_sponso"])
             dico[@"isSponso"] = attributes[@"is_sponso"];
@@ -178,8 +178,8 @@ static NSDateFormatter *smallDateFormatter = nil;
         if(attributes[@"state"])
             dico[@"user_state"] = attributes[@"state"];
         
-        if(attributes[@"isOpen"])
-            dico[@"isOpen"] = attributes[@"isOpen"];
+        if(attributes[@"isOpenInvit"])
+            dico[@"isOpenInvit"] = attributes[@"isOpenInvit"];
         
         if(attributes[@"isSponso"])
             dico[@"is_sponso"] = attributes[@"is_sponso"];
@@ -273,15 +273,15 @@ static NSDateFormatter *smallDateFormatter = nil;
     
     if(self.state)
         dico[@"state"] = self.state;
-    
-    if(self.isOpen)
-        dico[@"isOpen"] = self.isOpen;
-    
+        
     if(self.isSponso)
         dico[@"is_sponso"] = self.isSponso;
     
     if(self.privacy)
         dico[@"privacy"] = self.privacy;
+    
+    if(self.isOpen)
+        dico[@"isOpenInvit"] = self.isOpen;
     
     //NSLog(@"\n--------------------------------------------------------------------------\n--------------------------------------------------------------------------\n");
     

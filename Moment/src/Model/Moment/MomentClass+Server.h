@@ -44,7 +44,7 @@
 - (void)updateMomentFromServerWithEnded:(void (^) (BOOL success) )block;
 - (void)updateUserWithIdAsAdmin:(NSInteger)userId withEnded:(void (^) (BOOL success) )block;
 - (void)updateMomentFromLocalToServerWithEnded:(void (^) (BOOL success))block;
-- (void)togglePrivacyWithEnded:(void (^) (BOOL success))block;
+//- (void)togglePrivacyWithEnded:(void (^) (BOOL success))block;
 
 // Photos
 - (void)getPhotosWithEnded:( void (^) (NSArray* photos) )block;

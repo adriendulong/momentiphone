@@ -30,17 +30,7 @@
         [self setSelectionStyle:UITableViewCellSelectionStyleNone];
         
         // Nom
-        NSString *titre = nil;
-        if(self.user.prenom && self.user.nom) {
-            titre = [NSString stringWithFormat:@"%@ %@", self.user.prenom, self.user.nom];
-        }
-        else if(self.user.prenom || self.user.nom) {
-            if(self.user.prenom)
-                titre = self.user.prenom;
-            else
-                titre = self.user.nom;
-        }
-        self.nomLabel.text = titre;
+        self.nomLabel.text = self.user.formatedUsername;
         self.nomLabel.font = [[Config sharedInstance] defaultFontWithSize:13];
         
         // Medaillon

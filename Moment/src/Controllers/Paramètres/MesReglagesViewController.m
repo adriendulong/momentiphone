@@ -10,6 +10,7 @@
 #import "ModifierUserViewController.h"
 #import "Config.h"
 #import "ParametreNotification.h"
+#import "UserClass+Server.h"
 
 const static NSString *kParameterFacebookPageID = @"277911125648059";
 const static NSString *kParameterFacebookPageName = @"appmoment";
@@ -134,8 +135,7 @@ const static NSString *kParameterContactMail = @"hello@appmoment.fr";
         [app openURL:url];
     }
     // Ouverture dans twitter ( différent selon iOS version je suppose)
-    else if( [app canOpenURL:(url = [NSURL URLWithString:[NSString stringWithFormat:@"tweetie:///user?screen_name=%@", kParameterTwitterPageName]])] )
-    {
+    else if( [app canOpenURL:(url = [NSURL URLWithString:[NSString stringWithFormat:@"tweetie:///user?screen_name=%@", kParameterTwitterPageName]])] ) {
         [app openURL:url];
     }
     // Ouverture dans Safari
@@ -192,7 +192,7 @@ const static NSString *kParameterContactMail = @"hello@appmoment.fr";
 
 - (IBAction)clicLogout
 {
-    [UserCoreData logoutCurrentUserWithEnded:^ {
+    [UserClass logoutCurrentUserWithEnded:^ {
         // Show Home
         [self.delegate showRootController:YES];
         [self.delegate.navigationController popToRootViewControllerAnimated:YES];

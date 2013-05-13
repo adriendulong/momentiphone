@@ -14,7 +14,7 @@
 @synthesize pictoView = _pictoView;
 @synthesize texteLabel = _texteLabel;
 
-- (id)initWithNotification:(LocalNotificationCoreData*)notification
+- (id)initWithNotification:(LocalNotification*)notification
 {
     self = [super initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"VoletViewControllerNotificationCell"];
     if(self) {
@@ -26,21 +26,34 @@
         // Label init
         self.texteLabel.font = [[Config sharedInstance] defaultFontWithSize:11];
         
-        switch (notification.type.intValue) {
+        switch (notification.type) {
             
             case NotificationTypeModification:
                 self.pictoView.image = [UIImage imageNamed:@"picto_bulle"];
-                self.texteLabel.text = [[NSString stringWithFormat:@"Modification sur le moment : %@", notification.moment.titre] uppercaseString];
+                self.texteLabel.text = [NSString stringWithFormat:@"Modification sur le moment : %@", notification.moment.titre.uppercaseString];
                 break;
                 
             case NotificationTypeNewChat:
                 self.pictoView.image = [UIImage imageNamed:@"picto_message"];
-                self.texteLabel.text = [[NSString stringWithFormat:@"Nouveau message sur le moment : %@", notification.moment.titre] uppercaseString];
+                self.texteLabel.text = [NSString stringWithFormat:@"Nouveau message sur le moment : %@", notification.moment.titre.uppercaseString];
                 break;
                 
             case NotificationTypeNewPhoto:
                 self.pictoView.image = [UIImage imageNamed:@"picto_photo"];
-                self.texteLabel.text = [[NSString stringWithFormat:@"Nouvelle photo sur le moment : %@", notification.moment.titre] uppercaseString];
+                self.texteLabel.text = [NSString stringWithFormat:@"Nouvelle photo sur le moment : %@", notification.moment.titre.uppercaseString];
+                break;
+                
+            case NotificationTypeNewFollower:
+                self.pictoView.image = [UIImage imageNamed:@"picto_invite"];
+                self.texteLabel.text = [NSString stringWithFormat:@"%@ vous suit maintenant", notification.follower.formatedUsername];
+                break;
+                
+            case NotificationTypeFollowRequest:
+                self.pictoView.image = [UIImage imageNamed:@"picto_invite"];
+                self.texteLabel.text = [NSString stringWithFormat:@"Demande de suivi de %@", notification.follower.formatedUsername];
+                break;
+                
+            default:
                 break;
         }
         

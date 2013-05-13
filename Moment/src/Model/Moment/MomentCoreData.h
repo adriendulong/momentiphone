@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
-@class LocalNotificationCoreData, UserCoreData;
+@class UserCoreData;
 
 @interface MomentCoreData : NSManagedObject
 
@@ -30,18 +30,9 @@
 @property (nonatomic, retain) NSNumber * isSponso;
 @property (nonatomic, retain) NSNumber * momentId;
 @property (nonatomic, retain) NSString * nomLieu;
+@property (nonatomic, retain) NSNumber * privacy;
 @property (nonatomic, retain) NSNumber * state;
 @property (nonatomic, retain) NSString * titre;
-@property (nonatomic, retain) NSNumber * privacy;
-@property (nonatomic, retain) NSSet *notifications;
 @property (nonatomic, retain) UserCoreData *owner;
-@end
-
-@interface MomentCoreData (CoreDataGeneratedAccessors)
-
-- (void)addNotificationsObject:(LocalNotificationCoreData *)value;
-- (void)removeNotificationsObject:(LocalNotificationCoreData *)value;
-- (void)addNotifications:(NSSet *)values;
-- (void)removeNotifications:(NSSet *)values;
 
 @end

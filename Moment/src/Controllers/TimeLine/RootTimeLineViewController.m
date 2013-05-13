@@ -79,7 +79,12 @@ withNavigationController:(UINavigationController*)navController
     [self showContentViewController:self.privateTimeLine];
     // Préload public timeLine
     [self.publicFeedList.view setNeedsDisplay];
-    self.publicFeedList.view.alpha = 0;
+    self.publicFeedList.view.alpha = 0;    
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
     
     // Préload Volet
     [[VoletViewController volet] loadNotifications];

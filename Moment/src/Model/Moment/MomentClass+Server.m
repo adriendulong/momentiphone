@@ -495,6 +495,21 @@
                 
         NSLog(@"Change state : %@", JSON);
         
+        // Update RSVP on facebook
+        if(self.facebookId)
+        {
+            [[FacebookManager sharedInstance] updateRSVP:state moment:self withEnded:^(BOOL success) {
+                
+                if(success) {
+                    NSLog(@"Change Facebook RSVP Success");
+                }
+                else {
+                    NSLog(@"Change Facebook RSVP Fail");
+                }
+                
+            }];
+        }
+        
         if(block) {
             self.state = @(state);
             block(YES);
@@ -595,6 +610,7 @@
     [operation start];
 }
 
+/*
 - (void)togglePrivacyWithEnded:(void (^) (BOOL success))block
 {
     NSString *path = [NSString stringWithFormat:@"openmoment/%@", self.momentId];
@@ -617,6 +633,7 @@
     }];
     
 }
+ */
 
 
 #pragma mark - Photos
@@ -677,6 +694,18 @@
         
         Photos *photo = [[Photos alloc] initWithAttributesFromWeb:JSON[@"success"]];
         
+#warning FB Notif
+        // Notify Facebook Notification
+        //if(self.facebookId)
+        //{
+            [[FacebookManager sharedInstance] postMessageOnEventWall:self photo:photo withEnded:^(BOOL success) {
+                if(!success) {
+                    [TestFlight passCheckpoint:[NSString stringWithFormat:@"Facebook Notification Fail - Photo %d - Moment %@", photo.photoId, self.momentId]];
+                }
+            }];
+        //}
+        
+        
         if(endBlock)
             endBlock(photo);
         
@@ -705,7 +734,7 @@
                                                        withStart:startBlock
                                                  withProgression:progressBlock
                                                        withEnded:endBlock];
-        
+    
     [operation start];
 }
 

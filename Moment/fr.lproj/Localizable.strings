@@ -195,6 +195,9 @@
 /* ------------ Cagnotte4ViewController ------------- */
 "Cagnotte4ViewController_EmptyCell" = "Aucun participant";
 
+/* ------------ PlacesTableViewController ----------- */
+"PlacesViewController_EmptyCell" = "Aucun résultat correspondant";
+
 /* ------------ FollowTableViewController ------------- */
 // Add Follow (Toggle) Error
 "FollowTableViewController_AddFollow_ErrorMessage" = "Follow a échoué, Réessayez";

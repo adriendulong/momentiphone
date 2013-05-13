@@ -68,6 +68,7 @@
 {
     // Init
     self.pickerView = [[CustomDatePicker alloc] init];
+    self.pickerView.datePicker.datePickerMode = UIDatePickerModeDate;
     // Date Max = Aujourd'hui
     self.pickerView.datePicker.maximumDate = [NSDate date];
     // Bouton Valider
@@ -108,38 +109,33 @@
 {
     [super viewDidLoad];
     
-    /*
-    // iPhone 5 support ==> Layout
-    if ( [[VersionControl sharedInstance] screenHeight] == 568 )
+    // iPhone 4 layout
+    if ( [[VersionControl sharedInstance] screenHeight] != 568 )
     {
-        
-        // Resize bgBox
+        // Move & Resize Box
         CGRect frame = self.boxView.frame;
-        frame.origin.y += 30;
-        frame.size.height += 40;
+        frame.origin.y = 15;
+        frame.size.height -= 15;
         self.boxView.frame = frame;
         
         // Move TextFields
-        int margin = 4;
-        [self moveView:self.nomLabel distance:margin+2];
-        [self moveView:self.prenomLabel distance:margin+2];
-        [self moveView:self.emailLabel distance:margin+2];
-        [self moveView:self.mdpLabel distance:margin+2];
+        int margin = -2;
+        [self moveView:self.prenomLabel distance:margin];
+        [self moveView:self.nomLabel distance:margin-1];
+        [self moveView:self.emailLabel distance:margin-2];
+        [self moveView:self.mdpLabel distance:margin-3];
+        [self moveView:self.birthdayTextField distance:margin-4];
+        [self moveView:self.maleButton distance:margin-5];
+        [self moveView:self.femaleButton distance:margin-5];
         
         // Move photo
-        [self moveView:self.photoProfil distance:margin + 20];
-        [self moveView:self.photoProfilLabel distance:margin + 15];
+        [self moveView:self.photoProfil distance:margin-13];
+        [self moveView:self.photoProfilLabel distance:margin-8];
         
         // Move label
-        [self moveView:self.confidentialiteLabel distance:margin + 55];
-        
-        // Move Buttons
-        [self moveView:self.backButton distance:margin+10];
-        [self moveView:self.nextButton distance:margin+10];
-        
+        [self moveView:self.confidentialiteLabel distance:margin - 75];
     }
-    */
-    
+        
     // Autocomplétion
     self.emailLabel.autocompleteType = TextFieldAutocompletionTypeEmail;
     self.emailLabel.autocompleteDisabled = NO;

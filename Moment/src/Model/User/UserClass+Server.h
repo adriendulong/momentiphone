@@ -17,11 +17,13 @@
 + (void)getUserFromServerWithId:(NSInteger)userId withEnded:(void (^) (UserClass *user))block;
 + (void)updateCurrentUserInformationsOnServerWithAttributes:(NSDictionary *)modifications
                                                   withEnded:(void (^) (BOOL success))block;
-
 // Login
 + (void)getLoggedUserFromServerWithEnded:( void (^) (UserClass *user) )block waitUntilFinished:(BOOL)waitUntilFinished;
 + (void)getLoggedUserFromServerWithEnded:( void (^) (UserClass *user) )block;
 + (void)loginUserWithUsername:(NSString *)username withPassword:(NSString *)password withEnded:(void (^)(NSInteger status))block;
+
+// Logout
++ (void)logoutCurrentUserWithEnded:(void (^) (void))block;
 
 // Lost Password
 + (void)requestNewPasswordAtEmail:(NSString*)email withEnded:(void (^) (BOOL success))block;

@@ -9,8 +9,7 @@
 #import "VoletViewController.h"
 #import "UserCoreData+Model.h"
 #import "PushNotificationManager.h"
-#import "LocalNotificationCoreData+Model.h"
-#import "LocalNotificationCoreData+Server.h"
+#import "LocalNotification.h"
 #import "Config.h"
 
 #import "VoletViewControllerEmptyCell.h"
@@ -150,10 +149,20 @@ static VoletViewController *actualVoletViewController;
     //[self loadNotifications];
 }
 
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    
+    // Show Notifications
+    [self clicNotifications];
+    
+    // Load
+    [self loadInvitations];
+}
+
 - (void)reloadUsername
 {
     UserClass *user = [UserCoreData getCurrentUser];
-    NSString *userName = [NSString stringWithFormat:@"%@ %@", user.prenom?[user.prenom capitalizedString]:@"", user.nom?[user.nom capitalizedString]:@""];;
+    NSString *userName = [user formatedUsernameWithStyle:UsernameStyleCapitalized];
     [self.nomUserButton setTitle:userName forState:UIControlStateNormal];
     [self.nomUserButton setTitle:userName forState:UIControlStateHighlighted];
     [self.nomUserButton setTitle:userName forState:UIControlStateSelected];
@@ -220,7 +229,7 @@ static VoletViewController *actualVoletViewController;
 
 - (void)loadNotifications {
     
-    [LocalNotificationCoreData getNotificationWithEnded:^(NSDictionary *notifications) {
+    [LocalNotification getNotificationWithEnded:^(NSDictionary *notifications) {
         //NSLog(@"Notifications reçus : %@", notifications);
         
         // Clear
@@ -240,7 +249,7 @@ static VoletViewController *actualVoletViewController;
 
 - (void)loadInvitations {
     
-    [LocalNotificationCoreData getInvitationsWithEnded:^(NSDictionary *notifications) {
+    [LocalNotification getInvitationsWithEnded:^(NSDictionary *notifications) {
         
         // Clear
         [self.invitations removeAllObjects];
@@ -344,51 +353,50 @@ static VoletViewController *actualVoletViewController;
 {
     if(!isEmpty)
     {
-        enum NotificationType type = -1;
-        MomentClass *moment = nil;
+        LocalNotification *notif = nil;
         
         if(isShowingInvitations) {
-            LocalNotificationCoreData *invit = self.invitations[indexPath.row];
-            type = invit.type.intValue;
-            moment = [invit.moment localCopy];
+            notif = self.invitations[indexPath.row];
             // Remove From Local
-            [self.invitations removeObject:invit];
-            // Remove From Core Data
-            [LocalNotificationCoreData deleteNotification:invit];
+            //[self.invitations removeObject:notif];
         }
         else {
-            LocalNotificationCoreData *notif = self.notifications[indexPath.row];
-            type = notif.type.intValue;
-            moment = [notif.moment localCopy];
+            notif = self.notifications[indexPath.row];
             // Remove From Local
-            [self.notifications removeObject:notif];
-            // Remove From Core Data
-            [LocalNotificationCoreData deleteNotification:notif];
+            //[self.notifications removeObject:notif];
         }
         
         // Update nb labels
-        [self designNbNotificationsViews];
+        //[self designNbNotificationsViews];
         
         // Reload
-        [self.tableView reloadData];
+        //[self.tableView reloadData];
         
-        switch (type) {
+        switch (notif.type) {
             case NotificationTypeModification:
-                [self redirectToInfoMoment:moment];
+                [self redirectToInfoMoment:notif.moment];
                 break;
                 
             case NotificationTypeNewChat:
-                [self redirectToChatMoment:moment];
+                [self redirectToChatMoment:notif.moment];
                 break;
                 
             case NotificationTypeNewPhoto:
-                [self redirectToPhotoMoment:moment];
+                [self redirectToPhotoMoment:notif.moment];
                 break;
                 
             case NotificationTypeInvitation:
-                [self redirectToInfoMoment:moment];
+                [self redirectToInfoMoment:notif.moment];
                 break;
                 
+            case NotificationTypeFollowRequest:
+                [self redirectToProfile:notif.requestFollower];
+                break;
+                
+            case NotificationTypeNewFollower:
+                [self redirectToProfile:notif.follower];
+                break;
+            
             default:
                 break;
         }
@@ -493,6 +501,15 @@ static VoletViewController *actualVoletViewController;
     [[self.rootTimeLine timeLineForMoment:moment] showTchatView:moment];
 }
 
+- (void)redirectToProfile:(UserClass*)user
+{
+    if(user) {
+        [self.delegate showRootController:NO];
+        
+        ProfilViewController *profile = [[ProfilViewController alloc] initWithUser:user];
+        [self.rootTimeLine.navController pushViewController:profile animated:YES];
+    }
+}
 
 #pragma mark - UITextField Delegate
 
@@ -556,18 +573,6 @@ static VoletViewController *actualVoletViewController;
         
         // Load Notifs
         [self loadNotifications];
-        
-        // Reset Notif on Server
-        [LocalNotificationCoreData resetNotificationsWithEnded:nil];
-        
-        // Si il y des Invitations --> Afficher invitations
-        if([self.invitations count] > 0) {
-            [self clicInvitations];
-        }
-        // Sinon afficher notifications
-        else
-            [self clicNotifications];
-        
     }
 }
 

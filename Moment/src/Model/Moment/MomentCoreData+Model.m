@@ -92,6 +92,12 @@
     if(attributes[@"isSponso"])
         self.isSponso = attributes[@"isSponso"];
     
+    if(attributes[@"isOpenInvit"])
+        self.isOpen = @([attributes[@"isOpenInvit"] boolValue]);
+    
+    if(attributes[@"privacy"])
+        self.privacy = attributes[@"privacy"];
+    
     if(attributes[@"owner"]) {
         UserCoreData *owner = nil;
         NSDictionary *dico = [UserClass mappingToLocalAttributes:attributes[@"owner"]];

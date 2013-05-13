@@ -8,6 +8,12 @@
 
 #import <Foundation/Foundation.h>
 
+enum UsernameStyle {
+    UsernameStyleUppercase = 0,
+    UsernameStyleCapitalized = 1,
+    UsernameStyleUnchanged = 2
+    };
+
 @interface UserClass : NSObject
 
 @property (nonatomic, strong) UIImage * uimage;
@@ -36,5 +42,12 @@
 
 + (NSArray*)arrayOfUsersWithArrayOfAttributesFromLocal:(NSArray*)arrayAttributes;
 + (NSArray*)arrayOfUsersWithArrayOfAttributesFromWeb:(NSArray*)arrayAttributes;
+
+// Util
+- (NSString*)formatedUsername;
+- (NSString*)formatedUsernameWithStyle:(enum UsernameStyle)style;
++ (NSString*)formatedUsernameWithFirstname:(NSString*)firstname
+                                  lastname:(NSString*)lastname
+                                     style:(enum UsernameStyle)style;
 
 @end

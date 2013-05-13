@@ -518,11 +518,25 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
     if(!isLoading)
     {
         isLoading = YES;
-        [MomentClass getMomentsServerWithEnded:^(BOOL success) {
-            NSArray *array = [MomentCoreData getMoments];
-            [self reloadDataWithMoments:array];
-            isLoading = NO;
-        } waitUntilFinished:NO];
+        
+        if(self.timeLineStyle == TimeLineStyleComplete) {
+            [MomentClass getMomentsServerWithEnded:^(BOOL success) {
+                if(success) {
+                    NSArray *array = [MomentCoreData getMoments];
+                    [self reloadDataWithMoments:array];
+                }
+                isLoading = NO;
+            } waitUntilFinished:NO];
+        }
+        else {
+            [MomentClass getMomentsForUser:self.user withEnded:^(NSArray *moments) {
+                if(moments) {
+                    [self reloadDataWithMoments:moments];
+                    isLoading = NO;
+                }
+            }];
+        }
+        
     }
 }
 
@@ -885,19 +899,8 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
     {
         [self setNomMomentLabelText:moment.titre];
         
-        if(moment.owner)
-        {
-            if(moment.owner.prenom && moment.owner.nom) {
-                [self setNomOwnerLabelText:[NSString stringWithFormat:@"%@ %@", moment.owner.prenom.uppercaseString, moment.owner.nom.uppercaseString]];
-            }
-            else if(moment.owner.prenom || moment.owner.nom) {
-                if(moment.owner.prenom)
-                    [self setNomOwnerLabelText:moment.owner.prenom.uppercaseString];
-                else
-                    [self setNomOwnerLabelText:moment.owner.nom.uppercaseString];
-            }
-            else
-                [self setNomOwnerLabelText:@"..."];
+        if(moment.owner) {
+            [self setNomOwnerLabelText:moment.owner.formatedUsername];
         }
         
         

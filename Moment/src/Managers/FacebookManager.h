@@ -9,6 +9,8 @@
 #import <Foundation/Foundation.h>
 #import <FacebookSDK/FacebookSDK.h>
 #import "AFHTTPClient.h"
+#import "Photos.h"
+#import "UserCoreData+Model.h"
 
 enum FacebookPermissionType {
     FacebookPermissionReadType = 1,
@@ -31,7 +33,9 @@ enum FacebookPermissionType {
 - (BOOL)isLogged;
 
 // Permissions
-- (void)askForPermissions:(NSArray*)permisions type:(enum FacebookPermissionType)type withEnded:( void (^) (BOOL success) )block;
+- (void)askForPermissions:(NSArray*)permisions
+                     type:(enum FacebookPermissionType)type
+                withEnded:( void (^) (BOOL success) )block;
 
 // FB ID
 - (void)getCurrentUserInformationsWithEnded:(void (^) (UserClass* user))block;
@@ -45,10 +49,24 @@ enum FacebookPermissionType {
 // Events
 - (void)getEventsWithEnded:(void (^) (NSArray* events) )block;
 
+// RSVP
+- (void)updateRSVP:(enum UserState)rsvp
+            moment:(MomentClass*)moment
+         withEnded:(void (^) (BOOL success))block;
+
 // Publish
 - (void)getPublishPermissions;
+- (void)postMessageOnEventWall:(MomentClass*)moment
+                       message:(NSString*)message
+                     withEnded:(void (^) (BOOL success))block;
+- (void)postMessageOnEventWall:(MomentClass *)moment
+                         photo:(Photos*)photo
+                     withEnded:(void (^)(BOOL success))block;
+- (void)postMessageOnEventWall:(MomentClass *)moment
+                          chat:(ChatMessage*)chat
+                     withEnded:(void (^)(BOOL success))block;
 
-// 
+// --
 - (void)sessionStateChanged:(FBSession *)session
                       state:(FBSessionState)state
                       error:(NSError *)error;

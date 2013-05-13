@@ -110,28 +110,42 @@
 }
 
 - (IBAction)clicInviter {
+    
+    // Update Privacy and isOpenInvit
+    self.moment.isOpen = @(self.switchControlState);
+    [self.moment updateMomentFromLocalToServerWithEnded:^(BOOL success) {
         
-    [UIView animateWithDuration:0.3 animations:^{
-        self.generalView.alpha = 0;
-     } completion:^(BOOL finished) {
-         [UIView animateWithDuration:0.2 animations:^{
-             self.backgroundFilterView.alpha = 0;
-         } completion:^(BOOL finished) {
-             
-             self.navigationController.navigationBar.hidden = NO;
-             
-             // Si Public ==> informer server
-             if(self.switchControlState) {
-                 [self.moment togglePrivacyWithEnded:nil];
-             }
-             
-             self.moment.isOpen = @(self.switchControlState);
-             
-             [self.timeLine updateSelectedMoment:self.moment atRow:-1];
-             [self.timeLine showInviteViewControllerWithMoment:self.moment];
-             
-         }];
-     }];
+        // Success
+        if(success) {
+            // Animation
+            [UIView animateWithDuration:0.3 animations:^{
+                self.generalView.alpha = 0;
+            } completion:^(BOOL finished) {
+                [UIView animateWithDuration:0.2 animations:^{
+                    self.backgroundFilterView.alpha = 0;
+                } completion:^(BOOL finished) {
+                    
+                    // Show Navigation Bar
+                    self.navigationController.navigationBar.hidden = NO;
+                    
+                    // Update Timeline
+                    [self.timeLine updateSelectedMoment:self.moment atRow:-1];
+                    [self.timeLine showInviteViewControllerWithMoment:self.moment];
+                    
+                }];
+            }];
+        }
+        // Erreur
+        else {
+            [[MTStatusBarOverlay sharedInstance]
+             postImmediateErrorMessage:NSLocalizedString(@"Error_Classic", nil)
+             duration:1
+             animated:YES];
+        }
+        
+        
+    }];
+    
 }
 
 - (IBAction)clicSwitchButton {

@@ -44,7 +44,7 @@ navigationController:(UINavigationController*)navController
         self.user = user;
         
         // Set Nom
-        self.nomLabel.text = [NSString stringWithFormat:@"%@ %@", user.prenom?[user.prenom capitalizedString]:@"", user.nom?[user.nom capitalizedString]:@"" ];
+        self.nomLabel.text = [user formatedUsernameWithStyle:UsernameStyleCapitalized];
         self.nomLabel.font = [[Config sharedInstance] defaultFontWithSize:14];
         
         // Set image

@@ -8,6 +8,7 @@
 
 #import "VoletViewControllerInvitationCell.h"
 #import "Config.h"
+#import "UILabel+BottomAlign.h"
 
 static NSDateFormatter *dateFormatter = nil;
 
@@ -19,7 +20,7 @@ static NSDateFormatter *dateFormatter = nil;
 @synthesize nbInvitesLabel = _nbInvitesLabel;
 @synthesize heureLabel = _heureLabel;
 
-- (id)initWithNotification:(LocalNotificationCoreData*)notification
+- (id)initWithNotification:(LocalNotification*)notification
 {
     self = [super initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"VoletViewControllerInvitationCell"];
     if(self) {
@@ -33,7 +34,7 @@ static NSDateFormatter *dateFormatter = nil;
         //self.medallion.borderColor = [Config sharedInstance].orangeColor;
         if(notification.moment.imageString || notification.moment.dataImage) {
             [self.medallion setImage:notification.moment.uimage imageString:notification.moment.imageString withSaveBlock:^(UIImage *image) {
-                [notification.moment setDataImageWithUIImage:image];
+                notification.moment.uimage = image;
             }];
         }
         
@@ -42,6 +43,14 @@ static NSDateFormatter *dateFormatter = nil;
         // Nom moment
         self.momentLabel.text = notification.moment.titre;
         self.momentLabel.font = font;
+        CGPoint origin = self.momentLabel.frame.origin;
+        NSInteger marge = 60;
+        NSInteger max = 270 - marge - origin.x;
+        [self.momentLabel sizeToFit];
+        CGRect frame = self.momentLabel.frame;
+        frame.origin = origin;
+        frame.size.width = MIN(frame.size.width, max);
+        self.momentLabel.frame = frame;
         
         // Date Formatter
         if(!dateFormatter) {
@@ -60,6 +69,14 @@ static NSDateFormatter *dateFormatter = nil;
         dateFormatter.dateFormat = @"dd MMMM";
         self.dateLabel.text = [dateFormatter stringFromDate:notification.date];
         self.dateLabel.font = font;
+        frame = self.dateLabel.frame;
+        NSInteger end = frame.origin.x + frame.size.width - 5;
+        frame.origin.x = self.momentLabel.frame.origin.x + self.momentLabel.frame.size.width + 5;
+        frame.size.width = end - frame.origin.x;
+        frame.size.height = self.momentLabel.frame.size.height;
+        self.dateLabel.frame = frame;
+        frame.origin.y = [self.dateLabel topAfterBottomAligningWithLabel:self.momentLabel];
+        self.dateLabel.frame = frame;
         
         // Nb Invités
         self.nbInvitesLabel.text = [NSString stringWithFormat:@"%@", notification.moment.guests_number];

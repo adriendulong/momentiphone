@@ -8,8 +8,7 @@
 
 #import "PushNotificationManager.h"
 #import "DeviceModel.h"
-#import "LocalNotificationCoreData+Model.h"
-#import "LocalNotificationCoreData+Server.h"
+#import "LocalNotification.h"
 #import "VoletViewController.h"
 #import "Config.h"
 

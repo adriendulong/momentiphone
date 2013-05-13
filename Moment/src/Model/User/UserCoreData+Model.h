@@ -55,10 +55,13 @@ enum UserState {
 + (UserCoreData*)getCurrentUserAsCoreData;
 + (UserClass*)getCurrentUser;
 + (void)updateCurrentUserWithAttributes:(NSDictionary*)attributes;
-+ (void)logoutCurrentUserWithEnded:(void (^) (void))block;
 
 // Release
 + (void)releaseUsersAfterIndex:(NSInteger)max;
 + (void)resetUsersLocal;
+
+// Util
+- (NSString*)formatedUsername;
+- (NSString*)formatedUsernameWithStyle:(enum UsernameStyle)style;
 
 @end

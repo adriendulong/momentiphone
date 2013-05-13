@@ -21,6 +21,9 @@
 #define kNotificationChangeCover @"ChangeCoverNotification"
 #define kNotificationStatusBarFrameChanged @"NotificationStatusBarFrameChanged"
 
+// Google Account API Key
+#define kGoogleAPIKey @"AIzaSyAXb81v4E4Xn2bvBxBV8CYvSBEQhqLOPxM"
+
 @interface Config : NSObject
 
 #pragma mark - Singleton

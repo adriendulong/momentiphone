@@ -668,6 +668,81 @@ static FacebookManager *sharedInstance = nil;
     
 }
 
+#pragma mark - RSVP
+
+- (void)updateRSVP:(enum UserState)rsvp
+            moment:(MomentClass*)moment
+         withEnded:(void (^) (BOOL success))block
+{
+    if(moment.facebookId)
+    {
+        NSString *path = nil;
+        
+        // Identifier RSVP
+        switch (rsvp) {
+            case UserStateAdmin:
+            case UserStateOwner:
+            case UserStateValid:
+                path = @"attending";
+                break;
+                
+            case UserStateRefused:
+                path = @"declined";
+                break;
+                
+            case UserStateUnknown:
+            case UserStateWaiting:
+                path = @"maybe";
+                break;
+                
+            default:
+                break;
+        }
+        
+        if(path)
+        {
+            // Ask For Permission
+            [self askForPermissions:@[kFbPermissionRsvpEvent] type:FacebookPermissionPublishType withEnded:^(BOOL success) {
+                
+                // Get Permission
+                if(success) {
+                    
+                    // Request Config
+                    NSString *fullPath = [NSString stringWithFormat:@"%@/%@", moment.facebookId, path];
+                    FBRequestConnection *connection = [[FBRequestConnection alloc] init];
+                    FBRequest *request = [[FBRequest alloc]
+                                          initWithSession:[FBSession activeSession]
+                                          graphPath:fullPath
+                                          parameters:nil
+                                          HTTPMethod:@"POST"];
+                    
+                    // Comptetion Handler
+                    [connection addRequest:request completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
+                        if(block) {
+                            
+                            if(error) {
+                                NSLog(@"RSVP FB ERROR : %@", error.localizedDescription);
+                                [TestFlight passCheckpoint:[NSString stringWithFormat:@"FAIL TO CHANGE FB RSVP : Moment %@ - RSVP : %@", moment.facebookId, path]];
+                            }
+                            
+                            block(error == nil);
+                        }
+                    }];
+                    
+                    // Launch Request
+                    [connection start];
+                }
+                // Permission Refused Or Fail
+                else if(block) {
+                    block(NO);
+                }
+                
+            }];
+        }
+        
+    }
+}
+
 #pragma mark - Publish
 
 - (void)getPublishPermissions
@@ -677,6 +752,91 @@ static FacebookManager *sharedInstance = nil;
                   withEnded:^(BOOL success) {
         
     }];
+}
+
+- (void)postMessageOnEventWall:(MomentClass*)moment
+                    parameters:(NSDictionary*)params
+                     withEnded:(void (^) (BOOL success))block
+{
+    if( (moment.facebookId && params) || 1)
+    {
+        // Ask For Permissions
+        [self askForPermissions:@[kFbPermissionPublishAction, kFbPermissionPublishStream] type:FacebookPermissionPublishType withEnded:^(BOOL success) {
+            
+            // Success
+            if(success) {
+                FBRequestConnection *connection = [[FBRequestConnection alloc] init];
+                                
+                // Post Request
+                FBRequest *request = [[FBRequest alloc] initWithSession:[FBSession activeSession] graphPath:@"454455871307842/feed" parameters:params HTTPMethod:@"POST"];
+                
+                /*
+                FBRequest *request = [[FBRequest alloc]
+                                      initWithSession:[FBSession activeSession]
+                                      graphPath:[NSString stringWithFormat:@"%@/feed", moment.facebookId]
+                                      parameters:params HTTPMethod:@"POST"];
+                */
+                
+                // Completion Handler
+                [connection addRequest:request completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
+                    if(block) {
+                        block(error == nil);
+                    }
+                }];
+                
+                // Send Request
+                [connection start];
+            }
+            // Failure
+            else if(block) {
+                block(NO);
+            }
+            
+        }];
+    }
+}
+
+- (void)postMessageOnEventWall:(MomentClass*)moment
+                       message:(NSString*)message
+                     withEnded:(void (^)(BOOL success))block
+{
+    if(message) {
+        
+        message = [message stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+        [self postMessageOnEventWall:moment parameters:@{@"message":message} withEnded:block];
+    }
+}
+
+- (void)postMessageOnEventWall:(MomentClass *)moment
+                         photo:(Photos*)photo
+                     withEnded:(void (^)(BOOL success))block
+{
+    if(photo) {
+        
+        NSString *message = [[NSString stringWithFormat:@"Nouvelle Photo sur %@\n-- Moment --", moment.titre] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+        NSString *picture = [photo.urlOriginal stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+        
+        NSDictionary *params = @{@"message":message,
+                                 @"picture":picture,
+                                 @"name":moment.titre,
+                                 @"description":moment.descriptionString,
+                                 @"type":@"photo",
+                                 @"caption":moment.adresse};
+        
+        [self postMessageOnEventWall:moment parameters:params withEnded:block];
+    }
+}
+
+- (void)postMessageOnEventWall:(MomentClass *)moment
+                          chat:(ChatMessage*)chat
+                     withEnded:(void (^)(BOOL success))block
+{
+    if(chat) {
+        
+        NSString *message = [[NSString stringWithFormat:@"Nouveau Message sur %@ :\n\"%@\"\n-- Moment --", moment.titre, chat.message] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+        
+        [self postMessageOnEventWall:moment message:message withEnded:block];
+    }
 }
 
 #pragma mark - Getters

@@ -10,6 +10,12 @@
 #import "UserCoreData.h"
 #import "MomentClass.h"
 
+// Delegate
+// -> Utilisé pour retourné la valeur depuis le PlacesViewController
+@protocol CreationFicheViewControllerDelegate <NSObject>
+@property (nonatomic, strong) NSString *adresseText;
+@end
+
 #import "TimeLineViewController.h"
 #import "CustomTextField.h"
 #import "CustomDatePicker.h"
@@ -18,7 +24,7 @@
 #import "CustomUIImageView.h"
 #import "CustomTextView.h"
 
-@interface CreationFicheViewController : UIViewController <UINavigationControllerDelegate,UIImagePickerControllerDelegate, UIActionSheetDelegate, UITextFieldDelegate, UITextViewDelegate> {
+@interface CreationFicheViewController : UIViewController <UINavigationControllerDelegate,UIImagePickerControllerDelegate, UIActionSheetDelegate, UITextFieldDelegate, UITextViewDelegate, CreationFicheViewControllerDelegate> {
     @private
     NSInteger viewHeight;
 }
@@ -59,6 +65,7 @@
 @property (nonatomic, weak) IBOutlet CustomTextField *infoLieuTextField;
 @property (nonatomic, weak) IBOutlet CustomTextField *hashtagTextField;
 @property (nonatomic, weak) IBOutlet CustomLabel *adresseLabel;
+@property (nonatomic, strong) NSString *adresseText;
 @property (nonatomic, weak) IBOutlet CustomLabel *infoLieuLabel;
 @property (nonatomic, weak) IBOutlet CustomLabel *descriptionLabel;
 @property (nonatomic, weak) IBOutlet CustomLabel *hashtagLabel;

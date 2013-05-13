@@ -41,7 +41,6 @@
     self.titre = attributes[@"titre"];
     self.dateDebut = attributes[@"dateDebut"];
     self.dateFin = attributes[@"dateFin"];
-    self.isOpen = attributes[@"isOpen"];
     self.isSponso = attributes[@"isSponso"];
     
     /*
@@ -78,6 +77,15 @@
     
     if(attributes[@"state"])
         self.state = attributes[@"state"];
+    
+    if(attributes[@"facebookId"])
+        self.facebookId = [NSString stringWithFormat:@"%@", attributes[@"facebookId"]];
+    
+    if(attributes[@"isOpenInvit"])
+        self.isOpen = @([attributes[@"isOpenInvit"] boolValue]);
+    
+    if(attributes[@"privacy"])
+        self.privacy = attributes[@"privacy"];
     
     if(attributes[@"owner"]) {
         UserClass *owner = nil;

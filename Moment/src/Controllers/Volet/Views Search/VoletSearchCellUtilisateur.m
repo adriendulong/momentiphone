@@ -30,12 +30,7 @@
         [self setSelectionStyle:UITableViewCellSelectionStyleNone];
         
         // Label
-        NSString *texteLabel = @"";
-        if(self.user.prenom && self.user.nom)
-            texteLabel = [NSString stringWithFormat:@"%@ %@", self.user.prenom, self.user.nom];
-        else if(self.user.prenom || self.user.nom)
-            texteLabel = self.user.prenom ?: self.user.nom;
-        self.nomLabel.text = texteLabel;
+        self.nomLabel.text = [self.user formatedUsernameWithStyle:UsernameStyleCapitalized];
         self.nomLabel.font = [[Config sharedInstance] defaultFontWithSize:14];
         
         // Set image

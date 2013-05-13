@@ -10,11 +10,7 @@
 #import "UserClass+Mapping.h"
 #import "Config.h"
 #import "MomentCoreData+Model.h"
-#import "AFMomentAPIClient.h"
-#import "PushNotificationManager.h"
 #import "UserClass+Server.h"
-#import "LocalNotificationCoreData+Model.h"
-#import "ParametreNotification.h"
 
 #define NB_USERS_STORED 10
 
@@ -394,41 +390,6 @@ static NSTimeInterval lastUpdateTime = 0;
     self.dataImage = UIImagePNGRepresentation(image);
 }
 
-#pragma mark - Logout
-
-+ (void)logoutCurrentUserWithEnded:(void (^) (void))block
-{
-    NSLog(@"LOGOUT");
-    
-    UserCoreData *user = [UserCoreData getCurrentUserAsCoreData];
-    if(user)
-    {
-        // Delete Current User
-        [[Config sharedInstance].managedObjectContext deleteObject:user];
-        [[Config sharedInstance] saveContext];
-        
-        // Clear data
-        [MomentCoreData resetMomentsLocal];
-        [ChatMessageCoreData resetChatMessagesLocal];
-        [LocalNotificationCoreData resetNotifcationsLocal];
-        
-        // Suppression cookie de connexion automatique
-        [[AFMomentAPIClient sharedClient] clearConnexionCookie];
-        
-        // Unsubscribe to local notifications
-        [[PushNotificationManager sharedInstance] removeNotifications];
-        
-        // Suppression des préférences des push notifications
-        [ParametreNotification clearSettingsLocal];
-        
-#warning Prévenir le server -> arreter push notifications
-    }
-    
-    if(block)
-        block();
-
-}
-
 #pragma mark - Release
 
 + (void)releaseUsersAfterIndex:(NSInteger)max
@@ -456,6 +417,16 @@ static NSTimeInterval lastUpdateTime = 0;
     }
     
     [[Config sharedInstance] saveContext];
+}
+
+#pragma mark - Util
+
+- (NSString*)formatedUsername {
+    return [self formatedUsernameWithStyle:UsernameStyleUppercase];
+}
+
+- (NSString*)formatedUsernameWithStyle:(enum UsernameStyle)style {
+    return [UserClass formatedUsernameWithFirstname:self.prenom lastname:self.nom style:style];
 }
 
 @end
