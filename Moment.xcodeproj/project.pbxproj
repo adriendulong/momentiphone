@@ -445,10 +445,6 @@
 		5BA2736616ABAC3E006CE383 /* btn_onoff@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5BA2735E16ABAC3E006CE383 /* btn_onoff@2x.png */; };
 		5BAB90A716ECD2580055C960 /* CreationPage2ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BAB90A516ECD2580055C960 /* CreationPage2ViewController.m */; };
 		5BAB90A816ECD2580055C960 /* CreationPage2ViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5BAB90A616ECD2580055C960 /* CreationPage2ViewController.xib */; };
-		5BAB90B816ECD78E0055C960 /* MesReglagesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BAB90B616ECD78E0055C960 /* MesReglagesViewController.m */; };
-		5BAB90B916ECD78E0055C960 /* MesReglagesViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5BAB90B716ECD78E0055C960 /* MesReglagesViewController.xib */; };
-		5BAB90BD16ECD7AD0055C960 /* ModifierUserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BAB90BB16ECD7AC0055C960 /* ModifierUserViewController.m */; };
-		5BAB90BE16ECD7AD0055C960 /* ModifierUserViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5BAB90BC16ECD7AD0055C960 /* ModifierUserViewController.xib */; };
 		5BAB90C616ED61110055C960 /* MKNumberBadgeView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BAB90C516ED61110055C960 /* MKNumberBadgeView.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		5BAB90C816ED79450055C960 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAB90C716ED79430055C960 /* MessageUI.framework */; };
 		5BAB90D416EE710C0055C960 /* CustomNumberBadgeView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BAB90D316EE710B0055C960 /* CustomNumberBadgeView.m */; };
@@ -788,6 +784,19 @@
 		6EB09D431737D8BD00DC7F62 /* Walkthoughtv2_03@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6EB09D2D1737D8BD00DC7F62 /* Walkthoughtv2_03@2x.png */; };
 		6EB09D441737D8BD00DC7F62 /* Walkthoughtv2_04.png in Resources */ = {isa = PBXBuildFile; fileRef = 6EB09D2E1737D8BD00DC7F62 /* Walkthoughtv2_04.png */; };
 		6EB09D451737D8BD00DC7F62 /* Walkthoughtv2_04@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6EB09D2F1737D8BD00DC7F62 /* Walkthoughtv2_04@2x.png */; };
+		6EB44A9617422C2E00E9E5D7 /* Walkthoughtv2_Iphone4_01.png in Resources */ = {isa = PBXBuildFile; fileRef = 6EB44A8E17422C2D00E9E5D7 /* Walkthoughtv2_Iphone4_01.png */; };
+		6EB44A9717422C2E00E9E5D7 /* Walkthoughtv2_Iphone4_01@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6EB44A8F17422C2D00E9E5D7 /* Walkthoughtv2_Iphone4_01@2x.png */; };
+		6EB44A9817422C2E00E9E5D7 /* Walkthoughtv2_Iphone4_02.png in Resources */ = {isa = PBXBuildFile; fileRef = 6EB44A9017422C2D00E9E5D7 /* Walkthoughtv2_Iphone4_02.png */; };
+		6EB44A9917422C2E00E9E5D7 /* Walkthoughtv2_Iphone4_02@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6EB44A9117422C2D00E9E5D7 /* Walkthoughtv2_Iphone4_02@2x.png */; };
+		6EB44A9A17422C2E00E9E5D7 /* Walkthoughtv2_Iphone4_03.png in Resources */ = {isa = PBXBuildFile; fileRef = 6EB44A9217422C2D00E9E5D7 /* Walkthoughtv2_Iphone4_03.png */; };
+		6EB44A9B17422C2E00E9E5D7 /* Walkthoughtv2_Iphone4_03@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6EB44A9317422C2D00E9E5D7 /* Walkthoughtv2_Iphone4_03@2x.png */; };
+		6EB44A9C17422C2E00E9E5D7 /* Walkthoughtv2_Iphone4_04.png in Resources */ = {isa = PBXBuildFile; fileRef = 6EB44A9417422C2D00E9E5D7 /* Walkthoughtv2_Iphone4_04.png */; };
+		6EB44A9D17422C2E00E9E5D7 /* Walkthoughtv2_Iphone4_04@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6EB44A9517422C2E00E9E5D7 /* Walkthoughtv2_Iphone4_04@2x.png */; };
+		6EB44AA117428CAF00E9E5D7 /* handsean.otf in Resources */ = {isa = PBXBuildFile; fileRef = 6EB44AA017428CAF00E9E5D7 /* handsean.otf */; };
+		6ED0EF44174B652200730DD7 /* MesReglagesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6ED0EF3F174B652200730DD7 /* MesReglagesViewController.m */; };
+		6ED0EF45174B652200730DD7 /* MesReglagesViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6ED0EF40174B652200730DD7 /* MesReglagesViewController.xib */; };
+		6ED0EF46174B652200730DD7 /* ModifierUserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6ED0EF42174B652200730DD7 /* ModifierUserViewController.m */; };
+		6ED0EF47174B652200730DD7 /* ModifierUserViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6ED0EF43174B652200730DD7 /* ModifierUserViewController.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1470,12 +1479,6 @@
 		5BAB90A416ECD2580055C960 /* CreationPage2ViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CreationPage2ViewController.h; sourceTree = "<group>"; };
 		5BAB90A516ECD2580055C960 /* CreationPage2ViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CreationPage2ViewController.m; sourceTree = "<group>"; };
 		5BAB90A616ECD2580055C960 /* CreationPage2ViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CreationPage2ViewController.xib; sourceTree = "<group>"; };
-		5BAB90B516ECD78E0055C960 /* MesReglagesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MesReglagesViewController.h; sourceTree = "<group>"; };
-		5BAB90B616ECD78E0055C960 /* MesReglagesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MesReglagesViewController.m; sourceTree = "<group>"; };
-		5BAB90B716ECD78E0055C960 /* MesReglagesViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MesReglagesViewController.xib; sourceTree = "<group>"; };
-		5BAB90BA16ECD7AC0055C960 /* ModifierUserViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModifierUserViewController.h; sourceTree = "<group>"; };
-		5BAB90BB16ECD7AC0055C960 /* ModifierUserViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ModifierUserViewController.m; sourceTree = "<group>"; };
-		5BAB90BC16ECD7AD0055C960 /* ModifierUserViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ModifierUserViewController.xib; sourceTree = "<group>"; };
 		5BAB90C416ED61110055C960 /* MKNumberBadgeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKNumberBadgeView.h; sourceTree = "<group>"; };
 		5BAB90C516ED61110055C960 /* MKNumberBadgeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKNumberBadgeView.m; sourceTree = "<group>"; };
 		5BAB90C716ED79430055C960 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
@@ -1913,6 +1916,21 @@
 		6EB09D2D1737D8BD00DC7F62 /* Walkthoughtv2_03@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Walkthoughtv2_03@2x.png"; sourceTree = "<group>"; };
 		6EB09D2E1737D8BD00DC7F62 /* Walkthoughtv2_04.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Walkthoughtv2_04.png; sourceTree = "<group>"; };
 		6EB09D2F1737D8BD00DC7F62 /* Walkthoughtv2_04@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Walkthoughtv2_04@2x.png"; sourceTree = "<group>"; };
+		6EB44A8E17422C2D00E9E5D7 /* Walkthoughtv2_Iphone4_01.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Walkthoughtv2_Iphone4_01.png; sourceTree = "<group>"; };
+		6EB44A8F17422C2D00E9E5D7 /* Walkthoughtv2_Iphone4_01@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Walkthoughtv2_Iphone4_01@2x.png"; sourceTree = "<group>"; };
+		6EB44A9017422C2D00E9E5D7 /* Walkthoughtv2_Iphone4_02.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Walkthoughtv2_Iphone4_02.png; sourceTree = "<group>"; };
+		6EB44A9117422C2D00E9E5D7 /* Walkthoughtv2_Iphone4_02@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Walkthoughtv2_Iphone4_02@2x.png"; sourceTree = "<group>"; };
+		6EB44A9217422C2D00E9E5D7 /* Walkthoughtv2_Iphone4_03.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Walkthoughtv2_Iphone4_03.png; sourceTree = "<group>"; };
+		6EB44A9317422C2D00E9E5D7 /* Walkthoughtv2_Iphone4_03@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Walkthoughtv2_Iphone4_03@2x.png"; sourceTree = "<group>"; };
+		6EB44A9417422C2D00E9E5D7 /* Walkthoughtv2_Iphone4_04.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Walkthoughtv2_Iphone4_04.png; sourceTree = "<group>"; };
+		6EB44A9517422C2E00E9E5D7 /* Walkthoughtv2_Iphone4_04@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Walkthoughtv2_Iphone4_04@2x.png"; sourceTree = "<group>"; };
+		6EB44AA017428CAF00E9E5D7 /* handsean.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = handsean.otf; sourceTree = "<group>"; };
+		6ED0EF3E174B652200730DD7 /* MesReglagesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MesReglagesViewController.h; path = Parametres/MesReglagesViewController.h; sourceTree = "<group>"; };
+		6ED0EF3F174B652200730DD7 /* MesReglagesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MesReglagesViewController.m; path = Parametres/MesReglagesViewController.m; sourceTree = "<group>"; };
+		6ED0EF40174B652200730DD7 /* MesReglagesViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = MesReglagesViewController.xib; path = Parametres/MesReglagesViewController.xib; sourceTree = "<group>"; };
+		6ED0EF41174B652200730DD7 /* ModifierUserViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ModifierUserViewController.h; path = Parametres/ModifierUserViewController.h; sourceTree = "<group>"; };
+		6ED0EF42174B652200730DD7 /* ModifierUserViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ModifierUserViewController.m; path = Parametres/ModifierUserViewController.m; sourceTree = "<group>"; };
+		6ED0EF43174B652200730DD7 /* ModifierUserViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = ModifierUserViewController.xib; path = Parametres/ModifierUserViewController.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -2817,19 +2835,6 @@
 			path = SwitchButton;
 			sourceTree = "<group>";
 		};
-		5BAB90AA16ECD57B0055C960 /* Paramètres */ = {
-			isa = PBXGroup;
-			children = (
-				5BAB90B516ECD78E0055C960 /* MesReglagesViewController.h */,
-				5BAB90B616ECD78E0055C960 /* MesReglagesViewController.m */,
-				5BAB90B716ECD78E0055C960 /* MesReglagesViewController.xib */,
-				5BAB90BA16ECD7AC0055C960 /* ModifierUserViewController.h */,
-				5BAB90BB16ECD7AC0055C960 /* ModifierUserViewController.m */,
-				5BAB90BC16ECD7AD0055C960 /* ModifierUserViewController.xib */,
-			);
-			path = "Paramètres";
-			sourceTree = "<group>";
-		};
 		5BAB90C316ED61110055C960 /* MKNumberBadgeView */ = {
 			isa = PBXGroup;
 			children = (
@@ -3163,6 +3168,7 @@
 		5BF02E99169C944700232E75 /* font */ = {
 			isa = PBXGroup;
 			children = (
+				6EB44AA017428CAF00E9E5D7 /* handsean.otf */,
 				5BF02E9A169C944700232E75 /* Numans-Regular.otf */,
 			);
 			path = font;
@@ -3366,10 +3372,10 @@
 				5BF02F40169C944700232E75 /* HomeViewController.m */,
 				5BF02F41169C944700232E75 /* HomeViewController.xib */,
 				5BF850511713CFF500549E4C /* Cagnotte */,
-				5BAB90AA16ECD57B0055C960 /* Paramètres */,
 				5B44558116E5445F00F94D5B /* Profil */,
 				5B14C65416B563F20020E463 /* Invite */,
 				5BCCDE6916A0D7BF00C86579 /* Volet */,
+				6ED0EF2A174B640200730DD7 /* Parametres */,
 				5BF02F42169C944700232E75 /* Onglets */,
 				5BF02F59169C944700232E75 /* TimeLine */,
 				5B51153F16F25C1B00B96DFD /* Feed */,
@@ -3908,6 +3914,14 @@
 		6EB09D191737D8B700DC7F62 /* Tuto */ = {
 			isa = PBXGroup;
 			children = (
+				6EB44A8E17422C2D00E9E5D7 /* Walkthoughtv2_Iphone4_01.png */,
+				6EB44A8F17422C2D00E9E5D7 /* Walkthoughtv2_Iphone4_01@2x.png */,
+				6EB44A9017422C2D00E9E5D7 /* Walkthoughtv2_Iphone4_02.png */,
+				6EB44A9117422C2D00E9E5D7 /* Walkthoughtv2_Iphone4_02@2x.png */,
+				6EB44A9217422C2D00E9E5D7 /* Walkthoughtv2_Iphone4_03.png */,
+				6EB44A9317422C2D00E9E5D7 /* Walkthoughtv2_Iphone4_03@2x.png */,
+				6EB44A9417422C2D00E9E5D7 /* Walkthoughtv2_Iphone4_04.png */,
+				6EB44A9517422C2E00E9E5D7 /* Walkthoughtv2_Iphone4_04@2x.png */,
 				6EB09D1A1737D8BD00DC7F62 /* bar1.png */,
 				6EB09D1B1737D8BD00DC7F62 /* bar1@2x.png */,
 				6EB09D1C1737D8BD00DC7F62 /* bar2.png */,
@@ -3932,6 +3946,19 @@
 				6EB09D2F1737D8BD00DC7F62 /* Walkthoughtv2_04@2x.png */,
 			);
 			path = Tuto;
+			sourceTree = "<group>";
+		};
+		6ED0EF2A174B640200730DD7 /* Parametres */ = {
+			isa = PBXGroup;
+			children = (
+				6ED0EF3E174B652200730DD7 /* MesReglagesViewController.h */,
+				6ED0EF3F174B652200730DD7 /* MesReglagesViewController.m */,
+				6ED0EF40174B652200730DD7 /* MesReglagesViewController.xib */,
+				6ED0EF41174B652200730DD7 /* ModifierUserViewController.h */,
+				6ED0EF42174B652200730DD7 /* ModifierUserViewController.m */,
+				6ED0EF43174B652200730DD7 /* ModifierUserViewController.xib */,
+			);
+			name = Parametres;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -4495,8 +4522,6 @@
 				5B6049FB16EBBAEA00A2FACF /* picto_croix_rouge@2x.png in Resources */,
 				5B604A2316EC5E9A00A2FACF /* PopUpFinCreationViewController.xib in Resources */,
 				5BAB90A816ECD2580055C960 /* CreationPage2ViewController.xib in Resources */,
-				5BAB90B916ECD78E0055C960 /* MesReglagesViewController.xib in Resources */,
-				5BAB90BE16ECD7AD0055C960 /* ModifierUserViewController.xib in Resources */,
 				5B929AA416EFC3F3007AB16D /* VoletSearchViewController.xib in Resources */,
 				5B929AA816EFCA2C007AB16D /* Annuler.png in Resources */,
 				5B929AA916EFCA2C007AB16D /* Annuler@2x.png in Resources */,
@@ -4699,6 +4724,17 @@
 				6EB09D431737D8BD00DC7F62 /* Walkthoughtv2_03@2x.png in Resources */,
 				6EB09D441737D8BD00DC7F62 /* Walkthoughtv2_04.png in Resources */,
 				6EB09D451737D8BD00DC7F62 /* Walkthoughtv2_04@2x.png in Resources */,
+				6EB44A9617422C2E00E9E5D7 /* Walkthoughtv2_Iphone4_01.png in Resources */,
+				6EB44A9717422C2E00E9E5D7 /* Walkthoughtv2_Iphone4_01@2x.png in Resources */,
+				6EB44A9817422C2E00E9E5D7 /* Walkthoughtv2_Iphone4_02.png in Resources */,
+				6EB44A9917422C2E00E9E5D7 /* Walkthoughtv2_Iphone4_02@2x.png in Resources */,
+				6EB44A9A17422C2E00E9E5D7 /* Walkthoughtv2_Iphone4_03.png in Resources */,
+				6EB44A9B17422C2E00E9E5D7 /* Walkthoughtv2_Iphone4_03@2x.png in Resources */,
+				6EB44A9C17422C2E00E9E5D7 /* Walkthoughtv2_Iphone4_04.png in Resources */,
+				6EB44A9D17422C2E00E9E5D7 /* Walkthoughtv2_Iphone4_04@2x.png in Resources */,
+				6EB44AA117428CAF00E9E5D7 /* handsean.otf in Resources */,
+				6ED0EF45174B652200730DD7 /* MesReglagesViewController.xib in Resources */,
+				6ED0EF47174B652200730DD7 /* ModifierUserViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4838,8 +4874,6 @@
 				5B0055F516E97A0500C45A3D /* CustomTimeScroller.m in Sources */,
 				5B6049FF16EC423400A2FACF /* PopUpFinCreationViewController.m in Sources */,
 				5BAB90A716ECD2580055C960 /* CreationPage2ViewController.m in Sources */,
-				5BAB90B816ECD78E0055C960 /* MesReglagesViewController.m in Sources */,
-				5BAB90BD16ECD7AD0055C960 /* ModifierUserViewController.m in Sources */,
 				5BAB90C616ED61110055C960 /* MKNumberBadgeView.m in Sources */,
 				5BAB90D416EE710C0055C960 /* CustomNumberBadgeView.m in Sources */,
 				5B929AA316EFC3F3007AB16D /* VoletSearchViewController.m in Sources */,
@@ -4885,6 +4919,8 @@
 				5B9D96DA172BE59D0064D9ED /* UIApplication+DEFacebookComposeViewController.m in Sources */,
 				5B9D96DB172BE59D0064D9ED /* UIDevice+DEFacebookComposeViewController.m in Sources */,
 				6E3C71E81737B4BF009B841E /* TutorialViewController.m in Sources */,
+				6ED0EF44174B652200730DD7 /* MesReglagesViewController.m in Sources */,
+				6ED0EF46174B652200730DD7 /* ModifierUserViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

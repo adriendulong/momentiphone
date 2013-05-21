@@ -109,18 +109,9 @@
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     BOOL hasRunOnce = [defaults boolForKey:@"hasRunOnce"];
     NSLog(hasRunOnce ? @"Yes" : @"No");
-    if (![defaults boolForKey:@"hasRunOnce"])
+    if (!hasRunOnce)
     {
-        
         [self showTutorialAnimated:YES];
-        
-        /*UIAlertView *alert = [[UIAlertView alloc] init];
-        [alert setTitle:@"Premier lancement"];
-        [alert setMessage:@"Bienvenue sur Moment.\nLancement du didacticiel."];
-        [alert setDelegate:self];
-        [alert addButtonWithTitle:@"OK"];
-        
-        [alert show];*/
     }
     
     
@@ -213,8 +204,10 @@
 #pragma mark - Show Views
 - (void)showTutorialAnimated:(BOOL)animated
 {    
-    TutorialViewController *tutorialViewController = [[TutorialViewController alloc] init];
-    [self.navigationController pushViewController:tutorialViewController animated:animated];
+    TutorialViewController *tutorial = [[TutorialViewController alloc] initWithNibName:@"TutorialViewController" bundle:nil];
+    [tutorial setWantsFullScreenLayout:YES];
+    [tutorial setModalPresentationStyle:UIModalPresentationFullScreen];
+    [self presentViewController:tutorial animated:YES completion:nil];
 }
 
 - (void) entrerDansMomentAnimated:(BOOL)animated {
