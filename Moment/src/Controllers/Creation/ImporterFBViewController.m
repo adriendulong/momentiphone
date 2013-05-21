@@ -174,7 +174,10 @@
         else {
             
             // Root
-            RootOngletsViewController *rootViewController = [[RootOngletsViewController alloc] initWithMoment:moment withOnglet:OngletInfoMoment];
+            RootOngletsViewController *rootViewController = [[RootOngletsViewController alloc]
+                                                             initWithMoment:moment
+                                                             withOnglet:OngletInfoMoment
+                                                             withTimeLine:self.timeLine];
             
             [self.navigationController pushViewController:rootViewController animated:YES];
         }

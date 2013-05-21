@@ -24,8 +24,9 @@
 #import "RootOngletsViewController.h"
 #import "MDCParallaxView.h"
 #import "IgnoreTouchView.h"
+#import <MessageUI/MessageUI.h>
 
-@interface InfoMomentViewController : UIViewController <RNExpandingButtonBarDelegate, UIScrollViewDelegate, OngletViewController> {
+@interface InfoMomentViewController : UIViewController <RNExpandingButtonBarDelegate, UIScrollViewDelegate, OngletViewController, MFMailComposeViewControllerDelegate> {
     
     @private
     NSInteger hauteur;
@@ -122,6 +123,13 @@
 @property (weak, nonatomic) IBOutlet UILabel *cagnotteCagnotteLabel;
 @property (weak, nonatomic) IBOutlet UILabel *cagnotteCompteLabel;
 
+/* ------ Partage View ----- */
+@property (nonatomic, strong) IBOutlet UIView *partageView;
+- (IBAction)clicShareMail;
+- (IBAction)clicShareLink;
+- (IBAction)clicShareFacebook;
+- (IBAction)clicShareTwitter;
+- (IBAction)clicShareInstagram;
 
 
 - (id)initWithMoment:(MomentClass*)moment withRootViewController:(UIViewController*)rootViewController;

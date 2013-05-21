@@ -11,6 +11,7 @@
 #import "Config.h"
 #import "ParametreNotification.h"
 #import "UserClass+Server.h"
+#import "PushNotificationManager.h"
 
 const static NSString *kParameterFacebookPageID = @"277911125648059";
 const static NSString *kParameterFacebookPageName = @"appmoment";
@@ -341,29 +342,57 @@ const static NSString *kParameterContactMail = @"hello@appmoment.fr";
 
 - (IBAction)clicButton:(UIButton*)sender {
     
+    BOOL pushAuthorized = [[PushNotificationManager sharedInstance] pushNotificationEnabled];
+    BOOL pushTried = NO;
+    
     // Notification Invitation
-    if(sender == self.notifInviteButtonPush)
-        [self clicButton:sender type:ParametreNotificationTypeInvitation mode:ParametreNotificationModePush];
+    if(sender == self.notifInviteButtonPush) {
+        if(!sender.selected)
+            pushTried = YES;
+        
+        if(pushAuthorized)
+            [self clicButton:sender type:ParametreNotificationTypeInvitation mode:ParametreNotificationModePush];
+    }
     else if(sender == self.notifInviteButtonEmail)
         [self clicButton:sender type:ParametreNotificationTypeInvitation mode:ParametreNotificationModeEmail];
     
     // Notification Photo
-    else if(sender == self.notifPhotoButtonPush)
-        [self clicButton:sender type:ParametreNotificationTypeNewPhoto mode:ParametreNotificationModePush];
+    else if(sender == self.notifPhotoButtonPush) {
+        if(!sender.selected)
+            pushTried = YES;
+        
+        if(pushAuthorized)
+            [self clicButton:sender type:ParametreNotificationTypeNewPhoto mode:ParametreNotificationModePush];
+    }
     else if(sender == self.notifPhotoButtonEmail)
         [self clicButton:sender type:ParametreNotificationTypeNewPhoto mode:ParametreNotificationModeEmail];
     
     // Notification Message
-    else if(sender == self.notifMessageButtonPush)
-        [self clicButton:sender type:ParametreNotificationTypeNewChat mode:ParametreNotificationModePush];
+    else if(sender == self.notifMessageButtonPush) {
+        if(!sender.selected)
+            pushTried = YES;
+        
+        if(pushAuthorized)
+            [self clicButton:sender type:ParametreNotificationTypeNewChat mode:ParametreNotificationModePush];
+    }
     else if(sender == self.notifMessageButtonEmail)
         [self clicButton:sender type:ParametreNotificationTypeNewChat mode:ParametreNotificationModeEmail];
     
     // Notification Message
-    else if(sender == self.notifModifButtonPush)
-        [self clicButton:sender type:ParametreNotificationTypeModification mode:ParametreNotificationModePush];
+    else if(sender == self.notifModifButtonPush) {
+        if(!sender.selected)
+            pushTried = YES;
+        
+        if(pushAuthorized)
+            [self clicButton:sender type:ParametreNotificationTypeModification mode:ParametreNotificationModePush];
+    }
     else if(sender == self.notifModifButtonEmail)
         [self clicButton:sender type:ParametreNotificationTypeModification mode:ParametreNotificationModeEmail];
+    
+    // Si push désactivé
+    if(!pushAuthorized && pushTried) {
+        [[PushNotificationManager sharedInstance] pushNotificationDisabledAlertView];
+    }
 }
 
 ///////////////////////////////////////////

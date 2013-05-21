@@ -11,11 +11,13 @@
 #import "UserCoreData.h"
 
 // Protocol
+@class RootOngletsViewController;
 @protocol TimeLineDelegate <NSObject>
 
 @property NSInteger selectedIndex;
 @property CGSize size;
 @property (nonatomic, weak) UINavigationController *navController;
+@property (nonatomic, strong) RootOngletsViewController *rootOngletsViewController;
 
 // Update TimeLine
 - (void)updateSelectedMoment:(MomentClass*)moment atRow:(NSInteger)row;

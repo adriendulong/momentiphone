@@ -18,6 +18,8 @@
 + (PushNotificationManager*)sharedInstance;
 
 // Push Notifications
+- (BOOL)pushNotificationEnabled;
+- (void)pushNotificationDisabledAlertView;
 - (void)saveDeviceToken:(NSData*)deviceToken;
 - (void)receivePushNotification:(NSDictionary*)attributes updateUI:(BOOL)updateUI;
 - (void)failToReceiveNotification:(NSError*)error;

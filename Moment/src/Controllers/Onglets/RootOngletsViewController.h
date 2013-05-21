@@ -41,8 +41,9 @@ enum OngletRank {
 @property (nonatomic, weak) IBOutlet UIScrollView *scrollView;
 @property (nonatomic) BOOL shouldShowInviteViewController;
 
-- (id)initWithMoment:(MomentClass*)moment withOnglet:(enum OngletRank)onglet;
-        //withTimeLine:(UIViewController <TimeLineDelegate>*)timeLine;
+- (id)initWithMoment:(MomentClass*)moment
+          withOnglet:(enum OngletRank)onglet
+        withTimeLine:(UIViewController <TimeLineDelegate>*)timeLine;
 
 - (void)addAndScrollToOnglet:(enum OngletRank)onglet;
 

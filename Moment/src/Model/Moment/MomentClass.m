@@ -37,11 +37,16 @@
 
 - (void)setupWithAttributes:(NSDictionary*)attributes
 {
-    self.momentId = attributes[@"momentId"];
-    self.titre = attributes[@"titre"];
-    self.dateDebut = attributes[@"dateDebut"];
-    self.dateFin = attributes[@"dateFin"];
-    self.isSponso = attributes[@"isSponso"];
+    if(attributes[@"momentId"])
+        self.momentId = attributes[@"momentId"];
+    if(attributes[@"titre"])
+        self.titre = attributes[@"titre"];
+    if(attributes[@"dateDebut"])
+        self.dateDebut = attributes[@"dateDebut"];
+    if(attributes[@"dateFin"])
+        self.dateFin = attributes[@"dateFin"];
+    if(attributes[@"isSponso"])
+        self.isSponso = attributes[@"isSponso"];
     
     /*
      if(attributes[@"facebookId"])

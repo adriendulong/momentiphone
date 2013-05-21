@@ -9,6 +9,9 @@
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
+// Activer Hashtag dans l'application
+//#define HASHTAG_ENABLE
+
 // NSNotificationCenter
 #define kNotificationNewChat @"NotificationNewChat"
 #define kNotificationNewPhoto @"NotificationNewPhoto"

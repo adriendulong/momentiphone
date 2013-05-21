@@ -392,7 +392,7 @@
                      withVelocity:(CGPoint)velocity
               targetContentOffset:(inout CGPoint *)targetContentOffset
 {
-    
+    // Si ce n'est pas la scroll view principale mais une des scroll view des photos
     if(scrollView.tag != TABLEVIEW_SCROLLVIEW_TAG_IDENTIFER)
     {
         // Force à s'arreter sur une photo
@@ -409,7 +409,10 @@
 {
     // Si une nouvelle cellule a été selectionnée
     if( (!self.ongletsViewController) || (self.ongletsViewController.moment != moment) ) {
-        self.ongletsViewController = [[RootOngletsViewController alloc] initWithMoment:moment withOnglet:onglet];
+        self.ongletsViewController = [[RootOngletsViewController alloc]
+                                      initWithMoment:moment
+                                      withOnglet:onglet
+                                      withTimeLine:self.rootViewController.privateTimeLine];
     }
     else
         [self.ongletsViewController addAndScrollToOnglet:onglet];

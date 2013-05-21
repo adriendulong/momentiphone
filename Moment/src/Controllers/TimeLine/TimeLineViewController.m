@@ -633,7 +633,10 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
 {
     // Si une nouvelle cellule a été selectionnée
     if( (!self.rootOngletsViewController) || (self.rootOngletsViewController.moment != moment) ) {
-        self.rootOngletsViewController = [[RootOngletsViewController alloc] initWithMoment:moment withOnglet:onglet];
+        self.rootOngletsViewController = [[RootOngletsViewController alloc]
+                                          initWithMoment:moment
+                                          withOnglet:onglet
+                                          withTimeLine:self];
     }
     else
         [self.rootOngletsViewController addAndScrollToOnglet:onglet];

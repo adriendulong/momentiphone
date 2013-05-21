@@ -12,6 +12,7 @@
 #import "UILabel+BottomAlign.h"
 #import "UserClass+Server.h"
 #import <FacebookSDK/FacebookSDK.h>
+#import "MomentClass+Server.h"
 
 #define headerSize 100 
 
@@ -439,7 +440,7 @@ enum InviteAddFontSize {
         MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
         hud.labelText = NSLocalizedString(@"MBProgressHUD_Loading", nil);
         
-        [UserClass inviteNewGuest:self.selectedFriends toMoment:self.moment withEnded:^(BOOL success) {
+        [self.moment inviteNewGuest:self.selectedFriends withEnded:^(BOOL success) {
             
             [MBProgressHUD hideHUDForView:self.view animated:YES];
             

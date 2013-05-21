@@ -59,6 +59,13 @@
     frame.origin.x = (self.view.frame.size.width - frame.size.width)/2.0;
     self.generalView.frame = frame;
     [self.view addSubview:self.generalView];
+    
+    // Labels
+    UIFont *font = [[Config sharedInstance] defaultFontWithSize:10];
+    self.privacyTitleLabel.font = font;
+    self.privacyDetailsLabel.font = font;
+    self.privacyTitleLabel.text = NSLocalizedString(@"PopUpFunCreationViewController_Privacy_Public_Title", nil);
+    self.privacyDetailsLabel.text = NSLocalizedString(@"PopUpFunCreationViewController_Privacy_Public_Details", nil);
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -106,6 +113,8 @@
     [self setPublicButton:nil];
     [self setFriendsButton:nil];
     [self setPrivateButton:nil];
+    [self setPrivacyTitleLabel:nil];
+    [self setPrivacyDetailsLabel:nil];
     [super viewDidUnload];
 }
 
@@ -170,6 +179,8 @@
             self.moment.privacy = @(MomentPrivacyOpen);
             self.publicButton.selected = YES;
             self.friendsButton.selected = self.privateButton.selected = NO;
+            self.privacyTitleLabel.text = NSLocalizedString(@"PopUpFunCreationViewController_Privacy_Open_Title", nil);
+            self.privacyDetailsLabel.text = NSLocalizedString(@"PopUpFunCreationViewController_Privacy_Open_Details", nil);
         }
         // Privacy Public
         else if(sender == self.friendsButton)
@@ -177,6 +188,8 @@
             self.moment.privacy = @(MomentPrivacyPublic);
             self.friendsButton.selected = YES;
             self.publicButton.selected = self.privateButton.selected = NO;
+            self.privacyTitleLabel.text = NSLocalizedString(@"PopUpFunCreationViewController_Privacy_Public_Title", nil);
+            self.privacyDetailsLabel.text = NSLocalizedString(@"PopUpFunCreationViewController_Privacy_Public_Details", nil);
         }
         // Privacy Private
         else
@@ -184,6 +197,8 @@
             self.moment.privacy = @(MomentPrivacyPrivate);
             self.privateButton.selected = YES;
             self.publicButton.selected = self.friendsButton.selected = NO;
+            self.privacyTitleLabel.text = NSLocalizedString(@"PopUpFunCreationViewController_Privacy_Private_Title", nil);
+            self.privacyDetailsLabel.text = NSLocalizedString(@"PopUpFunCreationViewController_Privacy_Private_Details", nil);
         }
     }
 }

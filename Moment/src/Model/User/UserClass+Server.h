@@ -28,13 +28,11 @@
 // Lost Password
 + (void)requestNewPasswordAtEmail:(NSString*)email withEnded:(void (^) (BOOL success))block;
 
-// Invites
-+ (void)inviteNewGuest:(NSArray*)users toMoment:(MomentClass*)moment withEnded:( void (^) (BOOL success) )block;
-+ (void)getInvitedUsersToMoment:(MomentClass*)moment
-         withAdminEncapsulation:(BOOL)adminEncapsulation
-                      withEnded:( void (^) (NSDictionary* invites) )block;
-+ (void)getInvitedUsersToMoment:(MomentClass*)moment withEnded:( void (^) (NSDictionary* invites) )block;
-+ (void)getFavorisUsersWithEnded:( void (^) (NSArray* favoris) )block;
+// Favoris
++ (void)getFavorisUsersWithEnded:(void (^) (NSArray* favoris) )block;
+
+// Follow Public Moment
+- (void)followPublicMoment:(MomentClass*)moment withEnded:( void (^) (BOOL success) )block;
 
 // Users on moment
 + (void)getUsersWhoAreOnMoment:(NSArray *)users withEnded:(void (^) (NSArray *usersOnMoment))block;

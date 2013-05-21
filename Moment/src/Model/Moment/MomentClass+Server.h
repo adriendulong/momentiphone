@@ -63,4 +63,10 @@
 // Suppression
 - (void)deleteWithEnded:(void (^) (BOOL success))block;
 
+// Invités
+- (void)inviteNewGuest:(NSArray*)users withEnded:( void (^) (BOOL success) )block;
+- (void)getInvitedUsersWithAdminEncapsulation:(BOOL)adminEncapsulation
+                                    withEnded:( void (^) (NSDictionary* invites) )block;
+- (void)getInvitedUsersWithEnded:( void (^) (NSDictionary* invites) )block;
+
 @end

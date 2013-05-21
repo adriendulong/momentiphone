@@ -638,7 +638,7 @@ withDelegate:(PhotoViewController*)photoViewController
     // Paramètres
     Photos *photo = self.photos[self.selectedIndex];
     UIImage *image = photo.imageOriginal;
-    NSString *initialText = [NSString stringWithFormat:@"Bon Moment @[%@] !\n", self.moment.titre];
+    NSString *initialText = [NSString stringWithFormat:@"Bon Moment @%@ !\n", self.moment.titre];
     NSURL *url = [NSURL URLWithString:photo.urlOriginal];
     
     // iOS 6 -> Social Framework
@@ -650,7 +650,8 @@ withDelegate:(PhotoViewController*)photoViewController
         [fbSheet addImage:image];
         [fbSheet addURL:url];
         
-        [self presentViewController:fbSheet animated:YES completion:nil];
+        //[self presentViewController:fbSheet animated:YES completion:nil];
+        [[VersionControl sharedInstance] presentModalViewController:fbSheet fromRoot:self animated:YES];
     }
     // iOS 5
     else
@@ -676,7 +677,8 @@ withDelegate:(PhotoViewController*)photoViewController
         [facebookViewComposer addImage:image];
         [facebookViewComposer addURL:url];
         //facebookViewComposer.completionHandler = completionHandler;
-        [self presentViewController:facebookViewComposer animated:YES completion:nil];
+        //[self presentViewController:facebookViewComposer animated:YES completion:nil];
+        [[VersionControl sharedInstance] presentModalViewController:facebookViewComposer fromRoot:self animated:YES];
     }
     
 }
@@ -686,7 +688,7 @@ withDelegate:(PhotoViewController*)photoViewController
     // Paramètres
     Photos *photo = self.photos[self.selectedIndex];
     UIImage *image = photo.imageOriginal;
-    NSMutableString *initialText = [NSMutableString stringWithFormat:@"Bon Moment @[%@] !", self.moment.titre];
+    NSMutableString *initialText = [NSMutableString stringWithFormat:@"Bon Moment @%@ !", self.moment.titre];
     if(self.moment.hashtag)
         [initialText appendFormat:@" #%@\n", self.moment.hashtag];
     else
@@ -702,7 +704,8 @@ withDelegate:(PhotoViewController*)photoViewController
         [tweetSheet addImage:image];
         [tweetSheet addURL:url];
         
-        [self presentViewController:tweetSheet animated:YES completion:nil];
+        //[self presentViewController:tweetSheet animated:YES completion:nil];
+        [[VersionControl sharedInstance] presentModalViewController:tweetSheet fromRoot:self animated:YES];
     }
     // iOS 5 -> Twitter Framework
     else
@@ -713,7 +716,8 @@ withDelegate:(PhotoViewController*)photoViewController
         [twitterViewComposer addImage:image];
         [twitterViewComposer addURL:url];
         
-        [self presentViewController:twitterViewComposer animated:YES completion:nil];
+        //[self presentViewController:twitterViewComposer animated:YES completion:nil];
+        [[VersionControl sharedInstance] presentModalViewController:twitterViewComposer fromRoot:self animated:YES];
     }
     
 }
@@ -862,7 +866,6 @@ withDelegate:(PhotoViewController*)photoViewController
 }
 
 - (void)showFullScreen {
-    NSLog(@"pop");
     
     //RotationNavigationControllerViewController *nav = [[RotationNavigationControllerViewController alloc] initWithRootViewController:self.fullScreenViewController];
     //[[[UIApplication sharedApplication] keyWindow] addSubview:nav.view];

@@ -24,6 +24,10 @@
 
 #import "Cagnotte1ViewController.h"
 
+#import "DEFacebookComposeViewController.h"
+#import <Twitter/Twitter.h>
+#import <Social/Social.h>
+
 // Font Sizes
 enum InfoMomentFontSize {
     InfoMomentFontSizeBig = 18,
@@ -404,13 +408,18 @@ static CGFloat DescriptionBoxHeightMax = 100;
     
     // Owner Description
     self.ownerNameLabel.text = [NSString stringWithFormat:@"par %@ %@", self.moment.owner.prenom?:@"", self.moment.owner.nom?:@""];
+    
+#ifdef HASHTAG_ENABLE
     if(self.moment.hashtag)
         self.hashtagLabel.text = [NSString stringWithFormat:@"#%@", self.moment.hashtag ];
     else {
         self.hashtagLabel.hidden = YES;
         // Déplacer titre
     }
-        
+#else
+    self.hashtagLabel.hidden = YES;
+#endif
+    
 }
 
 - (void)clicProfile {
@@ -1041,8 +1050,8 @@ static CGFloat DescriptionBoxHeightMax = 100;
         self.infoLieuLabel.text = self.moment.infoLieu;
         
         // Sparateur
-        InfoMomentSeparateurView *separator = [[InfoMomentSeparateurView alloc] initAtPosition:(59 + 5)];
-        [self.infoLieuLabel addSubview:separator];
+        InfoMomentSeparateurView *separator = [[InfoMomentSeparateurView alloc] initAtPosition:(63)];
+        [self.infoLieuView addSubview:separator];
         
         CGRect frame = self.infoLieuView.frame;
         frame.size.height = separator.frame.origin.y + separator.frame.size.height + 5;
@@ -1055,6 +1064,14 @@ static CGFloat DescriptionBoxHeightMax = 100;
 
 - (void) initCagnotteView
 {
+     // Sparateur
+     InfoMomentSeparateurView *separator = [[InfoMomentSeparateurView alloc] initAtPosition:(121)];
+     [self.cagnotteView addSubview:separator];
+     
+     CGRect frame = self.cagnotteView.frame;
+     frame.size.height = separator.frame.origin.y + separator.frame.size.height + 5;
+     self.cagnotteView.frame = frame;
+    
     if(firstLoad) {
         UIFont *font = [[Config sharedInstance] defaultFontWithSize:10];
         for( UILabel *label in self.comingSoonCagnotteLabels) {
@@ -1070,6 +1087,21 @@ static CGFloat DescriptionBoxHeightMax = 100;
     }
 }
 
+- (void) initPartageView
+{
+    /*
+    // Sparateur
+    InfoMomentSeparateurView *separator = [[InfoMomentSeparateurView alloc] initAtPosition:(59 + 5)];
+    [self.partageView addSubview:separator];
+    
+    CGRect frame = self.partageView.frame;
+    frame.size.height = separator.frame.origin.y + separator.frame.size.height + 5;
+    self.partageView.frame = frame;
+     */
+    
+    if(firstLoad)
+        [self addSubviewAtAutomaticPosition:self.partageView];
+}
 
 #pragma mark - View lifecycle
 
@@ -1103,6 +1135,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
     [self initInfoLieuView];
     [self initTopImageView];
     [self initCagnotteView];
+    [self initPartageView];
 
     /***********************************************
      *              Parallax View                  *
@@ -1221,6 +1254,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
             [self initInfoLieuView];
             [self initTopImageView];
             [self initCagnotteView];
+            [self initPartageView];
         }
     }];
 }
@@ -1373,6 +1407,137 @@ static CGFloat DescriptionBoxHeightMax = 100;
     NSLog(@"pop");
 }
 
+- (IBAction)clicShareMail {
+    NSLog(@"Mail");
+    
+    if([MFMailComposeViewController canSendMail])
+    {
+        
+        // Email Subject
+        NSString *emailTitle = @"Moment";
+        // Email Content
+        NSMutableString *messageBody = [NSMutableString stringWithFormat:@"Bon Moment @%@ !", self.moment.titre];
+        
+#ifdef HASHTAG_ENABLE
+        if(self.moment.hashtag)
+            [messageBody appendFormat:@" #%@\n", self.moment.hashtag];
+        else
+            [messageBody appendString:@"\n"];
+#else
+        [messageBody appendString:@"\n"];
+#endif
+        
+        MFMailComposeViewController *mc = [[MFMailComposeViewController alloc] init];
+        mc.mailComposeDelegate = self;
+        [mc setSubject:emailTitle];
+        [mc setMessageBody:messageBody isHTML:YES];
+        
+        // Present mail view controller on screen
+        [[VersionControl sharedInstance] presentModalViewController:mc fromRoot:self.rootViewController animated:YES];
+    }
+    else
+    {
+        NSLog(@"mail composer fail");
+        
+        [[[UIAlertView alloc] initWithTitle:@"Envoi impossible"
+                                    message:@"Votre appareil ne supporte pas l'envoi d'email"
+                                   delegate:nil
+                          cancelButtonTitle:@"OK"
+                          otherButtonTitles:nil]
+         show];
+    }
+    
+}
+
+- (IBAction)clicShareLink {
+    NSLog(@"Link");
+}
+
+- (IBAction)clicShareFacebook {
+    NSLog(@"Facebook");
+    
+    // Paramètres
+    NSString *initialText = [NSString stringWithFormat:@"Bon Moment @%@ !\n", self.moment.titre];
+    
+    // iOS 6 -> Social Framework
+    if ( (NSClassFromString(@"SLComposeViewController") != nil) && [SLComposeViewController isAvailableForServiceType:SLServiceTypeFacebook])
+    {
+        SLComposeViewController *fbSheet = [SLComposeViewController
+                                            composeViewControllerForServiceType:SLServiceTypeFacebook];
+        [fbSheet setInitialText:initialText];
+        
+        //[self presentViewController:fbSheet animated:YES completion:nil];
+        [[VersionControl sharedInstance] presentModalViewController:fbSheet fromRoot:self animated:YES];
+    }
+    // iOS 5
+    else
+    {
+        /*
+         DEFacebookComposeViewControllerCompletionHandler completionHandler = ^(DEFacebookComposeViewControllerResult result) {
+         switch (result) {
+         case DEFacebookComposeViewControllerResultCancelled:
+         NSLog(@"Facebook Result: Cancelled - iOS 5");
+         break;
+         case DEFacebookComposeViewControllerResultDone:
+         NSLog(@"Facebook Result: Sent - iOS 5");
+         break;
+         }
+         
+         [self dismissModalViewControllerAnimated:YES];
+         };
+         */
+        
+        DEFacebookComposeViewController *facebookViewComposer = [[DEFacebookComposeViewController alloc] init];
+        self.modalPresentationStyle = UIModalPresentationCurrentContext;
+        [facebookViewComposer setInitialText:initialText];
+        //facebookViewComposer.completionHandler = completionHandler;
+        //[self presentViewController:facebookViewComposer animated:YES completion:nil];
+        [[VersionControl sharedInstance] presentModalViewController:facebookViewComposer fromRoot:self animated:YES];
+    }
+    
+}
+
+- (IBAction)clicShareTwitter {
+    NSLog(@"Twitter");
+    
+    // Paramètres
+    NSMutableString *initialText = [NSMutableString stringWithFormat:@"Bon Moment @%@ !", self.moment.titre];
+#ifdef HASHTAG_ENABLE
+    if(self.moment.hashtag)
+        [initialText appendFormat:@" #%@\n", self.moment.hashtag];
+    else
+        [initialText appendString:@"\n"];
+#else
+    [initialText appendString:@"\n"];
+#endif
+    
+    // iOS 6 -> Social Framework
+    if( (NSClassFromString(@"SLComposeViewController") != nil) && [SLComposeViewController isAvailableForServiceType:SLServiceTypeTwitter])
+    {
+        SLComposeViewController *tweetSheet = [SLComposeViewController
+                                               composeViewControllerForServiceType:SLServiceTypeTwitter];
+        [tweetSheet setInitialText:initialText];
+        
+        //[self presentViewController:tweetSheet animated:YES completion:nil];
+        [[VersionControl sharedInstance] presentModalViewController:tweetSheet fromRoot:self animated:YES];
+    }
+    // iOS 5 -> Twitter Framework
+    else
+    {
+        TWTweetComposeViewController *twitterViewComposer = [[TWTweetComposeViewController alloc] init];
+        self.modalPresentationStyle = UIModalPresentationCurrentContext;
+        [twitterViewComposer setInitialText:initialText];
+        
+        //[self presentViewController:twitterViewComposer animated:YES completion:nil];
+        [[VersionControl sharedInstance] presentModalViewController:twitterViewComposer fromRoot:self animated:YES];
+    }
+    
+}
+
+- (IBAction)clicShareInstagram {
+    NSLog(@"Instagram");
+}
+
 #pragma mark - UIScrollView Delegate
 
 - (void) scrollViewDidScroll:(UIScrollView *)scrollView
@@ -1465,6 +1630,41 @@ static CGFloat DescriptionBoxHeightMax = 100;
     [nav pushViewController:cagnotte animated:YES];
 }
 
+
+#pragma mark - MFMailComposeViewControllerDelegate
+
+- (void) mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError *)error
+{
+    
+    switch (result)
+    {
+        case MFMailComposeResultCancelled:
+            NSLog(@"Mail cancelled");
+            break;
+        case MFMailComposeResultSaved:
+            NSLog(@"Mail saved");
+            break;
+        case MFMailComposeResultSent:
+            NSLog(@"Mail sent");
+            break;
+        case MFMailComposeResultFailed:
+            NSLog(@"Mail sent failure: %@", [error localizedDescription]);
+            
+            [[[UIAlertView alloc] initWithTitle:@"Erreur d'envoi"
+                                        message:[error localizedDescription]
+                                       delegate:nil
+                              cancelButtonTitle:@"OK"
+                              otherButtonTitles:nil]
+             show];
+            
+            break;
+        default:
+            break;
+    }
+    
+    // Close the Mail Interface
+    [[VersionControl sharedInstance] dismissModalViewControllerFromRoot:self.rootViewController animated:YES];
+}
 
 
 @end

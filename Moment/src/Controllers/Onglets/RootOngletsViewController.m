@@ -29,7 +29,9 @@
 @synthesize scrollView = _scrollView;
 
 
-- (id)initWithMoment:(MomentClass*)moment withOnglet:(enum OngletRank)onglet
+- (id)initWithMoment:(MomentClass*)moment
+          withOnglet:(enum OngletRank)onglet
+        withTimeLine:(UIViewController <TimeLineDelegate>*)timeLine;
 {
     self = [super initWithNibName:@"RootOngletsViewController" bundle:nil];
     if(self) {
@@ -55,7 +57,7 @@
         self.selectedOnglet = onglet;
         viewHeight = [[VersionControl sharedInstance] screenHeight] - TOPBAR_HEIGHT;
         self.shouldShowInviteViewController = NO;
-        //self.timeLine = timeLine;
+        self.timeLine = timeLine;
         
         // Update state (Unknown -> Maybe)
         if(self.moment.state.intValue == UserStateUnknown) {

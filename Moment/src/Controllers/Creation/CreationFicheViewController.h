@@ -56,11 +56,11 @@
 @property (nonatomic, strong) NSDateFormatter *dateFormatter;
 @property (nonatomic, strong) NSDate *dateDebut, *dateFin;
 
+
 /* ---- Step 2 ---- */
 @property (nonatomic, weak) IBOutlet TPKeyboardAvoidingScrollView *step1ScrollView;
 @property (nonatomic, weak) IBOutlet CustomLabel *ouLabel;
 @property (nonatomic, weak) IBOutlet CustomLabel *etape2Label;
-@property (nonatomic, weak) IBOutlet CustomTextField *adresseTextField;
 @property (nonatomic, weak) IBOutlet CustomTextField *infoLieuTextField;
 @property (nonatomic, weak) IBOutlet CustomTextField *hashtagTextField;
 @property (nonatomic, weak) IBOutlet CustomLabel *adresseLabel;
@@ -73,8 +73,17 @@
 @property (nonatomic) BOOL switchControlState;
 @property (nonatomic, weak) IBOutlet UIImageView *backgroundDescriptionView;
 @property (nonatomic, weak) IBOutlet CustomTextView *descriptionTextView;
+@property (weak, nonatomic) IBOutlet UIButton *adresseButton;
+@property (weak, nonatomic) IBOutlet UIButton *switchBackground;
 
-- (id)initWithUser:(UserClass*)user withEventName:(NSString*)eventName withTimeLine:(UIViewController <TimeLineDelegate> *)timeLine;
-- (id)initWithUser:(UserClass*)user withMoment:(MomentClass*)moment withTimeLine:(UIViewController <TimeLineDelegate> *)timeLine;
+
+
+- (id)initWithUser:(UserClass*)user
+     withEventName:(NSString*)eventName
+      withTimeLine:(UIViewController <TimeLineDelegate> *)timeLine;
+
+- (id)initWithUser:(UserClass*)user
+        withMoment:(MomentClass*)moment
+      withTimeLine:(UIViewController <TimeLineDelegate> *)timeLine;
 
 @end

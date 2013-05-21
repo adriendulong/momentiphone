@@ -89,6 +89,9 @@
 /* ---------------- PushNotifications ------------------ */
 // Chat
 "PushNotification_NewChat_AlertView_Title" = "Nouveau Message";
+// Push Notifications Désactivées AlertView
+"PushNotification_Disabled_AlertView_Title" = "Notifications Désactivées";
+"PushNotification_Disabled_AlertView_Message" = "Les notifications sont désactivées. Veuillez changer vos paramètres de notifications";
 
 /* ---------------- VoletViewController ------------------ */
 // Empty Cell
@@ -204,6 +207,17 @@
 // EmptyCell
 "FollowTableViewController_Follows_EmptyCellLabel" = "Aucun Follows";
 "FollowTableViewController_Followers_EmptyCellLabel" = "Aucun Followers";
+
+/* ------------ PopUpFunCreationViewController ---------- */
+// Privacy Open
+"PopUpFunCreationViewController_Privacy_Open_Title" = "Ouvert :";
+"PopUpFunCreationViewController_Privacy_Open_Details" = "Tout le monde peut voir ce moment";
+// Privacy Public
+"PopUpFunCreationViewController_Privacy_Public_Title" = "Public :";
+"PopUpFunCreationViewController_Privacy_Public_Details" = "Seuls vos amis peuvent voir ce moment";
+// Privacy Private
+"PopUpFunCreationViewController_Privacy_Private_Title" = "Privé :";
+"PopUpFunCreationViewController_Privacy_Private_Details" = "Seuls les invités peuvent voir ce moment";
 
 /* ---------------- Defautl AlertView ------------------ */
 "AlertView_Button_OK" = "OK";

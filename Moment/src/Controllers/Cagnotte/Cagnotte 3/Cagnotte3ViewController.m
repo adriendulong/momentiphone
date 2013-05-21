@@ -12,6 +12,7 @@
 #import "Cagnotte3TableViewCell.h"
 #import "UserClass+Server.h"
 #import "Cagnotte4ViewController.h"
+#import "MomentClass+Server.h"
 
 @interface Cagnotte3ViewController () {
     @private
@@ -198,7 +199,7 @@
     MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
     hud.labelText = NSLocalizedString(@"MBProgressHUD_Loading", nil);
 
-    [UserClass getInvitedUsersToMoment:self.parametres[@"moment"] withAdminEncapsulation:NO withEnded:^(NSDictionary *invites) {
+    [((MomentClass*)self.parametres[@"moment"]) getInvitedUsersWithAdminEncapsulation:NO withEnded:^(NSDictionary *invites) {
         
         if(invites) {
             

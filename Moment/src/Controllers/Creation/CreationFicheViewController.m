@@ -57,7 +57,6 @@
 @synthesize step1ScrollView = _step1ScrollView;
 @synthesize ouLabel = _ouLabel;
 @synthesize etape2Label = _etape2Label;
-@synthesize adresseTextField = _adresseTextField;
 @synthesize infoLieuTextField = _infoLieuTextField;
 @synthesize hashtagTextField = _hashtagTextField;
 @synthesize adresseLabel = _adresseLabel;
@@ -124,7 +123,7 @@
             [previousButton setEnabled:YES];
             
             // Second Button enable
-            if( (self.adresseTextField.text.length > 0) && (self.descriptionTextView.text.length > 0) ){
+            if( (self.adresseLabel.text.length > 0) && (self.descriptionTextView.text.length > 0) ){
                 secondButtonEnable = YES;
             }
 
@@ -239,47 +238,51 @@
 
 - (UIView*)setLabelText:(CustomLabel*)label text:(NSString*)texteLabel minFontSize:(NSInteger)minSize maxFontSize:(NSInteger)maxSize color:(UIColor*)color
 {
-    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:texteLabel];
-    
-    if( [[VersionControl sharedInstance] supportIOS6] )
+    if(texteLabel.length > 0)
     {
-        // Attributs du label
-        NSRange range = NSMakeRange(0, 1);
-        [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:maxSize] range:range];
-        range = NSMakeRange(1, [attributedString length]-1);
-        [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:minSize] range:range];
-        [attributedString setTextColor:color];
+        NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:texteLabel];
         
-        [label setAttributedText:attributedString];
-        
-        return label;
+        if( [[VersionControl sharedInstance] supportIOS6] )
+        {
+            // Attributs du label
+            NSRange range = NSMakeRange(0, 1);
+            [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:maxSize] range:range];
+            range = NSMakeRange(1, [attributedString length]-1);
+            [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:minSize] range:range];
+            [attributedString setTextColor:color];
+            
+            [label setAttributedText:attributedString];
+            
+            return label;
+        }
+        else
+        {
+            TTTAttributedLabel *tttLabel = [[TTTAttributedLabel alloc] initWithFrame:label.frame];
+            tttLabel.backgroundColor = [UIColor clearColor];
+            [tttLabel setText:texteLabel afterInheritingLabelAttributesAndConfiguringWithBlock:^NSMutableAttributedString *(NSMutableAttributedString *mutableAttributedString) {
+                
+                NSInteger taille = [texteLabel length];
+                Config *cf = [Config sharedInstance];
+                
+                // 1er Lettre Font
+                [cf updateTTTAttributedString:mutableAttributedString withFontSize:maxSize onRange:NSMakeRange(0, 1)];
+                
+                // Autres Lettres Font
+                [cf updateTTTAttributedString:mutableAttributedString withFontSize:minSize onRange:NSMakeRange(1, taille-1 )];
+                
+                // Couleurs
+                [cf updateTTTAttributedString:mutableAttributedString withColor:color onRange:NSMakeRange(0, taille)];
+                
+                return mutableAttributedString;
+            }];
+            
+            [label.superview addSubview:tttLabel];
+            label.hidden = YES;
+            
+            return tttLabel;
+        }
     }
-    else
-    {
-        TTTAttributedLabel *tttLabel = [[TTTAttributedLabel alloc] initWithFrame:label.frame];
-        tttLabel.backgroundColor = [UIColor clearColor];
-        [tttLabel setText:texteLabel afterInheritingLabelAttributesAndConfiguringWithBlock:^NSMutableAttributedString *(NSMutableAttributedString *mutableAttributedString) {
-            
-            NSInteger taille = [texteLabel length];
-            Config *cf = [Config sharedInstance];
-            
-            // 1er Lettre Font
-            [cf updateTTTAttributedString:mutableAttributedString withFontSize:maxSize onRange:NSMakeRange(0, 1)];
-            
-            // Autres Lettres Font
-            [cf updateTTTAttributedString:mutableAttributedString withFontSize:minSize onRange:NSMakeRange(1, taille-1 )];
-            
-            // Couleurs
-            [cf updateTTTAttributedString:mutableAttributedString withColor:color onRange:NSMakeRange(0, taille)];
-            
-            return mutableAttributedString;
-        }];
-        
-        [label.superview addSubview:tttLabel];
-        label.hidden = YES;
-        
-        return tttLabel;
-    }
+    return label;
 }
 
 - (void)designTitreLabel:(CustomLabel*)label
@@ -376,6 +379,8 @@
     
     [self setLabelText:self.startDateLabel text:self.startDateLabel.text minFontSize:minSize maxFontSize:maxSize color:color];
     [self setLabelText:self.endDateLabel text:self.endDateLabel.text minFontSize:minSize maxFontSize:maxSize color:color];
+    
+    self.changerCoverButton.titleLabel.font = [[Config sharedInstance] defaultFontWithSize:13];
 }
 
 - (void)initDatePicker
@@ -405,14 +410,17 @@
 {
     NSInteger maxSize = 15, minSize = 11;
     UIColor *textColor = [Config sharedInstance].textColor;
-    UIColor *orangeColor = [[Config sharedInstance] orangeColor];
     
     [self setLabelText:self.adresseLabel text:self.adresseLabel.text minFontSize:minSize maxFontSize:maxSize color:textColor];
     [self setLabelText:self.infoLieuLabel text:self.infoLieuLabel.text minFontSize:minSize maxFontSize:maxSize color:textColor];
     [self setLabelText:self.descriptionLabel text:self.descriptionLabel.text minFontSize:minSize maxFontSize:maxSize color:textColor];
     
+    self.adresseButton.titleLabel.font = [[Config sharedInstance] defaultFontWithSize:14];
     
     // HashTag Label
+#ifdef HASHTAG_ENABLE
+    UIColor *orangeColor = [[Config sharedInstance] orangeColor];
+    
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:self.hashtagLabel.text];
     NSInteger taille = [self.hashtagLabel.text length];
 
@@ -504,6 +512,12 @@
         self.infoHashtagLabel.hidden = YES;
         
     }
+#else
+    self.hashtagLabel.hidden = YES;
+    self.hashtagTextField.hidden = YES;
+    self.switchButton.hidden = YES;
+    self.switchBackground.hidden = YES;
+#endif
 
 }
 
@@ -526,7 +540,7 @@
         self.dateFin = self.moment.dateFin;
         self.startDateTextField.text = [self.dateFormatter stringFromDate:self.dateDebut];
         self.endDateTextField.text = [self.dateFormatter stringFromDate:self.dateFin];
-        self.adresseTextField.text = self.moment.adresse;
+        [self setAdresseText:self.moment.adresse];
         self.descriptionTextView.text = self.moment.descriptionString;
         self.coverImage = self.moment.uimage;
         [self.coverView setImage:self.coverImage imageString:self.moment.imageString withSaveBlock:^(UIImage *image) {
@@ -566,7 +580,7 @@
 - (BOOL)formIsValid
 {
     if( self.dateDebut && self.dateFin &&
-        (self.adresseTextField.text.length > 0) && (self.descriptionTextView.text.length > 0) )
+        (self.adresseLabel.text.length > 0) && (self.descriptionTextView.text.length > 0) )
     {
         return YES;
     }
@@ -641,7 +655,7 @@
         //NSLog(@"date envoyée :\ndate début = %@\ndate fin = %@", _dateDebut, _dateFin);
         
         NSMutableDictionary *attributes = @{
-        @"adresse":_adresseTextField.text,
+        @"adresse":_adresseLabel.text,
         @"titre":_nomEvent,
         @"dateDebut":_dateDebut,
         @"dateFin":_dateFin,
@@ -651,13 +665,17 @@
             attributes[@"infoLieu"] = _infoLieuTextField.text;
         if([_descriptionTextView.text length] > 0)
             attributes[@"descriptionString"] = _descriptionTextView.text;
+#ifdef HASHTAG_ENABLE
         if([_hashtagTextField.text length] > 0)
             attributes[@"hashtag"] = _hashtagTextField.text;
+#endif
         if(self.moment && self.moment.facebookId)
             attributes[@"facebbokId"] = self.moment.facebookId;
         if(_coverImage)
             attributes[@"dataImage"] = _coverImage;
         
+        // Mettre à jour Moment Local
+        [self.moment setupWithAttributes:attributes];
         
         MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
         hud.labelText = NSLocalizedString(@"MBProgressHUD_Loading", nil);
@@ -669,7 +687,8 @@
                 
                 if(success) {
                     [self.timeLineViewContoller reloadData];
-                    [self.timeLineViewContoller showInviteViewControllerWithMoment:self.moment];
+                    [self.timeLineViewContoller.rootOngletsViewController.infoMomentViewController reloadData];
+                    [self.navigationController popViewControllerAnimated:YES];
                 }
                 else{
                     [[[UIAlertView alloc] initWithTitle:@"Erreur"
@@ -787,15 +806,16 @@
     
     if(_currentStep == 2)
     {
-        if (textField == _adresseTextField) {
-            [_infoLieuTextField becomeFirstResponder];
-        }
-        else if(textField == _infoLieuTextField) {
+#ifdef HASHTAG_ENABLE
+        if(textField == _infoLieuTextField) {
             [_hashtagTextField becomeFirstResponder];
         }
         else {
             [textField resignFirstResponder];
         }
+#else
+        [textField resignFirstResponder];
+#endif
         
         return YES;
     }
@@ -841,12 +861,6 @@
         
         [self setNavBarSecondButtonEnable:NO];
         
-    }
-    
-    if( textField == self.adresseTextField ) {
-        [self setNavBarSecondButtonEnable:NO];
-        adresseTextFieldShouldClear = YES;
-        self.adresseText = nil;
     }
     
     return YES;
@@ -902,21 +916,6 @@
             [_step1ScrollView adjustOffsetToIdealIfNeeded];
         
     }
-    else if(textField == self.adresseTextField) {
-        
-        // Cliquer sur le bouton clear n'affiche pas le PlacesViewController
-        if(adresseTextFieldShouldClear) {
-            adresseTextFieldShouldClear = NO;
-            [textField resignFirstResponder];
-        }
-        else {
-            // Google Places
-            PlacesViewController *places = [[PlacesViewController alloc] initWithDelegate:self];
-            [self.adresseTextField resignFirstResponder];
-            [self.navigationController pushViewController:places animated:YES];
-        }
-        
-    }
     else {
         [_step2ScrollView adjustOffsetToIdealIfNeeded];
     }
@@ -926,7 +925,7 @@
 {
     if(_currentStep == 2) {
         
-        if( (self.adresseTextField.text.length > 0) && (self.descriptionTextView.text.length > 0) ) {
+        if( (self.adresseLabel.text.length > 0) && (self.descriptionTextView.text.length > 0) ) {
             [self setNavBarSecondButtonEnable:YES];
         }
         else {
@@ -948,21 +947,7 @@
 {    
     if(_currentStep == 1)
         return NO;
-    
-    // Check if textField empty
-    if( textField == self.adresseTextField ) {
-        /*
-        NSRange textFieldRange = NSMakeRange(0, [textField.text length]);
-        if (NSEqualRanges(range, textFieldRange) && [string length] == 0) {
-            [self setNavBarSecondButtonEnable:NO];
-        }
-        else if(textField.text.length > 0) {
-            [self setNavBarSecondButtonEnable:YES];
-        }
-         */
-        return NO;
-    }
-        
+            
     return YES;
 }
 
@@ -978,7 +963,7 @@
         if (NSEqualRanges(range, textFieldRange) && [text length] == 0) {
             [self setNavBarSecondButtonEnable:NO];
         }
-        else if(textView.text.length > 0 && self.adresseTextField.text.length > 0) {
+        else if(textView.text.length > 0 && self.adresseLabel.text.length > 0) {
                 [self setNavBarSecondButtonEnable:YES];
         }
     }
@@ -1035,7 +1020,11 @@
 
 - (void)setAdresseText:(NSString *)adresseText {
     _adresseText = adresseText;
-    self.adresseTextField.text = adresseText;
+    
+    NSInteger maxSize = 15, minSize = 11;
+    UIColor *textColor = [Config sharedInstance].textColor;
+    
+    [self setLabelText:self.adresseLabel text:adresseText minFontSize:minSize maxFontSize:maxSize color:textColor];
     
     // Activer bouton si champs obligatoires remplis
     if(_currentStep == 2 && adresseText.length > 0 && self.descriptionTextView.text.length > 0) {
@@ -1043,4 +1032,19 @@
     }
 }
 
+#pragma mark - Actions
+
+- (IBAction)clicPlaces {
+    
+    // Google Places
+    PlacesViewController *places = [[PlacesViewController alloc] initWithDelegate:self];
+    [self.navigationController pushViewController:places animated:YES];
+    
+}
+
+- (void)viewDidUnload {
+    [self setAdresseButton:nil];
+    [self setSwitchBackground:nil];
+    [super viewDidUnload];
+}
 @end

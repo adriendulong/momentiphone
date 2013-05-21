@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "CustomUIImageView.h"
+#include "VoletSearchViewController.h"
 
 @interface VoletSearchCellMoment : UITableViewCell
 
@@ -15,7 +16,9 @@
 
 @property (nonatomic, weak) IBOutlet CustomUIImageView *pictureView;
 @property (nonatomic, weak) IBOutlet UILabel *nomLabel;
+@property (weak, nonatomic) IBOutlet UIButton *followButton;
 
-- (id)initWithMoment:(MomentClass*)moment reuseIdentifier:(NSString*)reuseIdentifier;
+- (id)initWithMoment:(MomentClass*)moment
+     reuseIdentifier:(NSString*)reuseIdentifier;
 
 @end

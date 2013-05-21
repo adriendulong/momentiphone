@@ -45,6 +45,20 @@ static PushNotificationManager *sharedInstance = nil;
 
 #pragma mark - Push Notification
 
+- (BOOL)pushNotificationEnabled {
+    return [[UIApplication sharedApplication] enabledRemoteNotificationTypes] & UIRemoteNotificationTypeAlert;
+}
+
+- (void)pushNotificationDisabledAlertView {
+    [[[UIAlertView alloc]
+      initWithTitle:NSLocalizedString(@"PushNotification_Disabled_AlertView_Title", nil)
+      message:NSLocalizedString(@"PushNotification_Disabled_AlertView_Message", nil)
+      delegate:nil
+      cancelButtonTitle:NSLocalizedString(@"AlertView_Button_OK", nil)
+      otherButtonTitles:nil]
+     show];
+}
+
 - (void)saveDeviceToken:(NSData*)deviceToken {
     NSString *stringFormat = [[deviceToken description] stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"<>"]];
     stringFormat = [stringFormat stringByReplacingOccurrencesOfString:@" " withString:@""];

@@ -10,6 +10,7 @@
 #import "MomentClass+Mapping.h"
 #import "AFMomentAPIClient.h"
 #import "FacebookManager.h"
+#import "UserClass+Mapping.h"
 
 @implementation MomentClass (Server)
 
@@ -823,6 +824,123 @@
     }];
     
 }
-                            
+
+#pragma mark - Invites
+
+- (void)inviteNewGuest:(NSArray*)users withEnded:( void (^) (BOOL success) )block
+{
+    NSString *path = [NSString stringWithFormat:@"newguests/%d", self.momentId.intValue];
+    
+    // Mapping
+    NSMutableArray *params = [[NSMutableArray alloc] initWithCapacity:[users count]];
+    for( UserClass *u in users) {
+        [params addObject:[u mappingToWeb]];
+    }
+    
+    [[AFMomentAPIClient sharedClient] postPath:path parameters:@{@"users":params} encoding:AFJSONParameterEncoding success:^(AFHTTPRequestOperation *operation, id JSON) {
+        
+        if(block)
+            block(YES);
+        
+        
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        
+        HTTP_ERROR(operation, error);
+        
+        if(block)
+            block(NO);
+    }];
+}
+
+// --- Local Conversions ----
+
+// Englobe sous la forme @{@"user":user, @"isAdmin":@(isAdmin)}
++ (NSMutableDictionary*)englobeUserWithAdminAttributeFromWeb:(NSDictionary*)userAttriubtes admin:(BOOL)isAdmin
+{
+    NSMutableDictionary *dico = [[NSMutableDictionary alloc] initWithCapacity:2];
+    dico[@"user"] = [[UserClass alloc] initWithAttributesFromWeb:userAttriubtes];
+    dico[@"isAdmin"] = @(isAdmin);
+    return dico;
+}
+
+// Array avec la forme d'au dessus
++ (NSArray*)englobeUserArrayWithAdminAttributesFromWeb:(NSArray*)users admin:(BOOL)isAdmin
+{
+    NSMutableArray *final = [[NSMutableArray alloc] initWithCapacity:[users count]];
+    for( NSDictionary* user in users ) {
+        NSMutableDictionary *newUser = [MomentClass englobeUserWithAdminAttributeFromWeb:user admin:isAdmin];
+        [final addObject:newUser];
+    }
+    return final;
+}
+
+- (void)getInvitedUsersWithAdminEncapsulation:(BOOL)adminEncapsulation
+                      withEnded:( void (^) (NSDictionary* invites) )block
+{
+    NSString *path = [NSString stringWithFormat:@"guests/%d", self.momentId.intValue];
+    
+    [[AFMomentAPIClient sharedClient] getPath:path parameters:nil encoding:AFFormURLParameterEncoding
+                                      success:^(AFHTTPRequestOperation *operation, id JSON) {
+                                          
+                                          if(block) {
+                                              NSArray *ownerArray = (NSArray*)JSON[@"owner"];
+                                              id owner = nil;
+                                              if([ownerArray count] > 0) {
+                                                  owner = ownerArray[0];
+                                              }
+                                              NSArray *maybe = (NSArray*)JSON[@"maybe"];
+                                              NSArray *coming = (NSArray*)JSON[@"coming"];
+                                              NSArray *not_coming = (NSArray*)JSON[@"not_coming"];
+                                              NSArray *unknown = (NSArray*)JSON[@"unknown"];
+                                              NSArray *admin = (NSArray*)JSON[@"admin"];
+                                              
+                                              if(adminEncapsulation)
+                                              {
+                                                  // Update Admins As Admin
+                                                  admin = [MomentClass englobeUserArrayWithAdminAttributesFromWeb:admin admin:YES];
+                                                  if(owner)
+                                                      owner = [MomentClass englobeUserWithAdminAttributeFromWeb:owner admin:YES];
+                                                  
+                                                  // Convert non admins
+                                                  maybe = [MomentClass englobeUserArrayWithAdminAttributesFromWeb:maybe admin:NO];
+                                                  coming = [MomentClass englobeUserArrayWithAdminAttributesFromWeb:coming admin:NO];
+                                                  not_coming = [MomentClass englobeUserArrayWithAdminAttributesFromWeb:not_coming admin:NO];
+                                                  unknown = [MomentClass englobeUserArrayWithAdminAttributesFromWeb:unknown admin:NO];
+                                              }
+                                              else {
+                                                  admin = [UserClass arrayOfUsersWithArrayOfAttributesFromWeb:admin];
+                                                  if(owner)
+                                                      owner = [[UserClass alloc] initWithAttributesFromWeb:owner];
+                                                  maybe = [UserClass arrayOfUsersWithArrayOfAttributesFromWeb:maybe];
+                                                  coming = [UserClass arrayOfUsersWithArrayOfAttributesFromWeb:coming];
+                                                  not_coming = [UserClass arrayOfUsersWithArrayOfAttributesFromWeb:not_coming];
+                                                  unknown = [UserClass arrayOfUsersWithArrayOfAttributesFromWeb:unknown];
+                                              }
+                                              
+                                              NSMutableDictionary *dico = [[NSMutableDictionary alloc] init];
+                                              if(owner) dico[@"owner"] = owner;
+                                              if(maybe) dico[@"maybe"] = maybe;
+                                              if(coming) dico[@"coming"] = coming;
+                                              if(not_coming) dico[@"not_coming"] = not_coming;
+                                              if(unknown) dico[@"unknown"] = unknown;
+                                              if(admin) dico[@"admin"] = admin;
+                                              
+                                              block(dico);
+                                          }
+                                          
+                                      } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                          
+                                          HTTP_ERROR(operation, error);
+                                          
+                                          if(block)
+                                              block(nil);
+                                          
+                                      }];
+}
+
+- (void)getInvitedUsersWithEnded:( void (^) (NSDictionary* invites) )block {
+    [self getInvitedUsersWithAdminEncapsulation:YES withEnded:block];
+}
+
 
 @end

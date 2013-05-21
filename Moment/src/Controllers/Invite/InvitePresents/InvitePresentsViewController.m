@@ -78,7 +78,7 @@
     MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
     hud.labelText = NSLocalizedString(@"MBProgressHUD_Loading", nil);
     
-    [UserClass getInvitedUsersToMoment:self.moment withEnded:^(NSDictionary *invites) {
+    [self.moment getInvitedUsersWithEnded:^(NSDictionary *invites) {
         
         if(invites) {
             self.invites = invites;
