@@ -762,6 +762,10 @@
 		5BFDBFDC16BB0CB600857FA3 /* TextFieldAutocompletionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BFDBFDB16BB0CB600857FA3 /* TextFieldAutocompletionManager.m */; };
 		6E3C71E81737B4BF009B841E /* TutorialViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E3C71E61737B4BF009B841E /* TutorialViewController.m */; };
 		6E3C71E91737B4BF009B841E /* TutorialViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6E3C71E71737B4BF009B841E /* TutorialViewController.xib */; };
+		6E415D61174E255700CF0C33 /* tuto_overlay.png in Resources */ = {isa = PBXBuildFile; fileRef = 6E415D5D174E255700CF0C33 /* tuto_overlay.png */; };
+		6E415D62174E255700CF0C33 /* tuto_overlay@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6E415D5E174E255700CF0C33 /* tuto_overlay@2x.png */; };
+		6E415D63174E255700CF0C33 /* tuto_overlay_iphone4.png in Resources */ = {isa = PBXBuildFile; fileRef = 6E415D5F174E255700CF0C33 /* tuto_overlay_iphone4.png */; };
+		6E415D64174E255700CF0C33 /* tuto_overlay_iphone4@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6E415D60174E255700CF0C33 /* tuto_overlay_iphone4@2x.png */; };
 		6EB09D301737D8BD00DC7F62 /* bar1.png in Resources */ = {isa = PBXBuildFile; fileRef = 6EB09D1A1737D8BD00DC7F62 /* bar1.png */; };
 		6EB09D311737D8BD00DC7F62 /* bar1@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6EB09D1B1737D8BD00DC7F62 /* bar1@2x.png */; };
 		6EB09D321737D8BD00DC7F62 /* bar2.png in Resources */ = {isa = PBXBuildFile; fileRef = 6EB09D1C1737D8BD00DC7F62 /* bar2.png */; };
@@ -1894,6 +1898,10 @@
 		6E3C71E51737B4BF009B841E /* TutorialViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TutorialViewController.h; path = Tutorial/TutorialViewController.h; sourceTree = "<group>"; };
 		6E3C71E61737B4BF009B841E /* TutorialViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TutorialViewController.m; path = Tutorial/TutorialViewController.m; sourceTree = "<group>"; };
 		6E3C71E71737B4BF009B841E /* TutorialViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = TutorialViewController.xib; path = Tutorial/TutorialViewController.xib; sourceTree = "<group>"; };
+		6E415D5D174E255700CF0C33 /* tuto_overlay.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = tuto_overlay.png; sourceTree = "<group>"; };
+		6E415D5E174E255700CF0C33 /* tuto_overlay@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "tuto_overlay@2x.png"; sourceTree = "<group>"; };
+		6E415D5F174E255700CF0C33 /* tuto_overlay_iphone4.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = tuto_overlay_iphone4.png; sourceTree = "<group>"; };
+		6E415D60174E255700CF0C33 /* tuto_overlay_iphone4@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "tuto_overlay_iphone4@2x.png"; sourceTree = "<group>"; };
 		6EB09D1A1737D8BD00DC7F62 /* bar1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bar1.png; sourceTree = "<group>"; };
 		6EB09D1B1737D8BD00DC7F62 /* bar1@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "bar1@2x.png"; sourceTree = "<group>"; };
 		6EB09D1C1737D8BD00DC7F62 /* bar2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bar2.png; sourceTree = "<group>"; };
@@ -3911,9 +3919,21 @@
 			name = Tutorial;
 			sourceTree = "<group>";
 		};
+		6E415D5C174E255700CF0C33 /* Overlay */ = {
+			isa = PBXGroup;
+			children = (
+				6E415D5D174E255700CF0C33 /* tuto_overlay.png */,
+				6E415D5E174E255700CF0C33 /* tuto_overlay@2x.png */,
+				6E415D5F174E255700CF0C33 /* tuto_overlay_iphone4.png */,
+				6E415D60174E255700CF0C33 /* tuto_overlay_iphone4@2x.png */,
+			);
+			path = Overlay;
+			sourceTree = "<group>";
+		};
 		6EB09D191737D8B700DC7F62 /* Tuto */ = {
 			isa = PBXGroup;
 			children = (
+				6E415D5C174E255700CF0C33 /* Overlay */,
 				6EB44A8E17422C2D00E9E5D7 /* Walkthoughtv2_Iphone4_01.png */,
 				6EB44A8F17422C2D00E9E5D7 /* Walkthoughtv2_Iphone4_01@2x.png */,
 				6EB44A9017422C2D00E9E5D7 /* Walkthoughtv2_Iphone4_02.png */,
@@ -4735,6 +4755,10 @@
 				6EB44AA117428CAF00E9E5D7 /* handsean.otf in Resources */,
 				6ED0EF45174B652200730DD7 /* MesReglagesViewController.xib in Resources */,
 				6ED0EF47174B652200730DD7 /* ModifierUserViewController.xib in Resources */,
+				6E415D61174E255700CF0C33 /* tuto_overlay.png in Resources */,
+				6E415D62174E255700CF0C33 /* tuto_overlay@2x.png in Resources */,
+				6E415D63174E255700CF0C33 /* tuto_overlay_iphone4.png in Resources */,
+				6E415D64174E255700CF0C33 /* tuto_overlay_iphone4@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
