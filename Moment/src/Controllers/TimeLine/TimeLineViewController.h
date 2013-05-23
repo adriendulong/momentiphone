@@ -10,6 +10,12 @@
 #import "MomentClass.h"
 #import "UserCoreData.h"
 
+#define IS_IPHONE ( [ [ [ UIDevice currentDevice ] model ] isEqualToString: @"iPhone" ] )
+#define IS_IPOD   ( [ [ [ UIDevice currentDevice ] model ] isEqualToString: @"iPod touch" ] )
+
+#define IS_WIDESCREEN ( fabs( ( double )[ [ UIScreen mainScreen ] bounds ].size.height - ( double )568 ) < DBL_EPSILON )
+#define IS_IPHONE_5 ( IS_IPHONE && IS_WIDESCREEN )
+
 // Protocol
 @protocol TimeLineDelegate <NSObject>
 
@@ -85,6 +91,9 @@ enum TimeLineStyle {
 @property (weak, nonatomic) IBOutlet UILabel *echelleFuturLabel;
 @property (weak, nonatomic) IBOutlet UILabel *echelleTodayLabel;
 @property (weak, nonatomic) IBOutlet UILabel *echellePasseLabel;
+
+@property (strong, nonatomic) UIImageView *overlay;
+@property (strong, nonatomic) UIButton *overlay_button;
 
 
 // Methodes

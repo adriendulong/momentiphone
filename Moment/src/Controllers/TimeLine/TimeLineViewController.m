@@ -35,6 +35,9 @@ enum ClockState {
     BOOL isLoading;
     
     MomentClass *momentToDelete;
+    
+    UIImageView *overlay;
+    UIButton *overlay_button;
 }
 
 @synthesize rootOngletsViewController = _rootOngletsViewController;
@@ -63,6 +66,9 @@ enum ClockState {
 @synthesize echelleFuturLabel = _echelleFuturLabel;
 @synthesize echellePasseLabel = _echellePasseLabel;
 @synthesize echelleTodayLabel = _echelleTodayLabel;
+
+@synthesize overlay = _overlay;
+@synthesize overlay_button = _overlay_button;
 
 #pragma mark - Init
 
@@ -272,6 +278,8 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
 {
     [super viewDidLoad];
     
+    CGSize screenSize = [[UIScreen mainScreen] bounds].size;
+    
     // Navigation controller
     self.navController =  self.rootViewController.navigationController ?: self.navigationController;
     
@@ -341,6 +349,15 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
     // Placer labels
     [self placerEchelleLabels];
     
+    
+    //Premier lancement de l'application
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    BOOL hasRunOnce = [defaults boolForKey:@"hasRunOnce"];
+    NSLog(hasRunOnce ? @"Yes" : @"No");
+    if (!hasRunOnce)
+    {
+        [self showTutorialOverlayWithFrame:CGRectMake(0, -20, screenSize.width, screenSize.height)];
+    }
 }
 
 - (void)viewDidUnload
@@ -1268,6 +1285,52 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
         
     }
     
+}
+
+- (void)showTutorialOverlayWithFrame:(CGRect)frame {
+    UIImage *image_overlay;
+    self.overlay = [[UIImageView alloc] initWithFrame:frame];
+    
+    if (IS_WIDESCREEN) {
+        NSLog(@"IS iPhone 5");
+        image_overlay = [UIImage imageNamed:@"tuto_overlay"];
+    } else {
+        NSLog(@"IS iPhone 4/4S");
+        image_overlay = [UIImage imageNamed:@"tuto_overlay_iphone4"];
+    }
+    
+    [self.overlay setImage:image_overlay];
+    
+    // Finally set the alpha value
+    [self.overlay setAlpha:0.9];
+    [self.navController.view addSubview:self.overlay];
+    
+    self.overlay_button = [UIButton buttonWithType:UIButtonTypeCustom];
+    [self.overlay_button setFrame:self.overlay.frame];
+    [self.overlay_button addTarget:self action:@selector(hideTutorialOverlay) forControlEvents:UIControlEventTouchUpInside];
+    
+    [self.navController.view addSubview:self.overlay_button];
+}
+
+- (void)hideTutorialOverlay {
+    [UIView animateWithDuration:0.4
+                     animations:^{self.overlay.alpha = 0.0;}
+                     completion:^(BOOL finished)
+     {
+         
+         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+         BOOL hasRunOnce = [defaults boolForKey:@"hasRunOnce"];
+         
+         if (!hasRunOnce)
+         {
+             [defaults setBool:YES forKey:@"hasRunOnce"];
+         }
+         [[NSUserDefaults standardUserDefaults] synchronize];
+         
+         [self.overlay_button removeFromSuperview];
+         [self.overlay removeFromSuperview];
+         
+     }];
 }
 
 @end 
