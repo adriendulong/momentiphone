@@ -23,6 +23,8 @@
 @property (nonatomic, strong) NSNumber * userId;
 @property (nonatomic, strong) NSNumber *nb_follows;
 @property (nonatomic, strong) NSNumber *nb_followers;
+@property (nonatomic, strong) NSNumber *nb_moments;
+@property (nonatomic, strong) NSNumber *nb_photos;
 @property (nonatomic, strong) NSNumber *is_followed;
 @property (nonatomic, strong) NSString *descriptionString;
 

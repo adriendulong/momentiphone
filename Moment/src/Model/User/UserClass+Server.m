@@ -101,7 +101,7 @@
     NSString *path = [NSString stringWithFormat:@"user/%d", userId];
     [[AFMomentAPIClient sharedClient] getPath:path parameters:nil encoding:AFFormURLParameterEncoding success:^(AFHTTPRequestOperation *operation, id JSON) {
         if(block && JSON) {
-            //NSLog(@"JSON = %@", JSON);
+            NSLog(@"JSON = %@", JSON);
             block([[UserClass alloc] initWithAttributesFromWeb:JSON]);
             //NSDictionary *mapped = [UserClass mappingToLocalAttributes:JSON];
             //UserClass *requested = [UserCoreData requestUserWithAttributes:mapped];

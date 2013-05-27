@@ -42,6 +42,10 @@
         newAttributes[@"nb_followers"] = attributes[@"nb_followers"];
     if(attributes[@"nb_follows"])
         newAttributes[@"nb_follows"] = attributes[@"nb_follows"];
+    if(attributes[@"nb_moments"])
+        newAttributes[@"nb_moments"] = attributes[@"nb_moments"];
+    if(attributes[@"nb_photos"])
+        newAttributes[@"nb_photos"] = attributes[@"nb_photos"];
     if(attributes[@"is_followed"])
         newAttributes[@"is_followed"] = attributes[@"is_followed"];
     if(attributes[@"description"])

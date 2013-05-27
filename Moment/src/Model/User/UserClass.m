@@ -24,6 +24,8 @@
 @synthesize userId = _userId;
 @synthesize nb_followers = _nb_followers;
 @synthesize nb_follows = _nb_follows;
+@synthesize nb_moments = _nb_moments;
+@synthesize nb_photos = _nb_photos;
 @synthesize is_followed = _is_followed;
 @synthesize descriptionString = _descriptionString;
 
@@ -59,6 +61,10 @@
         self.nb_follows = attributes[@"nb_follows"];
     if(attributes[@"nb_followers"])
         self.nb_followers = attributes[@"nb_followers"];
+    if(attributes[@"nb_moments"])
+        self.nb_moments = attributes[@"nb_moments"];
+    if(attributes[@"nb_photos"])
+        self.nb_photos = attributes[@"nb_photos"];
     if(attributes[@"is_followed"])
         self.is_followed = attributes[@"is_followed"];
     if(attributes[@"description"])
