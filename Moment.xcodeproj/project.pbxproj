@@ -760,6 +760,8 @@
 		5BF85091171649C200549E4C /* CagnotteProduct.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BF85090171649C200549E4C /* CagnotteProduct.m */; };
 		5BFDBFD916BB08AE00857FA3 /* HTAutocompleteTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BFDBFD816BB08AE00857FA3 /* HTAutocompleteTextField.m */; };
 		5BFDBFDC16BB0CB600857FA3 /* TextFieldAutocompletionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BFDBFDB16BB0CB600857FA3 /* TextFieldAutocompletionManager.m */; };
+		6E0CFAF91753A34E00B8BCE5 /* EventMissingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E0CFAF71753A34E00B8BCE5 /* EventMissingViewController.m */; };
+		6E0CFAFA1753A34E00B8BCE5 /* EventMissingViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6E0CFAF81753A34E00B8BCE5 /* EventMissingViewController.xib */; };
 		6E3C71E81737B4BF009B841E /* TutorialViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E3C71E61737B4BF009B841E /* TutorialViewController.m */; };
 		6E3C71E91737B4BF009B841E /* TutorialViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6E3C71E71737B4BF009B841E /* TutorialViewController.xib */; };
 		6E415D61174E255700CF0C33 /* tuto_overlay.png in Resources */ = {isa = PBXBuildFile; fileRef = 6E415D5D174E255700CF0C33 /* tuto_overlay.png */; };
@@ -796,6 +798,14 @@
 		6E415DA9174E286100CF0C33 /* btn_go_down@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6E415D8B174E286100CF0C33 /* btn_go_down@2x.png */; };
 		6E415DAA174E286100CF0C33 /* btn_go_up.png in Resources */ = {isa = PBXBuildFile; fileRef = 6E415D8C174E286100CF0C33 /* btn_go_up.png */; };
 		6E415DAB174E286100CF0C33 /* btn_go_up@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6E415D8D174E286100CF0C33 /* btn_go_up@2x.png */; };
+		6E4996281753B3EE00B286D8 /* btn_missing_mail.png in Resources */ = {isa = PBXBuildFile; fileRef = 6E4996201753B3EE00B286D8 /* btn_missing_mail.png */; };
+		6E4996291753B3EE00B286D8 /* btn_missing_mail@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6E4996211753B3EE00B286D8 /* btn_missing_mail@2x.png */; };
+		6E49962A1753B3EE00B286D8 /* btn_missing_bulle.png in Resources */ = {isa = PBXBuildFile; fileRef = 6E4996221753B3EE00B286D8 /* btn_missing_bulle.png */; };
+		6E49962B1753B3EE00B286D8 /* btn_missing_bulle@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6E4996231753B3EE00B286D8 /* btn_missing_bulle@2x.png */; };
+		6E49962C1753B3EE00B286D8 /* btn_missing_contact.png in Resources */ = {isa = PBXBuildFile; fileRef = 6E4996241753B3EE00B286D8 /* btn_missing_contact.png */; };
+		6E49962D1753B3EE00B286D8 /* btn_missing_contact@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6E4996251753B3EE00B286D8 /* btn_missing_contact@2x.png */; };
+		6E49962E1753B3EE00B286D8 /* btn_missing_fb.png in Resources */ = {isa = PBXBuildFile; fileRef = 6E4996261753B3EE00B286D8 /* btn_missing_fb.png */; };
+		6E49962F1753B3EE00B286D8 /* btn_missing_fb@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6E4996271753B3EE00B286D8 /* btn_missing_fb@2x.png */; };
 		6EB44AA117428CAF00E9E5D7 /* handsean.otf in Resources */ = {isa = PBXBuildFile; fileRef = 6EB44AA017428CAF00E9E5D7 /* handsean.otf */; };
 		6ED0EF44174B652200730DD7 /* MesReglagesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6ED0EF3F174B652200730DD7 /* MesReglagesViewController.m */; };
 		6ED0EF45174B652200730DD7 /* MesReglagesViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6ED0EF40174B652200730DD7 /* MesReglagesViewController.xib */; };
@@ -1895,6 +1905,9 @@
 		5BFDBFD816BB08AE00857FA3 /* HTAutocompleteTextField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HTAutocompleteTextField.m; sourceTree = "<group>"; };
 		5BFDBFDA16BB0CB600857FA3 /* TextFieldAutocompletionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextFieldAutocompletionManager.h; sourceTree = "<group>"; };
 		5BFDBFDB16BB0CB600857FA3 /* TextFieldAutocompletionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TextFieldAutocompletionManager.m; sourceTree = "<group>"; };
+		6E0CFAF61753A34E00B8BCE5 /* EventMissingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventMissingViewController.h; sourceTree = "<group>"; };
+		6E0CFAF71753A34E00B8BCE5 /* EventMissingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventMissingViewController.m; sourceTree = "<group>"; };
+		6E0CFAF81753A34E00B8BCE5 /* EventMissingViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = EventMissingViewController.xib; sourceTree = "<group>"; };
 		6E3C71E51737B4BF009B841E /* TutorialViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TutorialViewController.h; path = Tutorial/TutorialViewController.h; sourceTree = "<group>"; };
 		6E3C71E61737B4BF009B841E /* TutorialViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TutorialViewController.m; path = Tutorial/TutorialViewController.m; sourceTree = "<group>"; };
 		6E3C71E71737B4BF009B841E /* TutorialViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = TutorialViewController.xib; path = Tutorial/TutorialViewController.xib; sourceTree = "<group>"; };
@@ -1932,6 +1945,14 @@
 		6E415D8B174E286100CF0C33 /* btn_go_down@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "btn_go_down@2x.png"; sourceTree = "<group>"; };
 		6E415D8C174E286100CF0C33 /* btn_go_up.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = btn_go_up.png; sourceTree = "<group>"; };
 		6E415D8D174E286100CF0C33 /* btn_go_up@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "btn_go_up@2x.png"; sourceTree = "<group>"; };
+		6E4996201753B3EE00B286D8 /* btn_missing_mail.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = btn_missing_mail.png; sourceTree = "<group>"; };
+		6E4996211753B3EE00B286D8 /* btn_missing_mail@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "btn_missing_mail@2x.png"; sourceTree = "<group>"; };
+		6E4996221753B3EE00B286D8 /* btn_missing_bulle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = btn_missing_bulle.png; sourceTree = "<group>"; };
+		6E4996231753B3EE00B286D8 /* btn_missing_bulle@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "btn_missing_bulle@2x.png"; sourceTree = "<group>"; };
+		6E4996241753B3EE00B286D8 /* btn_missing_contact.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = btn_missing_contact.png; sourceTree = "<group>"; };
+		6E4996251753B3EE00B286D8 /* btn_missing_contact@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "btn_missing_contact@2x.png"; sourceTree = "<group>"; };
+		6E4996261753B3EE00B286D8 /* btn_missing_fb.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = btn_missing_fb.png; sourceTree = "<group>"; };
+		6E4996271753B3EE00B286D8 /* btn_missing_fb@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "btn_missing_fb@2x.png"; sourceTree = "<group>"; };
 		6EB44AA017428CAF00E9E5D7 /* handsean.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = handsean.otf; sourceTree = "<group>"; };
 		6ED0EF3E174B652200730DD7 /* MesReglagesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MesReglagesViewController.h; path = Parametres/MesReglagesViewController.h; sourceTree = "<group>"; };
 		6ED0EF3F174B652200730DD7 /* MesReglagesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MesReglagesViewController.m; path = Parametres/MesReglagesViewController.m; sourceTree = "<group>"; };
@@ -3185,6 +3206,7 @@
 		5BF02E9B169C944700232E75 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				6E49961F1753B3D500B286D8 /* EventMissing */,
 				6EB09D191737D8B700DC7F62 /* Tuto */,
 				5BE7059516EAE535008A6F48 /* Defaut_img */,
 				5BB3762016DA6739006729DD /* bg_photo.png */,
@@ -3374,6 +3396,7 @@
 		5BF02F34169C944700232E75 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				6E0CFAF51753A32900B8BCE5 /* EventMissing */,
 				6E3C71DD1737B3DF009B841E /* Tutorial */,
 				5B37422A1711C50C00202ED1 /* NavigationController */,
 				5BF02F3F169C944700232E75 /* HomeViewController.h */,
@@ -3909,6 +3932,16 @@
 			path = HTAutocompleteTextField;
 			sourceTree = "<group>";
 		};
+		6E0CFAF51753A32900B8BCE5 /* EventMissing */ = {
+			isa = PBXGroup;
+			children = (
+				6E0CFAF61753A34E00B8BCE5 /* EventMissingViewController.h */,
+				6E0CFAF71753A34E00B8BCE5 /* EventMissingViewController.m */,
+				6E0CFAF81753A34E00B8BCE5 /* EventMissingViewController.xib */,
+			);
+			path = EventMissing;
+			sourceTree = "<group>";
+		};
 		6E3C71DD1737B3DF009B841E /* Tutorial */ = {
 			isa = PBXGroup;
 			children = (
@@ -3986,6 +4019,21 @@
 				6E415D8D174E286100CF0C33 /* btn_go_up@2x.png */,
 			);
 			path = Button;
+			sourceTree = "<group>";
+		};
+		6E49961F1753B3D500B286D8 /* EventMissing */ = {
+			isa = PBXGroup;
+			children = (
+				6E4996201753B3EE00B286D8 /* btn_missing_mail.png */,
+				6E4996211753B3EE00B286D8 /* btn_missing_mail@2x.png */,
+				6E4996221753B3EE00B286D8 /* btn_missing_bulle.png */,
+				6E4996231753B3EE00B286D8 /* btn_missing_bulle@2x.png */,
+				6E4996241753B3EE00B286D8 /* btn_missing_contact.png */,
+				6E4996251753B3EE00B286D8 /* btn_missing_contact@2x.png */,
+				6E4996261753B3EE00B286D8 /* btn_missing_fb.png */,
+				6E4996271753B3EE00B286D8 /* btn_missing_fb@2x.png */,
+			);
+			path = EventMissing;
 			sourceTree = "<group>";
 		};
 		6EB09D191737D8B700DC7F62 /* Tuto */ = {
@@ -4791,6 +4839,15 @@
 				6E415DA9174E286100CF0C33 /* btn_go_down@2x.png in Resources */,
 				6E415DAA174E286100CF0C33 /* btn_go_up.png in Resources */,
 				6E415DAB174E286100CF0C33 /* btn_go_up@2x.png in Resources */,
+				6E0CFAFA1753A34E00B8BCE5 /* EventMissingViewController.xib in Resources */,
+				6E4996281753B3EE00B286D8 /* btn_missing_mail.png in Resources */,
+				6E4996291753B3EE00B286D8 /* btn_missing_mail@2x.png in Resources */,
+				6E49962A1753B3EE00B286D8 /* btn_missing_bulle.png in Resources */,
+				6E49962B1753B3EE00B286D8 /* btn_missing_bulle@2x.png in Resources */,
+				6E49962C1753B3EE00B286D8 /* btn_missing_contact.png in Resources */,
+				6E49962D1753B3EE00B286D8 /* btn_missing_contact@2x.png in Resources */,
+				6E49962E1753B3EE00B286D8 /* btn_missing_fb.png in Resources */,
+				6E49962F1753B3EE00B286D8 /* btn_missing_fb@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4977,6 +5034,7 @@
 				6E3C71E81737B4BF009B841E /* TutorialViewController.m in Sources */,
 				6ED0EF44174B652200730DD7 /* MesReglagesViewController.m in Sources */,
 				6ED0EF46174B652200730DD7 /* ModifierUserViewController.m in Sources */,
+				6E0CFAF91753A34E00B8BCE5 /* EventMissingViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
