@@ -18,6 +18,8 @@
 #define bigCellHeight 263
 #define smallCellHeight 130
 
+#define DEGREES_TO_RADIANS(x) (M_PI * x / 180.0)
+
 enum ClockState {
     ClockStateUp = 0,
     ClockStateDown = 1
@@ -1310,6 +1312,82 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
     [self.overlay_button addTarget:self action:@selector(hideTutorialOverlay) forControlEvents:UIControlEventTouchUpInside];
     
     [self.navController.view addSubview:self.overlay_button];
+    
+    
+    UILabel *overlay_label1_1 = [[UILabel alloc] initWithFrame:CGRectMake(65, 20, 200, 30)];
+    UILabel *overlay_label1_2 = [[UILabel alloc] initWithFrame:CGRectMake(65, 40, 200, 30)];
+    [overlay_label1_1 setBackgroundColor:[UIColor clearColor]];
+    [overlay_label1_2 setBackgroundColor:[UIColor clearColor]];
+    [overlay_label1_1 setTextAlignment:NSTextAlignmentLeft];
+    [overlay_label1_2 setTextAlignment:NSTextAlignmentLeft];
+    [overlay_label1_1 setFont:[UIFont fontWithName:@"Hand Of Sean" size:16.0]];
+    [overlay_label1_2 setFont:[UIFont fontWithName:@"Hand Of Sean" size:16.0]];
+    [overlay_label1_1 setText:@"Recherche,"];
+    [overlay_label1_2 setText:@"notifications, profil,..."];
+    [overlay_label1_1 setTextColor:[UIColor whiteColor]];
+    [overlay_label1_2 setTextColor:[UIColor whiteColor]];
+    
+    [self.overlay addSubview:overlay_label1_1];
+    [self.overlay addSubview:overlay_label1_2];
+    
+    
+    UILabel *overlay_label2_1 = [[UILabel alloc] initWithFrame:CGRectMake(80, 135, 230, 30)];
+    UILabel *overlay_label2_2 = [[UILabel alloc] initWithFrame:CGRectMake(80, 155, 230, 30)];
+    [overlay_label2_1 setBackgroundColor:[UIColor clearColor]];
+    [overlay_label2_2 setBackgroundColor:[UIColor clearColor]];
+    [overlay_label2_1 setTextAlignment:NSTextAlignmentRight];
+    [overlay_label2_2 setTextAlignment:NSTextAlignmentRight];
+    [overlay_label2_1 setFont:[UIFont fontWithName:@"Hand Of Sean" size:16.0]];
+    [overlay_label2_2 setFont:[UIFont fontWithName:@"Hand Of Sean" size:16.0]];
+    [overlay_label2_1 setText:@"Crée un moment ou"];
+    [overlay_label2_2 setText:@"importe tes events Facebook !"];
+    [overlay_label2_1 setTextColor:[UIColor whiteColor]];
+    [overlay_label2_2 setTextColor:[UIColor whiteColor]];
+    [overlay_label2_1 setTransform:CGAffineTransformMakeRotation(DEGREES_TO_RADIANS(-2))];
+    [overlay_label2_2 setTransform:CGAffineTransformMakeRotation(DEGREES_TO_RADIANS(-2))];
+    
+    [self.overlay addSubview:overlay_label2_1];
+    [self.overlay addSubview:overlay_label2_2];
+    
+    
+    
+    if (IS_WIDESCREEN) {
+        UILabel *overlay_label3_1 = [[UILabel alloc] initWithFrame:CGRectMake(10, 380, 260, 30)];
+        UILabel *overlay_label3_2 = [[UILabel alloc] initWithFrame:CGRectMake(10, 400, 260, 30)];
+        [overlay_label3_1 setBackgroundColor:[UIColor clearColor]];
+        [overlay_label3_2 setBackgroundColor:[UIColor clearColor]];
+        [overlay_label3_1 setTextAlignment:NSTextAlignmentCenter];
+        [overlay_label3_2 setTextAlignment:NSTextAlignmentCenter];
+        [overlay_label3_1 setFont:[UIFont fontWithName:@"Hand Of Sean" size:16.0]];
+        [overlay_label3_2 setFont:[UIFont fontWithName:@"Hand Of Sean" size:16.0]];
+        [overlay_label3_1 setText:@"Consulte l'activité évènementielle"];
+        [overlay_label3_2 setText:@"de tes proches !"];
+        [overlay_label3_1 setTextColor:[UIColor whiteColor]];
+        [overlay_label3_2 setTextColor:[UIColor whiteColor]];
+        [overlay_label3_1 setTransform:CGAffineTransformMakeRotation(DEGREES_TO_RADIANS(-9))];
+        [overlay_label3_2 setTransform:CGAffineTransformMakeRotation(DEGREES_TO_RADIANS(-9))];
+        
+        [self.overlay addSubview:overlay_label3_1];
+        [self.overlay addSubview:overlay_label3_2];
+    } else {
+        UILabel *overlay_label3_1 = [[UILabel alloc] initWithFrame:CGRectMake(10, 300, 260, 30)];
+        UILabel *overlay_label3_2 = [[UILabel alloc] initWithFrame:CGRectMake(10, 320, 260, 30)];
+        [overlay_label3_1 setBackgroundColor:[UIColor clearColor]];
+        [overlay_label3_2 setBackgroundColor:[UIColor clearColor]];
+        [overlay_label3_1 setTextAlignment:NSTextAlignmentCenter];
+        [overlay_label3_2 setTextAlignment:NSTextAlignmentCenter];
+        [overlay_label3_1 setFont:[UIFont fontWithName:@"Hand Of Sean" size:16.0]];
+        [overlay_label3_2 setFont:[UIFont fontWithName:@"Hand Of Sean" size:16.0]];
+        [overlay_label3_1 setText:@"Consulte l'activité évènementielle"];
+        [overlay_label3_2 setText:@"de tes proches !"];
+        [overlay_label3_1 setTextColor:[UIColor whiteColor]];
+        [overlay_label3_2 setTextColor:[UIColor whiteColor]];
+        [overlay_label3_1 setTransform:CGAffineTransformMakeRotation(DEGREES_TO_RADIANS(-9))];
+        [overlay_label3_2 setTransform:CGAffineTransformMakeRotation(DEGREES_TO_RADIANS(-9))];
+        
+        [self.overlay addSubview:overlay_label3_1];
+        [self.overlay addSubview:overlay_label3_2];
+    }
 }
 
 - (void)hideTutorialOverlay {
