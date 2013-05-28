@@ -76,24 +76,9 @@ static VoletViewController *actualVoletViewController;
     return self;
 }
 
-- (void)viewDidAppear:(BOOL)animated
-{
-    [super viewDidAppear:animated];
-    
-    NSLog(@"viewDidAppear - VoletViewController");
-}
-
-- (void)viewWillAppear:(BOOL)animated
-{
-    [super viewWillAppear:animated];
-    
-    NSLog(@"viewWillAppear - VoletViewController");
-}
-
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    NSLog(@"viewDidLoad - VoletViewController");
     // Do any additional setup after loading the view from its nib.
     
     // iPhone 5 support
