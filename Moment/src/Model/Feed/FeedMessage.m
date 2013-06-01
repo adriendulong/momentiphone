@@ -25,4 +25,9 @@
     return self;
 }
 
+- (BOOL)shouldUseLargeView {
+    NSInteger taille = [self.messages count];
+    return (taille > 1) || ( (taille > 0) && (((NSString*)[self.messages[0] message]).length > 60));
+}
+
 @end

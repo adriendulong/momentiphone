@@ -83,7 +83,7 @@
         if([self.feed.photos count] == 1) {
             self.scrollView.scrollEnabled = NO;
         }
-
+        
         int i = 0;
         for(Photos *p in self.feed.photos)
         {
@@ -95,6 +95,21 @@
                 p.imageOriginal = image;
             }];
             i++;
+            
+            // Titre
+            UIView *backgroundView = [[UIView alloc] initWithFrame:CGRectMake(imageView.frame.origin.x, 0, imageView.frame.size.width, 25)];
+            backgroundView.backgroundColor = [UIColor blackColor];
+            backgroundView.alpha = 0.5;
+            
+            UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(8 + backgroundView.frame.origin.x, 2, backgroundView.frame.origin.x + backgroundView.frame.size.width - 2*8, backgroundView.frame.size.height - 2*2)];
+            label.textColor = [UIColor whiteColor];
+            label.text = self.feed.moment.titre;
+            label.font = [[Config sharedInstance] defaultFontWithSize:14];
+            label.backgroundColor = [UIColor clearColor];
+            label.alpha = 0.8;
+            
+            [self.scrollView addSubview:backgroundView];
+            [self.scrollView addSubview:label];
         }
         
         NSInteger startPhoto = rand()%([self.feed.photos count]);
@@ -130,8 +145,6 @@
         frame.origin.y = self.iconeView.frame.origin.y + self.iconeView.frame.size.height - frame.size.height;
         frame.origin.x = self.iconeView.frame.origin.x - frame.size.width - 5;
         self.dateLabel.frame = frame;
-        
-        
     }
     return self;
 }

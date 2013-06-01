@@ -107,6 +107,8 @@ static VoletViewController *actualVoletViewController;
     self.parametresButton.titleLabel.font = font;
     // Mes Moments
     self.mesMoments.titleLabel.font = font;
+    // Event Missing
+    self.eventMissingButton.titleLabel.font = font;
     
     // TableView
     frame = self.tableView.frame;

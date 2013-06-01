@@ -18,4 +18,6 @@
      withMessage:(NSArray*)messages
         withDate:(NSDate*)date;
 
+- (BOOL)shouldUseLargeView;
+
 @end

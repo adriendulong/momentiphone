@@ -17,6 +17,7 @@
 #import "FeedSmallCell.h"
 #import "FeedChatCell.h"
 #import "FeedFollowCell.h"
+#import "FeedNewMomentCell.h"
 
 #define TABLEVIEW_SCROLLVIEW_TAG_IDENTIFER -1
 
@@ -186,12 +187,17 @@
             break;
         
         case FeedTypeFollow:
-            return 115.0f;
+            return 104.0f;
             break;
             
-        case FeedTypeChat:
-            return 141.0f;
-            break;
+        case FeedTypeChat: {
+            FeedMessage *fm = (FeedMessage*)feed;
+            return fm.shouldUseLargeView ? 141.0f : 108.0f;
+        } break;
+            
+        case FeedTypeNewEvent:
+            return 155.0f;
+        break;
             
         default:
             return 163.0f;
@@ -267,7 +273,7 @@
                 
             case FeedTypeFollow: {
                 
-                CellIdentifier = [NSString stringWithFormat:@"FeedViewController_ChatCell_%d", feed.feedId];
+                CellIdentifier = [NSString stringWithFormat:@"FeedViewController_FollowCell_%d", feed.feedId];
                 
                 cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
                 
@@ -279,9 +285,23 @@
                 
             } break;
                 
+            case FeedTypeNewEvent: {
+                
+                CellIdentifier = [NSString stringWithFormat:@"FeedViewController_NewMomentCell_%d", feed.feedId];
+                
+                cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+                
+                if(cell == nil) {
+                    cell = [[FeedNewMomentCell alloc] initWithFeed:feed
+                                                reuseIdentifier:CellIdentifier
+                                                       delegate:self];
+                }
+                
+            } break;
+                
             default:
                 
-                CellIdentifier = [NSString stringWithFormat:@"FeedViewController_FollowCell_%d", feed.feedId];
+                CellIdentifier = [NSString stringWithFormat:@"FeedViewController_Cell_%d", feed.feedId];
                 
                 cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
                 

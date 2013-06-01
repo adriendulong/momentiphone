@@ -187,7 +187,8 @@
 "ProfilViewController_MomentsLabel" = "Moments";
 
 /* ------------ FeedViewController ------------- */
-"FeedViewController_aboutMoment_label" = "À PROPOS DE";
+"FeedViewController_lire_messages_label1" = "Lire les";
+"FeedViewController_lire_messages_label2" = "%d autres messages";
 
 /* ------------ Cagnotte2ViewController ------------- */
 "Cagnotte2ViewController_EmptyCell" = "Aucun cadeau correspondant";
