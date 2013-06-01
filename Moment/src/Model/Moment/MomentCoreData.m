@@ -2,7 +2,7 @@
 //  MomentCoreData.m
 //  Moment
 //
-//  Created by Mathieu PIERAGGI on 06/05/13.
+//  Created by Mathieu PIERAGGI on 01/06/13.
 //  Copyright (c) 2013 Moment. All rights reserved.
 //
 
@@ -32,6 +32,8 @@
 @dynamic privacy;
 @dynamic state;
 @dynamic titre;
+@dynamic uniqueURL;
+@dynamic coverPhotoURL;
 @dynamic owner;
 
 @end

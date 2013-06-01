@@ -34,6 +34,8 @@
 @synthesize uimage = _uimage;
 @synthesize isOpen = _isOpen;
 @synthesize isSponso = _isSponso;
+@synthesize uniqueURL = _uniqueURL;
+@synthesize coverPhotoURL = _coverPhotoURL;
 
 - (void)setupWithAttributes:(NSDictionary*)attributes
 {
@@ -91,6 +93,12 @@
     
     if(attributes[@"privacy"])
         self.privacy = attributes[@"privacy"];
+    
+    if(attributes[@"unique_url"])
+        self.uniqueURL = attributes[@"unique_url"];
+    
+    if(attributes[@"cover_photo_url"])
+        self.coverPhotoURL = attributes[@"cover_photo_url"];
     
     if(attributes[@"owner"]) {
         UserClass *owner = nil;

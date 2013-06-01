@@ -85,8 +85,9 @@
         // Alloc and persist in CoreData
         ChatMessage* message = [ChatMessageCoreData newMessageWithText:texte];
         
-#warning FB Notif
+//#warning FB Notif
         // Notify Message on Facebook
+        /*
         //if(moment.facebookId) {
             [[FacebookManager sharedInstance] postMessageOnEventWall:moment chat:message withEnded:^(BOOL success) {
                 if(!success) {
@@ -94,6 +95,7 @@
                 }
             }];
         //}
+         */
         
         if(block) {
             block(message);

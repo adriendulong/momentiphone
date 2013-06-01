@@ -1426,6 +1426,9 @@ static CGFloat DescriptionBoxHeightMax = 100;
 #else
         [messageBody appendString:@"\n"];
 #endif
+      
+        if(self.moment.uniqueURL)
+            [messageBody appendFormat:@"<a href=%@>%@</a>\n", self.moment.uniqueURL, self.moment.uniqueURL];
         
         MFMailComposeViewController *mc = [[MFMailComposeViewController alloc] init];
         mc.mailComposeDelegate = self;
@@ -1465,6 +1468,8 @@ static CGFloat DescriptionBoxHeightMax = 100;
         SLComposeViewController *fbSheet = [SLComposeViewController
                                             composeViewControllerForServiceType:SLServiceTypeFacebook];
         [fbSheet setInitialText:initialText];
+        if(self.moment.uniqueURL)
+            [fbSheet addURL:[NSURL URLWithString:self.moment.uniqueURL]];
         
         //[self presentViewController:fbSheet animated:YES completion:nil];
         [[VersionControl sharedInstance] presentModalViewController:fbSheet fromRoot:self animated:YES];
@@ -1490,6 +1495,8 @@ static CGFloat DescriptionBoxHeightMax = 100;
         DEFacebookComposeViewController *facebookViewComposer = [[DEFacebookComposeViewController alloc] init];
         self.modalPresentationStyle = UIModalPresentationCurrentContext;
         [facebookViewComposer setInitialText:initialText];
+        if(self.moment.uniqueURL)
+            [facebookViewComposer addURL:[NSURL URLWithString:self.moment.uniqueURL]];
         //facebookViewComposer.completionHandler = completionHandler;
         //[self presentViewController:facebookViewComposer animated:YES completion:nil];
         [[VersionControl sharedInstance] presentModalViewController:facebookViewComposer fromRoot:self animated:YES];
@@ -1517,6 +1524,8 @@ static CGFloat DescriptionBoxHeightMax = 100;
         SLComposeViewController *tweetSheet = [SLComposeViewController
                                                composeViewControllerForServiceType:SLServiceTypeTwitter];
         [tweetSheet setInitialText:initialText];
+        if(self.moment.uniqueURL)
+            [tweetSheet addURL:[NSURL URLWithString:self.moment.uniqueURL]];
         
         //[self presentViewController:tweetSheet animated:YES completion:nil];
         [[VersionControl sharedInstance] presentModalViewController:tweetSheet fromRoot:self animated:YES];
@@ -1527,6 +1536,8 @@ static CGFloat DescriptionBoxHeightMax = 100;
         TWTweetComposeViewController *twitterViewComposer = [[TWTweetComposeViewController alloc] init];
         self.modalPresentationStyle = UIModalPresentationCurrentContext;
         [twitterViewComposer setInitialText:initialText];
+        if(self.moment.uniqueURL)
+            [twitterViewComposer addURL:[NSURL URLWithString:self.moment.uniqueURL]];
         
         //[self presentViewController:twitterViewComposer animated:YES completion:nil];
         [[VersionControl sharedInstance] presentModalViewController:twitterViewComposer fromRoot:self animated:YES];

@@ -2,7 +2,7 @@
 //  MomentCoreData.h
 //  Moment
 //
-//  Created by Mathieu PIERAGGI on 06/05/13.
+//  Created by Mathieu PIERAGGI on 01/06/13.
 //  Copyright (c) 2013 Moment. All rights reserved.
 //
 
@@ -33,6 +33,8 @@
 @property (nonatomic, retain) NSNumber * privacy;
 @property (nonatomic, retain) NSNumber * state;
 @property (nonatomic, retain) NSString * titre;
+@property (nonatomic, retain) NSString * uniqueURL;
+@property (nonatomic, retain) NSString * coverPhotoURL;
 @property (nonatomic, retain) UserCoreData *owner;
 
 @end

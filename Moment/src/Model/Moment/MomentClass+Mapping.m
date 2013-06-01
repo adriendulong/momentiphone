@@ -123,6 +123,12 @@ static NSDateFormatter *smallDateFormatter = nil;
         if(attributes[@"privacy"])
             dico[@"privacy"] = attributes[@"privacy"];
         
+        if(attributes[@"unique_url"])
+            dico[@"unique_url"] = attributes[@"unique_url"];
+        
+        if(attributes[@"cover_photo_url"])
+            dico[@"cover_photo_url"] = attributes[@"cover_photo_url"];
+        
         return dico;
     }
     

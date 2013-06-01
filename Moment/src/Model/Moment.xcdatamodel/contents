@@ -8,6 +8,7 @@
     </entity>
     <entity name="MomentCoreData" representedClassName="MomentCoreData" syncable="YES">
         <attribute name="adresse" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="coverPhotoURL" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="dataImage" optional="YES" attributeType="Binary" syncable="YES"/>
         <attribute name="dateDebut" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="dateFin" optional="YES" attributeType="Date" syncable="YES"/>
@@ -27,6 +28,7 @@
         <attribute name="privacy" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
         <attribute name="state" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
         <attribute name="titre" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="uniqueURL" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="owner" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UserCoreData" inverseName="moments" inverseEntity="UserCoreData" syncable="YES"/>
     </entity>
     <entity name="UserCoreData" representedClassName="UserCoreData" syncable="YES">
@@ -50,7 +52,7 @@
     </entity>
     <elements>
         <element name="ChatMessageCoreData" positionX="189" positionY="74" width="128" height="105"/>
-        <element name="MomentCoreData" positionX="-216" positionY="-60" width="128" height="360"/>
+        <element name="MomentCoreData" positionX="-216" positionY="-60" width="128" height="390"/>
         <element name="UserCoreData" positionX="16" positionY="45" width="128" height="300"/>
     </elements>
 </model>
