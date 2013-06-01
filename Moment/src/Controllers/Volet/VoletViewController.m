@@ -20,6 +20,8 @@
 #import "MesReglagesViewController.h"
 #import "UserClass+Server.h"
 
+#import "EventMissingViewController.h"
+
 static VoletViewController *actualVoletViewController;
 
 @interface VoletViewController () {
@@ -39,7 +41,7 @@ static VoletViewController *actualVoletViewController;
 @synthesize notifications = _notifications;
 @synthesize invitations = _invitations;
 
-@synthesize nomUserButton = _nomUserButton, mesActualites = _mesActualites, parametresButton = _parametresButton;
+@synthesize nomUserButton = _nomUserButton, mesActualites = _mesActualites, parametresButton = _parametresButton, eventMissingButton = _eventMissingButton;
 @synthesize sectionView = _sectionView;
 @synthesize sectionTitleLabel = _sectionTitleLabel;
 @synthesize ttSectionTitleLabel = _ttSectionTitleLabel;
@@ -293,6 +295,7 @@ static VoletViewController *actualVoletViewController;
     [self setNbInvitationsView:nil];
     [self setNbInvitationsLabel:nil];
     [self setNbInvitationsBackground:nil];
+    [self setEventMissingButton:nil];
     [super viewDidUnload];
 }
 
@@ -464,6 +467,14 @@ static VoletViewController *actualVoletViewController;
     UINavigationController *navController = (UINavigationController*)self.delegate.rootViewController;
     [self.delegate showRootController:NO];
     [navController pushViewController:reglages animated:YES];
+}
+
+- (IBAction)clicEventMissing
+{
+    EventMissingViewController *eventMissing = [[EventMissingViewController alloc] initWithDDMenuDelegate:self.delegate];
+    UINavigationController *navController = (UINavigationController*)self.delegate.rootViewController;
+    [self.delegate showRootController:NO];
+    [navController pushViewController:eventMissing animated:YES];
 }
 
 - (void)selectActualitesButton {

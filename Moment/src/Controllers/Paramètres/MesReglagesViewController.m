@@ -12,6 +12,10 @@
 #import "ParametreNotification.h"
 #import "UserClass+Server.h"
 #import "PushNotificationManager.h"
+=======
+#import "TutorialViewController.h"
+#import "HomeViewController.h"
+>>>>>>> dev
 
 const static NSString *kParameterFacebookPageID = @"277911125648059";
 const static NSString *kParameterFacebookPageName = @"appmoment";
@@ -149,6 +153,12 @@ const static NSString *kParameterContactMail = @"hello@appmoment.fr";
 }
 
 - (IBAction)clicTutoriel {
+- (IBAction)clicTutoriel
+{
+    TutorialViewController *tutorial = [[TutorialViewController alloc] initWithNibName:@"TutorialViewController" bundle:nil];
+    [tutorial setWantsFullScreenLayout:YES];
+    [tutorial setModalPresentationStyle:UIModalPresentationFullScreen];
+    [self presentViewController:tutorial animated:YES completion:nil];
 }
 
 - (IBAction)clicEditProfil {

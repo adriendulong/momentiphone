@@ -201,7 +201,11 @@ enum ProfilOnglet {
     
     // Nb Moments
     texte = NSLocalizedString(@"ProfilViewController_MomentsLabel", nil);
-    self.momentLabel.text = (self.user.nb_follows.intValue > 0)? [NSString stringWithFormat:@"%@\n%@", self.user.nb_follows, texte] : texte;
+    self.momentLabel.text = (self.user.nb_moments.intValue > 0)? [NSString stringWithFormat:@"%@\n%@", self.user.nb_moments, texte] : texte;
+    
+    // Nb Photos
+    texte = NSLocalizedString(@"ProfilViewController_PhotosLabel", nil);
+    self.photoLabel.text = (self.user.nb_photos.intValue > 0)? [NSString stringWithFormat:@"%@\n%@", self.user.nb_photos, texte] : texte;
     
     // Is Followed
     // On ne peut pas se follow soi-même
@@ -252,7 +256,7 @@ enum ProfilOnglet {
 {
     // Nb Photos
     NSString *texte = NSLocalizedString(@"ProfilViewController_PhotosLabel", nil);
-    self.photoLabel.text = (self.user.nb_followers.intValue > 0)? [NSString stringWithFormat:@"%@\n%@", self.user.nb_followers, texte] : texte;
+    self.photoLabel.text = (self.user.nb_photos.intValue > 0)? [NSString stringWithFormat:@"%@\n%@", self.user.nb_photos, texte] : texte;
 }
 
 #pragma mark - Notification

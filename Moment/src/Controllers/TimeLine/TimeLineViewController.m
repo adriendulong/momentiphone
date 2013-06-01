@@ -18,6 +18,8 @@
 #define bigCellHeight 263
 #define smallCellHeight 130
 
+#define DEGREES_TO_RADIANS(x) (M_PI * x / 180.0)
+
 enum ClockState {
     ClockStateUp = 0,
     ClockStateDown = 1
@@ -35,6 +37,9 @@ enum ClockState {
     BOOL isLoading;
     
     MomentClass *momentToDelete;
+    
+    UIImageView *overlay;
+    UIButton *overlay_button;
 }
 
 @synthesize rootOngletsViewController = _rootOngletsViewController;
@@ -63,6 +68,9 @@ enum ClockState {
 @synthesize echelleFuturLabel = _echelleFuturLabel;
 @synthesize echellePasseLabel = _echellePasseLabel;
 @synthesize echelleTodayLabel = _echelleTodayLabel;
+
+@synthesize overlay = _overlay;
+@synthesize overlay_button = _overlay_button;
 
 #pragma mark - Init
 
@@ -173,6 +181,7 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
 {
     // -- Echelle Labels
     UIFont *echelleFont = [[Config sharedInstance] defaultFontWithSize:10];
+    CGFloat contentWidth = self.view.frame.size.width;
     CGFloat contentHeight = self.view.frame.size.height;
     CGFloat division = 5.0f;
     CGRect todayRect = [self.tableView rectForRowAtIndexPath:[NSIndexPath indexPathForRow:rowForToday inSection:0]];
@@ -202,7 +211,7 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
     self.echelleFuturLabel.text = NSLocalizedString(@"TimeLineViewController_Echelle_FuturLabel", nil);
     [self.echelleFuturLabel sizeToFit];
     CGRect frame = self.echelleFuturLabel.frame;
-    frame.origin.x = self.view.frame.size.width - frame.size.width - 5;
+    frame.origin.x = contentWidth - frame.size.width - 5;
     frame.origin.y = (division-1)*(contentHeight - frame.size.height)/division + originToday;
     self.echelleFuturLabel.frame = frame;
     
@@ -213,7 +222,7 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
     self.echelleTodayLabel.text = NSLocalizedString(@"TimeLineViewController_Echelle_TodayLabel", nil);
     [self.echelleTodayLabel sizeToFit];
     frame = self.echelleTodayLabel.frame;
-    frame.origin.x = self.view.frame.size.width - frame.size.width - 5;
+    frame.origin.x = contentWidth - frame.size.width - 5;
     frame.origin.y = (contentHeight - frame.size.height)/2.0f + originToday;
     self.echelleTodayLabel.frame = frame;
     
@@ -224,7 +233,7 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
     self.echellePasseLabel.text = NSLocalizedString(@"TimeLineViewController_Echelle_PasseLabel", nil);
     [self.echellePasseLabel sizeToFit];
     frame = self.echellePasseLabel.frame;
-    frame.origin.x = self.view.frame.size.width - frame.size.width - 5;
+    frame.origin.x = contentWidth - frame.size.width - 5;
     frame.origin.y =  (contentHeight - frame.size.height)/division + originToday;
     self.echellePasseLabel.frame = frame;
 }
@@ -270,6 +279,8 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    CGSize screenSize = [[UIScreen mainScreen] bounds].size;
     
     // Navigation controller
     self.navController =  self.rootViewController.navigationController ?: self.navigationController;
@@ -340,6 +351,15 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
     // Placer labels
     [self placerEchelleLabels];
     
+    
+    //Premier lancement de l'application
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    BOOL hasRunOnce = [defaults boolForKey:@"hasRunOnce"];
+    NSLog(hasRunOnce ? @"Yes" : @"No");
+    if (!hasRunOnce)
+    {
+        [self showTutorialOverlayWithFrame:CGRectMake(0, -20, screenSize.width, screenSize.height)];
+    }
 }
 
 - (void)viewDidUnload
@@ -1273,6 +1293,128 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
         
     }
     
+}
+
+- (void)showTutorialOverlayWithFrame:(CGRect)frame {
+    UIImage *image_overlay;
+    self.overlay = [[UIImageView alloc] initWithFrame:frame];
+    
+    if (IS_WIDESCREEN) {
+        NSLog(@"IS iPhone 5");
+        image_overlay = [UIImage imageNamed:@"tuto_overlay"];
+    } else {
+        NSLog(@"IS iPhone 4/4S");
+        image_overlay = [UIImage imageNamed:@"tuto_overlay_iphone4"];
+    }
+    
+    [self.overlay setImage:image_overlay];
+    
+    // Finally set the alpha value
+    [self.overlay setAlpha:0.9];
+    [self.navController.view addSubview:self.overlay];
+    
+    self.overlay_button = [UIButton buttonWithType:UIButtonTypeCustom];
+    [self.overlay_button setFrame:self.overlay.frame];
+    [self.overlay_button addTarget:self action:@selector(hideTutorialOverlay) forControlEvents:UIControlEventTouchUpInside];
+    
+    [self.navController.view addSubview:self.overlay_button];
+    
+    
+    UILabel *overlay_label1_1 = [[UILabel alloc] initWithFrame:CGRectMake(65, 20, 200, 30)];
+    UILabel *overlay_label1_2 = [[UILabel alloc] initWithFrame:CGRectMake(65, 40, 200, 30)];
+    [overlay_label1_1 setBackgroundColor:[UIColor clearColor]];
+    [overlay_label1_2 setBackgroundColor:[UIColor clearColor]];
+    [overlay_label1_1 setTextAlignment:NSTextAlignmentLeft];
+    [overlay_label1_2 setTextAlignment:NSTextAlignmentLeft];
+    [overlay_label1_1 setFont:[UIFont fontWithName:@"Hand Of Sean" size:16.0]];
+    [overlay_label1_2 setFont:[UIFont fontWithName:@"Hand Of Sean" size:16.0]];
+    [overlay_label1_1 setText:@"Recherche,"];
+    [overlay_label1_2 setText:@"notifications, profil,..."];
+    [overlay_label1_1 setTextColor:[UIColor whiteColor]];
+    [overlay_label1_2 setTextColor:[UIColor whiteColor]];
+    
+    [self.overlay addSubview:overlay_label1_1];
+    [self.overlay addSubview:overlay_label1_2];
+    
+    
+    UILabel *overlay_label2_1 = [[UILabel alloc] initWithFrame:CGRectMake(80, 135, 230, 30)];
+    UILabel *overlay_label2_2 = [[UILabel alloc] initWithFrame:CGRectMake(80, 155, 230, 30)];
+    [overlay_label2_1 setBackgroundColor:[UIColor clearColor]];
+    [overlay_label2_2 setBackgroundColor:[UIColor clearColor]];
+    [overlay_label2_1 setTextAlignment:NSTextAlignmentRight];
+    [overlay_label2_2 setTextAlignment:NSTextAlignmentRight];
+    [overlay_label2_1 setFont:[UIFont fontWithName:@"Hand Of Sean" size:16.0]];
+    [overlay_label2_2 setFont:[UIFont fontWithName:@"Hand Of Sean" size:16.0]];
+    [overlay_label2_1 setText:@"Crée un moment ou"];
+    [overlay_label2_2 setText:@"importe tes events Facebook !"];
+    [overlay_label2_1 setTextColor:[UIColor whiteColor]];
+    [overlay_label2_2 setTextColor:[UIColor whiteColor]];
+    [overlay_label2_1 setTransform:CGAffineTransformMakeRotation(DEGREES_TO_RADIANS(-2))];
+    [overlay_label2_2 setTransform:CGAffineTransformMakeRotation(DEGREES_TO_RADIANS(-2))];
+    
+    [self.overlay addSubview:overlay_label2_1];
+    [self.overlay addSubview:overlay_label2_2];
+    
+    
+    
+    if (IS_WIDESCREEN) {
+        UILabel *overlay_label3_1 = [[UILabel alloc] initWithFrame:CGRectMake(10, 380, 260, 30)];
+        UILabel *overlay_label3_2 = [[UILabel alloc] initWithFrame:CGRectMake(10, 400, 260, 30)];
+        [overlay_label3_1 setBackgroundColor:[UIColor clearColor]];
+        [overlay_label3_2 setBackgroundColor:[UIColor clearColor]];
+        [overlay_label3_1 setTextAlignment:NSTextAlignmentCenter];
+        [overlay_label3_2 setTextAlignment:NSTextAlignmentCenter];
+        [overlay_label3_1 setFont:[UIFont fontWithName:@"Hand Of Sean" size:16.0]];
+        [overlay_label3_2 setFont:[UIFont fontWithName:@"Hand Of Sean" size:16.0]];
+        [overlay_label3_1 setText:@"Consulte l'activité évènementielle"];
+        [overlay_label3_2 setText:@"de tes proches !"];
+        [overlay_label3_1 setTextColor:[UIColor whiteColor]];
+        [overlay_label3_2 setTextColor:[UIColor whiteColor]];
+        [overlay_label3_1 setTransform:CGAffineTransformMakeRotation(DEGREES_TO_RADIANS(-9))];
+        [overlay_label3_2 setTransform:CGAffineTransformMakeRotation(DEGREES_TO_RADIANS(-9))];
+        
+        [self.overlay addSubview:overlay_label3_1];
+        [self.overlay addSubview:overlay_label3_2];
+    } else {
+        UILabel *overlay_label3_1 = [[UILabel alloc] initWithFrame:CGRectMake(10, 300, 260, 30)];
+        UILabel *overlay_label3_2 = [[UILabel alloc] initWithFrame:CGRectMake(10, 320, 260, 30)];
+        [overlay_label3_1 setBackgroundColor:[UIColor clearColor]];
+        [overlay_label3_2 setBackgroundColor:[UIColor clearColor]];
+        [overlay_label3_1 setTextAlignment:NSTextAlignmentCenter];
+        [overlay_label3_2 setTextAlignment:NSTextAlignmentCenter];
+        [overlay_label3_1 setFont:[UIFont fontWithName:@"Hand Of Sean" size:16.0]];
+        [overlay_label3_2 setFont:[UIFont fontWithName:@"Hand Of Sean" size:16.0]];
+        [overlay_label3_1 setText:@"Consulte l'activité évènementielle"];
+        [overlay_label3_2 setText:@"de tes proches !"];
+        [overlay_label3_1 setTextColor:[UIColor whiteColor]];
+        [overlay_label3_2 setTextColor:[UIColor whiteColor]];
+        [overlay_label3_1 setTransform:CGAffineTransformMakeRotation(DEGREES_TO_RADIANS(-9))];
+        [overlay_label3_2 setTransform:CGAffineTransformMakeRotation(DEGREES_TO_RADIANS(-9))];
+        
+        [self.overlay addSubview:overlay_label3_1];
+        [self.overlay addSubview:overlay_label3_2];
+    }
+}
+
+- (void)hideTutorialOverlay {
+    [UIView animateWithDuration:0.4
+                     animations:^{self.overlay.alpha = 0.0;}
+                     completion:^(BOOL finished)
+     {
+         
+         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+         BOOL hasRunOnce = [defaults boolForKey:@"hasRunOnce"];
+         
+         if (!hasRunOnce)
+         {
+             [defaults setBool:YES forKey:@"hasRunOnce"];
+         }
+         [[NSUserDefaults standardUserDefaults] synchronize];
+         
+         [self.overlay_button removeFromSuperview];
+         [self.overlay removeFromSuperview];
+         
+     }];
 }
 
 @end 

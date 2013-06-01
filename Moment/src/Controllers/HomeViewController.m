@@ -28,6 +28,8 @@
 #import "MTStatusBarOverlay.h"
 #import "DeviceModel.h"
 
+#import "TutorialViewController.h"
+
 @interface HomeViewController ()
 
 @end
@@ -109,6 +111,16 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    //Premier lancement de l'application
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    BOOL hasRunOnce = [defaults boolForKey:@"hasRunOnce"];
+    NSLog(hasRunOnce ? @"Yes" : @"No");
+    if (!hasRunOnce)
+    {
+        [self showTutorialAnimated:YES];
+    }
+    
     
     // iPhone 5 support
     NSInteger allElementsHeight =  (self.boxView.frame.origin.y + self.boxView.frame.size.height) - self.logoView.frame.origin.y;
@@ -197,6 +209,14 @@
 }
 
 #pragma mark - Show Views
+- (void)showTutorialAnimated:(BOOL)animated
+{    
+    TutorialViewController *tutorial = [[TutorialViewController alloc] initWithNibName:@"TutorialViewController" bundle:nil];
+    [tutorial setWantsFullScreenLayout:YES];
+    [tutorial setModalPresentationStyle:UIModalPresentationFullScreen];
+    [self presentViewController:tutorial animated:YES completion:nil];
+}
+
 - (void) entrerDansMomentAnimated:(BOOL)animated {
     
     // Vérifier la dernière date de modification
