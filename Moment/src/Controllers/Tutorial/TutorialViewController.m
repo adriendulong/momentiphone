@@ -10,6 +10,7 @@
 #import "HomeViewController.h"
 #import "Config.h"
 #import "UIImage+Alpha.h"
+#import "VersionControl.h"
 
 #define DEGREES_TO_RADIANS(x) (M_PI * x / 180.0)
 
@@ -55,7 +56,10 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    CGSize screenSize = [[UIScreen mainScreen] bounds].size;
+    CGSize screenSize = [[VersionControl sharedInstance] screenSize];
+    BOOL supportIOS6 = [[VersionControl sharedInstance] supportIOS6];
+    BOOL isIphone5 = [[VersionControl sharedInstance] isIphone5];
+    
     //[self.navigationController.navigationBar setHidden:YES];
     
     self.pageControlBeingUsed = NO;
@@ -64,7 +68,7 @@
     
     [self setImages:[NSMutableArray array]];
 	
-    if (IS_WIDESCREEN)
+    if (isIphone5)
     {
         NSLog(@"iPhone 5");
         //NSArray *colors = [NSArray arrayWithObjects:[UIColor redColor], [UIColor greenColor], [UIColor blueColor], nil];
@@ -116,7 +120,7 @@
     
     int button_height_from_bottom = 0;
     
-    if (IS_WIDESCREEN)
+    if (isIphone5)
     {
         button_height_from_bottom = 125;
     } else {
@@ -140,7 +144,7 @@
     UILabel *titlePage1 = [[UILabel alloc] initWithFrame:CGRectMake(5, 12, 300, 60)];
     [titlePage1 setText:@"BIENVENUE !\nCECI EST VOTRE TIMELINE DE MOMENTS,\nCRÉEZ ET GÉREZ LES SIMPLEMENT"];
     
-    if([[VersionControl sharedInstance] supportIOS6]) {
+    if(supportIOS6) {
         
         [titlePage1 setBackgroundColor:[UIColor clearColor]];
         [titlePage1 setNumberOfLines:0];
@@ -197,7 +201,7 @@
     UILabel *titlePage2 = [[UILabel alloc] initWithFrame:CGRectMake(self.scrollView.frame.size.width + 5, 12, 300, 60)];
     [titlePage2 setText:@"RÉCUPÉREZ ENFIN TOUTES VOS PHOTOS\nAPRÈS VOS MOMENTS ENTRE AMIS !"];
     
-    if([[VersionControl sharedInstance] supportIOS6]) {
+    if(supportIOS6) {
         
         [titlePage2 setBackgroundColor:[UIColor clearColor]];
         [titlePage2 setNumberOfLines:0];
@@ -243,7 +247,7 @@
     UILabel *titlePage3 = [[UILabel alloc] initWithFrame:CGRectMake(self.scrollView.frame.size.width*2 + 5, 12, 300, 60)];
     [titlePage3 setText:@"PRÉPAREZ, ORGANISEZ, ECHANGEZ\nDURANT VOS MOMENTS ENTRE PROCHES."];
     
-    if([[VersionControl sharedInstance] supportIOS6]) {
+    if(supportIOS6) {
         
         [titlePage3 setBackgroundColor:[UIColor clearColor]];
         [titlePage3 setNumberOfLines:0];
@@ -291,7 +295,7 @@
     UILabel *titlePage4 = [[UILabel alloc] initWithFrame:CGRectMake(self.scrollView.frame.size.width*3 + 5, 12, 300, 60)];
     [titlePage4 setText:@"ET ENCORE PLUS ..."];
     
-    if([[VersionControl sharedInstance] supportIOS6]) {
+    if(supportIOS6) {
         
         [titlePage4 setBackgroundColor:[UIColor clearColor]];
         [titlePage4 setTextAlignment:NSTextAlignmentCenter];
@@ -354,7 +358,7 @@
     [self.scrollView addSubview:comptesPage4];
     
     
-    if (IS_WIDESCREEN)
+    if (isIphone5)
     {
         //Page 1
         UILabel *basketPage1 = [[UILabel alloc] initWithFrame:CGRectMake(100, 132, 125, 40)];
@@ -389,45 +393,20 @@
         //Page 2
         UILabel *parMarcPage2 = [[UILabel alloc] initWithFrame:CGRectMake(self.scrollView.frame.size.width + 20, 123, 100, 20)];
         [parMarcPage2 setText:@"PAR MARC N."];
-        
-        if([[VersionControl sharedInstance] supportIOS6]) {
             
-            [parMarcPage2 setBackgroundColor:[UIColor clearColor]];
-            [parMarcPage2 setTextAlignment:NSTextAlignmentCenter];
-            [parMarcPage2 setFont:[UIFont fontWithName:@"Numans-Regular" size:10.0]];
-            [parMarcPage2 setTextColor:[UIColor colorWithRed:100.0f/255.0f green:100.0f/255.0f blue:100.0f/255.0f alpha:1.0f]];
-            [parMarcPage2 setTransform:CGAffineTransformMakeRotation(DEGREES_TO_RADIANS(-8.25))];
+        [parMarcPage2 setBackgroundColor:[UIColor clearColor]];
+        [parMarcPage2 setTextAlignment:NSTextAlignmentCenter];
+        [parMarcPage2 setFont:[UIFont fontWithName:@"Numans-Regular" size:10.0]];
+        [parMarcPage2 setTextColor:[UIColor colorWithRed:100.0f/255.0f green:100.0f/255.0f blue:100.0f/255.0f alpha:1.0f]];
+        [parMarcPage2 setTransform:CGAffineTransformMakeRotation(DEGREES_TO_RADIANS(-8.25))];
             
-            NSMutableAttributedString *text = [[NSMutableAttributedString alloc] initWithString:parMarcPage2.text];
-            [text addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"Numans-Regular" size:13.0] range:NSMakeRange(0, 1)];
-            [text addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"Numans-Regular" size:13.0] range:NSMakeRange(4, 1)];
-            [text addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"Numans-Regular" size:13.0] range:NSMakeRange(9, 1)];
-            [parMarcPage2 setAttributedText:text];
+        NSMutableAttributedString *parMarcPage2AttributedString = [[NSMutableAttributedString alloc] initWithString:parMarcPage2.text];
+        [parMarcPage2AttributedString addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"Numans-Regular" size:13.0] range:NSMakeRange(0, 1)];
+        [parMarcPage2AttributedString addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"Numans-Regular" size:13.0] range:NSMakeRange(4, 1)];
+        [parMarcPage2AttributedString addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"Numans-Regular" size:13.0] range:NSMakeRange(9, 1)];
+        [parMarcPage2 setAttributedText:parMarcPage2AttributedString];
             
-            [self.scrollView addSubview:parMarcPage2];
-        } else {
-            
-            TTTAttributedLabel *tttLabel = [[TTTAttributedLabel alloc] initWithFrame:parMarcPage2.frame];
-            [tttLabel setBackgroundColor:[UIColor clearColor]];
-            [tttLabel setTextAlignment:NSTextAlignmentCenter];
-            [tttLabel setFont:[UIFont fontWithName:@"Numans-Regular" size:10.0]];
-            [tttLabel setTextColor:[UIColor colorWithRed:100.0f/255.0f green:100.0f/255.0f blue:100.0f/255.0f alpha:1.0f]];
-            [tttLabel setTransform:CGAffineTransformMakeRotation(DEGREES_TO_RADIANS(-8.25))];
-            
-            [tttLabel setText:parMarcPage2.text afterInheritingLabelAttributesAndConfiguringWithBlock:^NSMutableAttributedString *(NSMutableAttributedString *mutableAttributedString) {
-                
-                Config *cf = [Config sharedInstance];
-                
-                // 1 first Lettre Font
-                [cf updateTTTAttributedString:mutableAttributedString withFontSize:13.0 onRange:NSMakeRange(0, 1)];
-                [cf updateTTTAttributedString:mutableAttributedString withFontSize:13.0 onRange:NSMakeRange(4, 1)];
-                [cf updateTTTAttributedString:mutableAttributedString withFontSize:13.0 onRange:NSMakeRange(9, 1)];
-                
-                return mutableAttributedString;
-            }];
-            
-            [self.scrollView addSubview:tttLabel];
-        }
+        [self.scrollView addSubview:parMarcPage2];
         
         
         
@@ -590,45 +569,20 @@
         //Page 4
         UILabel *facebookPage4 = [[UILabel alloc] initWithFrame:CGRectMake(self.scrollView.frame.size.width*3 + 60, 110, 300, 20)];
         [facebookPage4 setText:@"IMPORTER DEPUIS FACEBOOK"];
-        
-        if([[VersionControl sharedInstance] supportIOS6]) {
             
-            [facebookPage4 setBackgroundColor:[UIColor clearColor]];
-            [facebookPage4 setTextAlignment:NSTextAlignmentLeft];
-            [facebookPage4 setFont:[UIFont fontWithName:@"Numans-Regular" size:11.0]];
-            [facebookPage4 setTextColor:[UIColor colorWithRed:100.0f/255.0f green:100.0f/255.0f blue:100.0f/255.0f alpha:1.0f]];
-            [facebookPage4 setTransform:CGAffineTransformMakeRotation(DEGREES_TO_RADIANS(-4))];
+        [facebookPage4 setBackgroundColor:[UIColor clearColor]];
+        [facebookPage4 setTextAlignment:NSTextAlignmentLeft];
+        [facebookPage4 setFont:[UIFont fontWithName:@"Numans-Regular" size:11.0]];
+        [facebookPage4 setTextColor:[UIColor colorWithRed:100.0f/255.0f green:100.0f/255.0f blue:100.0f/255.0f alpha:1.0f]];
+        [facebookPage4 setTransform:CGAffineTransformMakeRotation(DEGREES_TO_RADIANS(-4))];
             
-            NSMutableAttributedString *text = [[NSMutableAttributedString alloc] initWithString:facebookPage4.text];
-            [text addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"Numans-Regular" size:16.0] range:NSMakeRange(0, 1)];
-            [text addAttribute:NSForegroundColorAttributeName value:[UIColor orangeColor] range:NSMakeRange(0, 1)];
-            [text addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"Numans-Regular" size:14.0] range:NSMakeRange(16, 1)];
-            [facebookPage4 setAttributedText:text];
+        NSMutableAttributedString *facebookPage4AttributedString = [[NSMutableAttributedString alloc] initWithString:facebookPage4.text];
+        [facebookPage4AttributedString addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"Numans-Regular" size:16.0] range:NSMakeRange(0, 1)];
+        [facebookPage4AttributedString addAttribute:NSForegroundColorAttributeName value:[UIColor orangeColor] range:NSMakeRange(0, 1)];
+        [facebookPage4AttributedString addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"Numans-Regular" size:14.0] range:NSMakeRange(16, 1)];
+        [facebookPage4 setAttributedText:facebookPage4AttributedString];
             
-            [self.scrollView addSubview:facebookPage4];
-        } else {
-            
-            TTTAttributedLabel *tttLabel = [[TTTAttributedLabel alloc] initWithFrame:facebookPage4.frame];
-            [tttLabel setBackgroundColor:[UIColor clearColor]];
-            [tttLabel setTextAlignment:NSTextAlignmentLeft];
-            [tttLabel setFont:[UIFont fontWithName:@"Numans-Regular" size:11.0]];
-            [tttLabel setTextColor:[UIColor colorWithRed:100.0f/255.0f green:100.0f/255.0f blue:100.0f/255.0f alpha:1.0f]];
-            [tttLabel setTransform:CGAffineTransformMakeRotation(DEGREES_TO_RADIANS(-4))];
-            
-            [tttLabel setText:facebookPage4.text afterInheritingLabelAttributesAndConfiguringWithBlock:^NSMutableAttributedString *(NSMutableAttributedString *mutableAttributedString) {
-                
-                Config *cf = [Config sharedInstance];
-                
-                // 1 first Lettre Font
-                [cf updateTTTAttributedString:mutableAttributedString withFontSize:16.0 onRange:NSMakeRange(0, 1)];
-                [cf updateTTTAttributedString:mutableAttributedString withColor:[UIColor orangeColor] onRange:NSMakeRange(0, 1)];
-                [cf updateTTTAttributedString:mutableAttributedString withFontSize:14.0 onRange:NSMakeRange(16, 1)];
-                
-                return mutableAttributedString;
-            }];
-            
-            [self.scrollView addSubview:tttLabel];
-        }
+        [self.scrollView addSubview:facebookPage4];
         
         
         
@@ -636,45 +590,22 @@
         
         UILabel *lieuPage4 = [[UILabel alloc] initWithFrame:CGRectMake(self.scrollView.frame.size.width*3 + 205, 196, 100, 24)];
         [lieuPage4 setText:@"LIEU"];
+            
+        [lieuPage4 setBackgroundColor:[UIColor clearColor]];
+        [lieuPage4 setTextAlignment:NSTextAlignmentLeft];
+        [lieuPage4 setFont:[UIFont fontWithName:@"Numans-Regular" size:12.0]];
+        [lieuPage4 setTextColor:[UIColor whiteColor]];
+        [lieuPage4 setTransform:CGAffineTransformMakeRotation(DEGREES_TO_RADIANS(5))];
+            
+        NSMutableAttributedString *lieuPage4AttributedString = [[NSMutableAttributedString alloc] initWithString:lieuPage4.text];
+        [lieuPage4AttributedString addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"Numans-Regular" size:19.0] range:NSMakeRange(0, 1)];
+        [lieuPage4 setAttributedText:lieuPage4AttributedString];
+        [lieuPage4 setShadowColor:[UIColor colorWithRed:0 green:0 blue:0 alpha:0.2]];
+        [lieuPage4 setShadowOffset:CGSizeMake(2.0, 2.0)];
+            
+        [self.scrollView addSubview:lieuPage4];
         
-        if([[VersionControl sharedInstance] supportIOS6]) {
-            
-            [lieuPage4 setBackgroundColor:[UIColor clearColor]];
-            [lieuPage4 setTextAlignment:NSTextAlignmentLeft];
-            [lieuPage4 setFont:[UIFont fontWithName:@"Numans-Regular" size:12.0]];
-            [lieuPage4 setTextColor:[UIColor whiteColor]];
-            [lieuPage4 setTransform:CGAffineTransformMakeRotation(DEGREES_TO_RADIANS(5))];
-            
-            NSMutableAttributedString *text = [[NSMutableAttributedString alloc] initWithString:lieuPage4.text];
-            [text addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"Numans-Regular" size:19.0] range:NSMakeRange(0, 1)];
-            [lieuPage4 setAttributedText:text];
-            [lieuPage4 setShadowColor:[UIColor colorWithRed:0 green:0 blue:0 alpha:0.2]];
-            [lieuPage4 setShadowOffset:CGSizeMake(2.0, 2.0)];
-            
-            [self.scrollView addSubview:lieuPage4];
-        } else {
-            
-            TTTAttributedLabel *tttLabel = [[TTTAttributedLabel alloc] initWithFrame:lieuPage4.frame];
-            [tttLabel setBackgroundColor:[UIColor clearColor]];
-            [tttLabel setTextAlignment:NSTextAlignmentLeft];
-            [tttLabel setFont:[UIFont fontWithName:@"Numans-Regular" size:12.0]];
-            [tttLabel setTextColor:[UIColor whiteColor]];
-            [tttLabel setTransform:CGAffineTransformMakeRotation(DEGREES_TO_RADIANS(5))];
-            
-            [tttLabel setText:lieuPage4.text afterInheritingLabelAttributesAndConfiguringWithBlock:^NSMutableAttributedString *(NSMutableAttributedString *mutableAttributedString) {
-                
-                Config *cf = [Config sharedInstance];
-                
-                // 1 first Lettre Font
-                [cf updateTTTAttributedString:mutableAttributedString withFontSize:19.0 onRange:NSMakeRange(0, 1)];
-                
-                return mutableAttributedString;
-            }];
-            [tttLabel setShadowColor:[UIColor colorWithRed:0 green:0 blue:0 alpha:0.2]];
-            [tttLabel setShadowOffset:CGSizeMake(2.0, 2.0)];
-            
-            [self.scrollView addSubview:tttLabel];
-        }
+        
         
         
         UILabel *placePage4 = [[UILabel alloc] initWithFrame:CGRectMake(self.scrollView.frame.size.width*3 + 117, 215, 175, 20)];
@@ -686,45 +617,22 @@
         [placePage4 setTransform:CGAffineTransformMakeRotation(DEGREES_TO_RADIANS(5))];
         [self.scrollView addSubview:placePage4];
         
+        
         UILabel *addressPage4 = [[UILabel alloc] initWithFrame:CGRectMake(self.scrollView.frame.size.width*3 + 70, 270, 245, 20)];
         [addressPage4 setText:@"50 COURS LA REINE, 75006 PARIS"];
-        
-        if([[VersionControl sharedInstance] supportIOS6]) {
             
-            [addressPage4 setBackgroundColor:[UIColor clearColor]];
-            [addressPage4 setTextAlignment:NSTextAlignmentLeft];
-            [addressPage4 setFont:[UIFont fontWithName:@"Numans-Regular" size:8.0]];
-            [addressPage4 setTextColor:[UIColor colorWithRed:100.0f/255.0f green:100.0f/255.0f blue:100.0f/255.0f alpha:1.0f]];
-            [addressPage4 setTransform:CGAffineTransformMakeRotation(DEGREES_TO_RADIANS(5))];
+        [addressPage4 setBackgroundColor:[UIColor clearColor]];
+        [addressPage4 setTextAlignment:NSTextAlignmentLeft];
+        [addressPage4 setFont:[UIFont fontWithName:@"Numans-Regular" size:8.0]];
+        [addressPage4 setTextColor:[UIColor colorWithRed:100.0f/255.0f green:100.0f/255.0f blue:100.0f/255.0f alpha:1.0f]];
+        [addressPage4 setTransform:CGAffineTransformMakeRotation(DEGREES_TO_RADIANS(5))];
             
-            NSMutableAttributedString *text = [[NSMutableAttributedString alloc] initWithString:addressPage4.text];
-            [text addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"Numans-Regular" size:12.0] range:NSMakeRange(0, 2)];
-            [text addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"Numans-Regular" size:12.0] range:NSMakeRange(19, 7)];
-            [addressPage4 setAttributedText:text];
+        NSMutableAttributedString *addressPage4AttributedText = [[NSMutableAttributedString alloc] initWithString:addressPage4.text];
+        [addressPage4AttributedText addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"Numans-Regular" size:12.0] range:NSMakeRange(0, 2)];
+        [addressPage4AttributedText addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"Numans-Regular" size:12.0] range:NSMakeRange(19, 7)];
+        [addressPage4 setAttributedText:addressPage4AttributedText];
             
-            [self.scrollView addSubview:addressPage4];
-        } else {
-            
-            TTTAttributedLabel *tttLabel = [[TTTAttributedLabel alloc] initWithFrame:addressPage4.frame];
-            [tttLabel setBackgroundColor:[UIColor clearColor]];
-            [tttLabel setTextAlignment:NSTextAlignmentLeft];
-            [tttLabel setFont:[UIFont fontWithName:@"Numans-Regular" size:8.0]];
-            [tttLabel setTextColor:[UIColor colorWithRed:100.0f/255.0f green:100.0f/255.0f blue:100.0f/255.0f alpha:1.0f]];
-            [tttLabel setTransform:CGAffineTransformMakeRotation(DEGREES_TO_RADIANS(5))];
-            
-            [tttLabel setText:addressPage4.text afterInheritingLabelAttributesAndConfiguringWithBlock:^NSMutableAttributedString *(NSMutableAttributedString *mutableAttributedString) {
-                
-                Config *cf = [Config sharedInstance];
-                
-                // 1 first Lettre Font
-                [cf updateTTTAttributedString:mutableAttributedString withFontSize:12.0 onRange:NSMakeRange(0, 2)];
-                [cf updateTTTAttributedString:mutableAttributedString withFontSize:12.0 onRange:NSMakeRange(19, 7)];
-                
-                return mutableAttributedString;
-            }];
-            
-            [self.scrollView addSubview:tttLabel];
-        }
+        [self.scrollView addSubview:addressPage4];
     } else {
         
         //Page 1
@@ -753,7 +661,7 @@
         UILabel *parMarcPage2 = [[UILabel alloc] initWithFrame:CGRectMake(self.scrollView.frame.size.width + 28, 95, 100, 20)];
         [parMarcPage2 setText:@"PAR MARC N."];
         
-        if([[VersionControl sharedInstance] supportIOS6]) {
+        if(supportIOS6) {
             
             [parMarcPage2 setBackgroundColor:[UIColor clearColor]];
             [parMarcPage2 setTextAlignment:NSTextAlignmentCenter];
@@ -927,7 +835,7 @@
         UILabel *facebookPage4 = [[UILabel alloc] initWithFrame:CGRectMake(self.scrollView.frame.size.width*3 + 60, 100, 300, 20)];
         [facebookPage4 setText:@"IMPORTER DEPUIS FACEBOOK"];
         
-        if([[VersionControl sharedInstance] supportIOS6]) {
+        if(supportIOS6) {
             
             [facebookPage4 setBackgroundColor:[UIColor clearColor]];
             [facebookPage4 setTextAlignment:NSTextAlignmentLeft];
@@ -971,7 +879,7 @@
         UILabel *lieuPage4 = [[UILabel alloc] initWithFrame:CGRectMake(self.scrollView.frame.size.width*3 + 205, 192, 100, 24)];
         [lieuPage4 setText:@"LIEU"];
         
-        if([[VersionControl sharedInstance] supportIOS6]) {
+        if(supportIOS6) {
             
             [lieuPage4 setBackgroundColor:[UIColor clearColor]];
             [lieuPage4 setTextAlignment:NSTextAlignmentLeft];
@@ -1023,7 +931,7 @@
         UILabel *addressPage4 = [[UILabel alloc] initWithFrame:CGRectMake(self.scrollView.frame.size.width*3 + 70, 265, 245, 20)];
         [addressPage4 setText:@"50 COURS LA REINE, 75006 PARIS"];
         
-        if([[VersionControl sharedInstance] supportIOS6]) {
+        if(supportIOS6) {
             
             [addressPage4 setBackgroundColor:[UIColor clearColor]];
             [addressPage4 setTextAlignment:NSTextAlignmentLeft];
@@ -1081,7 +989,7 @@
         [self.imagePageControl setImage:[UIImage imageNamed:[@"bar" stringByAppendingString:[@(page+1) description]]]];
         
         //NSLog(@"scrollViewDidScroll - Page n°%i", self.pageControl.currentPage);
-        if (!IS_WIDESCREEN)
+        if (![[VersionControl sharedInstance] isIphone5])
         {
             if (page == 3)
             {
@@ -1169,7 +1077,7 @@
         self.pageControl.currentPage = pageDestination;
         
         //NSLog(@"goToPage - Page n°%i", pageDestination);
-        if (!IS_WIDESCREEN)
+        if (![[VersionControl sharedInstance] isIphone5])
         {
             if (pageDestination == 3)
             {
