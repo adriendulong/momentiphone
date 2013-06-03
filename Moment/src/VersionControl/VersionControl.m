@@ -28,9 +28,22 @@ static VersionControl *sharedInstance = nil;
     return screenBounds.size.height;
 }
 
+- (CGSize)screenSize {
+    CGRect screenBounds = [[UIScreen mainScreen] bounds];
+    return screenBounds.size;
+}
+
 - (BOOL)isRetina {
     return ([[UIScreen mainScreen] respondsToSelector:@selector(scale)]
             && ([[UIScreen mainScreen] scale] > 1.0) );
+}
+
+- (BOOL)isIphone5 {
+    if(self.screenHeight == 568) {
+        return YES;
+    } else {
+        return NO;
+    }
 }
 
 - (BOOL)supportIOS6
