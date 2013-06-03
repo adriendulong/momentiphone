@@ -1016,38 +1016,6 @@
     self.pageControlBeingUsed = NO;
 }
 
-/*- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
- //self.pageControlBeingUsed = NO;
- CGFloat pageWidth = self.scrollView.frame.size.width;
- int page = floor((self.scrollView.contentOffset.x - pageWidth / 2) / pageWidth) + 1;
- 
- self.pageControl.currentPage = page;
- 
- [self.imagePageControl setImage:[UIImage imageNamed:[@"bar" stringByAppendingString:[@(page+1) description]]]];
- 
- NSLog(@"scrollViewDidEndDecelerating - Page n°%i", self.pageControl.currentPage);
- if (!IS_IPHONE_5)
- {
- if (self.pageControl.currentPage == 3)
- {
- [self.imagePageControl setHidden:YES];
- [self.page1 setHidden:YES];
- [self.page2 setHidden:YES];
- [self.page3 setHidden:YES];
- [self.page4 setHidden:YES];
- self.letsgoButton.frame = CGRectMake((self.scrollView.frame.size.width * self.images.count) - (self.scrollView.frame.size.width-82), self.scrollView.frame.size.height-45, 165.0, 34.0);
- } else {
- [self.imagePageControl setHidden:NO];
- [self.page1 setHidden:NO];
- [self.page2 setHidden:NO];
- [self.page3 setHidden:NO];
- [self.page4 setHidden:NO];
- }
- }
- 
- self.pageControlBeingUsed = NO;
- }*/
-
 - (IBAction)changePage {
 	// Update the scroll view to the appropriate page
 	CGRect frame;
