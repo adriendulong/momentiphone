@@ -14,6 +14,7 @@
 #import "TTTAttributedLabel.h"
 #import "NSDate+NSDateAdditions.h"
 #import "MomentClass+Server.h"
+#import "VersionControl.h"
 
 #define bigCellHeight 263
 #define smallCellHeight 130
@@ -1299,11 +1300,9 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
     UIImage *image_overlay;
     self.overlay = [[UIImageView alloc] initWithFrame:frame];
     
-    if (IS_WIDESCREEN) {
-        NSLog(@"IS iPhone 5");
+    if ([[VersionControl sharedInstance] isIphone5]) {
         image_overlay = [UIImage imageNamed:@"tuto_overlay"];
     } else {
-        NSLog(@"IS iPhone 4/4S");
         image_overlay = [UIImage imageNamed:@"tuto_overlay_iphone4"];
     }
     
@@ -1357,7 +1356,7 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
     
     
     
-    if (IS_WIDESCREEN) {
+    if ([[VersionControl sharedInstance] isIphone5]) {
         UILabel *overlay_label3_1 = [[UILabel alloc] initWithFrame:CGRectMake(10, 380, 260, 30)];
         UILabel *overlay_label3_2 = [[UILabel alloc] initWithFrame:CGRectMake(10, 400, 260, 30)];
         [overlay_label3_1 setBackgroundColor:[UIColor clearColor]];
