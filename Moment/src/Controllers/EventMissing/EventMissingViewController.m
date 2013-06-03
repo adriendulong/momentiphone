@@ -9,9 +9,15 @@
 #import "EventMissingViewController.h"
 #import "Config.h"
 
+#import "UserClass+Server.h"
+#import "FacebookManager.h"
+
 const static NSString *kParameterContactMail = @"hello@appmoment.fr";
 
-@interface EventMissingViewController ()
+@interface EventMissingViewController () {
+@private
+    UIAlertView *fbLoginPopup;
+}
 
 @property (strong, nonatomic) IBOutlet UILabel *mainTitle;
 @property (strong, nonatomic) IBOutlet UILabel *subTitle;
@@ -243,21 +249,32 @@ const static NSString *kParameterContactMail = @"hello@appmoment.fr";
     }
 }*/
 
-- (IBAction)clicAddPhonenumber
+- (IBAction)clicAddFacebookAccount:(id)sender
+{
+    // ------------ FACEBOOK LOGIN POPUP -------------
+    fbLoginPopup = [[UIAlertView alloc] initWithTitle:@"Lier mon compte Facebook"
+                                              message:@"Vous avez reçu une invitation sur Facebook mais vous n'avez pas lié votre compte moment avec votre compte facebook :"
+                                             delegate:self
+                                    cancelButtonTitle:@"Refuser"
+                                    otherButtonTitles:@"Accepter", nil];
+    [fbLoginPopup show];
+}
+
+- (IBAction)clicAddPhonenumber:(id)sender
 {
     UserClass *currentUser = [UserCoreData getCurrentUser];
 
     if(currentUser.numeroMobile) {
         
         if(currentUser.secondPhone) {
-            [[[UIAlertView alloc] initWithTitle:@"J'ai 2 numéros"
+            [[[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"J'ai 2 numéros: %@ | 2nd: %@", currentUser.numeroMobile, currentUser.secondPhone]
                                         message:@"Supprimes-en 1 des 2 !"
                                        delegate:nil
                               cancelButtonTitle:@"OK"
                               otherButtonTitles: nil]
              show];
         } else {
-            [[[UIAlertView alloc] initWithTitle:@"J'ai 1 seul numéro"
+            [[[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"J'ai 1 seul numéro: %@", currentUser.numeroMobile]
                                         message:@"Rentres-en un second !"
                                        delegate:nil
                               cancelButtonTitle:@"OK"
@@ -274,7 +291,7 @@ const static NSString *kParameterContactMail = @"hello@appmoment.fr";
     }
 }
 
-- (IBAction)clicContactUs
+- (IBAction)clicContactUs:(id)sender
 {
     
     if([MFMailComposeViewController canSendMail])
@@ -309,7 +326,7 @@ const static NSString *kParameterContactMail = @"hello@appmoment.fr";
 
 #pragma mark - MFMailComposeViewControllerDelegate
 
-- (void) mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError *)error
+- (void)mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError *)error
 {
     
     switch (result)
@@ -340,6 +357,47 @@ const static NSString *kParameterContactMail = @"hello@appmoment.fr";
     
     // Close the Mail Interface
     [[VersionControl sharedInstance] dismissModalViewControllerFromRoot:self animated:YES];
+}
+
+
+
+#pragma mark - UIAlertView Delegate -> Login FB
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    // Login via FB
+    if(alertView == fbLoginPopup)
+    {
+        // Accepter
+        if(buttonIndex == 1)
+        {
+            [[FacebookManager sharedInstance] getCurrentUserInformationsWithEnded:^(UserClass *user) {
+                
+                if(user)
+                {
+                    UIAlertView *fbPopup = [[UIAlertView alloc] initWithTitle:@"Lier mon compte Facebook"
+                                                                      message:[NSString stringWithFormat:@"nom: %@ | prenom: %@ | email: %@ | fb_ID: %@", user.nom, user.prenom, user.email, user.facebookId]
+                                                                     delegate:self
+                                                            cancelButtonTitle:@"Refuser"
+                                                            otherButtonTitles:@"Accepter", nil];
+                    [fbPopup show];
+                    
+                    /*self.nomLabel.text = user.nom;
+                     self.prenomLabel.text = user.prenom;
+                     self.emailLabel.text = user.email;
+                     if(user.imageString)
+                     {
+                     [self.photoProfil setImage:nil imageString:user.imageString withSaveBlock:^(UIImage *image) {
+                     self.imageProfile = image;
+                     }];
+                     }
+                     facebookId = user.facebookId;*/
+                }
+                
+            }];
+        }
+        
+    }
 }
 
 - (void)didReceiveMemoryWarning

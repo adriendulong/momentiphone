@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import <MessageUI/MessageUI.h>
 
-@interface EventMissingViewController : UIViewController <MFMailComposeViewControllerDelegate>
+@interface EventMissingViewController : UIViewController <MFMailComposeViewControllerDelegate, UIAlertViewDelegate>
 
 // --- Properties ---
 
