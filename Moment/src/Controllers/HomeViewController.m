@@ -550,7 +550,7 @@
 {
     // Centrer view même quand le clavier monte
     // (Sur écran non iPhone 5)
-    if( ([VersionControl sharedInstance].screenHeight == 480) && ([_loginTextField isFirstResponder]) ) {
+    if( (![[VersionControl sharedInstance] isIphone5]) && ([_loginTextField isFirstResponder]) ) {
         
         [UIView animateWithDuration:0.2 animations:^{
             [scrollView scrollRectToVisible:CGRectMake(0, -125, scrollView.contentSize.width, scrollView.contentSize.height) animated:NO];
