@@ -51,6 +51,13 @@
     if(attributes[@"description"])
         newAttributes[@"description"] = attributes[@"description"];
     
+    if(attributes[@"privacy"])
+        newAttributes[@"privacy"] = attributes[@"privacy"];
+    if(attributes[@"request_follower"])
+        newAttributes[@"request_follower"] = attributes[@"request_follower"];
+    if(attributes[@"request_follow_me"])
+        newAttributes[@"request_follow_me"] = attributes[@"request_follow_me"];
+    
     //NSLog(@"Mapped : %@", newAttributes);
     
     return newAttributes;

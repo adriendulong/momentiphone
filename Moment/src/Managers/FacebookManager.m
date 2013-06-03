@@ -768,14 +768,15 @@ static FacebookManager *sharedInstance = nil;
                 FBRequestConnection *connection = [[FBRequestConnection alloc] init];
                                 
                 // Post Request
-                FBRequest *request = [[FBRequest alloc] initWithSession:[FBSession activeSession] graphPath:@"454455871307842/feed" parameters:params HTTPMethod:@"POST"];
-                
                 /*
+                FBRequest *request = [[FBRequest alloc] initWithSession:[FBSession activeSession] graphPath:@"454455871307842/feed" parameters:params HTTPMethod:@"POST"];
+                */
+                
                 FBRequest *request = [[FBRequest alloc]
                                       initWithSession:[FBSession activeSession]
                                       graphPath:[NSString stringWithFormat:@"%@/feed", moment.facebookId]
                                       parameters:params HTTPMethod:@"POST"];
-                */
+                
                 
                 // Completion Handler
                 [connection addRequest:request completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {

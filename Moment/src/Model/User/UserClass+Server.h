@@ -40,7 +40,9 @@
 // Follows/Followers
 - (void)getFollowsWithEnded:(void (^) (NSArray *follows))block;
 - (void)getFollowersWithEnded:(void (^) (NSArray *followers))block;
-- (void)toggleFollowWithEnded:(void (^) (BOOL success))block;
+- (void)toggleFollowWithEnded:(void (^) (BOOL success, BOOL waitForReponse))block;
++ (void)acceptFollowOfUser:(UserClass*)user withEnded:(void (^) (BOOL success))block;
++ (void)refuseFollowOfUser:(UserClass*)user withEnded:(void (^) (BOOL success))block;
 
 // Photos
 - (void)getPhotosWithEnded:(void (^) (NSArray *photos))block;

@@ -697,14 +697,14 @@
         
 #warning FB Notif
         // Notify Facebook Notification
-        //if(self.facebookId)
-        //{
+        if(self.facebookId)
+        {
             [[FacebookManager sharedInstance] postMessageOnEventWall:self photo:photo withEnded:^(BOOL success) {
                 if(!success) {
                     [TestFlight passCheckpoint:[NSString stringWithFormat:@"Facebook Notification Fail - Photo %d - Moment %@", photo.photoId, self.momentId]];
                 }
             }];
-        //}
+        }
         
         
         if(endBlock)

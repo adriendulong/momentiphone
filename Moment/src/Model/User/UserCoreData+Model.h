@@ -19,6 +19,12 @@ enum UserState {
     UserStateWaiting = 5
 };
 
+enum UserPrivacy {
+    UserPrivacyClosed = 0,
+    UserPrivacyPrivate = 1,
+    UserPrivacyOpen = 2
+    };
+
 #define USERS_NO_LIMIT -1
 
 @interface UserCoreData (Model)

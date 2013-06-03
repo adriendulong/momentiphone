@@ -12,6 +12,12 @@
 #import "FollowTableViewController.h"
 #import "CustomUIImageView.h"
 
+enum FollowButtonState {
+    FollowButtonStateNotFollowed = 0,
+    FollowButtonStateFollowed = 1,
+    FollowButtonStateWaiting = 2
+};
+
 @interface ProfilViewController : UIViewController
 
 @property (strong, nonatomic) UserClass *user;
@@ -41,6 +47,11 @@
 @property (weak, nonatomic) IBOutlet UILabel *headFollowLabel;
 @property (weak, nonatomic) IBOutlet CustomUIImageView *pictureView;
 
+@property (weak, nonatomic) IBOutlet UIView *headerView;
+@property (weak, nonatomic) IBOutlet UIView *acceptFollowBarView;
+@property (weak, nonatomic) IBOutlet UILabel *acceptFollowBarNameLabel;
+@property (weak, nonatomic) IBOutlet UILabel *acceptFollowBarInfoLabel;
+
 // Init
 - (id)initWithUser:(UserClass*)user;
 
@@ -51,5 +62,8 @@
 - (IBAction)clicPhotos;
 - (IBAction)clicFollow;
 - (IBAction)clicFollowers;
+- (IBAction)clicHeadFollow;
+- (IBAction)clicAcceptFollow;
+- (IBAction)clicRefuseFollow;
 
 @end

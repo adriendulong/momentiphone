@@ -18,6 +18,7 @@
 @synthesize user = _user;
 @synthesize index = _index;
 @synthesize navigationController = _navigationController;
+@synthesize buttonState = _buttonState;
 
 @synthesize followButton = _followButton;
 @synthesize nomLabel = _nomLabel;
@@ -80,31 +81,47 @@ navigationController:(UINavigationController*)navController
             color = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg"]];
         self.backgroundImageView.backgroundColor = color;
         
+        // Button State
+        self.buttonState = self.user.request_follower.boolValue ? FollowButtonStateWaiting : (self.user.is_followed.boolValue? FollowButtonStateFollowed : FollowButtonStateNotFollowed);
+        
     }
     return self;
 }
 
 - (IBAction)clicFollowButton
 {
-    [self.followButton setSelected:!self.followButton.selected];
-    
-    // Follow / UnFollow user selectionné
-    [self.user toggleFollowWithEnded:^(BOOL success) {
+    if(self.buttonState != FollowButtonStateWaiting)
+    {
+        enum FollowButtonState previousState = self.buttonState;
         
-        // Si il y a eu un erreur
-        if(!success) {
+        [self.followButton setSelected:!self.followButton.selected];
+        
+        // Follow / UnFollow user selectionné
+        [self.user toggleFollowWithEnded:^(BOOL success, BOOL waitForResponse) {
             
-            // On remet le bouton dans le bonne état
-            [self.followButton setSelected:!self.followButton.selected];
-            
-            // On informe l'utilisateur
-            [[MTStatusBarOverlay sharedInstance] postImmediateErrorMessage:NSLocalizedString(@"FollowTableViewController_AddFollow_ErrorMessage", nil)
-                                                                  duration:1
-                                                                  animated:YES];
-            
-        }
-    }];
-    
+            // Success
+            if(success) {
+                
+                enum FollowButtonState newState = waitForResponse ? FollowButtonStateWaiting : ((previousState == FollowButtonStateFollowed)? FollowButtonStateNotFollowed : FollowButtonStateFollowed );
+                
+                self.buttonState = newState;
+            }
+            // Si il y a eu un erreur
+            else {
+                
+                // On remet le bouton dans le bonne état
+                [self.followButton setSelected:!self.followButton.selected];
+                self.buttonState = previousState;
+                
+                // On informe l'utilisateur
+                [[MTStatusBarOverlay sharedInstance] postImmediateErrorMessage:NSLocalizedString(@"FollowTableViewController_AddFollow_ErrorMessage", nil)
+                                                                      duration:1
+                                                                      animated:YES];
+                
+            }
+        }];
+        
+    }
 }
 
 - (void)clicProfile {

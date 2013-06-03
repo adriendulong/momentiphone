@@ -33,6 +33,9 @@ enum UsernameStyle {
 @property (nonatomic, strong) NSNumber *nb_photos;
 @property (nonatomic, strong) NSNumber *is_followed;
 @property (nonatomic, strong) NSString *descriptionString;
+@property (nonatomic, strong) NSNumber *privacy;
+@property (nonatomic, strong) NSNumber *request_follower;
+@property (nonatomic, strong) NSNumber *request_follow_me;
 
 // Setup
 - (void)setupWithAttributesFromLocal:(NSDictionary*)attributes;

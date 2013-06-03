@@ -17,11 +17,13 @@ examples/FilterShowcase/build*
 *.perspectivev3
 *.pbxuser
 *.xcworkspace
-*.xcuserdata
+xcuserdata
 
 # Documentation
 documentation/*
 
 # Exclude .ipa
 *.ipa
-Moment.xcodeproj
+
+# Exclude XcodeProj
+#Moment.xcodeproj

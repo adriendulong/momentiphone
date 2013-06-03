@@ -254,7 +254,7 @@
 						<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
 						<bool key="IBUIEditable">NO</bool>
 						<string key="IBUIText">Description</string>
-						<object class="NSColor" key="IBUITextColor">
+						<object class="NSColor" key="IBUITextColor" id="1049218198">
 							<int key="NSColorSpace">1</int>
 							<bytes key="NSRGB">MSAxIDEAA</bytes>
 						</object>
@@ -550,10 +550,132 @@
 				<string key="NSReuseIdentifierKey">_NS:9</string>
 				<reference key="IBUIBackgroundColor" ref="842015794"/>
 				<int key="IBUIContentMode">1</int>
-				<object class="IBUISimulatedSizeMetrics" key="IBUISimulatedDestinationMetrics">
+				<object class="IBUISimulatedSizeMetrics" key="IBUISimulatedDestinationMetrics" id="283970228">
 					<string key="IBUISimulatedSizeMetricsClass">IBUISimulatedFreeformSizeMetricsSentinel</string>
 					<string key="IBUIDisplayName">Freeform</string>
 				</object>
+				<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
+			</object>
+			<object class="IBUIView" id="789061634">
+				<reference key="NSNextResponder"/>
+				<int key="NSvFlags">292</int>
+				<array class="NSMutableArray" key="NSSubviews">
+					<object class="IBUIButton" id="805459038">
+						<reference key="NSNextResponder" ref="789061634"/>
+						<int key="NSvFlags">292</int>
+						<string key="NSFrame">{{268, 0}, {52, 42}}</string>
+						<reference key="NSSuperview" ref="789061634"/>
+						<reference key="NSWindow"/>
+						<reference key="NSNextKeyView"/>
+						<string key="NSReuseIdentifierKey">_NS:9</string>
+						<object class="NSColor" key="IBUIBackgroundColor">
+							<int key="NSColorSpace">1</int>
+							<bytes key="NSRGB">MSAwLjM1Mjk0MTE3NjUgMCAwLjM1AA</bytes>
+						</object>
+						<bool key="IBUIOpaque">NO</bool>
+						<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
+						<int key="IBUIContentHorizontalAlignment">0</int>
+						<int key="IBUIContentVerticalAlignment">0</int>
+						<reference key="IBUIHighlightedTitleColor" ref="479297333"/>
+						<object class="NSColor" key="IBUINormalTitleColor">
+							<int key="NSColorSpace">1</int>
+							<bytes key="NSRGB">MC4xOTYwNzg0MzQ2IDAuMzA5ODAzOTMyOSAwLjUyMTU2ODY1NgA</bytes>
+						</object>
+						<reference key="IBUINormalTitleShadowColor" ref="1026155340"/>
+						<object class="NSCustomResource" key="IBUINormalImage">
+							<string key="NSClassName">NSImage</string>
+							<string key="NSResourceName">picto_croix_blanche.png</string>
+						</object>
+						<object class="NSCustomResource" key="IBUINormalBackgroundImage" id="1070734152">
+							<string key="NSClassName">NSImage</string>
+							<string key="NSResourceName">button_accept_follow_background.png</string>
+						</object>
+						<reference key="IBUIFontDescription" ref="322022337"/>
+						<reference key="IBUIFont" ref="751717003"/>
+					</object>
+					<object class="IBUIButton" id="331973174">
+						<reference key="NSNextResponder" ref="789061634"/>
+						<int key="NSvFlags">292</int>
+						<string key="NSFrame">{{216, 0}, {52, 42}}</string>
+						<reference key="NSSuperview" ref="789061634"/>
+						<reference key="NSWindow"/>
+						<reference key="NSNextKeyView" ref="805459038"/>
+						<string key="NSReuseIdentifierKey">_NS:9</string>
+						<object class="NSColor" key="IBUIBackgroundColor">
+							<int key="NSColorSpace">1</int>
+							<bytes key="NSRGB">MSAwLjM1Mjk0MTE3NjUgMCAwLjM1AA</bytes>
+						</object>
+						<bool key="IBUIOpaque">NO</bool>
+						<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
+						<int key="IBUIContentHorizontalAlignment">0</int>
+						<int key="IBUIContentVerticalAlignment">0</int>
+						<reference key="IBUIHighlightedTitleColor" ref="479297333"/>
+						<object class="NSColor" key="IBUINormalTitleColor">
+							<int key="NSColorSpace">1</int>
+							<bytes key="NSRGB">MC4xOTYwNzg0MzQ2IDAuMzA5ODAzOTMyOSAwLjUyMTU2ODY1NgA</bytes>
+						</object>
+						<reference key="IBUINormalTitleShadowColor" ref="1026155340"/>
+						<object class="NSCustomResource" key="IBUINormalImage">
+							<string key="NSClassName">NSImage</string>
+							<string key="NSResourceName">picto_check_blanc.png</string>
+						</object>
+						<reference key="IBUINormalBackgroundImage" ref="1070734152"/>
+						<reference key="IBUIFontDescription" ref="322022337"/>
+						<reference key="IBUIFont" ref="751717003"/>
+					</object>
+					<object class="IBUILabel" id="730308703">
+						<reference key="NSNextResponder" ref="789061634"/>
+						<int key="NSvFlags">292</int>
+						<string key="NSFrame">{{7, 4}, {208, 16}}</string>
+						<reference key="NSSuperview" ref="789061634"/>
+						<reference key="NSWindow"/>
+						<reference key="NSNextKeyView" ref="373143581"/>
+						<string key="NSReuseIdentifierKey">_NS:9</string>
+						<bool key="IBUIOpaque">NO</bool>
+						<bool key="IBUIClipsSubviews">YES</bool>
+						<int key="IBUIContentMode">7</int>
+						<bool key="IBUIUserInteractionEnabled">NO</bool>
+						<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
+						<string key="IBUIText">Nom</string>
+						<reference key="IBUITextColor" ref="1049218198"/>
+						<nil key="IBUIHighlightedColor"/>
+						<int key="IBUIBaselineAdjustment">0</int>
+						<reference key="IBUIFontDescription" ref="163361442"/>
+						<reference key="IBUIFont" ref="206468466"/>
+						<bool key="IBUIAdjustsFontSizeToFit">NO</bool>
+					</object>
+					<object class="IBUILabel" id="373143581">
+						<reference key="NSNextResponder" ref="789061634"/>
+						<int key="NSvFlags">292</int>
+						<string key="NSFrame">{{6, 23}, {208, 15}}</string>
+						<reference key="NSSuperview" ref="789061634"/>
+						<reference key="NSWindow"/>
+						<reference key="NSNextKeyView" ref="331973174"/>
+						<string key="NSReuseIdentifierKey">_NS:9</string>
+						<bool key="IBUIOpaque">NO</bool>
+						<bool key="IBUIClipsSubviews">YES</bool>
+						<int key="IBUIContentMode">7</int>
+						<bool key="IBUIUserInteractionEnabled">NO</bool>
+						<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
+						<string key="IBUIText">SOUHAITE VOUS SUIVRE.</string>
+						<reference key="IBUITextColor" ref="1049218198"/>
+						<nil key="IBUIHighlightedColor"/>
+						<int key="IBUIBaselineAdjustment">0</int>
+						<reference key="IBUIFontDescription" ref="28180877"/>
+						<reference key="IBUIFont" ref="942076630"/>
+						<bool key="IBUIAdjustsFontSizeToFit">NO</bool>
+					</object>
+				</array>
+				<string key="NSFrameSize">{320, 42}</string>
+				<reference key="NSSuperview"/>
+				<reference key="NSWindow"/>
+				<reference key="NSNextKeyView" ref="730308703"/>
+				<string key="NSReuseIdentifierKey">_NS:9</string>
+				<object class="NSColor" key="IBUIBackgroundColor">
+					<int key="NSColorSpace">1</int>
+					<bytes key="NSRGB">MC45OTYwNzg0MzE2IDAuNjM5MjE1NzA3OCAwLjExMzcyNTQ5MDkgMC43NQA</bytes>
+				</object>
+				<reference key="IBUISimulatedDestinationMetrics" ref="283970228"/>
 				<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
 			</object>
 		</array>
@@ -704,6 +826,38 @@
 					<int key="connectionID">89</int>
 				</object>
 				<object class="IBConnectionRecord">
+					<object class="IBCocoaTouchOutletConnection" key="connection">
+						<string key="label">headerView</string>
+						<reference key="source" ref="372490531"/>
+						<reference key="destination" ref="354116974"/>
+					</object>
+					<int key="connectionID">95</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBCocoaTouchOutletConnection" key="connection">
+						<string key="label">acceptFollowBarView</string>
+						<reference key="source" ref="372490531"/>
+						<reference key="destination" ref="789061634"/>
+					</object>
+					<int key="connectionID">96</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBCocoaTouchOutletConnection" key="connection">
+						<string key="label">acceptFollowBarNameLabel</string>
+						<reference key="source" ref="372490531"/>
+						<reference key="destination" ref="730308703"/>
+					</object>
+					<int key="connectionID">97</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBCocoaTouchOutletConnection" key="connection">
+						<string key="label">acceptFollowBarInfoLabel</string>
+						<reference key="source" ref="372490531"/>
+						<reference key="destination" ref="373143581"/>
+					</object>
+					<int key="connectionID">98</int>
+				</object>
+				<object class="IBConnectionRecord">
 					<object class="IBCocoaTouchEventConnection" key="connection">
 						<string key="label">clicHeadFollow</string>
 						<reference key="source" ref="736358906"/>
@@ -747,6 +901,24 @@
 						<int key="IBEventType">7</int>
 					</object>
 					<int key="connectionID">74</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBCocoaTouchEventConnection" key="connection">
+						<string key="label">clicRefuseFollow</string>
+						<reference key="source" ref="805459038"/>
+						<reference key="destination" ref="372490531"/>
+						<int key="IBEventType">7</int>
+					</object>
+					<int key="connectionID">101</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBCocoaTouchEventConnection" key="connection">
+						<string key="label">clicAcceptFollow</string>
+						<reference key="source" ref="331973174"/>
+						<reference key="destination" ref="372490531"/>
+						<int key="IBEventType">7</int>
+					</object>
+					<int key="connectionID">99</int>
 				</object>
 			</array>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -910,6 +1082,38 @@
 						<reference key="object" ref="697091835"/>
 						<reference key="parent" ref="191373211"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">90</int>
+						<reference key="object" ref="789061634"/>
+						<array class="NSMutableArray" key="children">
+							<reference ref="805459038"/>
+							<reference ref="331973174"/>
+							<reference ref="373143581"/>
+							<reference ref="730308703"/>
+						</array>
+						<reference key="parent" ref="0"/>
+						<string key="objectName">Accept Follow Bar</string>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">91</int>
+						<reference key="object" ref="805459038"/>
+						<reference key="parent" ref="789061634"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">92</int>
+						<reference key="object" ref="331973174"/>
+						<reference key="parent" ref="789061634"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">93</int>
+						<reference key="object" ref="730308703"/>
+						<reference key="parent" ref="789061634"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">94</int>
+						<reference key="object" ref="373143581"/>
+						<reference key="parent" ref="789061634"/>
+					</object>
 				</array>
 			</object>
 			<dictionary class="NSMutableDictionary" key="flattenedProperties">
@@ -947,12 +1151,17 @@
 				<string key="86.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 				<string key="88.CustomClassName">UnselectableTextView</string>
 				<string key="88.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
+				<string key="90.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
+				<string key="91.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
+				<string key="92.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
+				<string key="93.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
+				<string key="94.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 			</dictionary>
 			<dictionary class="NSMutableDictionary" key="unlocalizedProperties"/>
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">89</int>
+			<int key="maxID">101</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -976,18 +1185,29 @@
 					<string key="className">ProfilViewController</string>
 					<string key="superclassName">UIViewController</string>
 					<dictionary class="NSMutableDictionary" key="actions">
+						<string key="clicAcceptFollow">id</string>
 						<string key="clicFollow">id</string>
 						<string key="clicFollowers">id</string>
+						<string key="clicHeadFollow">id</string>
 						<string key="clicMoment">id</string>
 						<string key="clicPhotos">id</string>
+						<string key="clicRefuseFollow">id</string>
 					</dictionary>
 					<dictionary class="NSMutableDictionary" key="actionInfosByName">
+						<object class="IBActionInfo" key="clicAcceptFollow">
+							<string key="name">clicAcceptFollow</string>
+							<string key="candidateClassName">id</string>
+						</object>
 						<object class="IBActionInfo" key="clicFollow">
 							<string key="name">clicFollow</string>
 							<string key="candidateClassName">id</string>
 						</object>
 						<object class="IBActionInfo" key="clicFollowers">
 							<string key="name">clicFollowers</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="clicHeadFollow">
+							<string key="name">clicHeadFollow</string>
 							<string key="candidateClassName">id</string>
 						</object>
 						<object class="IBActionInfo" key="clicMoment">
@@ -998,8 +1218,15 @@
 							<string key="name">clicPhotos</string>
 							<string key="candidateClassName">id</string>
 						</object>
+						<object class="IBActionInfo" key="clicRefuseFollow">
+							<string key="name">clicRefuseFollow</string>
+							<string key="candidateClassName">id</string>
+						</object>
 					</dictionary>
 					<dictionary class="NSMutableDictionary" key="outlets">
+						<string key="acceptFollowBarInfoLabel">UILabel</string>
+						<string key="acceptFollowBarNameLabel">UILabel</string>
+						<string key="acceptFollowBarView">UIView</string>
 						<string key="backgroundContentView">UIView</string>
 						<string key="buttonsView">UIView</string>
 						<string key="contentView">UIView</string>
@@ -1010,6 +1237,7 @@
 						<string key="followerLabel">UILabel</string>
 						<string key="headFollowButton">UIButton</string>
 						<string key="headFollowLabel">UILabel</string>
+						<string key="headerView">UIView</string>
 						<string key="leftBarView">UIView</string>
 						<string key="momentButton">UIButton</string>
 						<string key="momentLabel">UILabel</string>
@@ -1019,6 +1247,18 @@
 						<string key="titreLabel">UILabel</string>
 					</dictionary>
 					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
+						<object class="IBToOneOutletInfo" key="acceptFollowBarInfoLabel">
+							<string key="name">acceptFollowBarInfoLabel</string>
+							<string key="candidateClassName">UILabel</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="acceptFollowBarNameLabel">
+							<string key="name">acceptFollowBarNameLabel</string>
+							<string key="candidateClassName">UILabel</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="acceptFollowBarView">
+							<string key="name">acceptFollowBarView</string>
+							<string key="candidateClassName">UIView</string>
+						</object>
 						<object class="IBToOneOutletInfo" key="backgroundContentView">
 							<string key="name">backgroundContentView</string>
 							<string key="candidateClassName">UIView</string>
@@ -1058,6 +1298,10 @@
 						<object class="IBToOneOutletInfo" key="headFollowLabel">
 							<string key="name">headFollowLabel</string>
 							<string key="candidateClassName">UILabel</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="headerView">
+							<string key="name">headerView</string>
+							<string key="candidateClassName">UIView</string>
 						</object>
 						<object class="IBToOneOutletInfo" key="leftBarView">
 							<string key="name">leftBarView</string>
@@ -1111,6 +1355,9 @@
 			<string key="bg_profil">{91, 90}</string>
 			<string key="btn_head_follow_down.png">{206, 34}</string>
 			<string key="btn_head_follow_up.png">{205, 34}</string>
+			<string key="button_accept_follow_background.png">{52, 42}</string>
+			<string key="picto_check_blanc.png">{26, 22}</string>
+			<string key="picto_croix_blanche.png">{24, 23}</string>
 			<string key="picto_follow_down.png">{67, 64}</string>
 			<string key="picto_follow_up.png">{67, 64}</string>
 			<string key="picto_follower_down.png">{67, 64}</string>

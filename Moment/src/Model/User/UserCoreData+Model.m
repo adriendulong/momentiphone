@@ -39,6 +39,9 @@ static NSTimeInterval lastUpdateTime = 0;
     self.nb_followers = user.nb_followers;
     self.is_followed = user.is_followed;
     self.descriptionString = user.descriptionString;
+    self.privacy = user.privacy;
+    self.request_follower = user.request_follower;
+    self.request_follow_me = user.request_follow_me;
 }
 
 - (void)setupWithAttributes:(NSDictionary*)attributes
@@ -72,6 +75,13 @@ static NSTimeInterval lastUpdateTime = 0;
         self.is_followed = @([attributes[@"is_followed"] boolValue]);
     if(attributes[@"description"])
         self.descriptionString = attributes[@"description"];
+    
+    if(attributes[@"privacy"])
+        self.privacy = attributes[@"privacy"];
+    if(attributes[@"request_follow_me"])
+        self.request_follow_me = attributes[@"request_follow_me"];
+    if(attributes[@"request_follower"])
+        self.request_follower = attributes[@"request_follower"];
 }
 
 #pragma mark - Persist

@@ -50,7 +50,7 @@
                 
             case NotificationTypeFollowRequest:
                 self.pictoView.image = [UIImage imageNamed:@"picto_invite"];
-                self.texteLabel.text = [NSString stringWithFormat:@"Demande de suivi de %@", notification.follower.formatedUsername];
+                self.texteLabel.text = [NSString stringWithFormat:@"Demande de suivi de %@", notification.requestFollower.formatedUsername];
                 break;
                 
             default:

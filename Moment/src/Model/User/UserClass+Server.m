@@ -477,27 +477,80 @@
     }];
 }
 
-- (void)toggleFollowWithEnded:(void (^) (BOOL success))block
+- (void)toggleFollowWithEnded:(void (^) (BOOL success, BOOL waitForReponse))block
 {
     NSString *path = [NSString stringWithFormat:@"addfollow/%@", self.userId];
     
     [[AFMomentAPIClient sharedClient] getPath:path parameters:nil encoding:AFFormURLParameterEncoding success:^(AFHTTPRequestOperation *operation, id JSON) {
         
-        self.is_followed = @(!self.is_followed.boolValue);
+        BOOL waitForResponse = [JSON[@"code_follow"] boolValue];
+        if(!waitForResponse)
+            self.is_followed = @(!self.is_followed.boolValue);
         
         [UserCoreData currentUserNeedsUpdate];
         
         if(block) {
-            block(YES);
+            block(YES, waitForResponse);
         }
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         HTTP_ERROR(operation, error);
         
         if(block)
-            block(NO);
+            block(NO, NO);
     }];
 }
+
++ (void)acceptFollowOfUser:(UserClass*)user withEnded:(void (^) (BOOL success))block {
+    
+    if(user.request_follow_me.boolValue) {
+        
+        NSString *path = [NSString stringWithFormat:@"acceptfollow/%@", user.userId];
+        
+        [[AFMomentAPIClient sharedClient] getPath:path parameters:nil encoding:AFFormURLParameterEncoding success:^(AFHTTPRequestOperation *operation, id JSON) {
+            
+            [UserCoreData currentUserNeedsUpdate];
+            
+            if(block) {
+                block(YES);
+            }
+            
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            HTTP_ERROR(operation, error);
+            
+            if(block)
+                block(NO);
+        }];
+        
+    }
+}
+
++ (void)refuseFollowOfUser:(UserClass*)user withEnded:(void (^) (BOOL success))block {
+    
+    if(user.request_follow_me.boolValue) {
+        
+        NSString *path = [NSString stringWithFormat:@"refusefollow/%@", user.userId];
+        
+        [[AFMomentAPIClient sharedClient] getPath:path parameters:nil encoding:AFFormURLParameterEncoding success:^(AFHTTPRequestOperation *operation, id JSON) {
+            
+            NSLog(@"JSON = %@", JSON);
+            
+            [UserCoreData currentUserNeedsUpdate];
+            
+            if(block) {
+                block(YES);
+            }
+            
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            HTTP_ERROR(operation, error);
+            
+            if(block)
+                block(NO);
+        }];
+        
+    }
+}
+
 
 #pragma mark - Photos
 

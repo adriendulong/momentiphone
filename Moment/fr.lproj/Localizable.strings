@@ -185,6 +185,11 @@
 "ProfilViewController_FollowersLabel" = "Followers";
 "ProfilViewController_PhotosLabel" = "Photos";
 "ProfilViewController_MomentsLabel" = "Moments";
+"ProfilViewController_AcceptFollowBar_InfoLabel" = "SOUHAITE VOUS SUIVRE.";
+"ProfilViewController_HeadFollowButtonLabel_Waiting" = "En attente";
+"ProfilViewController_HeadFollowButtonLabel_Follow" = "Follow";
+"ProfilViewController_AcceptFollow_Message" = "Follow Accepté";
+"ProfilViewController_RefuseFollow_Message" = "Follow Refusé";
 
 /* ------------ FeedViewController ------------- */
 "FeedViewController_lire_messages_label1" = "Lire les";

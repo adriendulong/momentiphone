@@ -2,7 +2,7 @@
 //  UserCoreData.h
 //  Moment
 //
-//  Created by Mathieu PIERAGGI on 02/04/13.
+//  Created by Mathieu PIERAGGI on 03/06/13.
 //  Copyright (c) 2013 Moment. All rights reserved.
 //
 
@@ -14,6 +14,7 @@
 @interface UserCoreData : NSManagedObject
 
 @property (nonatomic, retain) NSData * dataImage;
+@property (nonatomic, retain) NSString * descriptionString;
 @property (nonatomic, retain) NSString * email;
 @property (nonatomic, retain) NSString * facebookId;
 @property (nonatomic, retain) NSString * imageString;
@@ -27,7 +28,9 @@
 @property (nonatomic, retain) NSString * secondPhone;
 @property (nonatomic, retain) NSNumber * state;
 @property (nonatomic, retain) NSNumber * userId;
-@property (nonatomic, retain) NSString * descriptionString;
+@property (nonatomic, retain) NSNumber * privacy;
+@property (nonatomic, retain) NSNumber * request_follower;
+@property (nonatomic, retain) NSNumber * request_follow_me;
 @property (nonatomic, retain) NSSet *messages;
 @property (nonatomic, retain) NSSet *moments;
 @end
