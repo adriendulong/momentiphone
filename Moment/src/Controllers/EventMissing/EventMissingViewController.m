@@ -17,7 +17,9 @@ const static NSString *kParameterContactMail = @"hello@appmoment.fr";
 @interface EventMissingViewController () {
 @private
     UIAlertView *fbLoginPopup;
-    UIAlertView *addPhoneNumber;
+    UIAlertView *addFirstPhoneNumber;
+    UIAlertView *addSecondPhoneNumber;
+    UIAlertView *removePhoneNumber;
 }
 
 @property (strong, nonatomic) IBOutlet UILabel *mainTitle;
@@ -265,40 +267,40 @@ const static NSString *kParameterContactMail = @"hello@appmoment.fr";
 {
     UserClass *currentUser = [UserCoreData getCurrentUser];
 
-    if(currentUser.numeroMobile) {
+    if(currentUser.numeroMobile.length != 0) {
         
-        if(currentUser.secondPhone) {
+        if(currentUser.secondPhone.length != 0) {
             
-            addPhoneNumber = [[UIAlertView alloc] initWithTitle:@"2 numéros enregistrés"
+            removePhoneNumber = [[UIAlertView alloc] initWithTitle:@"2 numéros enregistrés"
                                                                   message:[NSString stringWithFormat:@"Veuillez en supprimer un:\n %@\n%@", currentUser.numeroMobile, currentUser.secondPhone]
                                                                  delegate:self
                                                         cancelButtonTitle:@"Annuler"
                                                    otherButtonTitles:@"Valider", nil];
-            [addPhoneNumber setAlertViewStyle:UIAlertViewStylePlainTextInput];
-            [addPhoneNumber show];
+            [removePhoneNumber setAlertViewStyle:UIAlertViewStylePlainTextInput];
+            [removePhoneNumber show];
         } else {
             
-            addPhoneNumber = [[UIAlertView alloc] initWithTitle:@"Ajouter un second numéro"
+            addSecondPhoneNumber = [[UIAlertView alloc] initWithTitle:@"Ajouter un second numéro"
                                                                   message:[NSString stringWithFormat:@"Numéro déja enregistré: %@", currentUser.numeroMobile]
                                                                  delegate:self
                                                         cancelButtonTitle:@"Annuler"
                                                         otherButtonTitles:@"Valider", nil];
-            [addPhoneNumber setAlertViewStyle:UIAlertViewStylePlainTextInput];
-            UITextField* tf = [addPhoneNumber textFieldAtIndex:0];
+            [addSecondPhoneNumber setAlertViewStyle:UIAlertViewStylePlainTextInput];
+            UITextField* tf = [addSecondPhoneNumber textFieldAtIndex:0];
             [tf setKeyboardType:UIKeyboardTypePhonePad];
-            [addPhoneNumber show];
+            [addSecondPhoneNumber show];
         }
     } else {
         
-        addPhoneNumber = [[UIAlertView alloc] initWithTitle:@"Aucun numéro existant"
+        addFirstPhoneNumber = [[UIAlertView alloc] initWithTitle:@"Aucun numéro existant"
                                                          message:@"Veuillez en ajouter un:"
                                                         delegate:self
                                                cancelButtonTitle:@"Annuler"
                                                otherButtonTitles:@"Valider", nil];
-        [addPhoneNumber setAlertViewStyle:UIAlertViewStylePlainTextInput];
-        UITextField* tf = [addPhoneNumber textFieldAtIndex:0];
+        [addFirstPhoneNumber setAlertViewStyle:UIAlertViewStylePlainTextInput];
+        UITextField* tf = [addFirstPhoneNumber textFieldAtIndex:0];
         [tf setKeyboardType:UIKeyboardTypePhonePad];
-        [addPhoneNumber show];
+        [addFirstPhoneNumber show];
     }
 }
 
@@ -408,14 +410,49 @@ const static NSString *kParameterContactMail = @"hello@appmoment.fr";
             }];
         }
         
-    } else if (alertView == addPhoneNumber) {
+    } else if (alertView == addFirstPhoneNumber) {
         UITextField *phoneTextField = [alertView textFieldAtIndex:0];
-        NSLog(@"%@", phoneTextField.text);
         
         if(buttonIndex == 1)
         {
-            NSLog(@"%@", phoneTextField.text);
+            [phoneTextField resignFirstResponder];
             
+            // Si le champ est vide, alertview
+            if(phoneTextField.text.length == 0)
+            {
+                
+                [[[UIAlertView alloc]
+                  initWithTitle:NSLocalizedString(@"CreationPage2ViewController_ConfirmEmptyAlertView_Title", nil)
+                  message:NSLocalizedString(@"CreationPage2ViewController_ConfirmEmptyAlertView_Message", nil)
+                  delegate:self
+                  cancelButtonTitle:NSLocalizedString(@"AlertView_Button_Cancel", nil)
+                  otherButtonTitles:NSLocalizedString(@"AlertView_Button_Continue", nil),nil]
+                 show];
+                
+            }
+            else
+            {                    
+                // Envoi
+                [UserClass updateCurrentUserInformationsOnServerWithAttributes:@{@"numeroMobile":[[Config sharedInstance] formatedPhoneNumber:phoneTextField.text]} withEnded:^(BOOL success) {
+                        
+                    // Informe user of success
+                    [MBProgressHUD hideHUDForView:self.view animated:YES];
+                        
+                    if(!success)
+                    {
+                        [[MTStatusBarOverlay sharedInstance]
+                         postImmediateErrorMessage:NSLocalizedString(@"Error", nil)
+                         duration:1
+                         animated:YES];
+                    }
+                }];
+            }
+        }
+    } else if (alertView == addSecondPhoneNumber) {
+        UITextField *phoneTextField = [alertView textFieldAtIndex:0];
+        
+        if(buttonIndex == 1)
+        {
             [phoneTextField resignFirstResponder];
             
             // Si le champ est vide, alertview
@@ -434,7 +471,7 @@ const static NSString *kParameterContactMail = @"hello@appmoment.fr";
             else
             {
                 // Envoi
-                [UserClass updateCurrentUserInformationsOnServerWithAttributes:@{@"numeroMobile":[[Config sharedInstance] formatedPhoneNumber:phoneTextField.text]} withEnded:^(BOOL success) {
+                [UserClass updateCurrentUserInformationsOnServerWithAttributes:@{@"secondPhone":[[Config sharedInstance] formatedPhoneNumber:phoneTextField.text]} withEnded:^(BOOL success) {
                     
                     // Informe user of success
                     [MBProgressHUD hideHUDForView:self.view animated:YES];
@@ -446,10 +483,12 @@ const static NSString *kParameterContactMail = @"hello@appmoment.fr";
                          duration:1
                          animated:YES];
                     }
-                    
                 }];
             }
         }
+    } else if (alertView == removePhoneNumber) {
+        
+        NSLog(@"alertView == removePhoneNumber not implemented yet...");
     }
 }
 
@@ -477,7 +516,7 @@ const static NSString *kParameterContactMail = @"hello@appmoment.fr";
 - (BOOL)alertViewShouldEnableFirstOtherButton:(UIAlertView *)alertView {
     if (alertView.alertViewStyle == UIAlertViewStylePlainTextInput) {
         
-        if (alertView == addPhoneNumber) {
+        if (alertView == addFirstPhoneNumber || alertView == addSecondPhoneNumber) {
             UITextField *phoneTextField = [alertView textFieldAtIndex:0];
             
             BOOL result = ( (phoneTextField.text.length != 0) && [[Config sharedInstance] isNumeric:phoneTextField.text] );
