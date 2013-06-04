@@ -198,6 +198,10 @@ static NSTimeInterval lastUpdateTime = 0;
     dico[@"state"] = @(UserStateCurrent);
     if(attributes[@"userId"])
         dico[@"userId"] = attributes[@"userId"];
+    else if(attributes[@"numeroMobile"]) 
+        dico[@"numeroMobile"] = attributes[@"numeroMobile"];
+    else if(attributes[@"secondPhone"])
+        dico[@"secondPhone"] = attributes[@"secondPhone"];
         
     if(!current) {
         current = [UserCoreData newUserWithAttributes:dico];
