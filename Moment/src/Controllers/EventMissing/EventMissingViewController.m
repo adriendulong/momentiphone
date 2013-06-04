@@ -17,6 +17,7 @@ const static NSString *kParameterContactMail = @"hello@appmoment.fr";
 @interface EventMissingViewController () {
 @private
     UIAlertView *fbLoginPopup;
+    UIAlertView *addPhoneNumber;
 }
 
 @property (strong, nonatomic) IBOutlet UILabel *mainTitle;
@@ -267,27 +268,37 @@ const static NSString *kParameterContactMail = @"hello@appmoment.fr";
     if(currentUser.numeroMobile) {
         
         if(currentUser.secondPhone) {
-            [[[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"J'ai 2 numéros: %@ | 2nd: %@", currentUser.numeroMobile, currentUser.secondPhone]
-                                        message:@"Supprimes-en 1 des 2 !"
-                                       delegate:nil
-                              cancelButtonTitle:@"OK"
-                              otherButtonTitles: nil]
-             show];
+            
+            addPhoneNumber = [[UIAlertView alloc] initWithTitle:@"2 numéros enregistrés"
+                                                                  message:[NSString stringWithFormat:@"Veuillez en supprimer un:\n %@\n%@", currentUser.numeroMobile, currentUser.secondPhone]
+                                                                 delegate:self
+                                                        cancelButtonTitle:@"Annuler"
+                                                   otherButtonTitles:@"Valider", nil];
+            [addPhoneNumber setAlertViewStyle:UIAlertViewStylePlainTextInput];
+            [addPhoneNumber show];
         } else {
-            [[[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"J'ai 1 seul numéro: %@", currentUser.numeroMobile]
-                                        message:@"Rentres-en un second !"
-                                       delegate:nil
-                              cancelButtonTitle:@"OK"
-                              otherButtonTitles: nil]
-             show];
+            
+            addPhoneNumber = [[UIAlertView alloc] initWithTitle:@"Ajouter un second numéro"
+                                                                  message:[NSString stringWithFormat:@"Numéro déja enregistré: %@", currentUser.numeroMobile]
+                                                                 delegate:self
+                                                        cancelButtonTitle:@"Annuler"
+                                                        otherButtonTitles:@"Valider", nil];
+            [addPhoneNumber setAlertViewStyle:UIAlertViewStylePlainTextInput];
+            UITextField* tf = [addPhoneNumber textFieldAtIndex:0];
+            [tf setKeyboardType:UIKeyboardTypePhonePad];
+            [addPhoneNumber show];
         }
     } else {
-        [[[UIAlertView alloc] initWithTitle:@"Je n'ai pas de numéro"
-                                    message:@"Rentres-en un ;)"
-                                   delegate:nil
-                          cancelButtonTitle:@"OK"
-                          otherButtonTitles: nil]
-         show];
+        
+        addPhoneNumber = [[UIAlertView alloc] initWithTitle:@"Aucun numéro existant"
+                                                         message:@"Veuillez en ajouter un:"
+                                                        delegate:self
+                                               cancelButtonTitle:@"Annuler"
+                                               otherButtonTitles:@"Valider", nil];
+        [addPhoneNumber setAlertViewStyle:UIAlertViewStylePlainTextInput];
+        UITextField* tf = [addPhoneNumber textFieldAtIndex:0];
+        [tf setKeyboardType:UIKeyboardTypePhonePad];
+        [addPhoneNumber show];
     }
 }
 
@@ -397,6 +408,96 @@ const static NSString *kParameterContactMail = @"hello@appmoment.fr";
             }];
         }
         
+    } else if (alertView == addPhoneNumber) {
+        UITextField *phoneTextField = [alertView textFieldAtIndex:0];
+        NSLog(@"%@", phoneTextField.text);
+        
+        if(buttonIndex == 1)
+        {
+            NSLog(@"%@", phoneTextField.text);
+            
+            [phoneTextField resignFirstResponder];
+            
+            // Si le champ est vide, alertview
+            if(phoneTextField.text.length == 0)
+            {
+                
+                [[[UIAlertView alloc]
+                  initWithTitle:NSLocalizedString(@"CreationPage2ViewController_ConfirmEmptyAlertView_Title", nil)
+                  message:NSLocalizedString(@"CreationPage2ViewController_ConfirmEmptyAlertView_Message", nil)
+                  delegate:self
+                  cancelButtonTitle:NSLocalizedString(@"AlertView_Button_Cancel", nil)
+                  otherButtonTitles:NSLocalizedString(@"AlertView_Button_Continue", nil),nil]
+                 show];
+                
+            }
+            else
+            {
+                // Envoi
+                [UserClass updateCurrentUserInformationsOnServerWithAttributes:@{@"numeroMobile":[[Config sharedInstance] formatedPhoneNumber:phoneTextField.text]} withEnded:^(BOOL success) {
+                    
+                    // Informe user of success
+                    [MBProgressHUD hideHUDForView:self.view animated:YES];
+                    
+                    if(!success)
+                    {
+                        [[MTStatusBarOverlay sharedInstance]
+                         postImmediateErrorMessage:NSLocalizedString(@"Error", nil)
+                         duration:1
+                         animated:YES];
+                    }
+                    
+                }];
+            }
+        }
+    }
+}
+
+#pragma mark - UITextField Delegate
+
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
+{
+    BOOL result = ( (string.length == 0) || [[Config sharedInstance] isNumeric:string] || ([string isEqualToString:@"-"]) || ([string isEqualToString:@" "]) );
+    
+    // Activation / Desactivation bouton envoyer
+    if(result) {
+        
+        NSString *newString = [textField.text stringByReplacingCharactersInRange:range withString:string];
+        
+        // Si valide -> Activer bouton
+        BOOL enable = (newString.length == 0 ||
+                       [[Config sharedInstance] isValidPhoneNumber:newString]);
+        
+        return enable;
+    }
+    
+    return result;
+}
+
+- (BOOL)alertViewShouldEnableFirstOtherButton:(UIAlertView *)alertView {
+    if (alertView.alertViewStyle == UIAlertViewStylePlainTextInput) {
+        
+        if (alertView == addPhoneNumber) {
+            UITextField *phoneTextField = [alertView textFieldAtIndex:0];
+            
+            BOOL result = ( (phoneTextField.text.length != 0) && [[Config sharedInstance] isNumeric:phoneTextField.text] );
+            
+            // Activation / Desactivation bouton envoyer
+            if(result) {
+                
+                // Si valide -> Activer bouton
+                BOOL enable = (phoneTextField.text.length != 0 ||
+                               [[Config sharedInstance] isValidPhoneNumber:phoneTextField.text]);
+                
+                return enable;
+            } else {
+                return NO;
+            }
+        } else {
+            return YES;
+        }
+    } else {
+        return YES;
     }
 }
 
