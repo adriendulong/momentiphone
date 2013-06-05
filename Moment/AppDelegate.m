@@ -186,9 +186,9 @@
     // Optional: automatically send uncaught exceptions to Google Analytics.
     [GAI sharedInstance].trackUncaughtExceptions = YES;
     // Optional: set Google Analytics dispatch interval to e.g. 20 seconds.
-    [GAI sharedInstance].dispatchInterval = 20;
+    //[GAI sharedInstance].dispatchInterval = 20; // Default = 2 min
     // Optional: set debug to YES for extra debugging information.
-    [GAI sharedInstance].debug = YES;
+    //[GAI sharedInstance].debug = YES;
     // Create tracker instance.
     self.tracker = [[GAI sharedInstance] trackerWithTrackingId:@"UA-36147731-1"];
     // Si on reste plus d'1 min inactif, les évenements sont envoyés sur une nouvelle session
