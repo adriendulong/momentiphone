@@ -32,4 +32,7 @@
 // Redirection Profonde
 - (void)showInviteViewControllerWithMoment:(MomentClass*)moment;
 
+// Google Analytics
++ (void)sendGoogleAnalyticsView;
+
 @end

@@ -13,8 +13,9 @@
 
 #import "UserCoreData.h"
 #import "FacebookEvent.h"
+#import "GAITrackedViewController.h"
 
-@interface CreationHomeViewController : UIViewController <UIAlertViewDelegate>
+@interface CreationHomeViewController : GAITrackedViewController <UIAlertViewDelegate>
 
 @property (nonatomic, weak) UIViewController <TimeLineDelegate> *timeLineViewContoller;
 @property (nonatomic, strong) UserClass *user;

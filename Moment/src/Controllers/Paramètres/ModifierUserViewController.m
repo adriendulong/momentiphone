@@ -58,7 +58,8 @@ enum PhotoPickerDestination {
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    // Do any additional setup after loading the view from its nib.
+    // Google Analytics
+    self.trackedViewName = @"Vue Edition Profil";
     
     // iPhone 5
     CGRect frame = self.view.frame;

@@ -155,6 +155,13 @@ enum InviteAddFontSize {
     // Dispose of any resources that can be recreated.
 }
 
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    
+    // Google Analytics
+    [[[GAI sharedInstance] defaultTracker] sendView:@"Vue Invitation"];
+}
+
 #pragma mark - Custom Label initialisation
 
 - (void)setValiderLabelText:(NSString*)texteLabel

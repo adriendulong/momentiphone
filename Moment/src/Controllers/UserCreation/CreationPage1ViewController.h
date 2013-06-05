@@ -14,8 +14,9 @@
 #import "CustomTextField.h"
 #import "CustomAGMedallionView.h"
 #import "TPKeyboardAvoidingScrollView.h"
+#import "GAITrackedViewController.h"
 
-@interface CreationPage1ViewController : UIViewController <UINavigationControllerDelegate, UIImagePickerControllerDelegate, UIActionSheetDelegate, UIAlertViewDelegate>
+@interface CreationPage1ViewController : GAITrackedViewController <UINavigationControllerDelegate, UIImagePickerControllerDelegate, UIActionSheetDelegate, UIAlertViewDelegate>
 
 @property (nonatomic, weak) NSManagedObjectContext *managedObjectContext;
 @property (nonatomic, weak) id <HomeViewControllerDelegate> delegate;

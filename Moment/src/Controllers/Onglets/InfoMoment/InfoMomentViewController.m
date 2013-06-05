@@ -1172,6 +1172,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
 {
     [super viewDidAppear:animated];
     [self reloadData];
+    [self sendGoogleAnalyticsView];
 }
 
 - (void)viewDidUnload
@@ -1265,6 +1266,22 @@ static CGFloat DescriptionBoxHeightMax = 100;
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
 }
 
+#pragma mark - Google Analytics
+
+- (void)sendGoogleAnalyticsView {
+    //AppDelegate *d = [[UIApplication sharedApplication] delegate];
+    //[d.tracker sendView:@"Vue Info"];
+    [[[GAI sharedInstance] defaultTracker] sendView:@"Vue Info"];
+    
+}
+
+- (void)sendGoogleAnalyticsEvent:(NSString*)action label:(NSString*)label value:(NSNumber*)value {
+    [[[GAI sharedInstance] defaultTracker]
+     sendEventWithCategory:@"Infos"
+     withAction:action
+     withLabel:label
+     withValue:value];
+}
 
 #pragma mark - ExpandingButtonBarDelegate
 
@@ -1317,6 +1334,9 @@ static CGFloat DescriptionBoxHeightMax = 100;
 
 - (void)clicRespond:(UIButton*)sender {
     
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic RSVP" value:nil];
+    
     enum UserState state = UserStateWaiting;
     UIImage *image = sender.imageView.image;
     
@@ -1346,6 +1366,9 @@ static CGFloat DescriptionBoxHeightMax = 100;
 }
 
 - (IBAction)clicRSVPButton:(UIButton*)sender {
+    
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic RSVP" value:nil];
     
     if(sender.isSelected)
         return;
@@ -1381,24 +1404,44 @@ static CGFloat DescriptionBoxHeightMax = 100;
 }
 
 - (IBAction)clicInviteButton {
+    
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Ajout Invité depuis Info" value:nil];
+    
     InviteAddViewController *inviteViewController = [[InviteAddViewController alloc] initWithOwner:self.user withMoment:self.moment];
     [self.rootViewController.navigationController pushViewController:inviteViewController animated:YES];
 }
 
 - (void)clicInviteView {
+    
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Invités" value:nil];
+    
     InvitePresentsViewController *inviteViewController = [[InvitePresentsViewController alloc] initWithOwner:self.user withMoment:self.moment];
     [self.rootViewController.navigationController pushViewController:inviteViewController animated:YES];
 }
 
 - (void)clicDateView {
+    
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Date" value:nil];
+    
     [CalendarManager addNewEventFromMoment:self.moment];
 }
 
 - (void)clicMapView {
+    
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Map" value:nil];
+    
     [self openMapsWithDirectionsTo:self.coordonateMap title:self.moment.titre];
 }
 
 - (void)clicPhotoView {
+    
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Racourcis Photos" value:nil];
+    
     [self.rootViewController addAndScrollToOnglet:OngletPhoto];
 }
 
@@ -1409,6 +1452,9 @@ static CGFloat DescriptionBoxHeightMax = 100;
 
 - (IBAction)clicShareMail {
     NSLog(@"Mail");
+    
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Partager Mail" value:nil];
     
     if([MFMailComposeViewController canSendMail])
     {
@@ -1454,10 +1500,17 @@ static CGFloat DescriptionBoxHeightMax = 100;
 
 - (IBAction)clicShareLink {
     NSLog(@"Link");
+    
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Partager Copié" value:nil];
+    
 }
 
 - (IBAction)clicShareFacebook {
     NSLog(@"Facebook");
+    
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Partager Facebook" value:nil];
     
     // Paramètres
     NSString *initialText = [NSString stringWithFormat:@"Bon Moment @%@ !\n", self.moment.titre];
@@ -1507,6 +1560,9 @@ static CGFloat DescriptionBoxHeightMax = 100;
 - (IBAction)clicShareTwitter {
     NSLog(@"Twitter");
     
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Partager Twitter" value:nil];
+    
     // Paramètres
     NSMutableString *initialText = [NSMutableString stringWithFormat:@"Bon Moment @%@ !", self.moment.titre];
 #ifdef HASHTAG_ENABLE
@@ -1547,6 +1603,10 @@ static CGFloat DescriptionBoxHeightMax = 100;
 
 - (IBAction)clicShareInstagram {
     NSLog(@"Instagram");
+    
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Partager Instagram" value:nil];
+    
 }
 
 #pragma mark - UIScrollView Delegate
@@ -1635,12 +1695,38 @@ static CGFloat DescriptionBoxHeightMax = 100;
 #pragma mark - Cagnotte
 
 - (IBAction)clicCagnotteButton {
+    
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Soon Cagnotte" value:nil];
+    
+#ifdef CAGNOTTE
     Cagnotte1ViewController *cagnotte = [[Cagnotte1ViewController alloc] initWithMoment:self.moment];
     
     UINavigationController *nav = self.rootViewController.timeLine.navigationController ?: self.rootViewController.navigationController;
     [nav pushViewController:cagnotte animated:YES];
+#endif
+    
 }
 
+/*
+- (IBAction)clicCoursesButton {
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Soon Courses" value:nil];
+}
+*/
+
+- (IBAction)clicFeedBackButton {
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Feedback" value:nil];
+    
+    // TestFlight SDK
+    [TestFlight openFeedbackView];
+}
+
+- (IBAction)clicComptesButton {
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Soon Comptes" value:nil];
+}
 
 #pragma mark - MFMailComposeViewControllerDelegate
 

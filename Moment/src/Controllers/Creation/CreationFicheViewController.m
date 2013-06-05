@@ -573,6 +573,9 @@
 {
     [super viewDidAppear:animated];
     [AppDelegate updateActualViewController:self];
+    
+    // Google Analytics
+    [[[GAI sharedInstance] defaultTracker] sendView:@"Création Event 1"];
 }
 
 #pragma mark - Util
@@ -606,6 +609,9 @@
 
 - (void)clicNext
 {
+    // Google Analytics
+    [[[GAI sharedInstance] defaultTracker] sendView:@"Création Event 2"];
+    
     // Cacher clavier
     [self.view endEditing:YES];
     
@@ -617,6 +623,9 @@
 
 - (void)clicPrev
 {
+    // Google Analytics
+    [[[GAI sharedInstance] defaultTracker] sendView:@"Création Event 1"];
+    
     // Cacher clavier
     [self.view endEditing:YES];
     

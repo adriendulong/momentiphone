@@ -85,6 +85,13 @@
     [super viewDidUnload];
 }
 
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    
+    // Google Analytics
+    [[[GAI sharedInstance] defaultTracker] sendView:@"Ajout Event Facebook"];
+}
+
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView

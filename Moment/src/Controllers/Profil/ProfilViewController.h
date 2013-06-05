@@ -11,6 +11,7 @@
 #import "PhotoViewController.h"
 #import "FollowTableViewController.h"
 #import "CustomUIImageView.h"
+#import "GAITrackedViewController.h"
 
 enum FollowButtonState {
     FollowButtonStateNotFollowed = 0,
@@ -18,7 +19,7 @@ enum FollowButtonState {
     FollowButtonStateWaiting = 2
 };
 
-@interface ProfilViewController : UIViewController
+@interface ProfilViewController : GAITrackedViewController
 
 @property (strong, nonatomic) UserClass *user;
 

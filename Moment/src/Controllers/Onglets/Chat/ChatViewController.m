@@ -140,10 +140,30 @@
     [super viewDidUnload];
 }
 
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    [self sendGoogleAnalyticsView];
+}
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+#pragma mark - Google Analytics
+
+- (void)sendGoogleAnalyticsView {
+    [[[GAI sharedInstance] defaultTracker] sendView:@"Vue Chat"];
+}
+
+- (void)sendGoogleAnalyticsEvent:(NSString*)action label:(NSString*)label value:(NSNumber*)value {
+    [[[GAI sharedInstance] defaultTracker]
+     sendEventWithCategory:@"Chat"
+     withAction:action
+     withLabel:label
+     withValue:value];
 }
 
 #pragma mark - Table view data source
@@ -376,6 +396,10 @@
 }
 
 - (void)textViewDidChange:(UITextView *)textView {
+    
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Entrée Clavier" label:@"Ecrit dans le Chat" value:nil];
+    
     [self updateSendBoxSize];
 }
 
@@ -449,6 +473,9 @@
 {
     if([self.sendboxTextView.text length] > 0) {
         
+        // Google Analytics
+        [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Post un Chat" value:nil];
+        
         // Ajout du message en local
         ChatMessage *message = [[ChatMessage alloc] initWithText:self.sendboxTextView.text withDate:[NSDate date] withUser:[UserCoreData getCurrentUser] withId:nil];
         [ChatMessage sendNewMessageForMoment:self.moment withText:self.sendboxTextView.text withEnded:nil];
@@ -470,6 +497,9 @@
         
         isLoading = YES;
         [activityIndicatorView startAnimating];
+        
+        // Google Analytics
+        [self sendGoogleAnalyticsEvent:@"Swipe" label:@"Recharge le Chat" value:nil];
         
         [self loadMessagesForPage:self.nextPage atPosition:ChatViewControllerMessagePositionTop withEnded:^ {
             [activityIndicatorView stopAnimating];

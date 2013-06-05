@@ -106,6 +106,14 @@ withNavigationController:(UINavigationController*)navController
 
 - (void)showContentViewController:(UIViewController*)viewController
 {
+    // Google Analytics
+    if(self.isShowingPrivateTimeLine) {
+        [FeedViewController sendGoogleAnalyticsView];
+    }
+    else {
+        [TimeLineViewController sendGoogleAnalyticsView];
+    }
+    
     // Add new TimeLine
     viewController.view.alpha = 0;
     [self.view addSubview:viewController.view];
@@ -143,7 +151,11 @@ withNavigationController:(UINavigationController*)navController
 
 - (IBAction)clicChangeTimeLine {    
     
+    // Show Feed
     if(self.isShowingPrivateTimeLine) {
+        
+        // Google Analytics
+        [self sendGoogleAnalyticsEvent:@"Timeline" action:@"Clic Bouton" label:@"Clic Afficher Feed" value:nil];
         
         // Hide Plus Button
         [UIView animateWithDuration:0.3 animations:^{
@@ -161,7 +173,11 @@ withNavigationController:(UINavigationController*)navController
         [self showContentViewController:self.publicFeedList];
         
     }
+    // Show Timeline
     else {
+        
+        // Google Analytics
+        [self sendGoogleAnalyticsEvent:@"Feed" action:@"Clic Bouton" label:@"Clic Afficher Timeline" value:nil];
         
         // Show Plus Button
         [UIView animateWithDuration:0.3 animations:^{
@@ -181,8 +197,25 @@ withNavigationController:(UINavigationController*)navController
 
 - (void)showAddEvent
 {
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Timeline" action:@"Clic Bouton" label:@"Clic Ajout Moment" value:nil];
+    
     CreationHomeViewController *creationViewController = [[CreationHomeViewController alloc] initWithUser:self.user withTimeLine:self.privateTimeLine];
     [self.navController pushViewController:creationViewController animated:YES];
+}
+
+#pragma mark - Google Analytics
+
+- (void)sendGoogleAnalyticsEvent:(NSString*)category
+                          action:(NSString*)action
+                           label:(NSString*)label
+                           value:(NSNumber*)value
+{
+    [[[GAI sharedInstance] defaultTracker]
+     sendEventWithCategory:category
+     withAction:action
+     withLabel:label
+     withValue:value];
 }
 
 #pragma mark - Getters and Setters

@@ -68,6 +68,14 @@
 }
 
 - (void)medallionClic {
+    
+    // Google Analytics
+    [[[GAI sharedInstance] defaultTracker]
+     sendEventWithCategory:@"Timeline"
+     withAction:@"Clic Bouton"
+     withLabel:@"Clic Grossissement"
+     withValue:nil];
+    
     //NSLog(@"clic on button %d with moment %d", button.tag, self.moment.momentId);
     [self.timeLineDelegate updateSelectedMoment:self.moment atRow:self.row];
 }

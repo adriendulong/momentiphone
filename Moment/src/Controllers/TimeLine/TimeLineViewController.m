@@ -383,7 +383,8 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
 
 - (void)viewDidAppear:(BOOL)animated
 {
-    [super viewDidAppear:animated];    
+    [super viewDidAppear:animated];
+    [TimeLineViewController sendGoogleAnalyticsView];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -406,6 +407,20 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
 {
     // Return YES for supported orientations
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
+}
+
+#pragma mark - Google Analytics
+
++ (void)sendGoogleAnalyticsView {
+    [[[GAI sharedInstance] defaultTracker] sendView:@"Vue Timeline"];
+}
+
++ (void)sendGoogleAnalyticsEvent:(NSString*)action label:(NSString*)label value:(NSNumber*)value {
+    [[[GAI sharedInstance] defaultTracker]
+     sendEventWithCategory:@"Timeline"
+     withAction:action
+     withLabel:label
+     withValue:value];
 }
 
 #pragma mark - Table view data source
@@ -518,6 +533,9 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
     // Si une cellule est selectionnée, la deselectionner
     if(self.selectedIndex != -1)
     {
+        // Google Analytics
+        [TimeLineViewController sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Diminution Moment" value:nil];
+        
         NSIndexPath *previousIndex = [NSIndexPath indexPathForRow:self.selectedIndex inSection:0];
         self.selectedIndex = -1;
         self.selectedMoment = nil;
@@ -1220,6 +1238,10 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
 - (IBAction)clicButtonClock
 {
     if([self.moments count] > 3) {
+        
+        // Google Analytics
+        [TimeLineViewController sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Today" value:nil];
+        
         [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:rowForToday inSection:0] atScrollPosition:UITableViewScrollPositionMiddle animated:YES];
         [self updateBandeauWithMoment:self.moments[rowForToday]];
         [self performSelector:@selector(selectActualMiddleCell) withObject:nil afterDelay:0.3];        

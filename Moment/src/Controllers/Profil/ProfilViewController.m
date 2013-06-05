@@ -87,7 +87,8 @@ enum ProfilOnglet {
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    // Do any additional setup after loading the view from its nib.
+    // Google Analytics
+    self.trackedViewName = @"Vue Profil";
     
     // Navigation bar
     [CustomNavigationController setBackButtonWithViewController:self];
@@ -425,9 +426,23 @@ enum ProfilOnglet {
     [[NSNotificationCenter defaultCenter] removeObserver:self name:kNotificationCurrentUserDidUpdate object:nil];
 }
 
+#pragma mark - Google Analytics
+
+- (void)sendGoogleAnalyticsEvent:(NSString*)action label:(NSString*)label value:(NSNumber*)value {
+    [[[GAI sharedInstance] defaultTracker]
+     sendEventWithCategory:@"Profil"
+     withAction:action
+     withLabel:label
+     withValue:value];
+}
+
 #pragma mark - Actions 
 
 - (IBAction)clicMoment {
+    
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Moments" value:nil];
+    
     if(selectedOnglet != ProfilOngletMoments) {
         selectedOnglet = ProfilOngletMoments;
         [self.momentButton setSelected:YES];
@@ -443,6 +458,10 @@ enum ProfilOnglet {
 }
 
 - (IBAction)clicPhotos {
+    
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Photos" value:nil];
+    
     if(selectedOnglet != ProfilOngletPhotos) {
         selectedOnglet = ProfilOngletPhotos;
         [self.momentButton setSelected:NO];
@@ -456,6 +475,10 @@ enum ProfilOnglet {
 }
 
 - (IBAction)clicFollow {
+    
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Liste des Follow" value:nil];
+    
     if(selectedOnglet != ProfilOngletFollow) {
         selectedOnglet = ProfilOngletFollow;
         [self.momentButton setSelected:NO];
@@ -473,6 +496,10 @@ enum ProfilOnglet {
 }
 
 - (IBAction)clicFollowers {
+    
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Liste des Followers" value:nil];
+    
     if(selectedOnglet != ProfilOngletFollower) {
         selectedOnglet = ProfilOngletFollower;
         [self.momentButton setSelected:NO];
@@ -490,6 +517,10 @@ enum ProfilOnglet {
 }
 
 - (void)clicEdit {
+    
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Editer Profil" value:nil];
+    
     ModifierUserViewController *edit = [[ModifierUserViewController alloc] initWithDefaults];
     [self.navigationController pushViewController:edit animated:YES];
 }
@@ -512,6 +543,9 @@ enum ProfilOnglet {
 
 - (IBAction)clicHeadFollow
 {
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Bouton pour Follow" value:nil];
+    
     enum FollowButtonState previousState = headFollowButtonState;
     
     // Requete pas encore envoyée

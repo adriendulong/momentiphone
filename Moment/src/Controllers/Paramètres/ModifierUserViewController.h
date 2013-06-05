@@ -8,8 +8,9 @@
 
 #import <UIKit/UIKit.h>
 #import "CustomTextView.h"
+#import "GAITrackedViewController.h"
 
-@interface ModifierUserViewController : UIViewController <UITextFieldDelegate, UITextViewDelegate, UIActionSheetDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate, UIAlertViewDelegate>
+@interface ModifierUserViewController : GAITrackedViewController <UITextFieldDelegate, UITextViewDelegate, UIActionSheetDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate, UIAlertViewDelegate>
 
 @property (strong, nonatomic) NSMutableSet *modifications;
 @property (strong, nonatomic) UIImage *coverImage;

@@ -25,7 +25,7 @@
 #define kNotificationStatusBarFrameChanged @"NotificationStatusBarFrameChanged"
 
 // Google Account API Key
-#define kGoogleAPIKey @"AIzaSyAXb81v4E4Xn2bvBxBV8CYvSBEQhqLOPxM"
+#define kGoogleAPIKey @"AIzaSyBOpJuAT7dEsXCxPbd_6m89wJPUbEIEM80"//@"AIzaSyBLhi9BP6Lmcr8NM2UeK8t9PYwOzJOnEBU"
 
 @interface Config : NSObject
 

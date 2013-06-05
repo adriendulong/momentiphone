@@ -25,6 +25,7 @@
 #import "MDCParallaxView.h"
 #import "IgnoreTouchView.h"
 #import <MessageUI/MessageUI.h>
+#import "GAI.h"
 
 @interface InfoMomentViewController : UIViewController <RNExpandingButtonBarDelegate, UIScrollViewDelegate, OngletViewController, MFMailComposeViewControllerDelegate> {
     
@@ -125,17 +126,29 @@
 
 /* ------ Partage View ----- */
 @property (nonatomic, strong) IBOutlet UIView *partageView;
-- (IBAction)clicShareMail;
-- (IBAction)clicShareLink;
-- (IBAction)clicShareFacebook;
-- (IBAction)clicShareTwitter;
-- (IBAction)clicShareInstagram;
 
+
+// ------------------- METHODES ------------------------ //
 
 - (id)initWithMoment:(MomentClass*)moment withRootViewController:(UIViewController*)rootViewController;
 
 - (IBAction)clicInviteButton;
 - (void)reloadData;
 - (IBAction)clicRSVPButton:(UIButton*)sender;
+
+- (IBAction)clicShareMail;
+- (IBAction)clicShareLink;
+- (IBAction)clicShareFacebook;
+- (IBAction)clicShareTwitter;
+- (IBAction)clicShareInstagram;
+
+- (IBAction)clicCagnotteButton;
+- (IBAction)clicCoursesButton;
+- (IBAction)clicComptesButton;
+- (IBAction)clicFeedBackButton;
+
+
+// Google Analytics
+- (void)sendGoogleAnalyticsView;
 
 @end

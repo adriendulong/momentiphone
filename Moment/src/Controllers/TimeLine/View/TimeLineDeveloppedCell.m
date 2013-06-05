@@ -79,7 +79,7 @@
         self.medallion.borderWidth = 3.0;
         self.medallion.defaultStyle = MedallionStyleCover;
         __weak TimeLineDeveloppedCell *dp = self;
-        [self.medallion addTarget:self action:@selector(buttonInfoClic) forControlEvents:UIControlEventTouchUpInside];
+        [self.medallion addTarget:self action:@selector(medaillionClic) forControlEvents:UIControlEventTouchUpInside];
         [self.medallion setImage:self.moment.uimage imageString:self.moment.imageString withSaveBlock:^(UIImage *image) {
             [dp.moment setUimage:image];
         }];
@@ -195,19 +195,43 @@
 }
 
 - (IBAction)buttonPhotoClic {
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Direct icone Photo" value:nil];
+    
     [self.timeLineDelegate showPhotoView:self.moment];
 }
 
 - (IBAction)buttonInfoClic {
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Direct icone Infos" value:nil];
+    [self.timeLineDelegate showInfoMomentView:self.moment];
+}
+
+- (void)medaillionClic {
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic ouvrir Moment" value:nil];
     [self.timeLineDelegate showInfoMomentView:self.moment];
 }
 
 - (IBAction)buttonMessageClic {
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Direct icone Chat" value:nil];
+    
     [self.timeLineDelegate showTchatView:self.moment];
 }
 
 - (IBAction)buttonDeleteClic {
     [self.timeLineDelegate deleteMoment:self.moment];
+}
+
+#pragma mark - Google Analytics
+
+- (void)sendGoogleAnalyticsEvent:(NSString*)action label:(NSString*)label value:(NSNumber*)value {
+    [[[GAI sharedInstance] defaultTracker]
+     sendEventWithCategory:@"Timeline"
+     withAction:action
+     withLabel:label
+     withValue:value];
 }
 
 @end

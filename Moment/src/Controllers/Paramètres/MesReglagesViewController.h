@@ -8,8 +8,9 @@
 
 #import <UIKit/UIKit.h>
 #import <MessageUI/MessageUI.h>
+#import "GAITrackedViewController.h"
 
-@interface MesReglagesViewController : UIViewController <MFMailComposeViewControllerDelegate>
+@interface MesReglagesViewController : GAITrackedViewController <MFMailComposeViewControllerDelegate>
 
 // --- Properties ---
 

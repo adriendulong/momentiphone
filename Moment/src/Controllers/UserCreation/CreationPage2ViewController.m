@@ -45,7 +45,8 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    // Do any additional setup after loading the view from its nib.
+    // Google Analytics
+    self.trackedViewName = @"Vue Inscription tel";
     
     //mettre le fond
     self.view.backgroundColor = [[UIColor alloc] initWithPatternImage:[UIImage imageNamed:@"login-bg.jpg"]];
@@ -153,7 +154,7 @@
     else
     {
         // Envoi
-        [UserClass updateCurrentUserInformationsOnServerWithAttributes:@{@"phone":[[Config sharedInstance] formatedPhoneNumber:self.phoneTextField.text]} withEnded:^(BOOL success) {
+        [UserClass updateCurrentUserInformationsOnServerWithAttributes:@{@"numeroMobile":[[Config sharedInstance] formatedPhoneNumber:self.phoneTextField.text]} withEnded:^(BOOL success) {
             
             // Informe user of success
             [MBProgressHUD hideHUDForView:self.view animated:YES];
@@ -176,7 +177,7 @@
         // Vérification
         if([[Config sharedInstance] isValidPhoneNumber:self.phoneTextField.text])
         {
-            [UserClass updateCurrentUserInformationsOnServerWithAttributes:@{@"phone":[[Config sharedInstance] formatedPhoneNumber:self.phoneTextField.text]} withEnded:^(BOOL success) {
+            [UserClass updateCurrentUserInformationsOnServerWithAttributes:@{@"numeroMobile":[[Config sharedInstance] formatedPhoneNumber:self.phoneTextField.text]} withEnded:^(BOOL success) {
                 
                 // Informe user of success
                 [MBProgressHUD hideHUDForView:self.view animated:YES];

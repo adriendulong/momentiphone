@@ -8,6 +8,7 @@
 
 #import "FullScreenPhotoViewController.h"
 #import "Photos.h"
+#import "GAI.h"
 
 @interface FullScreenPhotoViewController ()
 
@@ -40,6 +41,13 @@
 {
     [super viewWillDisappear:animated];
     [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleBlackOpaque;
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    // Google Analytics
+    [[[GAI sharedInstance] defaultTracker] sendView:@"Vue Photo FullScreen"];
 }
 
 /*

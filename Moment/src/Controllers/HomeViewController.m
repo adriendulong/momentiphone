@@ -29,6 +29,7 @@
 #import "DeviceModel.h"
 
 #import "TutorialViewController.h"
+#import "GAI.h"
 
 @interface HomeViewController ()
 
@@ -283,7 +284,7 @@
 
 - (void) showLoginForm:(BOOL)isDisplay{
     
-    
+    // ---- Show ----
     if( isDisplay ){
         _isShowFormLogin = YES;
         _backButton.enabled = YES;
@@ -334,7 +335,12 @@
         _forgotPassword.alpha = 1;
         _backButton.alpha = 1;
         [UIView commitAnimations]; // End animations
+        
+        // Google Analytics
+        [[[GAI sharedInstance] defaultTracker] sendView:@"Vue Connexion"];
     }
+    
+    // ----- Hide -----
     else{
         _isShowFormLogin = NO;
         _backButton.enabled = NO;

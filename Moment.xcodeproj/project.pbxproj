@@ -274,6 +274,7 @@
 		5B4455C316E547A500F94D5B /* ProfilViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5B4455C116E547A500F94D5B /* ProfilViewController.xib */; };
 		5B49EDF116B76D910033E525 /* AddressBookManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B49EDF016B76D910033E525 /* AddressBookManager.m */; };
 		5B4E863B16E7985D00D897FD /* MomentClass+Mapping.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B4E863A16E7985D00D897FD /* MomentClass+Mapping.m */; };
+		5B4E91A8175E0A53006A08F6 /* libGoogleAnalytics.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B4E91A6175E0A53006A08F6 /* libGoogleAnalytics.a */; };
 		5B51153916F251E100B96DFD /* box_feed_big.png in Resources */ = {isa = PBXBuildFile; fileRef = 5B51153316F251E100B96DFD /* box_feed_big.png */; };
 		5B51153A16F251E100B96DFD /* box_feed_big@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5B51153416F251E100B96DFD /* box_feed_big@2x.png */; };
 		5B51153B16F251E100B96DFD /* box_feed_little.png in Resources */ = {isa = PBXBuildFile; fileRef = 5B51153516F251E100B96DFD /* box_feed_little.png */; };
@@ -1341,6 +1342,12 @@
 		5B49EDF016B76D910033E525 /* AddressBookManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddressBookManager.m; sourceTree = "<group>"; };
 		5B4E863916E7985D00D897FD /* MomentClass+Mapping.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MomentClass+Mapping.h"; sourceTree = "<group>"; };
 		5B4E863A16E7985D00D897FD /* MomentClass+Mapping.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MomentClass+Mapping.m"; sourceTree = "<group>"; };
+		5B4E91A1175E0A53006A08F6 /* GAI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GAI.h; sourceTree = "<group>"; };
+		5B4E91A2175E0A53006A08F6 /* GAITrackedViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GAITrackedViewController.h; sourceTree = "<group>"; };
+		5B4E91A3175E0A53006A08F6 /* GAITracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GAITracker.h; sourceTree = "<group>"; };
+		5B4E91A4175E0A53006A08F6 /* GAITransaction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GAITransaction.h; sourceTree = "<group>"; };
+		5B4E91A5175E0A53006A08F6 /* GAITransactionItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GAITransactionItem.h; sourceTree = "<group>"; };
+		5B4E91A6175E0A53006A08F6 /* libGoogleAnalytics.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libGoogleAnalytics.a; sourceTree = "<group>"; };
 		5B51153316F251E100B96DFD /* box_feed_big.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = box_feed_big.png; sourceTree = "<group>"; };
 		5B51153416F251E100B96DFD /* box_feed_big@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "box_feed_big@2x.png"; sourceTree = "<group>"; };
 		5B51153516F251E100B96DFD /* box_feed_little.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = box_feed_little.png; sourceTree = "<group>"; };
@@ -2123,6 +2130,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5BCCDE7716A1DC9A00C86579 /* SystemConfiguration.framework in Frameworks */,
 				5B6A106E1738B54A005BCB7D /* StoreKit.framework in Frameworks */,
 				5B69928C172C398F00F07271 /* Security.framework in Frameworks */,
 				5B9D96E4172BECFD0064D9ED /* Twitter.framework in Frameworks */,
@@ -2143,7 +2151,6 @@
 				5B0DFEDA16C64A0D00033C86 /* Social.framework in Frameworks */,
 				5B13B0C016B590C4002D8AC4 /* AddressBookUI.framework in Frameworks */,
 				5B13B0BE16B590B7002D8AC4 /* AddressBook.framework in Frameworks */,
-				5BCCDE7716A1DC9A00C86579 /* SystemConfiguration.framework in Frameworks */,
 				5BCCDE7516A1DC6D00C86579 /* MobileCoreServices.framework in Frameworks */,
 				5BBBA2C3169E1C0000867B31 /* CoreText.framework in Frameworks */,
 				5BF03135169C987F00232E75 /* CoreLocation.framework in Frameworks */,
@@ -2155,6 +2162,7 @@
 				5BF02E7C169C8F7400232E75 /* CoreGraphics.framework in Frameworks */,
 				5B0DFEE816C6A86A00033C86 /* FacebookSDK.framework in Frameworks */,
 				5BB7E428170A851A002E6C6E /* libTestFlight.a in Frameworks */,
+				5B4E91A8175E0A53006A08F6 /* libGoogleAnalytics.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2694,6 +2702,19 @@
 				5B4455A016E5471200F94D5B /* picto_photo_up@2x.png */,
 			);
 			path = Profil;
+			sourceTree = "<group>";
+		};
+		5B4E91A0175E0A53006A08F6 /* GoogleAnalyticsiOS_2.0beta4 */ = {
+			isa = PBXGroup;
+			children = (
+				5B4E91A1175E0A53006A08F6 /* GAI.h */,
+				5B4E91A2175E0A53006A08F6 /* GAITrackedViewController.h */,
+				5B4E91A3175E0A53006A08F6 /* GAITracker.h */,
+				5B4E91A4175E0A53006A08F6 /* GAITransaction.h */,
+				5B4E91A5175E0A53006A08F6 /* GAITransactionItem.h */,
+				5B4E91A6175E0A53006A08F6 /* libGoogleAnalytics.a */,
+			);
+			path = GoogleAnalyticsiOS_2.0beta4;
 			sourceTree = "<group>";
 		};
 		5B51153216F251E100B96DFD /* Feed */ = {
@@ -3517,6 +3538,7 @@
 			isa = PBXGroup;
 			children = (
 				5BF02E7D169C8F7400232E75 /* Moment */,
+				5B4E91A0175E0A53006A08F6 /* GoogleAnalyticsiOS_2.0beta4 */,
 				5BB7E423170A851A002E6C6E /* TestFlightSDK1 */,
 				5BF02E76169C8F7400232E75 /* Frameworks */,
 				5BF02E74169C8F7400232E75 /* Products */,
@@ -5561,6 +5583,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/TestFlightSDK1",
+					"\"$(SRCROOT)/GoogleAnalyticsiOS_2.0beta4\"",
 				);
 				OTHER_LDFLAGS = (
 					"-lsqlite3.0",
@@ -5595,6 +5618,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/TestFlightSDK1",
+					"\"$(SRCROOT)/GoogleAnalyticsiOS_2.0beta4\"",
 				);
 				OTHER_LDFLAGS = (
 					"-lsqlite3.0",

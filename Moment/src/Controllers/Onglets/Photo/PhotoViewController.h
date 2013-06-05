@@ -25,8 +25,7 @@ enum PhotoViewControllerStyle {
 
 #import "MTStatusBarOverlay.h"
 #import "BigPhotoViewController.h"
-
-
+#import "GAI.h"
 
 @interface PhotoViewController : UIViewController <NLImageViewDataSource, OngletViewController, QBImagePickerControllerDelegate, UIActionSheetDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate, MTStatusBarOverlayDelegate>
 
@@ -68,5 +67,8 @@ withRootViewController:(UIViewController *)rootViewController
 #ifdef ACTIVE_PRINT_MODE
 - (void)desactiverPrintMode;
 #endif
+
+// Google Analytics
+- (void)sendGoogleAnalyticsView;
 
 @end

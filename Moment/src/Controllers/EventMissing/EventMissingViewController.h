@@ -8,8 +8,9 @@
 
 #import <UIKit/UIKit.h>
 #import <MessageUI/MessageUI.h>
+#import "GAITrackedViewController.h"
 
-@interface EventMissingViewController : UIViewController <MFMailComposeViewControllerDelegate>
+@interface EventMissingViewController : GAITrackedViewController <MFMailComposeViewControllerDelegate>
 
 // --- Properties ---
 

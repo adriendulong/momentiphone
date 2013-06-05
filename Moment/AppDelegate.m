@@ -27,7 +27,7 @@
 @synthesize HUD = _HUD;
 @synthesize session = _session;
 @synthesize actualViewController = _actualViewController;
-
+@synthesize tracker = _tracker;
 
 #pragma mark - Global View
 
@@ -180,6 +180,19 @@
     // Perform check for new version of your app
     //[[Harpy sharedInstance] checkVersion];
     
+    // --------------- Google Analytics ------------------
+    //         ----> Initialisation du Tracker <----
+    // ---------------------------------------------------
+    // Optional: automatically send uncaught exceptions to Google Analytics.
+    [GAI sharedInstance].trackUncaughtExceptions = YES;
+    // Optional: set Google Analytics dispatch interval to e.g. 20 seconds.
+    [GAI sharedInstance].dispatchInterval = 20;
+    // Optional: set debug to YES for extra debugging information.
+    [GAI sharedInstance].debug = YES;
+    // Create tracker instance.
+    self.tracker = [[GAI sharedInstance] trackerWithTrackingId:@"UA-36147731-1"];
+    // Si on reste plus d'1 min inactif, les évenements sont envoyés sur une nouvelle session
+    [self.tracker setSessionTimeout:60];
         
     return YES;
 }

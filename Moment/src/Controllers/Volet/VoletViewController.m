@@ -301,6 +301,15 @@ static VoletViewController *actualVoletViewController;
     [super viewDidUnload];
 }
 
+#pragma mark - Google Analytics
+
+- (void)sendGoogleAnalyticsEvent:(NSString*)action label:(NSString*)label value:(NSNumber*)value {
+    [[[GAI sharedInstance] defaultTracker]
+     sendEventWithCategory:@"Volet"
+     withAction:action
+     withLabel:label
+     withValue:value];
+}
 
 #pragma mark - Table view data source
 
@@ -426,7 +435,10 @@ static VoletViewController *actualVoletViewController;
 #pragma mark - Actions
 
 - (IBAction)clicInvitations
-{ 
+{
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Invitations Volet" value:nil];
+    
     if(!self.invitationsButton.isSelected) {
         
         [self loadInvitations];
@@ -442,6 +454,9 @@ static VoletViewController *actualVoletViewController;
 
 - (IBAction)clicNotifications
 {
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Notifications Volet" value:nil];
+    
     if(!self.notificationsButton.isSelected) {
         
         [self loadNotifications];
@@ -457,6 +472,9 @@ static VoletViewController *actualVoletViewController;
 
 - (IBAction)clicUser
 {
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Profil" value:nil];
+    
     ProfilViewController *profil = [[ProfilViewController alloc] initWithUser:[UserCoreData getCurrentUser]];
     UINavigationController *navController = (UINavigationController*)self.delegate.rootViewController;
     [self.delegate showRootController:NO];
@@ -465,6 +483,9 @@ static VoletViewController *actualVoletViewController;
 
 - (IBAction)clicParametres
 {
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Paramètres" value:nil];
+    
     MesReglagesViewController *reglages = [[MesReglagesViewController alloc] initWithDDMenuDelegate:self.delegate];
     UINavigationController *navController = (UINavigationController*)self.delegate.rootViewController;
     [self.delegate showRootController:NO];
@@ -495,7 +516,20 @@ static VoletViewController *actualVoletViewController;
 
 - (IBAction)clicChangeTimeLine:(UIButton*)sender {
     
-    if( (sender == self.mesActualites && !self.mesActualites.selected) || (sender == self.mesMoments && !self.mesMoments.selected) ) {
+    // Identification du bouton
+    BOOL actualitesButton = (sender == self.mesActualites) && (!self.mesActualites.selected);
+    BOOL momentsButton = (sender == self.mesMoments) && (!self.mesMoments.selected);
+    
+    // Google Analytics
+    if(actualitesButton) {
+        [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Actualités" value:nil];
+    }
+    else if(momentsButton) {
+        [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Moments" value:nil];
+    }
+    
+    // Change TimeLine
+    if( actualitesButton || momentsButton ) {
         [self.delegate showRootController:YES];
         [self.rootTimeLine clicChangeTimeLine];
     }
@@ -559,6 +593,9 @@ static VoletViewController *actualVoletViewController;
 
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
 {
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Recherche" value:nil];
+    
     CATransition *transition = [CATransition animation];
     transition.duration = 0.3f;
     transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
@@ -579,6 +616,13 @@ static VoletViewController *actualVoletViewController;
     // Will Show Volet
     if(c == self)
     {
+        // Google Analytics
+        [[[GAI sharedInstance] defaultTracker]
+         sendEventWithCategory:@"Timeline"
+         withAction:@"Clic Bouton"
+         withLabel:@"Clic Volet"
+         withValue:nil];
+        
         // Si les informations du user sont incompletes --> Reload
         UserClass *user = [UserCoreData getCurrentUser];
         if( !isLoading && !(user && user.userId && (user.nom || user.prenom) ))

@@ -249,7 +249,8 @@ withDelegate:(PhotoViewController*)photoViewController
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    // Do any additional setup after loading the view from its nib.
+    // Google Analytics
+    self.trackedViewName = @"Vue Big Photo";
     
     // Background
     [self updateBackground];
@@ -576,6 +577,16 @@ withDelegate:(PhotoViewController*)photoViewController
     }
 }
 
+#pragma mark - Google Analytics
+
+- (void)sendGoogleAnalyticsEvent:(NSString*)action label:(NSString*)label value:(NSNumber*)value {
+    [[[GAI sharedInstance] defaultTracker]
+     sendEventWithCategory:@"Photos"
+     withAction:action
+     withLabel:label
+     withValue:value];
+}
+
 #pragma mark - Actions
 
 - (IBAction)clicClose {    
@@ -594,6 +605,10 @@ withDelegate:(PhotoViewController*)photoViewController
 }
 
 - (IBAction)clicNext {
+    
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Suivant" value:nil];
+    
     [self showViewAtIndex:self.selectedIndex+1 fromParent:NO];
     if(self.selectedIndex == [self.photos count]-1)
         self.nextButton.enabled = NO;
@@ -602,6 +617,10 @@ withDelegate:(PhotoViewController*)photoViewController
 }
 
 - (IBAction)clicPrevious {
+    
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Précédent" value:nil];
+    
     [self showViewAtIndex:self.selectedIndex-1 fromParent:NO];
     if(self.selectedIndex == 0)
         self.previousButton.enabled = NO;
@@ -626,6 +645,10 @@ withDelegate:(PhotoViewController*)photoViewController
 }
 
 - (IBAction)clicLike {
+    
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Like" value:nil];
+    
     Photos *photo = self.photos[self.selectedIndex];
     
     [photo likeRequestWithEnded:^(NSInteger nbLikes) {
@@ -634,7 +657,10 @@ withDelegate:(PhotoViewController*)photoViewController
 }
 
 - (IBAction)clicFacebook {
-        
+    
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Partage Facebook" value:nil];
+    
     // Paramètres
     Photos *photo = self.photos[self.selectedIndex];
     UIImage *image = photo.imageOriginal;
@@ -685,6 +711,9 @@ withDelegate:(PhotoViewController*)photoViewController
 
 - (IBAction)clicTwitter {
     
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Partage Twitter" value:nil];
+    
     // Paramètres
     Photos *photo = self.photos[self.selectedIndex];
     UIImage *image = photo.imageOriginal;
@@ -723,6 +752,10 @@ withDelegate:(PhotoViewController*)photoViewController
 }
 
 - (IBAction)clicDownload {
+    
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Téléchargement" value:nil];
+    
     Photos *p = self.photos[self.selectedIndex];
     UIImageWriteToSavedPhotosAlbum(p.imageOriginal, self, @selector(image:didFinishSavingWithError:contextInfo:), NULL);
 }
@@ -869,6 +902,9 @@ withDelegate:(PhotoViewController*)photoViewController
     
     //RotationNavigationControllerViewController *nav = [[RotationNavigationControllerViewController alloc] initWithRootViewController:self.fullScreenViewController];
     //[[[UIApplication sharedApplication] keyWindow] addSubview:nav.view];
+    
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Plein écran" value:nil];
     
     shouldAnimate = NO;
     ((RotationNavigationControllerViewController*)self.navigationController).activeRotation = YES;

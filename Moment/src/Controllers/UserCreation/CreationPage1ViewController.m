@@ -108,6 +108,8 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    // Google Analytics
+    self.trackedViewName = @"Vue Inscription";
     
     // iPhone 4 layout
     if ( [[VersionControl sharedInstance] screenHeight] != 568 )

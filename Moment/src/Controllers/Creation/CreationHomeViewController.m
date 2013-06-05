@@ -34,6 +34,8 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    // Google Analytics
+    self.trackedViewName = @"Ajout Event";
     
     [CustomNavigationController setBackButtonWithViewController:self];
     

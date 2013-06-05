@@ -41,7 +41,6 @@
 				<string key="NSFrame">{{0, 64}, {320, 504}}</string>
 				<reference key="NSSuperview"/>
 				<reference key="NSWindow"/>
-				<reference key="NSNextKeyView"/>
 				<object class="NSColor" key="IBUIBackgroundColor" id="564802254">
 					<int key="NSColorSpace">3</int>
 					<bytes key="NSWhite">MCAwAA</bytes>
@@ -142,7 +141,6 @@
 								<string key="NSFrame">{{263, 20}, {40, 40}}</string>
 								<reference key="NSSuperview" ref="681843645"/>
 								<reference key="NSWindow"/>
-								<reference key="NSNextKeyView"/>
 								<string key="NSReuseIdentifierKey">_NS:225</string>
 								<bool key="IBUIOpaque">NO</bool>
 								<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
@@ -276,7 +274,6 @@
 						<string key="NSFrame">{{22, 15}, {276, 70}}</string>
 						<reference key="NSSuperview" ref="530699570"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView"/>
 						<string key="NSReuseIdentifierKey">_NS:328</string>
 						<reference key="IBUIBackgroundColor" ref="564802254"/>
 						<bool key="IBUIOpaque">NO</bool>
@@ -354,7 +351,6 @@
 						<string key="NSFrame">{{43, 67}, {257, 21}}</string>
 						<reference key="NSSuperview" ref="164947809"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView"/>
 						<string key="NSReuseIdentifierKey">_NS:328</string>
 						<bool key="IBUIOpaque">NO</bool>
 						<bool key="IBUIClipsSubviews">YES</bool>
@@ -430,7 +426,6 @@
 						<string key="NSFrame">{{269, 2}, {41, 35}}</string>
 						<reference key="NSSuperview" ref="441759791"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<bool key="IBUIOpaque">NO</bool>
 						<int key="IBUIContentMode">1</int>
@@ -710,7 +705,6 @@
 						<string key="NSFrame">{{188, 31}, {109, 21}}</string>
 						<reference key="NSSuperview" ref="460313953"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView"/>
 						<string key="NSReuseIdentifierKey">_NS:328</string>
 						<bool key="IBUIOpaque">NO</bool>
 						<bool key="IBUIClipsSubviews">YES</bool>
@@ -915,7 +909,6 @@
 						<string key="NSFrame">{{245, 13}, {42, 42}}</string>
 						<reference key="NSSuperview" ref="628958806"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<bool key="IBUIClipsSubviews">YES</bool>
 						<int key="IBUIContentMode">2</int>
@@ -1002,7 +995,6 @@
 						<string key="NSFrame">{{244, 12}, {45, 45}}</string>
 						<reference key="NSSuperview" ref="505709546"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView"/>
 						<string key="NSReuseIdentifierKey">_NS:567</string>
 						<bool key="IBUIUserInteractionEnabled">NO</bool>
 						<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
@@ -1090,7 +1082,6 @@
 						<string key="NSFrame">{{64, 16}, {228, 21}}</string>
 						<reference key="NSSuperview" ref="337114662"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView"/>
 						<string key="NSReuseIdentifierKey">_NS:328</string>
 						<bool key="IBUIOpaque">NO</bool>
 						<bool key="IBUIClipsSubviews">YES</bool>
@@ -1156,7 +1147,6 @@
 						<string key="NSFrame">{{64, 16}, {228, 21}}</string>
 						<reference key="NSSuperview" ref="211854361"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView"/>
 						<string key="NSReuseIdentifierKey">_NS:328</string>
 						<bool key="IBUIOpaque">NO</bool>
 						<bool key="IBUIClipsSubviews">YES</bool>
@@ -1193,7 +1183,6 @@
 						<string key="NSFrame">{{16, 7}, {288, 21}}</string>
 						<reference key="NSSuperview" ref="885582167"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView"/>
 						<string key="NSReuseIdentifierKey">_NS:328</string>
 						<bool key="IBUIOpaque">NO</bool>
 						<bool key="IBUIClipsSubviews">YES</bool>
@@ -1278,7 +1267,6 @@
 						<string key="NSFrame">{{220, 80}, {88, 21}}</string>
 						<reference key="NSSuperview" ref="361220648"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<bool key="IBUIOpaque">NO</bool>
 						<bool key="IBUIClipsSubviews">YES</bool>
@@ -1529,7 +1517,6 @@
 						<string key="NSFrame">{{213, 20}, {95, 43}}</string>
 						<reference key="NSSuperview" ref="632764634"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<bool key="IBUIOpaque">NO</bool>
 						<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
@@ -1854,7 +1841,6 @@
 						<string key="NSFrame">{{246, 32}, {41, 42}}</string>
 						<reference key="NSSuperview" ref="256294141"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<bool key="IBUIOpaque">NO</bool>
 						<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
@@ -2359,6 +2345,33 @@
 						<int key="IBEventType">7</int>
 					</object>
 					<int key="connectionID">142</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBCocoaTouchEventConnection" key="connection">
+						<string key="label">clicFeedBackButton</string>
+						<reference key="source" ref="580251305"/>
+						<reference key="destination" ref="372490531"/>
+						<int key="IBEventType">7</int>
+					</object>
+					<int key="connectionID">299</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBCocoaTouchEventConnection" key="connection">
+						<string key="label">clicCagnotteButton</string>
+						<reference key="source" ref="29887008"/>
+						<reference key="destination" ref="372490531"/>
+						<int key="IBEventType">7</int>
+					</object>
+					<int key="connectionID">298</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBCocoaTouchEventConnection" key="connection">
+						<string key="label">clicComptesButton</string>
+						<reference key="source" ref="649144543"/>
+						<reference key="destination" ref="372490531"/>
+						<int key="IBEventType">7</int>
+					</object>
+					<int key="connectionID">297</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBCocoaTouchEventConnection" key="connection">
@@ -3204,7 +3217,7 @@
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">296</int>
+			<int key="maxID">299</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -3228,6 +3241,10 @@
 					<string key="className">InfoMomentViewController</string>
 					<string key="superclassName">UIViewController</string>
 					<dictionary class="NSMutableDictionary" key="actions">
+						<string key="clicCagnotteButton">id</string>
+						<string key="clicComptesButton">id</string>
+						<string key="clicCoursesButton">id</string>
+						<string key="clicFeedBackButton">id</string>
 						<string key="clicInviteButton">id</string>
 						<string key="clicRSVPButton:">UIButton</string>
 						<string key="clicShareFacebook">id</string>
@@ -3237,6 +3254,22 @@
 						<string key="clicShareTwitter">id</string>
 					</dictionary>
 					<dictionary class="NSMutableDictionary" key="actionInfosByName">
+						<object class="IBActionInfo" key="clicCagnotteButton">
+							<string key="name">clicCagnotteButton</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="clicComptesButton">
+							<string key="name">clicComptesButton</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="clicCoursesButton">
+							<string key="name">clicCoursesButton</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="clicFeedBackButton">
+							<string key="name">clicFeedBackButton</string>
+							<string key="candidateClassName">id</string>
+						</object>
 						<object class="IBActionInfo" key="clicInviteButton">
 							<string key="name">clicInviteButton</string>
 							<string key="candidateClassName">id</string>

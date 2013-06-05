@@ -51,7 +51,8 @@ const static NSString *kParameterContactMail = @"hello@appmoment.fr";
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    // Do any additional setup after loading the view from its nib.
+    // Google Analytics
+    self.trackedViewName = @"Vue Paramètre";
     
     // iPhone 5
     CGRect frame = self.view.frame;
