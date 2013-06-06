@@ -27,6 +27,7 @@
     enum PhotoViewControllerStyle photoViewStyle;
     BOOL suppressionModeActif;
     
+    /*
     // Position boutons Show suppression
     CGFloat trashButtonOriginShow;
     CGFloat likeButtonOriginShow;
@@ -39,6 +40,7 @@
     CGFloat facebookButtonOriginHide;
     CGFloat twitterButtonOriginHide;
     CGFloat downloadButtonOriginHide;
+     */
     
     // Action Sheets
     UIActionSheet *deleteActionSheet;
@@ -277,6 +279,7 @@ withDelegate:(PhotoViewController*)photoViewController
     self.auteurLabel.font = font;
     self.dateLabel.font = font;
     
+    /*
     // Save Position Show Buttons
     trashButtonOriginShow = self.trashButton.frame.origin.x;
     likeButtonOriginShow = self.likeButton.frame.origin.x;
@@ -290,6 +293,7 @@ withDelegate:(PhotoViewController*)photoViewController
     facebookButtonOriginHide = likeButtonOriginHide+delta;
     twitterButtonOriginHide = facebookButtonOriginHide+delta;
     downloadButtonOriginHide = twitterButtonOriginHide+delta;
+     */
     
     // Clic FullScreen
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(showFullScreen)];
@@ -411,7 +415,9 @@ withDelegate:(PhotoViewController*)photoViewController
     if(suppressionModeActif)
     {
         suppressionModeActif = NO;
-                
+        
+        /*
+        
         __block CGRect frame = self.likeButton.frame;
         
         // Animation
@@ -467,7 +473,12 @@ withDelegate:(PhotoViewController*)photoViewController
             
         }];
         
+        */
         
+        // Changer Picto
+        UIImage *image = [UIImage imageNamed:@"report_photo"];
+        [self.trashButton setImage:image forState:UIControlStateNormal];
+        [self.trashButton setImage:image forState:UIControlStateHighlighted];
     }
 }
 
@@ -477,6 +488,7 @@ withDelegate:(PhotoViewController*)photoViewController
     {
         suppressionModeActif = YES;
         
+        /*
         __block CGRect frame = self.likeButton.frame;
         
         // Animation
@@ -531,7 +543,12 @@ withDelegate:(PhotoViewController*)photoViewController
             }];
             
         }];
+        */
         
+        // Changer Picto
+        UIImage *image = [UIImage imageNamed:@"trash_photo"];
+        [self.trashButton setImage:image forState:UIControlStateNormal];
+        [self.trashButton setImage:image forState:UIControlStateHighlighted];
     }
 }
 
@@ -630,18 +647,29 @@ withDelegate:(PhotoViewController*)photoViewController
 
 - (IBAction)clicTrash {
     
-    if(!deleteActionSheet)
+    // Delete Photo
+    if(suppressionModeActif)
     {
-        deleteActionSheet = [[UIActionSheet alloc] initWithTitle:NSLocalizedString(@"BigPhotoViewController_DeleteActionSheet_Title", nil)
-                delegate:self
-       cancelButtonTitle:NSLocalizedString(@"AlertView_Button_Cancel", nil)
-  destructiveButtonTitle:NSLocalizedString(@"BigPhotoViewController_DeleteActionSheet_Delete", nil)
-       otherButtonTitles:nil];
-        deleteActionSheet.actionSheetStyle = UIActionSheetStyleBlackTranslucent;
+        if(!deleteActionSheet)
+        {
+            deleteActionSheet = [[UIActionSheet alloc] initWithTitle:NSLocalizedString(@"BigPhotoViewController_DeleteActionSheet_Title", nil)
+                                                            delegate:self
+                                                   cancelButtonTitle:NSLocalizedString(@"AlertView_Button_Cancel", nil)
+                                              destructiveButtonTitle:NSLocalizedString(@"BigPhotoViewController_DeleteActionSheet_Delete", nil)
+                                                   otherButtonTitles:nil];
+            deleteActionSheet.actionSheetStyle = UIActionSheetStyleBlackTranslucent;
+            
+        }
         
+        [deleteActionSheet showInView:self.view];
+    }
+    // Report Photo
+    else
+    {
+#warning Manque Server
+        [[[UIAlertView alloc] initWithTitle:@"Report Photo" message:@"Voulez-vous vraiment déclarer cette photo comme inapropriée ?" delegate:nil cancelButtonTitle:@"Non" otherButtonTitles:@"Oui", nil] show];
     }
     
-    [deleteActionSheet showInView:self.view];
 }
 
 - (IBAction)clicLike {
