@@ -18,6 +18,7 @@
 #import "LocalNotification.h"
 #import "ParametreNotification.h"
 #import "Config.h"
+#import "FacebookManager.h"
 
 @implementation UserClass (Server)
 
@@ -333,6 +334,9 @@
         
         // Suppression des préférences des push notifications
         [ParametreNotification clearSettingsLocal];
+        
+        // Logout Facebook
+        [[FacebookManager sharedInstance] logout];
     }
     
     if(block)

@@ -73,7 +73,6 @@
                 frame.origin.x = self.infoLabel.frame.origin.x + self.infoLabel.frame.size.width + 5;
                 frame.size.width = 320 - frame.origin.x - 5;
                 self.nbMessagesLabel.frame = frame;
-                NSLog(@"Frame = %@", NSStringFromCGRect(frame));
             }
             else {
                 self.nbMessagesLabel.hidden = YES;
