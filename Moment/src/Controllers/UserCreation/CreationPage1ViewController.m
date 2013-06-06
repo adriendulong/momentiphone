@@ -171,6 +171,10 @@
     // Picker view
     [self initDatePicker];
     
+    // Lien CGU
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(showCGU)];
+    [self.confidentialiteLabel addGestureRecognizer:tap];
+    
     // Labels
     NSString *confidialiteLabelString = self.confidentialiteLabel.text;
     NSString *photoProfilString = self.photoProfilLabel.text;
@@ -577,5 +581,9 @@
     self.birthdayTextField.text = [self.dateFormatter stringFromDate:self.pickerView.datePicker.date];
 }
 
+- (void)showCGU {
+    NSURL *url = [NSURL URLWithString:kAppMomentCGU];
+    [[UIApplication sharedApplication] openURL:url];
+}
 
 @end

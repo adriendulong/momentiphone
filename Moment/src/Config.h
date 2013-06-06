@@ -27,6 +27,9 @@
 // Google Account API Key
 #define kGoogleAPIKey @"AIzaSyBOpJuAT7dEsXCxPbd_6m89wJPUbEIEM80"//@"AIzaSyBLhi9BP6Lmcr8NM2UeK8t9PYwOzJOnEBU"
 
+// CGU Link
+#define kAppMomentCGU @"http://www.appmoment.fr/cgu"
+
 @interface Config : NSObject
 
 #pragma mark - Singleton
