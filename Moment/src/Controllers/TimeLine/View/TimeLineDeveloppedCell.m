@@ -121,17 +121,27 @@
 {
     // On réduit la taille pour faire un effet de grandissement
     CGRect frame = self.medallion.frame, tempFrame = self.medallion.frame;
-    tempFrame.origin.y -= tempFrame.size.height/3.0;
+    //tempFrame.origin.y -= tempFrame.size.height/3.0;
     self.medallion.frame = tempFrame;
-    self.medallion.transform =  CGAffineTransformScale(originalMedallionTransform, 0.2, 0.2);
+    self.medallion.transform =  CGAffineTransformScale(originalMedallionTransform, 0.35, 0.35);
     //self.transform = CGAffineTransformMakeTranslation(0, -0.6);
     self.buttonInfo.alpha = 0;
     self.buttonMessage.alpha = 0;
     self.buttonPhoto.alpha = 0;
     self.buttonDelete.alpha = 0;
     
+    /*
+    [self.medallion setNeedsDisplay];
+    [UIView animateWithDuration:0.5 delay:0 options:UIViewAnimationOptionTransitionCrossDissolve animations:^{
+        self.medallion.transform = originalMedallionTransform;
+        self.medallion.center = originalMedallionCenter;
+        self.medallion.frame = frame;
+        
+        [self.medallion.layer displayIfNeeded];
+        */
+        
     // On remet à la taille de base
-    [UIView animateWithDuration:0.5 animations:^{
+    [UIView animateWithDuration:0.5 delay:0.3 options:UIViewAnimationOptionTransitionCrossDissolve animations:^{
         self.medallion.transform = originalMedallionTransform;
         self.medallion.center = originalMedallionCenter;
         self.medallion.frame = frame;
