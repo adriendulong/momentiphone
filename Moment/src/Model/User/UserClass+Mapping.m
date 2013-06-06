@@ -51,7 +51,7 @@
     if(attributes[@"description"])
         newAttributes[@"description"] = attributes[@"description"];
     
-    if(attributes[@"privacy"])
+    if(attributes[@"privacy"] != nil)
         newAttributes[@"privacy"] = attributes[@"privacy"];
     if(attributes[@"request_follower"])
         newAttributes[@"request_follower"] = attributes[@"request_follower"];
@@ -88,6 +88,8 @@
         newAttributes[@"secondEmail"] = attributes[@"secondEmail"];
     if(attributes[@"description"])
         newAttributes[@"description"] = attributes[@"description"];
+    if(attributes[@"privacy"] != nil)
+        newAttributes[@"privacy"] = attributes[@"privacy"];
         
     return newAttributes;
 }
@@ -124,6 +126,8 @@
         newAttributes[@"secondEmail"] = self.secondEmail;
     if(self.descriptionString)
         newAttributes[@"description"] = self.descriptionString;
+    if(self.privacy != nil)
+        newAttributes[@"privacy"] = self.privacy;
 
     return newAttributes;
 }
@@ -151,6 +155,8 @@
         newAttributes[@"secondEmail"] = self.secondEmail;
     if(self.descriptionString)
         newAttributes[@"description"] = self.descriptionString;
+    if(self.privacy != nil)
+        newAttributes[@"privacy"] = self.privacy;
 
     return newAttributes;
 }

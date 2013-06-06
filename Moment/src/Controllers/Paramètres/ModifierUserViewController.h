@@ -36,9 +36,20 @@
 @property (weak, nonatomic) IBOutlet UILabel *label2;
 @property (weak, nonatomic) IBOutlet UILabel *label3;
 
+// Privacy
+@property (strong, nonatomic) IBOutletCollection(UILabel) NSArray *privacyTitleLabels;
+@property (strong, nonatomic) IBOutletCollection(UILabel) NSArray *privacyDetailLabels;
+
+@property (weak, nonatomic) IBOutlet UIButton *privacyPublicButton;
+@property (weak, nonatomic) IBOutlet UIButton *privacyFriendButton;
+@property (weak, nonatomic) IBOutlet UIButton *privacyClosedButton;
+
+- (IBAction)clicPrivacyButton:(UIButton *)sender;
+
 - (id)initWithDefaults;
 
 - (IBAction)clicFacebookBadge;
 - (IBAction)clicChangeCover;
+- (IBAction)clicValider;
 
 @end

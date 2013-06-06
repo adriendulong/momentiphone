@@ -76,7 +76,7 @@ static NSTimeInterval lastUpdateTime = 0;
     if(attributes[@"description"])
         self.descriptionString = attributes[@"description"];
     
-    if(attributes[@"privacy"])
+    if(attributes[@"privacy"] != nil)
         self.privacy = attributes[@"privacy"];
     if(attributes[@"request_follow_me"])
         self.request_follow_me = attributes[@"request_follow_me"];
@@ -121,7 +121,7 @@ static NSTimeInterval lastUpdateTime = 0;
     UserCoreData *userCoreData = [UserCoreData requestUserAsCoreDataWithUser:user];
     [userCoreData setupWithUser:user];
     [[Config sharedInstance] saveContext];
-    NSLog(@"USERCOREDATA : %@ - %@ - %@ - %@ - %@", userCoreData.userId, userCoreData.prenom, userCoreData.nom, userCoreData.facebookId, userCoreData.nb_follows);
+    NSLog(@"USERCOREDATA : %@ - %@ - %@ - %@ - %@ - %@", userCoreData.userId, userCoreData.prenom, userCoreData.nom, userCoreData.facebookId, userCoreData.nb_follows, userCoreData.privacy);
 }
 
 #pragma mark - Current User

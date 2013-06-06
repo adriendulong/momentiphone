@@ -40,6 +40,7 @@ enum PhotoPickerDestination {
 @synthesize adresseTextField = _adresseTextField;
 @synthesize backgroundDescriptionView = _backgroundDescriptionView, descriptionTextView = _descriptionTextView;
 
+
 - (id)initWithDefaults
 {
     self = [super initWithNibName:@"ModifierUserViewController" bundle:nil];
@@ -109,6 +110,23 @@ enum PhotoPickerDestination {
         self.secondPhoneTextField.text = user.secondPhone;
     if(user.descriptionString)
         self.descriptionTextView.text = user.descriptionString;
+    NSLog(@"privacy = %@", user.privacy);
+    if(user.privacy != nil) {
+        enum UserPrivacy privacy = user.privacy.intValue;
+        switch (privacy) {
+            case UserPrivacyClosed:
+                self.privacyClosedButton.selected = YES;
+                break;
+                
+            case UserPrivacyOpen:
+                self.privacyPublicButton.selected = YES;
+                break;
+                
+            case UserPrivacyPrivate:
+                self.privacyFriendButton.selected = YES;
+                break;
+        }
+    }
 }
 
 - (void)didReceiveMemoryWarning
@@ -137,6 +155,11 @@ enum PhotoPickerDestination {
     [self setProfilePictureImage:nil];
     [self setBackgroundDescriptionView:nil];
     [self setDescriptionTextView:nil];
+    [self setPrivacyTitleLabels:nil];
+    [self setPrivacyDetailLabels:nil];
+    [self setPrivacyPublicButton:nil];
+    [self setPrivacyFriendButton:nil];
+    [self setPrivacyClosedButton:nil];
     [super viewDidUnload];
 }
 
@@ -216,7 +239,51 @@ enum PhotoPickerDestination {
     [actionSheet showInView:self.view];
 }
 
-- (void)clicValider
+#pragma mark - UIImagePickerController Delegate
+
+-(void) imagePickerController:(UIImagePickerController *)UIPicker didFinishPickingMediaWithInfo:(NSDictionary *) info
+{
+    UIImage *image = [[Config sharedInstance] imageWithMaxSize:info[@"UIImagePickerControllerOriginalImage"] maxSize:600];
+    
+    switch (imagePickerDestination) {
+        case PhotoPickerDestinationProfilPicture:
+            self.profilePictureImage = [[Config sharedInstance] imageWithMaxSize:image maxSize:600];
+            self.medallion.image = image;
+            break;
+            
+        case PhotoPickerDestinationCover:
+            self.coverImage = image;
+            break;
+    }
+    
+    [[VersionControl sharedInstance] dismissModalViewControllerFromRoot:UIPicker animated:YES];
+}
+
+#pragma mark - UIActionSheet
+
+- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if(buttonIndex == 2)
+        return;
+    
+    UIImagePickerController *picker = [[UIImagePickerController alloc] init];
+    picker.delegate = self;
+    
+    // Album photo
+    if(buttonIndex == 0) {
+        picker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+    }
+    else {
+        picker.sourceType = UIImagePickerControllerSourceTypeCamera;
+    }
+    
+    [[VersionControl sharedInstance] presentModalViewController:picker fromRoot:self animated:YES];
+}
+
+#pragma mark - Actions
+
+
+- (IBAction)clicValider
 {
     // Cacher clavier
     [self.view endEditing:YES];
@@ -312,8 +379,7 @@ enum PhotoPickerDestination {
                 invalideTextField = self.secondPhoneTextField;
             }
         }
-        
-        
+                
         // --------- Si les données sont valides ---------
         if(!invalideTextField)
         {
@@ -354,6 +420,17 @@ enum PhotoPickerDestination {
             // -> Manque vérification de l'ancien mot de passe
             if([self.modifications containsObject:self.nouveauPasswordTextField]) {
                 [modifications setValue:self.nouveauPasswordTextField forKey:@"password"];
+            }
+            // Privacy
+            if([self.modifications containsObject:@"privacy"]) {
+                enum UserPrivacy privacy;
+                if(self.privacyFriendButton.isSelected)
+                    privacy = UserPrivacyPrivate;
+                else if(self.privacyPublicButton.isSelected)
+                    privacy = UserPrivacyOpen;
+                else
+                    privacy = UserPrivacyClosed;
+                [modifications setValue:@(privacy) forKey:@"privacy"];
             }
             
             // Manque Cover
@@ -421,50 +498,6 @@ enum PhotoPickerDestination {
     }
 }
 
-
-#pragma mark - UIImagePickerController Delegate
-
--(void) imagePickerController:(UIImagePickerController *)UIPicker didFinishPickingMediaWithInfo:(NSDictionary *) info
-{
-    UIImage *image = [[Config sharedInstance] imageWithMaxSize:info[@"UIImagePickerControllerOriginalImage"] maxSize:600];
-    
-    switch (imagePickerDestination) {
-        case PhotoPickerDestinationProfilPicture:
-            self.profilePictureImage = [[Config sharedInstance] imageWithMaxSize:image maxSize:600];
-            self.medallion.image = image;
-            break;
-            
-        case PhotoPickerDestinationCover:
-            self.coverImage = image;
-            break;
-    }
-    
-    [[VersionControl sharedInstance] dismissModalViewControllerFromRoot:UIPicker animated:YES];
-}
-
-#pragma mark - UIActionSheet
-
-- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
-{
-    if(buttonIndex == 2)
-        return;
-    
-    UIImagePickerController *picker = [[UIImagePickerController alloc] init];
-    picker.delegate = self;
-    
-    // Album photo
-    if(buttonIndex == 0) {
-        picker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
-    }
-    else {
-        picker.sourceType = UIImagePickerControllerSourceTypeCamera;
-    }
-    
-    [[VersionControl sharedInstance] presentModalViewController:picker fromRoot:self animated:YES];
-}
-
-#pragma mark - Actions
-
 - (IBAction)clicFacebookBadge {
     //NSLog(@"GET PERMISSIONS");
     //[[FacebookManager sharedInstance] getPublishPermissions];
@@ -475,6 +508,29 @@ enum PhotoPickerDestination {
                       cancelButtonTitle:NSLocalizedString(@"AlertView_Button_NO", nil)
                       otherButtonTitles:NSLocalizedString(@"AlertView_Button_YES", nil), nil]
      show];
+}
+
+- (IBAction)clicPrivacyButton:(UIButton *)sender {
+    
+    if(sender == self.privacyPublicButton) {
+        [self.privacyPublicButton setSelected:YES];
+        [self.privacyFriendButton setSelected:NO];
+        [self.privacyClosedButton setSelected:NO];
+    }
+    else if(sender == self.privacyClosedButton) {
+        [self.privacyPublicButton setSelected:NO];
+        [self.privacyFriendButton setSelected:NO];
+        [self.privacyClosedButton setSelected:YES];
+    }
+    else if(sender == self.privacyFriendButton) {
+        [self.privacyPublicButton setSelected:NO];
+        [self.privacyFriendButton setSelected:YES];
+        [self.privacyClosedButton setSelected:NO];
+    }
+
+    if(![self.modifications containsObject:@"privacy"]) {
+        [self.modifications addObject:@"privacy"];
+    }
 }
 
 #pragma mark - AlertView Delegate

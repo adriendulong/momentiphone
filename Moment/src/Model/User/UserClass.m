@@ -72,7 +72,7 @@
         self.is_followed = attributes[@"is_followed"];
     if(attributes[@"description"])
         self.descriptionString = attributes[@"description"];
-    if(attributes[@"privacy"])
+    if(attributes[@"privacy"] != nil)
         self.privacy = attributes[@"privacy"];
     if(attributes[@"request_follower"])
         self.request_follower = attributes[@"request_follower"];
@@ -187,7 +187,7 @@
 #pragma mark - Debug
 
 - (NSString*)description {
-    return [NSString stringWithFormat:@"USER %@ :\n{\nnom = %@\nprenom = %@\nfacebookId = %@\npictureString = %@\nrequest_follower = %@\nrequest_follow_me = %@\n}\n", self.userId, self.nom, self.prenom, self.facebookId, self.imageString, self.request_follower, self.request_follow_me];
+    return [NSString stringWithFormat:@"USER %@ :\n{\nnom = %@\nprenom = %@\nfacebookId = %@\npictureString = %@\nrequest_follower = %@\nrequest_follow_me = %@\nprivacy = %@\n}\n", self.userId, self.nom, self.prenom, self.facebookId, self.imageString, self.request_follower, self.request_follow_me, self.privacy];
 }
 
 @end

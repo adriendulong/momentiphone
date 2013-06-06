@@ -329,9 +329,7 @@ static FacebookManager *sharedInstance = nil;
     UpdateBlock localBlock = [^ {
         [self getCurrentUserFacebookIdWithEnded:^(NSString *fbId) {
             if(fbId) {
-                // Update CoreData
-                [UserCoreData updateCurrentUserWithAttributes:@{@"facebookId":fbId}];
-                // Update Server
+                // Update Server & CoreData
                 [UserClass updateCurrentUserInformationsOnServerWithAttributes:@{@"facebookId":fbId} withEnded:nil];
                 
                 if(block)
