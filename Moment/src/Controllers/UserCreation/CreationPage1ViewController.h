@@ -32,6 +32,8 @@
 @property (nonatomic, weak) IBOutlet CustomAGMedallionView *photoProfil;
 @property (nonatomic, weak) IBOutlet CustomLabel *photoProfilLabel;
 @property (nonatomic, weak) IBOutlet CustomLabel *confidentialiteLabel;
+@property (nonatomic, weak) IBOutlet CustomLabel *cguLabel;
+@property (nonatomic, weak) IBOutlet UIView *sublineCGU;
 
 @property (nonatomic, weak) IBOutlet CustomTextField *prenomLabel;
 @property (nonatomic, weak) IBOutlet CustomTextField *emailLabel;

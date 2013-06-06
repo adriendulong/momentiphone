@@ -43,6 +43,8 @@
 @synthesize photoProfil = _photoProfil;
 @synthesize photoProfilLabel = _photoProfilLabel;
 @synthesize confidentialiteLabel = _confidentialiteLabel;
+@synthesize cguLabel = _cguLabel;
+@synthesize sublineCGU = _sublineCGU;
 
 @synthesize nomLabel = _nomLabel;
 @synthesize prenomLabel = _prenomLabel;
@@ -136,6 +138,7 @@
         
         // Move label
         [self moveView:self.confidentialiteLabel distance:margin - 75];
+        [self moveView:self.cguLabel distance:margin - 75];
     }
         
     // Autocomplétion
@@ -174,10 +177,12 @@
     // Lien CGU
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(showCGU)];
     [self.confidentialiteLabel addGestureRecognizer:tap];
+    [self.cguLabel addGestureRecognizer:tap];
     
     // Labels
     NSString *confidialiteLabelString = self.confidentialiteLabel.text;
     NSString *photoProfilString = self.photoProfilLabel.text;
+    NSString *cguString = self.cguLabel.text;
     
     if( [[VersionControl sharedInstance] supportIOS6] )
     {
@@ -189,6 +194,13 @@
         //[self.confidentialiteLabel setAlignment:CLabelAlignmentCenter];
         self.confidentialiteLabel.textAlignment = NSTextAlignmentCenter;
         
+        /* ---------------------- CGU LABEL ----------------------- */
+        attributedString = [[NSMutableAttributedString alloc] initWithString:cguString];
+        [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:11] range:NSMakeRange(0, 1)];
+        [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:9] range:NSMakeRange(1, [cguString length] -1 )];
+        self.cguLabel.attributedText = attributedString;
+        //[self.confidentialiteLabel setAlignment:CLabelAlignmentCenter];
+        self.cguLabel.textAlignment = NSTextAlignmentCenter;
         
         /* ----------------- PHOTO PROFIL LABEL ------------------ */
         attributedString = [[NSMutableAttributedString alloc] initWithString:photoProfilString];
@@ -207,10 +219,7 @@
         
         self.confidentialiteLabel.textColor = [UIColor whiteColor];
         self.photoProfilLabel.textColor = [UIColor whiteColor];
-        
-        [self addShadowToView:self.confidentialiteLabel];
-        [self addShadowToView:self.photoProfilLabel];
-        
+        self.cguLabel.textColor = [UIColor whiteColor];
     }
     else
     {
@@ -241,6 +250,31 @@
         [self.confidentialiteLabel.superview addSubview:tttLabel];
         self.confidentialiteLabel.hidden = YES;
         
+        /* ---------------------- CGU LABEL ----------------------- */
+        
+        tttLabel = [[TTTAttributedLabel alloc] initWithFrame:self.cguLabel.frame];
+        
+        tttLabel.textAlignment = NSTextAlignmentCenter;
+        tttLabel.textColor = [UIColor whiteColor];
+        tttLabel.lineBreakMode = self.cguLabel.lineBreakMode;
+        tttLabel.numberOfLines = self.cguLabel.numberOfLines;
+        [self addShadowToView:tttLabel];
+        
+        tttLabel.backgroundColor = [UIColor clearColor];
+        [tttLabel setText:cguString afterInheritingLabelAttributesAndConfiguringWithBlock:^NSMutableAttributedString *(NSMutableAttributedString *mutableAttributedString) {
+            
+            NSInteger taille = [cguString length];
+            
+            [cf updateTTTAttributedString:mutableAttributedString withFontSize:11 onRange:NSMakeRange(0, 1)];
+            [cf updateTTTAttributedString:mutableAttributedString withFontSize:9 onRange:NSMakeRange(1, taille-1 )];
+            
+            [cf updateTTTAttributedString:mutableAttributedString withColor:[UIColor whiteColor] onRange:NSMakeRange(0, taille)];
+            
+            return mutableAttributedString;
+        }];
+        
+        [self.cguLabel.superview addSubview:tttLabel];
+        self.cguLabel.hidden = YES;
         
         /* ----------------- PHOTO PROFIL LABEL ------------------ */
         
@@ -280,6 +314,15 @@
          */
     }
     
+    
+    // Shadows
+    [self addShadowToView:self.confidentialiteLabel];
+    [self addShadowToView:self.photoProfilLabel];
+    [self addShadowToView:self.cguLabel];
+    
+    // Subline
+    self.sublineCGU.backgroundColor = [UIColor whiteColor];
+    [self addShadowToView:self.sublineCGU];
     
     // Medallion
     self.photoProfil.image = [UIImage imageNamed:@"picto_tete_avec_fond.png"];
