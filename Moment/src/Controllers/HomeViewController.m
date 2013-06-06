@@ -226,6 +226,13 @@
         MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
         hud.labelText = NSLocalizedString(@"MBProgressHUD_Loading_Moments", nil);
         
+        // Si Connexion Facebook, Récupération des Events Facebook
+        NSString *fbId = [[UserCoreData getCurrentUser] facebookId];
+        if(fbId && (fbId.intValue != 0)) {
+            [MomentClass importFacebookEventsWithEnded:nil];
+        }
+        
+        // Récupération des moments
         [MomentClass getMomentsServerWithEnded:^(BOOL success) {
             
             if(success) {

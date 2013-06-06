@@ -485,7 +485,8 @@ enum PhotoPickerDestination {
     
     // Oui -> Importer
     if(buttonIndex == 1) {
-                
+        
+        /*
         // Importation
         ImporterFBViewController *fbViewController = [[ImporterFBViewController alloc] initWithTimeLine:nil];
         
@@ -497,6 +498,10 @@ enum PhotoPickerDestination {
         [viewControllers addObject:fbViewController];
         
         [self.navigationController setViewControllers:viewControllers animated:NO];
+         */
+        
+        // Update Facebook ID
+        [[FacebookManager sharedInstance] updateCurrentUserFacebookIdOnServer:nil];
     }
     
 }

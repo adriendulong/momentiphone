@@ -584,7 +584,6 @@ static FacebookManager *sharedInstance = nil;
 {
     if(block)
     {
-        [TestFlight passCheckpoint:@"Load Facebook Event - Start"];
         // Ask Permissions for Events
         [self askForPermissions:@[kFbPermissionUserEvents] type:FacebookPermissionReadType
                           withEnded:^(BOOL success) {
@@ -649,7 +648,6 @@ static FacebookManager *sharedInstance = nil;
                                                            }];
                                                            
                                                            // Final block
-                                                           [TestFlight passCheckpoint:@"Load Facebook Event - Success"];
                                                            block(finalArray);
                                                            
                                                        }];
@@ -662,7 +660,6 @@ static FacebookManager *sharedInstance = nil;
                                            
                                        }
                                        else{
-                                           [TestFlight passCheckpoint:@"Load Facebook Event - Fail"];
                                            NSLog(@"Facebook Load Events Error : %@", error.localizedDescription);
                                            NSLog(@"Response = %@", connection.urlResponse);
                                            NSLog(@"Headers = %@", connection.urlResponse.allHeaderFields);

@@ -223,39 +223,44 @@
     }
 }
 
+//#define DEBUG_IMPORT_FACEBOOK_EVENT
 + (void)importFacebookEventsWithEnded:(void (^) (NSArray *events, NSArray* moments))block
 {
+        
     // Update Facebook Id
     [[FacebookManager sharedInstance] updateCurrentUserFacebookIdOnServer:^(BOOL success) {
         
-        if(block)
-        {
-            // Get Facebook Events
-            [[FacebookManager sharedInstance] getEventsWithEnded:^(NSArray *events) {
+        // Get Facebook Events
+        [[FacebookManager sharedInstance] getEventsWithEnded:^(NSArray *events) {
+            
+            // Identifier quels évenements sont déjà sur Moment
+            [self identifyFacebookEventsOnMoment:events withEnded:^(NSDictionary *results) {
                 
-                // Identifier quels évenements sont déjà sur Moment
-                [self identifyFacebookEventsOnMoment:events withEnded:^(NSDictionary *results) {
-                    
-                    // Facebook Events à afficher
-                    NSArray *fb_exist = results[@"exist"];
-                    NSArray *fb_notExist = results[@"not_exist"];
-                    
-                    // --------- Créer Moments qui ne sont pas sur le server ---
-                    NSMutableArray *moments_notExist = [MomentClass arrayOfMomentsWithFacebookEvents:fb_notExist].mutableCopy;
-                    
-                    NSLog(@"\n$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ NOT EXISTED $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n");
-                    
-                    __block int i = 0;
-                    // Création sur le server
-                    [MomentClass createMultipleMomentsFromLocalToServerWithMoments:moments_notExist
-                                                                    withTransition:
-                     ^(MomentClass *moment) {
+                // Facebook Events à afficher
+                NSArray *fb_exist = results[@"exist"];
+                NSArray *fb_notExist = results[@"not_exist"];
+                
+                // --------- Créer Moments qui ne sont pas sur le server ---
+                NSMutableArray *moments_notExist = [MomentClass arrayOfMomentsWithFacebookEvents:fb_notExist].mutableCopy;
+                
+#ifdef DEBUG_IMPORT_FACEBOOK_EVENT
+                NSLog(@"\n$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ NOT EXISTED $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n");
+#endif
+                
+                __block int i = 0;
+                // Création sur le server
+                [MomentClass createMultipleMomentsFromLocalToServerWithMoments:moments_notExist
+                                                                withTransition:
+                 ^(MomentClass *moment) {
+                     
+                     if(block) {
                          
-                         
+#ifdef DEBUG_IMPORT_FACEBOOK_EVENT
                          NSLog(@"\n-------------------------------------------------------------------\n");
                          NSLog(@"MOMENT\n : {\n %@ \n}", moment);
                          NSLog(@"OWNER : {\n %@ \n}", moment.owner);
                          NSLog(@"\n-------------------------------------------------------------------\n");
+#endif
                          
                          
                          if(moment)
@@ -263,37 +268,44 @@
                              // Update moments with server attributes
                              [moments_notExist replaceObjectAtIndex:i withObject:moment];
                          }
-                         
-                         i++;
-                         
-                     } withEnded:
-                     ^{
-                         
-                         NSLog(@"\n$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ EXISTED $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n");
-                         
-                         // Création NotExist terminée -> Création locale des fb_exist
-                         NSMutableArray *moments_exist = [MomentClass arrayOfMomentsWithFacebookEvents:fb_exist].mutableCopy;
-                         
-                         
-                         // ----- Ajouter en tant qu'invité aux moments déjà existant -> Requete de création ----
-                         i = 0;
-                         [MomentClass createMultipleMomentsFromLocalToServerWithMoments:moments_exist
-                                                                         withTransition:
-                          ^(MomentClass *moment) {
-                              
-                              
+                     }
+                     i++;
+                     
+                 } withEnded:
+                 ^{
+                     
+#ifdef DEBUG_IMPORT_FACEBOOK_EVENT
+                     NSLog(@"\n$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ EXISTED $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n");
+#endif
+                     
+                     // Création NotExist terminée -> Création locale des fb_exist
+                     NSMutableArray *moments_exist = [MomentClass arrayOfMomentsWithFacebookEvents:fb_exist].mutableCopy;
+                     
+                     
+                     // ----- Ajouter en tant qu'invité aux moments déjà existant -> Requete de création ----
+                     i = 0;
+                     [MomentClass createMultipleMomentsFromLocalToServerWithMoments:moments_exist
+                                                                     withTransition:
+                      ^(MomentClass *moment) {
+                          
+                          if(block) {
+                          
+#ifdef DEBUG_IMPORT_FACEBOOK_EVENT
                               NSLog(@"\n-------------------------------------------------------------------\n");
                               NSLog(@"MOMENT\n : {\n %@ \n}", moment);
                               NSLog(@"OWNER : {\n %@ \n}", moment.owner);
                               NSLog(@"\n-------------------------------------------------------------------\n");
+#endif
                               
                               
                               // Update moments with server attributes
                               [moments_exist replaceObjectAtIndex:i withObject:moment];
-                              i++;
-                              
-                          } withEnded:^{
-                              
+                          }
+                          i++;
+                          
+                      } withEnded:^{
+                          
+                          if(block) {
                               //  ----- Facebook Events par ordre chronologique -----
                               int taille = [fb_exist count] + [fb_notExist count];
                               NSMutableArray *fb = [[NSMutableArray alloc] initWithCapacity:taille];
@@ -311,30 +323,29 @@
                                   return [m1.dateDebut compare:m2.dateDebut];
                               }];
                               
-                              
+#ifdef DEBUG_IMPORT_FACEBOOK_EVENT
                               NSLog(@"\n$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ FIN $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n");
                               
                               NSLog(@"\n-------------------------------------------------------------------\n");
                               NSLog(@"MOMENT\n : {\n %@ \n}", moments);
                               NSLog(@"EVENTS : {\n %@ \n}", fb);
                               NSLog(@"\n-------------------------------------------------------------------\n");
-                              
+#endif
                               
                               // Retourne tableaux
                               block(fb, moments);
-                              
-                          }];
-                         
-                         
-                     }];
-                    
-                    
-                    
-                }];// Fin identifyFacebookEvents
+                          }
+                          
+                      }]; // Fin Moments Exists
+                     
+                     
+                 }]; // Fin Moments Not Exists
                 
                 
-            }];
-        }
+            }];// Fin identifyFacebookEvents
+            
+            
+        }];
         
     }];
 }
