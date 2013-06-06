@@ -11,6 +11,7 @@
 #import "AFJSONRequestOperation.h"
 #import "FacebookEvent.h"
 #import "UserClass+Server.h"
+#import "UserClass+Mapping.h"
 
 @implementation FacebookManager
 
@@ -321,6 +322,47 @@ static FacebookManager *sharedInstance = nil;
     }
 }
 
+- (void)updateCurrentUserFacebookIdOnServer:(void (^) (BOOL success))block {
+    
+    // Block Update
+    typedef void (^UpdateBlock) (void);
+    UpdateBlock localBlock = [^ {
+        [self getCurrentUserFacebookIdWithEnded:^(NSString *fbId) {
+            if(fbId) {
+                // Update CoreData
+                [UserCoreData updateCurrentUserWithAttributes:@{@"facebookId":fbId}];
+                // Update Server
+                [UserClass updateCurrentUserInformationsOnServerWithAttributes:@{@"facebookId":fbId} withEnded:nil];
+                
+                if(block)
+                    block(YES);
+            }
+            else if(block)
+                block(NO);
+        }];
+    } copy];
+    
+    // Save FB id
+    UserClass *user = [UserCoreData getCurrentUser];
+    if(user)
+    {
+        if(!user.facebookId || [user.facebookId intValue] == 0) {
+            localBlock();
+        }
+        else if(block)
+            block(YES);
+    }
+    else {
+        // Load User Informations
+        [UserClass getLoggedUserFromServerWithEnded:^(UserClass *user) {
+            if(user)
+                localBlock();
+            else if(block)
+                block(NO);
+        }];
+    }
+}
+
 - (void)getUserInformationsWithId:(NSString*)facebookId withEnded:(void (^) (UserClass* user))block
 {
     if(block)
@@ -446,36 +488,42 @@ static FacebookManager *sharedInstance = nil;
 
 - (void)loadFriends:( void (^) (NSArray* friends) )block
 {
-    [self askForPermissions:@[kFbPermissionFriendAboutMe ,kFbPermissionFriendHomeTown, kFbPermissionFriendLocation]
-                       type:FacebookPermissionReadType
-                  withEnded:^(BOOL success) {
-                      
-        FBRequest* friendsRequest = [FBRequest requestForMyFriends];
-        friendsRequest.session = [FBSession activeSession];
+    // Update Facebook Id
+    [self updateCurrentUserFacebookIdOnServer:^(BOOL success) {
         
-        [friendsRequest startWithCompletionHandler: ^(FBRequestConnection *connection,
-                                                      NSDictionary* result,
-                                                      NSError *error) {
-            if(!error) {
-                NSArray* friends = result[@"data"];
-                
-                if(block) {
-                    
-                    NSArray *users = [UserClass arrayOfUsersWithArrayOfAttributesFromLocal:[self mappingArrayToLocalFromFacebook:friends]];
-                    
-                    block(users);
-                }
-            }
-            else {
-                NSLog(@"Facebook Get Friends Error : %@", error.localizedDescription);
-                NSLog(@"Response = %@", connection.urlResponse);
-                NSLog(@"Headers = %@", connection.urlResponse.allHeaderFields);
-                NSLog(@"Request = %@", connection.urlRequest);
-                NSLog(@"Connection = %@", connection);
-                if(block) block(nil);
-            }
-            
-        }];
+        // Permissions
+        [self askForPermissions:@[kFbPermissionFriendAboutMe ,kFbPermissionFriendHomeTown, kFbPermissionFriendLocation]
+                           type:FacebookPermissionReadType
+                      withEnded:^(BOOL success) {
+                          
+                          FBRequest* friendsRequest = [FBRequest requestForMyFriends];
+                          friendsRequest.session = [FBSession activeSession];
+                          
+                          [friendsRequest startWithCompletionHandler: ^(FBRequestConnection *connection,
+                                                                        NSDictionary* result,
+                                                                        NSError *error) {
+                              if(!error) {
+                                  NSArray* friends = result[@"data"];
+                                  
+                                  if(block) {
+                                      
+                                      NSArray *users = [UserClass arrayOfUsersWithArrayOfAttributesFromLocal:[self mappingArrayToLocalFromFacebook:friends]];
+                                      
+                                      block(users);
+                                  }
+                              }
+                              else {
+                                  NSLog(@"Facebook Get Friends Error : %@", error.localizedDescription);
+                                  NSLog(@"Response = %@", connection.urlResponse);
+                                  NSLog(@"Headers = %@", connection.urlResponse.allHeaderFields);
+                                  NSLog(@"Request = %@", connection.urlRequest);
+                                  NSLog(@"Connection = %@", connection);
+                                  if(block) block(nil);
+                              }
+                              
+                          }];
+                      }];
+        
     }];
 }
 
@@ -895,17 +943,7 @@ static FacebookManager *sharedInstance = nil;
             // responsiveness when the user tags their friends.
             
             // Save FB id
-            UserClass *user = [UserCoreData getCurrentUser];
-            if(user)
-            {
-                if(!user.facebookId || [user.facebookId intValue] == 0)
-                {
-                    [self getCurrentUserFacebookIdWithEnded:^(NSString *fbId) {
-                        if(fbId)
-                            [UserCoreData updateCurrentUserWithAttributes:@{@"facebookId":fbId}];
-                    }];
-                }
-            }
+            [self updateCurrentUserFacebookIdOnServer:nil];
             
         }
             break;

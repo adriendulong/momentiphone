@@ -14,5 +14,6 @@
 + (NSDictionary*) mappingToWebWithAttributes:(NSDictionary*)attributes;
 + (NSArray*) mappingArrayToLocalAttributes:(NSArray*)array;
 - (NSDictionary*) mappingToWeb;
+- (NSDictionary*) mappingToLocal;
 
 @end

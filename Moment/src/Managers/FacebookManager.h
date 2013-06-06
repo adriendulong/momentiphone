@@ -40,6 +40,7 @@ enum FacebookPermissionType {
 // FB ID
 - (void)getCurrentUserInformationsWithEnded:(void (^) (UserClass* user))block;
 - (void)getCurrentUserFacebookIdWithEnded:(void (^) (NSString *fbId))block;
+- (void)updateCurrentUserFacebookIdOnServer:(void (^) (BOOL success))block;
 - (void)getUserInformationsWithId:(NSString*)facebookId withEnded:(void (^) (UserClass* user))block;
 
 // Friends

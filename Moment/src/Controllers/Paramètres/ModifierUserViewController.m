@@ -485,6 +485,8 @@ enum PhotoPickerDestination {
     
     // Oui -> Importer
     if(buttonIndex == 1) {
+                
+        // Importation
         ImporterFBViewController *fbViewController = [[ImporterFBViewController alloc] initWithTimeLine:nil];
         
         // Remove this view controller
