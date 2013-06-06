@@ -58,13 +58,14 @@
             
         case FeedTypeChat: {
             MomentClass *moment = [[MomentClass alloc] initWithAttributesFromWeb:attributes[@"moment"]];
-            NSArray *messages = [ChatMessage arrayWithArrayFromWeb:attributes[@"chats"]];
+            ChatMessage *message = [[ChatMessage alloc] initWithAttributesFromWeb:attributes[@"chats"][0]];
+            NSInteger nbChats = [attributes[@"nb_chats"] intValue];
             return [[FeedMessage alloc] initWithId:feedId
                                           withUser:user
                                         withMoment:moment
-                                       withMessage:messages
+                                       withMessage:message
+                                       withNbChats:nbChats
                                           withDate:date];
-            
         } break;
             
         case FeedTypeFollow: {

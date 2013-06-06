@@ -10,12 +10,14 @@
 
 @interface FeedMessage : Feed
 
-@property (nonatomic, strong) NSArray *messages;
+@property (nonatomic, strong) ChatMessage *message;
+@property (nonatomic) NSInteger nbChats;
 
 - (id)initWithId:(NSInteger)feedId
         withUser:(UserClass *)user
       withMoment:(MomentClass *)moment
-     withMessage:(NSArray*)messages
+     withMessage:(ChatMessage*)message
+     withNbChats:(NSInteger)nbChats
         withDate:(NSDate*)date;
 
 - (BOOL)shouldUseLargeView;
