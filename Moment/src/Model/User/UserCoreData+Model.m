@@ -375,6 +375,7 @@ static NSTimeInterval lastUpdateTime = 0;
     user.nb_followers = self.nb_followers;
     user.is_followed = self.is_followed;
     user.descriptionString = self.descriptionString;
+    user.privacy = self.privacy;
     
     return user;
 }
