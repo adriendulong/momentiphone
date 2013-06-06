@@ -28,7 +28,7 @@
 #define kGoogleAPIKey @"AIzaSyBOpJuAT7dEsXCxPbd_6m89wJPUbEIEM80"//@"AIzaSyBLhi9BP6Lmcr8NM2UeK8t9PYwOzJOnEBU"
 
 // Links
-#define kAppMomentCGU @"http://www.appmoment.fr/cgu"
+#define kAppMomentCGU @"http://appmoment.fr/cgu"
 #define kParameterFacebookPageID @"277911125648059"
 #define kParameterFacebookPageName @"appmoment"
 #define kParameterTwitterPageName @"appmoment"

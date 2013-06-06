@@ -160,6 +160,7 @@
 }
 
 - (IBAction)clicCGU {
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:kAppMomentCGU]];
 }
 
 - (IBAction)clicContactUs {

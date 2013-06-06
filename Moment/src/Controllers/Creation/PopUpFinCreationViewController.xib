@@ -106,7 +106,7 @@
 						<string key="NSFrameSize">{300, 325}</string>
 						<reference key="NSSuperview" ref="902515507"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView" ref="664900932"/>
+						<reference key="NSNextKeyView" ref="769527277"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<int key="IBUIContentMode">1</int>
 						<bool key="IBUIUserInteractionEnabled">NO</bool>
@@ -122,7 +122,7 @@
 						<string key="NSFrame">{{217, 181}, {68, 37}}</string>
 						<reference key="NSSuperview" ref="902515507"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView" ref="351640519"/>
+						<reference key="NSNextKeyView" ref="54878791"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<bool key="IBUIOpaque">NO</bool>
 						<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
@@ -159,12 +159,12 @@
 					<object class="IBUIImageView" id="664900932">
 						<reference key="NSNextResponder" ref="902515507"/>
 						<int key="NSvFlags">292</int>
-						<string key="NSFrameSize">{300, 45}</string>
+						<string key="NSFrame">{{-2, 0}, {305, 45}}</string>
 						<reference key="NSSuperview" ref="902515507"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView" ref="769527277"/>
+						<reference key="NSNextKeyView" ref="464417338"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
-						<int key="IBUIContentMode">1</int>
+						<int key="IBUIContentMode">2</int>
 						<bool key="IBUIUserInteractionEnabled">NO</bool>
 						<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
 						<object class="NSCustomResource" key="IBUIImage">
@@ -209,7 +209,7 @@
 						<string key="NSFrame">{{83, 238}, {133, 39}}</string>
 						<reference key="NSSuperview" ref="902515507"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView" ref="60875162"/>
+						<reference key="NSNextKeyView" ref="351640519"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<bool key="IBUIOpaque">NO</bool>
 						<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
@@ -473,7 +473,7 @@
 						<string key="NSFrame">{{14, 280}, {45, 21}}</string>
 						<reference key="NSSuperview" ref="902515507"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView" ref="54878791"/>
+						<reference key="NSNextKeyView" ref="985792295"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<bool key="IBUIOpaque">NO</bool>
 						<bool key="IBUIClipsSubviews">YES</bool>
@@ -497,6 +497,7 @@
 						<string key="NSFrame">{{67, 280}, {218, 21}}</string>
 						<reference key="NSSuperview" ref="902515507"/>
 						<reference key="NSWindow"/>
+						<reference key="NSNextKeyView" ref="60875162"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<bool key="IBUIOpaque">NO</bool>
 						<bool key="IBUIClipsSubviews">YES</bool>
@@ -518,7 +519,7 @@
 				<string key="NSFrameSize">{300, 356}</string>
 				<reference key="NSSuperview"/>
 				<reference key="NSWindow"/>
-				<reference key="NSNextKeyView" ref="464417338"/>
+				<reference key="NSNextKeyView" ref="664900932"/>
 				<string key="NSReuseIdentifierKey">_NS:9</string>
 				<reference key="IBUIBackgroundColor" ref="291628786"/>
 				<object class="IBUISimulatedSizeMetrics" key="IBUISimulatedDestinationMetrics">
@@ -860,15 +861,10 @@
 					<string key="className">PopUpFinCreationViewController</string>
 					<string key="superclassName">UIViewController</string>
 					<dictionary class="NSMutableDictionary" key="actions">
-						<string key="changePrivacy:">UIButton</string>
 						<string key="clicInviter">id</string>
 						<string key="clicSwitchButton">id</string>
 					</dictionary>
 					<dictionary class="NSMutableDictionary" key="actionInfosByName">
-						<object class="IBActionInfo" key="changePrivacy:">
-							<string key="name">changePrivacy:</string>
-							<string key="candidateClassName">UIButton</string>
-						</object>
 						<object class="IBActionInfo" key="clicInviter">
 							<string key="name">clicInviter</string>
 							<string key="candidateClassName">id</string>
