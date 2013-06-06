@@ -314,6 +314,12 @@
     UserCoreData *user = [UserCoreData getCurrentUserAsCoreData];
     if(user)
     {
+        // Prévenir Server d'arreter Push Notifications
+        [DeviceModel logout];
+        
+        // Suppression cookie de connexion automatique
+        [[AFMomentAPIClient sharedClient] clearConnexionCookie];
+        
         // Delete Current User
         [[Config sharedInstance].managedObjectContext deleteObject:user];
         [[Config sharedInstance] saveContext];
@@ -322,17 +328,11 @@
         [MomentCoreData resetMomentsLocal];
         [ChatMessageCoreData resetChatMessagesLocal];
         
-        // Suppression cookie de connexion automatique
-        [[AFMomentAPIClient sharedClient] clearConnexionCookie];
-        
         // Unsubscribe to local notifications
         [[PushNotificationManager sharedInstance] removeNotifications];
         
         // Suppression des préférences des push notifications
         [ParametreNotification clearSettingsLocal];
-        
-        // Prévenir Server d'arreter Push Notifications
-        [DeviceModel logout];
     }
     
     if(block)
