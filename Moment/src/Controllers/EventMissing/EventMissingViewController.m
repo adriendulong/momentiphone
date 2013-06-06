@@ -9,8 +9,6 @@
 #import "EventMissingViewController.h"
 #import "Config.h"
 
-const static NSString *kParameterContactMail = @"hello@appmoment.fr";
-
 @interface EventMissingViewController ()
 
 @property (strong, nonatomic) IBOutlet UILabel *mainTitle;

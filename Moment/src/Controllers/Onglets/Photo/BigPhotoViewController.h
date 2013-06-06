@@ -12,8 +12,9 @@
 #import "UserClass.h"
 #import "FullScreenPhotoViewController.h"
 #import "GAITrackedViewController.h"
+#import <MessageUI/MessageUI.h>
 
-@interface BigPhotoViewController : GAITrackedViewController <UIScrollViewDelegate, UIActionSheetDelegate>
+@interface BigPhotoViewController : GAITrackedViewController <UIScrollViewDelegate, UIActionSheetDelegate, MFMailComposeViewControllerDelegate>
 
 @property (nonatomic, strong) UserClass *currentUser; // [UserCoreData getCurrentUser]
 @property (nonatomic, strong) UserClass *user; // User owner de toutes les photos (util si on est dans le profil)

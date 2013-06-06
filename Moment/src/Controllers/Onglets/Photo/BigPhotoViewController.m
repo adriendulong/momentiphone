@@ -666,8 +666,41 @@ withDelegate:(PhotoViewController*)photoViewController
     // Report Photo
     else
     {
-#warning Manque Server
-        [[[UIAlertView alloc] initWithTitle:@"Report Photo" message:@"Voulez-vous vraiment déclarer cette photo comme inapropriée ?" delegate:nil cancelButtonTitle:@"Non" otherButtonTitles:@"Oui", nil] show];
+        if([MFMailComposeViewController canSendMail])
+        {
+            // URL
+            NSString *urlPhoto = ((Photos*)self.photos[self.selectedIndex]).urlOriginal;
+            
+            // Email Subject
+            NSString *emailTitle = @"Moment - Reporter Photo";
+            // Email Content
+            NSMutableString *messageBody = [NSMutableString stringWithFormat:@"<p>Bonjour,</p><p>Je souhaiterais faire enlever cette photo car :</p><p>...</p><br><br><p>URL de la photo : <a href=\"%@\">%@</a> </p>", urlPhoto, urlPhoto];
+            
+            if(self.moment.uniqueURL) {
+                [messageBody appendFormat:@"<p>URL De l'event : <a href=\"%@\">%@</a></p>", self.moment.uniqueURL, self.moment.titre];
+            }
+            
+            MFMailComposeViewController *mc = [[MFMailComposeViewController alloc] init];
+            mc.mailComposeDelegate = self;
+            [mc setSubject:emailTitle];
+            [mc setMessageBody:messageBody isHTML:YES];
+            [mc setToRecipients:@[kParameterContactMail]];
+            
+            // Present mail view controller on screen
+            [[VersionControl sharedInstance] presentModalViewController:mc fromRoot:self animated:YES];
+        }
+        else
+        {
+            NSLog(@"mail composer fail");
+            
+            [[[UIAlertView alloc] initWithTitle:@"Envoi impossible"
+                                        message:@"Votre appareil ne supporte pas l'envoi d'email"
+                                       delegate:nil
+                              cancelButtonTitle:@"OK"
+                              otherButtonTitles:nil]
+             show];
+        }
+        
     }
     
 }
@@ -937,6 +970,41 @@ withDelegate:(PhotoViewController*)photoViewController
     shouldAnimate = NO;
     ((RotationNavigationControllerViewController*)self.navigationController).activeRotation = YES;
     [self.navigationController pushViewController:self.fullScreenViewController animated:NO];
+}
+
+#pragma mark - MFMailComposeViewControllerDelegate
+
+- (void) mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError *)error
+{
+    
+    switch (result)
+    {
+        case MFMailComposeResultCancelled:
+            NSLog(@"Mail cancelled");
+            break;
+        case MFMailComposeResultSaved:
+            NSLog(@"Mail saved");
+            break;
+        case MFMailComposeResultSent:
+            NSLog(@"Mail sent");
+            break;
+        case MFMailComposeResultFailed:
+            NSLog(@"Mail sent failure: %@", [error localizedDescription]);
+            
+            [[[UIAlertView alloc] initWithTitle:@"Erreur d'envoi"
+                                        message:[error localizedDescription]
+                                       delegate:nil
+                              cancelButtonTitle:@"OK"
+                              otherButtonTitles:nil]
+             show];
+            
+            break;
+        default:
+            break;
+    }
+    
+    // Close the Mail Interface
+    [[VersionControl sharedInstance] dismissModalViewControllerFromRoot:self animated:YES];
 }
 
 

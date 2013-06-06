@@ -1501,6 +1501,14 @@ static CGFloat DescriptionBoxHeightMax = 100;
 - (IBAction)clicShareLink {
     NSLog(@"Link");
     
+    // Copy To Clipboard
+    if(self.moment.uniqueURL) {
+        UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
+        pasteboard.string = self.moment.uniqueURL;
+        
+        [[MTStatusBarOverlay sharedInstance] postImmediateFinishMessage:@"URL Copiée" duration:1 animated:YES];
+    }
+    
     // Google Analytics
     [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Partager Copié" value:nil];
     

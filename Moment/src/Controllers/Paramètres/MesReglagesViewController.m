@@ -15,11 +15,6 @@
 #import "TutorialViewController.h"
 #import "HomeViewController.h"
 
-const static NSString *kParameterFacebookPageID = @"277911125648059";
-const static NSString *kParameterFacebookPageName = @"appmoment";
-const static NSString *kParameterTwitterPageName = @"appmoment";
-const static NSString *kParameterContactMail = @"hello@appmoment.fr";
-
 @interface MesReglagesViewController ()
 
 @end
