@@ -3851,12 +3851,12 @@
 		5BF02F34169C944700232E75 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				5B3EA6AF17599DFF008261E0 /* Tutorial */,
-				5B3EA6A217599DE8008261E0 /* EventMissing */,
-				5B37422A1711C50C00202ED1 /* NavigationController */,
 				5BF02F3F169C944700232E75 /* HomeViewController.h */,
 				5BF02F40169C944700232E75 /* HomeViewController.m */,
 				5BF02F41169C944700232E75 /* HomeViewController.xib */,
+				5B3EA6AF17599DFF008261E0 /* Tutorial */,
+				5B3EA6A217599DE8008261E0 /* EventMissing */,
+				5B37422A1711C50C00202ED1 /* NavigationController */,
 				5BF850511713CFF500549E4C /* Cagnotte */,
 				5BAB90AA16ECD57B0055C960 /* Paramètres */,
 				5B44558116E5445F00F94D5B /* Profil */,
