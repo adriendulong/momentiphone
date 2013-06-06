@@ -65,7 +65,6 @@
 @property (weak, nonatomic) IBOutlet UIButton *rsvpYesButton;
 @property (weak, nonatomic) IBOutlet UIButton *rsvpNoButton;
 
-
 /* ----- Description View ----- */
 @property (nonatomic, strong) IBOutlet UIView *descriptionView;
 @property (nonatomic, weak) IBOutlet UILabel *descriptionLabel;
@@ -129,8 +128,7 @@
 
 
 // ------------------- METHODES ------------------------ //
-
-- (id)initWithMoment:(MomentClass*)moment withRootViewController:(UIViewController*)rootViewController;
+- (id)initWithMoment:(MomentClass*)moment withRootViewController:(RootOngletsViewController*)rootViewController;
 
 - (IBAction)clicInviteButton;
 - (void)reloadData;
@@ -140,13 +138,12 @@
 - (IBAction)clicShareLink;
 - (IBAction)clicShareFacebook;
 - (IBAction)clicShareTwitter;
-- (IBAction)clicShareInstagram;
+//- (IBAction)clicShareInstagram;
 
 - (IBAction)clicCagnotteButton;
-- (IBAction)clicCoursesButton;
+//- (IBAction)clicCoursesButton;
 - (IBAction)clicComptesButton;
 - (IBAction)clicFeedBackButton;
-
 
 // Google Analytics
 - (void)sendGoogleAnalyticsView;

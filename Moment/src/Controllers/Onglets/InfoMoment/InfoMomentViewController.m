@@ -40,7 +40,6 @@ enum InfoMomentFontSize {
     BOOL firstLoad;
 }
 
-
 static CGFloat DescriptionBoxHeightMax = 100;
 
 @synthesize moment = _moment, user = _user;
@@ -80,6 +79,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
 @synthesize infoLieuView = _infoLieuView, ttInfoLieuLabel = _ttInfoLieuLabel, infoLieuLabel = _infoLieuLabel;
 
 @synthesize cagnotteView = _cagnotteView;
+
 
 #pragma mark - Init
 
@@ -1609,6 +1609,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
     
 }
 
+/*
 - (IBAction)clicShareInstagram {
     NSLog(@"Instagram");
     
@@ -1616,6 +1617,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
     [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Partager Instagram" value:nil];
     
 }
+*/
 
 #pragma mark - UIScrollView Delegate
 

@@ -42,6 +42,7 @@
     self.isOpen = moment.isOpen;
     self.isSponso = moment.isSponso;
     self.owner = [UserCoreData requestUserAsCoreDataWithUser:moment.owner];
+    self.uniqueURL = moment.uniqueURL;
 }
 
 - (void)setupWithAttributes:(NSDictionary*)attributes
@@ -106,6 +107,9 @@
         //NSLog(@"owner = %@", owner);
         self.owner = owner;
     }
+    
+    if(attributes[@"unique_url"])
+        self.uniqueURL = attributes[@"unique_url"];
 }
 
 #pragma mark - Persist
@@ -186,6 +190,7 @@
     moment.isSponso = self.isSponso;
     moment.owner = [self.owner localCopy];
     moment.privacy = self.privacy;
+    moment.uniqueURL = self.uniqueURL;
     //moment.notifications = self.notifications;
     
     return moment;

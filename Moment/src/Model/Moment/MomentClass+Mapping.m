@@ -193,6 +193,9 @@ static NSDateFormatter *smallDateFormatter = nil;
         if(attributes[@"privacy"])
             dico[@"privacy"] = attributes[@"privacy"];
         
+        if(attributes[@"unique_url"])
+            dico[@"unique_url"] = attributes[@"unique_url"];
+        
         return dico;
     }
     
@@ -288,6 +291,9 @@ static NSDateFormatter *smallDateFormatter = nil;
     
     if(self.isOpen)
         dico[@"isOpenInvit"] = self.isOpen;
+    
+    if(self.uniqueURL)
+        dico[@"unique_url"] = self.uniqueURL;
     
     //NSLog(@"\n--------------------------------------------------------------------------\n--------------------------------------------------------------------------\n");
     
