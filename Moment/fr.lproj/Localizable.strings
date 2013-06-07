@@ -227,6 +227,12 @@
 "PopUpFunCreationViewController_Privacy_Private_Title" = "Privé :";
 "PopUpFunCreationViewController_Privacy_Private_Details" = "Seuls les invités peuvent voir ce moment";
 
+/* -------------------- Facebook Manager ------------------ */
+// Erreur AlertView
+"FacebookManager_ErrorLoginFailed_Title" = "Facebook";
+"FacebookManager_ErrorLoginFailed_Message" = "Connection impossible. Tentez de vous reconnecter à Facebook";
+"FacebookManager_ErrorLoginFailed_Message_iOS6" = "Connection impossible. Veuillez autoriser Moment à se connecter à votre compte Facebook     (Réglages -> Facebook)";
+
 /* ---------------- Defautl AlertView ------------------ */
 "AlertView_Button_OK" = "OK";
 "AlertView_Button_Cancel" = "Annuler";

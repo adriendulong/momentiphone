@@ -1063,13 +1063,41 @@ static FacebookManager *sharedInstance = nil;
                                                         object:session];
     
     if (error) {
-        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"Error: %@",
-                                                                     [FacebookManager FBErrorCodeDescription:error.code]]
-                                                            message:error.localizedDescription
-                                                           delegate:nil
-                                                  cancelButtonTitle:@"OK"
-                                                  otherButtonTitles:nil];
-        [alertView show];
+        
+        UIAlertView *alertView = nil;
+        
+        // Gestion des erreurs
+        switch (error.code) {
+                
+            // Login impossible -> Facebook Refusé ?
+            case FBErrorLoginFailedOrCancelled: {
+                
+                // Marche à suivre selon l'OS
+                NSString *localizedKey = [[VersionControl sharedInstance] supportIOS6] ?@"FacebookManager_ErrorLoginFailed_Message_iOS6" : @"FacebookManager_ErrorLoginFailed_Message";
+                
+                alertView = [[UIAlertView alloc]
+                             initWithTitle:NSLocalizedString(@"FacebookManager_ErrorLoginFailed_Title", nil)
+                             message:NSLocalizedString(localizedKey, nil)
+                             delegate:nil
+                             cancelButtonTitle:NSLocalizedString(@"AlertView_Button_OK", nil)
+                             otherButtonTitles:nil];
+                }   break;
+                
+            // Autre Erreur
+            default:
+                
+                alertView = [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"Error: %@",
+                                                                [FacebookManager FBErrorCodeDescription:error.code]]
+                                                       message:error.localizedDescription
+                                                      delegate:nil
+                                             cancelButtonTitle:NSLocalizedString(@"AlertView_Button_OK", nil)
+                                             otherButtonTitles:nil];
+                
+                break;
+        }
+        
+        if(alertView)
+            [alertView show];
     }
 }
 
