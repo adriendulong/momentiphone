@@ -11,6 +11,7 @@
 #import "AFHTTPClient.h"
 #import "Photos.h"
 #import "UserCoreData+Model.h"
+#import "FacebookTokenCachingStrategy.h"
 
 enum FacebookPermissionType {
     FacebookPermissionReadType = 1,
@@ -22,6 +23,7 @@ enum FacebookPermissionType {
 @property (nonatomic, strong) AFHTTPClient *httpClient;
 @property (nonatomic, strong) NSDateFormatter *dateFormatter;
 @property (nonatomic, strong) NSArray *defaultReadPermissions, *defaultPublishPermissions;
+@property (nonatomic, strong) FacebookTokenCachingStrategy *tokenCachingStrategy;
 
 // Singleton
 + (FacebookManager*)sharedInstance;

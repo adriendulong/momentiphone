@@ -19,6 +19,7 @@
 @synthesize dateFormatter = _dateFormatter;
 @synthesize defaultReadPermissions = _defaultReadPermissions;
 @synthesize defaultPublishPermissions = _defaultPublishPermissions;
+@synthesize tokenCachingStrategy = _tokenCachingStrategy;
 
 static NSString *kFbGraphBaseURL = @"http://graph.facebook.com/";
 static NSString *FBSessionStateChangedNotification = @"com.appMoment.Moment:FBSessionStateChangedNotification";
@@ -49,6 +50,51 @@ static FacebookManager *sharedInstance = nil;
         sharedInstance = [[super alloc] init];
     }
     return sharedInstance;
+}
+
+#pragma mark - TokenCachingStrategy
+
+- (BOOL)openActiveSessionWithPermissions:(NSArray*)perms
+                                    type:(enum FacebookPermissionType)type
+                            allowLoginUI:(BOOL)allowLoginUI
+                       completionHandler:(void (^)(FBSession *session, FBSessionState status, NSError *error))completionHandler
+{
+    BOOL openSessionResult = NO;
+    
+    // Set up token strategy, if needed
+    if(!self.tokenCachingStrategy) {
+        self.tokenCachingStrategy = [[FacebookTokenCachingStrategy alloc] init];
+    }
+    
+    // Initialize a session object with the tokenCacheStrategy
+    FBSession *session = [[FBSession alloc] initWithAppID:nil
+                                              permissions:perms
+                                          urlSchemeSuffix:nil
+                                       tokenCacheStrategy:self.tokenCachingStrategy];
+    
+    // If showing the login UI, or if a cached token is available,
+    // then open the session.
+    if (allowLoginUI || session.state == FBSessionStateCreatedTokenLoaded) {
+        // For debugging purposes log if cached token was found
+        if (session.state == FBSessionStateCreatedTokenLoaded) {
+            NSLog(@"Cached token found.");
+        }
+        
+        // Set the active session
+        [FBSession setActiveSession:session];
+        
+        // Open the session.
+        [session openWithBehavior:FBSessionLoginBehaviorUseSystemAccountIfPresent
+                completionHandler:completionHandler];
+        
+        // Return the result - will be set to open immediately from the session
+        // open call if a cached token was previously found.
+        openSessionResult = session.isOpen;
+    }
+    // If showing the login UI, or if a cached token is available,
+    // then open the session.
+    
+    return openSessionResult;
 }
 
 #pragma mark - Login/Logout
@@ -84,7 +130,7 @@ static FacebookManager *sharedInstance = nil;
                 
             } copy];
             
-            
+            /*
             // Login by type
             switch (type) {
                     
@@ -115,7 +161,9 @@ static FacebookManager *sharedInstance = nil;
                                                   completionHandler:completionHandler];
                 } break;
             }
+            */
             
+            [self openActiveSessionWithPermissions:perms type:type allowLoginUI:YES completionHandler:completionHandler];
             
             
         }else if(block) {

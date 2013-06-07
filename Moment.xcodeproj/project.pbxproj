@@ -579,6 +579,7 @@
 		5BB3762716DA877A006729DD /* UIImage+Resize.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BB3762616DA877A006729DD /* UIImage+Resize.m */; };
 		5BB3762A16DA8800006729DD /* UIImage+RoundedCorner.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BB3762916DA8800006729DD /* UIImage+RoundedCorner.m */; };
 		5BB3762D16DA8879006729DD /* UIImage+Alpha.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BB3762C16DA8879006729DD /* UIImage+Alpha.m */; };
+		5BB59E6517625F0F0023191E /* FacebookTokenCachingStrategy.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BB59E6417625F0F0023191E /* FacebookTokenCachingStrategy.m */; };
 		5BB7DE3017204D5000C46E10 /* btn_volet_enfoncé.png in Resources */ = {isa = PBXBuildFile; fileRef = 5BB7DE2E17204D5000C46E10 /* btn_volet_enfoncé.png */; };
 		5BB7DE3117204D5000C46E10 /* btn_volet_enfoncé@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5BB7DE2F17204D5000C46E10 /* btn_volet_enfoncé@2x.png */; };
 		5BB7E417170A7A9A002E6C6E /* CustomTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BB7E416170A7A9A002E6C6E /* CustomTextView.m */; };
@@ -1738,6 +1739,8 @@
 		5BB3762916DA8800006729DD /* UIImage+RoundedCorner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+RoundedCorner.m"; sourceTree = "<group>"; };
 		5BB3762B16DA8879006729DD /* UIImage+Alpha.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Alpha.h"; sourceTree = "<group>"; };
 		5BB3762C16DA8879006729DD /* UIImage+Alpha.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Alpha.m"; sourceTree = "<group>"; };
+		5BB59E6317625F0F0023191E /* FacebookTokenCachingStrategy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FacebookTokenCachingStrategy.h; sourceTree = "<group>"; };
+		5BB59E6417625F0F0023191E /* FacebookTokenCachingStrategy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FacebookTokenCachingStrategy.m; sourceTree = "<group>"; };
 		5BB7DE2E17204D5000C46E10 /* btn_volet_enfoncé.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "btn_volet_enfoncé.png"; sourceTree = "<group>"; };
 		5BB7DE2F17204D5000C46E10 /* btn_volet_enfoncé@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "btn_volet_enfoncé@2x.png"; sourceTree = "<group>"; };
 		5BB7E415170A7A9A002E6C6E /* CustomTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomTextView.h; sourceTree = "<group>"; };
@@ -4029,6 +4032,8 @@
 				5BFDBFDB16BB0CB600857FA3 /* TextFieldAutocompletionManager.m */,
 				5B0DFEE316C64EED00033C86 /* FacebookManager.h */,
 				5B0DFEE416C64EED00033C86 /* FacebookManager.m */,
+				5BB59E6317625F0F0023191E /* FacebookTokenCachingStrategy.h */,
+				5BB59E6417625F0F0023191E /* FacebookTokenCachingStrategy.m */,
 				5B0DFEEA16C6AA6100033C86 /* PushNotificationManager.h */,
 				5B0DFEEB16C6AA6100033C86 /* PushNotificationManager.m */,
 				5B5EF7FE16E40C58001C5A00 /* CalendarManager.h */,
@@ -5489,6 +5494,7 @@
 				5B3EA6A617599DE8008261E0 /* EventMissingViewController.m in Sources */,
 				5B3EA6B317599E00008261E0 /* TutorialViewController.m in Sources */,
 				5B3EA737175A28F9008261E0 /* FeedNewMomentCell.m in Sources */,
+				5BB59E6517625F0F0023191E /* FacebookTokenCachingStrategy.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
