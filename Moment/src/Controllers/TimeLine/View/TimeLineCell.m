@@ -85,10 +85,18 @@
     //CGRect frame = self.frame;
     //frame.origin.y += frame.size.height/1.5;
     
+    /*
     [UIView animateWithDuration:0.2 animations:^{
         self.alpha = 0;
         //self.frame = frame;
     }];
+    */
+    
+    [UIView animateWithDuration:0.1 delay:0 options:UIViewAnimationOptionBeginFromCurrentState animations:^{
+        self.alpha = 0;
+    } completion:nil];
+    
+    
     
     /*
     [UIView beginAnimations:@"TimeLineCellWillDisappear" context:nil];

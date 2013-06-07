@@ -646,7 +646,7 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
     TimeLineCell* cell = (TimeLineCell*)[self.tableView cellForRowAtIndexPath:indexPath];
     [cell willDisappear];
     
-    [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+    [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
     
     TimeLineDeveloppedCell* bigCell = (TimeLineDeveloppedCell*)[self.tableView cellForRowAtIndexPath:
                                                              [NSIndexPath indexPathForRow:_selectedIndex inSection:0]];
