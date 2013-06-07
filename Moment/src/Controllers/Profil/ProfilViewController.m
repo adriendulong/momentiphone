@@ -270,30 +270,62 @@ enum ProfilOnglet {
         texte = NSLocalizedString(@"ProfilViewController_PhotosLabel", nil);
         self.photoLabel.text = (self.user.nb_photos.intValue > 0)? [NSString stringWithFormat:@"%@\n%@", self.user.nb_photos, texte] : texte;
         
-        // Is Followed
+        // -------- Activer les boutons par défaut --------
+        self.momentButton.enabled = YES;
+        self.photoButton.enabled = YES;
+        self.followButton.enabled = YES;
+        self.followerButton.enabled = YES;
+        
+        // --------- Profil du user connecté ----------
         // -> On ne peut pas se follow soi-même
-        // -> On ne peut pas follow un profil privé
-        if( (self.user.state.intValue == UserStateCurrent) || ( ([self.user.privacy isKindOfClass:[NSNumber class]]) && (self.user.privacy.intValue == UserPrivacyClosed)) ) {
+        if( (self.user.state.intValue == UserStateCurrent) || ([self.user.userId isEqualToNumber:[UserCoreData getCurrentUser].userId]) )
+        {
             // Hide Follow Button
             [self showHeadFollowButton:NO];
         }
-        else {
-            NSLog(@"IS FOLLOWED : %@", self.user.is_followed);
+        else
+        {
+            //--------------- Cacher Informations ----------------
+            BOOL hideInformations = NO;
             
-            enum FollowButtonState state;
-            
-            // Waiting for follow request
-            if(self.user.request_follower.boolValue) {
-                state = FollowButtonStateWaiting;
+            // -> Blindage
+            if( (self.user.privacy == nil) || ![self.user.privacy isKindOfClass:[NSNumber class]]) {
+                hideInformations = YES;
             }
-            else {
-                state = (self.user.is_followed.boolValue) ? FollowButtonStateFollowed : FollowButtonStateNotFollowed;
+            // -> On ne peut pas follow/voir les infos d'un profil privé
+            if(self.user.privacy.intValue == UserPrivacyClosed)
+            {
+                // Hide Follow Button
+                [self showHeadFollowButton:NO];
+                hideInformations = YES;
+            }
+            // -> On ne peut pas voir les infos d'un profil qu'on ne follow pas
+            else if( !self.user.is_followed.boolValue ) {
+                hideInformations = YES;
             }
             
-            [self setHeadFollowButtonState:state];
+            // Cacher infos
+            if(hideInformations) {
+                self.momentButton.enabled = NO;
+                self.photoButton.enabled = NO;
+                self.followButton.enabled = NO;
+                self.followerButton.enabled = NO;
+                [self clearContentView];
+            }
         }
         
-        // Follow Bar
+        //----------- Bouton Head Follow ------------
+        enum FollowButtonState state;
+        // Waiting for follow request
+        if(self.user.request_follower.boolValue) {
+            state = FollowButtonStateWaiting;
+        }
+        else {
+            state = (self.user.is_followed.boolValue) ? FollowButtonStateFollowed : FollowButtonStateNotFollowed;
+        }
+        [self setHeadFollowButtonState:state];
+
+        //----------- Barre de réponse à une demande de Follow ------------
         // -> Si une requete de follow est en attente
         if(self.user.request_follow_me.boolValue)
             [self showAcceptFollowBar:YES];
@@ -600,6 +632,11 @@ enum ProfilOnglet {
             // Update Content
             [self.followTableViewController loadUsersList];
             [self reloadData];
+            
+            // Default -> Time Line
+            selectedOnglet = -1;
+            [self clicMoment];
+            [self.contentView addSubview:self.timeLineViewController.view];
         }
         else {
             [[MTStatusBarOverlay sharedInstance]
