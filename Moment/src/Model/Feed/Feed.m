@@ -101,7 +101,7 @@
 
 + (void)getFeedsAtPage:(NSInteger)page withEnded:(void (^) (NSDictionary *feeds))block
 {
-    NSString *path = @"feed";
+    NSString *path = (page > 0) ? [NSString stringWithFormat:@"feed/%d", page] : @"feed";
     
     [[AFMomentAPIClient sharedClient] getPath:path parameters:nil encoding:AFFormURLParameterEncoding success:^(AFHTTPRequestOperation *operation, id JSON) {
         

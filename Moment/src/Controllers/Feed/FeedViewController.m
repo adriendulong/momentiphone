@@ -97,8 +97,9 @@
          withSaveBlock:(void (^) (NSArray *feeds))saveBlock
              withEnded:(void (^) (void))endBlock
 {
-    [Feed getFeedsAtPage:nextPage withEnded:^(NSDictionary *feeds) {
+    [Feed getFeedsAtPage:page withEnded:^(NSDictionary *feeds) {
         
+        currentPage = page;
         nextPage = [feeds[@"next_page"] intValue];
         
         if(saveBlock)
