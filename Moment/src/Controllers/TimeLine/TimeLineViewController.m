@@ -669,6 +669,7 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
 - (void)showOnglet:(enum OngletRank)onglet forMoment:(MomentClass*)moment
 {
     // Si une nouvelle cellule a été selectionnée
+    /*
     if( (!self.rootOngletsViewController) || (self.rootOngletsViewController.moment != moment) ) {
         self.rootOngletsViewController = [[RootOngletsViewController alloc]
                                           initWithMoment:moment
@@ -677,6 +678,12 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
     }
     else
         [self.rootOngletsViewController addAndScrollToOnglet:onglet];
+    */
+    // Création
+    self.rootOngletsViewController = [[RootOngletsViewController alloc]
+                                      initWithMoment:moment
+                                      withOnglet:onglet
+                                      withTimeLine:self];
     
     if(self.shoulShowInviteView) {
         self.rootOngletsViewController.shouldShowInviteViewController = YES;

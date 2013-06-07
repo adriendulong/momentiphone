@@ -89,6 +89,8 @@
 /* ---------------- PushNotifications ------------------ */
 // Chat
 "PushNotification_NewChat_AlertView_Title" = "Nouveau Message";
+// Photos
+"PushNotification_NewPhoto_AlertView_Title" = "Nouvelle Photo";
 // Push Notifications Désactivées AlertView
 "PushNotification_Disabled_AlertView_Title" = "Notifications Désactivées";
 "PushNotification_Disabled_AlertView_Message" = "Les notifications sont désactivées. Veuillez changer vos paramètres de notifications";

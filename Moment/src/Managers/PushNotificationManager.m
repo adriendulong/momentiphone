@@ -18,6 +18,7 @@
     @private
     MomentClass *actualMoment;
     SEL chatNotifAction;
+    SEL photoNotifAction;
     NSInteger chatNbNotifsUnread;
 }
 
@@ -101,8 +102,13 @@ static PushNotificationManager *sharedInstance = nil;
             [[MTStatusBarOverlay sharedInstance] postImmediateFinishMessage:@"Nouvelle modification" duration:1 animated:YES];
             break;
             
-        case NotificationTypeNewPhoto:
-            [[MTStatusBarOverlay sharedInstance] postImmediateFinishMessage:@"Nouvelle Photo" duration:1 animated:YES];
+        case NotificationTypeNewPhoto:            
+            [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationNewPhoto
+                                                                object:@{
+                                                                         @"momentId":momentId
+                                                                         }
+             ];
+            
             break;
         
         default:
@@ -153,33 +159,105 @@ static PushNotificationManager *sharedInstance = nil;
                                              selector:@selector(notifNewChat:)
                                                  name:kNotificationNewChat
                                                object:nil];
+    // New Photo
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(notifNewPhoto:)
+                                                 name:kNotificationNewPhoto
+                                               object:nil];
 }
 
 - (void)removeNotifications {
     //NSLog(@"remove notifs");
     [[NSNotificationCenter defaultCenter] removeObserver:self name:kNotificationNewChat object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:kNotificationNewPhoto object:nil];
 }
+
+/****************************************************************
+ *              GESTION PUSH NOTIFICATIONS
+ ****************************************************************/
+
 
 #pragma mark - UIAlertView Delegate
 
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+- (void)performSelector:(SEL*)selector
+              alertView:(UIAlertView*)alertView
+      targetedAlertView:(UIAlertView*)targetedAlertView
+            buttonIndex:(NSInteger)buttonIndex
 {
     // Nouveau message chat
-    if(alertView == self.chatAlertView) {
+    if(alertView == targetedAlertView) {
         
         // Bouton OK
         if (buttonIndex == 1) {
-            if(chatNotifAction && [self respondsToSelector:chatNotifAction]) {
-                #pragma clang diagnostic push
-                #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
-                [self performSelector:chatNotifAction];
-                #pragma clang diagnostic pop
+            if(  (selector && *selector) && [self respondsToSelector:(*selector)]) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+                [self performSelector:(*selector)];
+#pragma clang diagnostic pop
             }
-            chatNotifAction = nil;
+            *selector = nil;
         }
         
     }
 }
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    // Nouveau message chat
+    [self performSelector:(&chatNotifAction)
+                alertView:alertView
+        targetedAlertView:self.chatAlertView
+              buttonIndex:buttonIndex];
+    
+    // Nouvelle Photo
+    [self performSelector:(&photoNotifAction)
+                alertView:alertView
+        targetedAlertView:self.photoAlertView
+              buttonIndex:buttonIndex];
+}
+
+
+#pragma mark - Généric
+
+- (void)actionScrollToOnglet:(enum OngletRank)onglet {
+    // Récupérer view controller
+    UIViewController <OngletViewController> *momentViewController = (UIViewController <OngletViewController> *)[AppDelegate actualViewController];
+    
+    RootOngletsViewController *rootViewController = (RootOngletsViewController*)momentViewController.rootViewController;
+    [rootViewController addAndScrollToOnglet:onglet];
+}
+
+- (void)actionOpenNewMoment:(enum OngletRank)onglet {
+    TimeLineViewController *timeLine = (TimeLineViewController*)[AppDelegate actualViewController];
+    switch (onglet) {
+        case OngletPhoto:
+            [timeLine showPhotoView:actualMoment];
+            break;
+        
+        case OngletChat:
+            [timeLine showTchatView:actualMoment];
+            break;
+            
+        case OngletInfoMoment:
+            [timeLine showInfoMomentView:actualMoment];
+            break;
+            
+        default:
+            break;
+    }
+    
+}
+
+- (void)actionPopToTimeLineAndOpenNewMoment:(enum OngletRank)onglet {
+    UIViewController <OngletViewController> *momentViewController = (UIViewController <OngletViewController> *)[AppDelegate actualViewController];
+    
+    RootOngletsViewController *rootViewController = (RootOngletsViewController*)momentViewController.rootViewController;
+    
+    [AppDelegate updateActualViewController:rootViewController.timeLine];
+    [rootViewController.navigationController popViewControllerAnimated:NO];
+    [self actionOpenNewMoment:onglet];
+}
+
 
 #pragma mark - Chat
 
@@ -245,32 +323,89 @@ static PushNotificationManager *sharedInstance = nil;
 }
 
 - (void)chatActionScrollToChat {
-    // Récupérer view controller
-    UIViewController <OngletViewController> *momentViewController = (UIViewController <OngletViewController> *)[AppDelegate actualViewController];
-    
-    RootOngletsViewController *rootViewController = (RootOngletsViewController*)momentViewController.rootViewController;
-    [rootViewController addAndScrollToOnglet:OngletChat];
+    [self actionScrollToOnglet:OngletChat];
 }
 
 - (void)chatActionOpenNewMoment {
-    TimeLineViewController *timeLine = (TimeLineViewController*)[AppDelegate actualViewController];
-    [timeLine showTchatView:actualMoment];
+    [self actionOpenNewMoment:OngletChat];
 }
 
 - (void)chatActionPopToTimeLineAndOpenNewMoment {
-    UIViewController <OngletViewController> *momentViewController = (UIViewController <OngletViewController> *)[AppDelegate actualViewController];
-    
-    RootOngletsViewController *rootViewController = (RootOngletsViewController*)momentViewController.rootViewController;
-    
-    [AppDelegate updateActualViewController:rootViewController.timeLine];
-    [rootViewController.navigationController popViewControllerAnimated:NO];
-    [self chatActionOpenNewMoment];
+    [self actionPopToTimeLineAndOpenNewMoment:OngletChat];
 }
 
+#pragma mark - Photo
+
+- (void)alertViewPhotoWithMessage:(NSString*)message {
+    
+    self.photoAlertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"PushNotification_NewPhoto_AlertView_Title", nil)
+                                                    message:message
+                                                   delegate:self
+                                          cancelButtonTitle:NSLocalizedString(@"AlertView_Button_Cancel", nil)
+                                          otherButtonTitles:NSLocalizedString(@"AlertView_Button_OK", nil), nil];
+    
+    [self.photoAlertView show];
+}
+
+- (void)notifNewPhoto:(NSNotification*)notification
+{
+    // Récupérer moment
+    NSNumber *momentId = (NSNumber*)notification.object[@"momentId"];
+    actualMoment = [MomentCoreData requestMomentWithAttributes:@{@"momentId":momentId}];
+    NSString *message = [NSString stringWithFormat:@"Nouvelle Photo sur %@", actualMoment.titre];
+    
+    // Actual View Controller
+    UIViewController *actualViewController = [AppDelegate actualViewController];
+    
+    // Status Bar Message
+    [[MTStatusBarOverlay sharedInstance]
+     postImmediateFinishMessage:NSLocalizedString(@"StatusBarOverlay_PushNotification_NewMessage", nil)
+     duration:1
+     animated:YES];
+    
+    // On est sur les Photos
+    if([actualViewController isMemberOfClass:[PhotoViewController class]]) {
+        
+        PhotoViewController *photoViewController = (PhotoViewController*)actualViewController;
+        [photoViewController loadPhotos];
+        
+    }
+    // On est dans un moment
+    else if([actualViewController isMemberOfClass:[ChatViewController class]] || [actualViewController isMemberOfClass:[InfoMomentViewController class]]) {
+        
+        UIViewController <OngletViewController> *momentViewController = (UIViewController <OngletViewController> *)actualViewController;
+        
+        // Si c'est le même moment
+        if(actualMoment.momentId == momentViewController.moment.momentId) {
+            photoNotifAction = @selector(photoActionScrollToPhoto);
+        }
+        // C'est un autre moment
+        else {
+            photoNotifAction = @selector(photoActionPopToTimeLineAndOpenNewMoment);
+        }
+        
+        [self alertViewPhotoWithMessage:message];
+    }
+    // On est sur la timeLine
+    else if([actualViewController isMemberOfClass:[TimeLineViewController class]]) {
+        photoNotifAction = @selector(photoActionOpenNewMoment);
+        [self alertViewPhotoWithMessage:message];
+    }
+    
+}
+- (void)photoActionScrollToPhoto {
+    [self actionScrollToOnglet:OngletPhoto];
+}
+
+- (void)photoActionOpenNewMoment {
+    [self actionOpenNewMoment:OngletPhoto];
+}
+
+- (void)photoActionPopToTimeLineAndOpenNewMoment {
+    [self actionPopToTimeLineAndOpenNewMoment:OngletPhoto];
+}
 
 #pragma mark - Invitation
-
-#pragma mark - Photo
 
 #pragma mark - Modification
 

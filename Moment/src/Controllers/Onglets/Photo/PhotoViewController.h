@@ -68,6 +68,8 @@ withRootViewController:(UIViewController *)rootViewController
 - (void)desactiverPrintMode;
 #endif
 
+- (void)loadPhotos;
+
 // Google Analytics
 - (void)sendGoogleAnalyticsView;
 
