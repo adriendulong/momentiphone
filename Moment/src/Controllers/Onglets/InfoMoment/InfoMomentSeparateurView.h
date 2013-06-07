@@ -12,4 +12,6 @@
 
 - (id)initAtPosition:(CGFloat)position;
 
+- (CGRect)frameForPosition:(CGFloat)position;
+
 @end

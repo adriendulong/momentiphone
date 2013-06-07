@@ -41,6 +41,7 @@ enum InfoMomentFontSize {
     @private
     BOOL firstLoad;
     UIButton *seeMoreButton;
+    BOOL shouldShowFullDescription;
 }
 
 static CGFloat DescriptionBoxHeightMax = 100;
@@ -100,6 +101,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
         
         // First Load constance
         firstLoad = YES;
+        shouldShowFullDescription = NO;
     }
     return self;
 }
@@ -537,8 +539,12 @@ static CGFloat DescriptionBoxHeightMax = 100;
     // Text
     self.rsvpLabel.text = message;
     
+    static InfoMomentSeparateurView *separator = nil;
+    if(separator) {
+        [separator removeFromSuperview];
+    }
     // Sparateur
-    InfoMomentSeparateurView *separator = [[InfoMomentSeparateurView alloc] initAtPosition:(70 + 5)];
+    separator = [[InfoMomentSeparateurView alloc] initAtPosition:(70 + 5)];
     [self.rsvpView addSubview:separator];
     
     CGRect frame = self.rsvpView.frame;
@@ -563,15 +569,13 @@ static CGFloat DescriptionBoxHeightMax = 100;
         CGSize maxSize = CGSizeMake(self.descriptionLabel.frame.size.width, 9999);
         CGSize expectedSize = [self.moment.descriptionString sizeWithFont:font constrainedToSize:maxSize lineBreakMode:self.descriptionLabel.lineBreakMode];
         CGRect frame = self.descriptionLabel.frame;
-        //frame.origin.y = separator.frame.origin.y + separator.frame.size.height + 15;
         
-#warning Description incomplete
         // Limitation de la taille
-        if( expectedSize.height > DescriptionBoxHeightMax )
+        if( (expectedSize.height > DescriptionBoxHeightMax) && (!shouldShowFullDescription) )
         {
             self.descriptionBoxReelHeight = expectedSize.height;
             frame.size.height = DescriptionBoxHeightMax + 30;
-            self.descriptionLabel.frame = CGRectMake(frame.origin.x, frame.origin.y - 10, frame.size.width, frame.size.height);
+            self.descriptionLabel.frame = CGRectMake(frame.origin.x, 5, frame.size.width, frame.size.height);
             
             // Background TextField
             frame = self.backgroundDescripionView.frame;
@@ -580,21 +584,28 @@ static CGFloat DescriptionBoxHeightMax = 100;
             self.backgroundDescripionView.frame = frame;
             
             // Bouton Voir Plus
-            UIButton *more = [[UIButton alloc] init];
-            [more setTitle:@"Voir plus" forState:UIControlStateNormal];
-            [more setTitleColor:[Config sharedInstance].textColor forState:UIControlStateNormal];
-            more.titleLabel.textAlignment = [[VersionControl sharedInstance] alignment:TextAlignmentCenter];
-            more.titleLabel.font = [[Config sharedInstance] defaultFontWithSize:InfoMomentFontSizeMedium];
-            [more addTarget:self action:@selector(clicExpandDescriptionView) forControlEvents:UIControlEventTouchUpInside];
-            [more sizeToFit];
-            more.backgroundColor = [UIColor redColor];
+            if(!seeMoreButton) {
+                seeMoreButton = [[UIButton alloc] init];
+                seeMoreButton.userInteractionEnabled = YES;
+                [seeMoreButton setTitle:@"Voir plus" forState:UIControlStateNormal];
+                [seeMoreButton setTitleColor:[Config sharedInstance].textColor forState:UIControlStateNormal];
+                seeMoreButton.titleLabel.textAlignment = [[VersionControl sharedInstance] alignment:TextAlignmentCenter];
+                seeMoreButton.titleLabel.font = [[Config sharedInstance] defaultFontWithSize:InfoMomentFontSizeMedium];
+                [seeMoreButton addTarget:self action:@selector(clicExpandDescriptionView) forControlEvents:UIControlEventTouchUpInside];
+                [seeMoreButton sizeToFit];
+                CGSize size = CGSizeMake(self.descriptionLabel.frame.size.width - 10, seeMoreButton.frame.size.height + 5);
+                seeMoreButton.frame = CGRectMake(seeMoreButton.frame.origin.x, seeMoreButton.frame.origin.y, size.width, size.height);
+                
+                [self.foregroundView addSubview:seeMoreButton];
+            }
+            
+            // Afficher "Voir Plus"
+            seeMoreButton.hidden = NO;
             
             // Frame
-            CGPoint origin = (CGPoint){(320 - more.frame.size.width)/2.0,
+            CGPoint origin = (CGPoint){(320 - seeMoreButton.frame.size.width)/2.0,
                                         self.rsvpView.frame.origin.y + self.rsvpView.frame.size.height + DescriptionBoxHeightMax + 25};
-            more.frame = CGRectMake(origin.x, origin.y, more.frame.size.width, more.frame.size.height);
-            [self.foregroundView addSubview:more];
-            seeMoreButton = more;
+            seeMoreButton.frame = CGRectMake(origin.x, origin.y, seeMoreButton.frame.size.width, seeMoreButton.frame.size.height);
         }
         else
         {
@@ -604,20 +615,33 @@ static CGFloat DescriptionBoxHeightMax = 100;
             
             // Background TextField
             frame = self.backgroundDescripionView.frame;
-            frame.origin.y = self.descriptionLabel.frame.origin.y - 10;
-            frame.size.height = self.descriptionLabel.frame.size.height + 20;
+            frame.origin.y = self.descriptionLabel.frame.origin.y - 15;
+            frame.size.height = self.descriptionLabel.frame.size.height + 30;
             self.backgroundDescripionView.frame = frame;
+            
+            // Cacher bouton "Voir plus"
+            if(seeMoreButton) {
+                seeMoreButton.hidden = YES;
+            }
         }
         
+        // Séparateur
+        static InfoMomentSeparateurView *separator = nil;
+        
         if(firstLoad) {
-            // Separateur
-            InfoMomentSeparateurView *separator = [[InfoMomentSeparateurView alloc] initAtPosition:(self.backgroundDescripionView.frame.origin.y + self.backgroundDescripionView.frame.size.height + 5)];
-            [self.descriptionView addSubview:separator];
             
             // View
             frame = self.descriptionView.frame;
-            frame.size.height = separator.frame.origin.y + separator.frame.size.height + 5;
+            frame.size.height =  self.backgroundDescripionView.frame.origin.y + self.backgroundDescripionView.frame.size.height + 10;
             self.descriptionView.frame = frame;
+            
+            if(separator) {
+                [separator removeFromSuperview];
+            }
+            
+            // Separateur
+            separator = [[InfoMomentSeparateurView alloc] initAtPosition:(self.descriptionView.frame.size.height-5)];
+            [self.descriptionView addSubview:separator];
             
             [self addSubviewAtAutomaticPosition:self.descriptionView];
         }
@@ -763,9 +787,15 @@ static CGFloat DescriptionBoxHeightMax = 100;
             self.nomLieuLabel.alpha = 0;
         }
         
+        static InfoMomentSeparateurView *separator = nil;
+        
         if(firstLoad) {
-            // ---- Sparateur ----
-            InfoMomentSeparateurView *separator = [[InfoMomentSeparateurView alloc] initAtPosition:(99 + 5)];
+            if(separator) {
+                [separator removeFromSuperview];
+            }
+            
+            // ---- Separateur ----
+            separator = [[InfoMomentSeparateurView alloc] initAtPosition:(99 + 5)];
             [self.generalMapView addSubview:separator];
             
             
@@ -886,9 +916,15 @@ static CGFloat DescriptionBoxHeightMax = 100;
         
     }
     
+    static InfoMomentSeparateurView *separator = nil;
+    
     if(firstLoad) {
+        if(separator) {
+            [separator removeFromSuperview];
+        }
+        
         // Sparateur
-        InfoMomentSeparateurView *separator = [[InfoMomentSeparateurView alloc] initAtPosition:(50 + 5)];
+        separator = [[InfoMomentSeparateurView alloc] initAtPosition:(50 + 5)];
         [self.invitesView addSubview:separator];
         
         // Frame
@@ -951,10 +987,16 @@ static CGFloat DescriptionBoxHeightMax = 100;
         
     }
     
+    static InfoMomentSeparateurView *separator = nil;
+    
     if(firstLoad) {
         
+        if(separator) {
+            [separator removeFromSuperview];
+        }
+        
         // Sparateur
-        InfoMomentSeparateurView *separator = [[InfoMomentSeparateurView alloc] initAtPosition:(76 + 5)];
+        separator = [[InfoMomentSeparateurView alloc] initAtPosition:(76 + 5)];
         [self.dateView addSubview:separator];
         
         CGRect frame = self.dateView.frame;
@@ -972,8 +1014,14 @@ static CGFloat DescriptionBoxHeightMax = 100;
 
 - (void) initPhotosView
 {
+    static InfoMomentSeparateurView *separator = nil;
+    
+    if(separator) {
+        [separator removeFromSuperview];
+    }
+    
     // Sparateur
-    InfoMomentSeparateurView *separator = [[InfoMomentSeparateurView alloc] initAtPosition:(78 + 5)];
+    separator = [[InfoMomentSeparateurView alloc] initAtPosition:(78 + 5)];
     [self.photosView addSubview:separator];
     
     CGRect frame = self.photosView.frame;
@@ -1009,8 +1057,13 @@ static CGFloat DescriptionBoxHeightMax = 100;
 
 - (void) initBadgesView
 {
+    static InfoMomentSeparateurView *separator = nil;
+    if(separator) {
+        [separator removeFromSuperview];
+    }
+    
     // Sparateur
-    InfoMomentSeparateurView *separator = [[InfoMomentSeparateurView alloc] initAtPosition:(78 + 5)];
+    separator = [[InfoMomentSeparateurView alloc] initAtPosition:(78 + 5)];
     [self.badgesView addSubview:separator];
     
     CGRect frame = self.photosView.frame;
@@ -1034,8 +1087,13 @@ static CGFloat DescriptionBoxHeightMax = 100;
         //[self.metroLabel setFontSize:InfoMomentFontSizeMedium];
         self.metroLabel.text = self.moment.infoMetro;
         
+        static InfoMomentSeparateurView *separator = nil;
+        if(separator) {
+            [separator removeFromSuperview];
+        }
+        
         // Sparateur
-        InfoMomentSeparateurView *separator = [[InfoMomentSeparateurView alloc] initAtPosition:(59 + 5)];
+        separator = [[InfoMomentSeparateurView alloc] initAtPosition:(59 + 5)];
         [self.metroView addSubview:separator];
         
         CGRect frame = self.metroView.frame;
@@ -1056,8 +1114,12 @@ static CGFloat DescriptionBoxHeightMax = 100;
         //[self.infoLieuLabel setFontSize:InfoMomentFontSizeMedium];
         self.infoLieuLabel.text = self.moment.infoLieu;
         
+        static InfoMomentSeparateurView *separator = nil;
+        if(separator) {
+            [separator removeFromSuperview];
+        }
         // Sparateur
-        InfoMomentSeparateurView *separator = [[InfoMomentSeparateurView alloc] initAtPosition:(63)];
+        separator = [[InfoMomentSeparateurView alloc] initAtPosition:(63)];
         [self.infoLieuView addSubview:separator];
         
         CGRect frame = self.infoLieuView.frame;
@@ -1071,8 +1133,12 @@ static CGFloat DescriptionBoxHeightMax = 100;
 
 - (void) initCagnotteView
 {
+    static InfoMomentSeparateurView *separator = nil;
+    if(separator) {
+        [separator removeFromSuperview];
+    }
      // Sparateur
-     InfoMomentSeparateurView *separator = [[InfoMomentSeparateurView alloc] initAtPosition:(121)];
+     separator = [[InfoMomentSeparateurView alloc] initAtPosition:(121)];
      [self.cagnotteView addSubview:separator];
      
      CGRect frame = self.cagnotteView.frame;
@@ -1144,6 +1210,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
     self.parallaxView.backgroundHeight = 150.0f;
     self.parallaxView.scrollViewDelegate = self;
     self.parallaxView.scrollView.scrollsToTop = YES;
+    self.parallaxView.userInteractionEnabled = YES;
     [self.view addSubview:self.parallaxView];
     
     /***********************************************
@@ -1158,6 +1225,10 @@ static CGFloat DescriptionBoxHeightMax = 100;
     
     // First Load Complete
     firstLoad = NO;
+    
+    // Ramener bouton "Voir plus" au premier plan
+    if(seeMoreButton)
+        [self.foregroundView bringSubviewToFront:seeMoreButton];
     
     /*
     [self layoutImage];
@@ -1287,6 +1358,14 @@ static CGFloat DescriptionBoxHeightMax = 100;
             [self initTopImageView];
             [self initCagnotteView];
             [self initPartageView];
+            
+            // Ramener bouton "Voir plus" au premier plan
+            if(seeMoreButton)
+                [self.foregroundView bringSubviewToFront:seeMoreButton];
+            
+            // View
+            firstLoad = NO;
+            self.parallaxView.scrollView.contentSize = CGSizeMake(self.view.frame.size.width, 150 + hauteur);
         }
     }];
 }
@@ -1478,7 +1557,12 @@ static CGFloat DescriptionBoxHeightMax = 100;
 
 - (void)clicExpandDescriptionView
 {
-    NSLog(@"pop");
+    NSLog(@"Pop");
+    // Forcer recréation de la vue
+    shouldShowFullDescription = YES;
+    firstLoad = YES;
+    hauteur = 0;
+    [self reloadData];
 }
 
 - (IBAction)clicShareMail {
