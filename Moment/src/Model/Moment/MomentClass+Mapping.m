@@ -22,7 +22,7 @@ static NSDateFormatter *smallDateFormatter = nil;
         NSString *startDate = attributes[@"startDate"];
         NSString *endDate = attributes[@"endDate"];
         NSString *startTime = attributes[@"startTime"];
-        NSString *endTime = attributes[@"entTime"];
+        NSString *endTime = attributes[@"endTime"];
         
         if(!fullDateFormatter) {
             fullDateFormatter = [[NSDateFormatter alloc] init];
