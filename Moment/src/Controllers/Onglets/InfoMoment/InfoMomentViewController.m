@@ -40,6 +40,7 @@ enum InfoMomentFontSize {
 @implementation InfoMomentViewController {
     @private
     BOOL firstLoad;
+    UIButton *seeMoreButton;
 }
 
 static CGFloat DescriptionBoxHeightMax = 100;
@@ -569,27 +570,31 @@ static CGFloat DescriptionBoxHeightMax = 100;
         if( expectedSize.height > DescriptionBoxHeightMax )
         {
             self.descriptionBoxReelHeight = expectedSize.height;
-            frame.size.height = DescriptionBoxHeightMax + 10;
-            self.descriptionLabel.frame = frame;
-            
-            CGRect buttonFrame = CGRectMake((self.backgroundDescripionView.frame.size.width - 50)/2.0, DescriptionBoxHeightMax + 5, 50, 20);
-            
-            // On se place dans la vue global pour ajouter au dessus des éléments et capter le touché
-            buttonFrame = [self.foregroundView convertRect:buttonFrame fromView:self.backgroundDescripionView];
-            
-            UIButton *more = [[UIButton alloc] initWithFrame:buttonFrame];
-            [more setTitle:@"..." forState:UIControlStateNormal];
-            [more setTitleColor:[Config sharedInstance].textColor forState:UIControlStateNormal];
-            more.titleLabel.textAlignment = [[VersionControl sharedInstance] alignment:TextAlignmentCenter];
-            more.titleLabel.font = [[Config sharedInstance] defaultFontWithSize:InfoMomentFontSizeBig];
-            [more addTarget:self action:@selector(clicExpandDescriptionView) forControlEvents:UIControlEventTouchUpInside];
-            [self.foregroundView addSubview:more];
+            frame.size.height = DescriptionBoxHeightMax + 30;
+            self.descriptionLabel.frame = CGRectMake(frame.origin.x, frame.origin.y - 10, frame.size.width, frame.size.height);
             
             // Background TextField
             frame = self.backgroundDescripionView.frame;
             frame.origin.y = self.descriptionLabel.frame.origin.y - 10;
             frame.size.height = self.descriptionLabel.frame.size.height + 20;
             self.backgroundDescripionView.frame = frame;
+            
+            // Bouton Voir Plus
+            UIButton *more = [[UIButton alloc] init];
+            [more setTitle:@"Voir plus" forState:UIControlStateNormal];
+            [more setTitleColor:[Config sharedInstance].textColor forState:UIControlStateNormal];
+            more.titleLabel.textAlignment = [[VersionControl sharedInstance] alignment:TextAlignmentCenter];
+            more.titleLabel.font = [[Config sharedInstance] defaultFontWithSize:InfoMomentFontSizeMedium];
+            [more addTarget:self action:@selector(clicExpandDescriptionView) forControlEvents:UIControlEventTouchUpInside];
+            [more sizeToFit];
+            more.backgroundColor = [UIColor redColor];
+            
+            // Frame
+            CGPoint origin = (CGPoint){(320 - more.frame.size.width)/2.0,
+                                        self.rsvpView.frame.origin.y + self.rsvpView.frame.size.height + DescriptionBoxHeightMax + 25};
+            more.frame = CGRectMake(origin.x, origin.y, more.frame.size.width, more.frame.size.height);
+            [self.foregroundView addSubview:more];
+            seeMoreButton = more;
         }
         else
         {

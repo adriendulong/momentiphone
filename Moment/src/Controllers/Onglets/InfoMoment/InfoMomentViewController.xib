@@ -108,6 +108,18 @@
 								<float key="IBUIAlpha">0.69999998807907104</float>
 								<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
 							</object>
+							<object class="IBUIImageView" id="544490865">
+								<reference key="NSNextResponder" ref="681843645"/>
+								<int key="NSvFlags">292</int>
+								<string key="NSFrame">{{10, -1}, {75, 75}}</string>
+								<reference key="NSSuperview" ref="681843645"/>
+								<reference key="NSWindow"/>
+								<reference key="NSNextKeyView" ref="266393769"/>
+								<string key="NSReuseIdentifierKey">_NS:9</string>
+								<int key="IBUIContentMode">1</int>
+								<bool key="IBUIUserInteractionEnabled">NO</bool>
+								<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
+							</object>
 							<object class="IBUIImageView" id="689019264">
 								<reference key="NSNextResponder" ref="681843645"/>
 								<int key="NSvFlags">292</int>
@@ -121,20 +133,8 @@
 								<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
 								<object class="NSCustomResource" key="IBUIImage">
 									<string key="NSClassName">NSImage</string>
-									<string key="NSResourceName">bg_profil</string>
+									<string key="NSResourceName">bg_profil.png</string>
 								</object>
-							</object>
-							<object class="IBUIImageView" id="544490865">
-								<reference key="NSNextResponder" ref="681843645"/>
-								<int key="NSvFlags">292</int>
-								<string key="NSFrame">{{10, -1}, {75, 75}}</string>
-								<reference key="NSSuperview" ref="681843645"/>
-								<reference key="NSWindow"/>
-								<reference key="NSNextKeyView" ref="266393769"/>
-								<string key="NSReuseIdentifierKey">_NS:9</string>
-								<int key="IBUIContentMode">1</int>
-								<bool key="IBUIUserInteractionEnabled">NO</bool>
-								<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
 							</object>
 							<object class="IBUIButton" id="184095738">
 								<reference key="NSNextResponder" ref="681843645"/>
@@ -3530,7 +3530,7 @@
 			<string key="bar_rsvp.png">{309, 24}</string>
 			<string key="bg_btn.png">{99, 100}</string>
 			<string key="bg_date.png">{305, 77}</string>
-			<string key="bg_profil">{91, 90}</string>
+			<string key="bg_profil.png">{91, 90}</string>
 			<string key="bg_respond.png">{42, 42}</string>
 			<string key="bloc_desc.png">{16, 16}</string>
 			<string key="bloc_phba.png">{305, 75}</string>
