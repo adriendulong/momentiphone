@@ -713,6 +713,58 @@ static FacebookManager *sharedInstance = nil;
 
 #pragma mark - RSVP
 
+- (void)getRSVP:(MomentClass*)moment withEnded:(void (^) (enum UserState rsvp))block
+{
+    if(!moment)
+        return;
+    
+    enum UserState currentState = moment.state.intValue;
+    if(moment.facebookId && !( (currentState == UserStateAdmin) || (currentState == UserStateOwner) ) )
+    {
+        // Connection
+        FBRequestConnection *connection = [[FBRequestConnection alloc] init];
+        FBRequest *request = [FBRequest requestForGraphPath:@"fql"];
+        
+        // Requete
+        NSString *query = [NSString stringWithFormat:@"SELECT rsvp_status FROM event_member WHERE eid=%@ AND uid=me()",  moment.facebookId];
+        [request.parameters setObject:query forKey:@"q"];
+        
+        // Completion
+        [connection addRequest:request completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
+            if(block) {
+                if(error) {
+                    NSLog(@"GET RSVP FB ERROR : %@", error.localizedDescription);
+                }
+                else {
+                    
+                    // Result
+                    if(result[@"data"] && ([result[@"data"] count] > 0) && result[@"data"][0][@"rsvp_status"])
+                    {
+                        NSString *rsvp = result[@"data"][0][@"rsvp_status"];
+                        enum UserState state;
+                        
+                        // Identification
+                        if([rsvp isEqualToString:@"attending"]) {
+                            state = UserStateValid;
+                        }
+                        else if([rsvp isEqualToString:@"declined"]) {
+                            state = UserStateRefused;
+                        }
+                        else {
+                            state = UserStateWaiting;
+                        }
+                        
+                        block(state);
+                    }
+                    
+                }
+            }
+        }];
+        
+        [connection start];
+    }
+}
+
 - (void)updateRSVP:(enum UserState)rsvp
             moment:(MomentClass*)moment
          withEnded:(void (^) (BOOL success))block
@@ -801,7 +853,7 @@ static FacebookManager *sharedInstance = nil;
                     parameters:(NSDictionary*)params
                      withEnded:(void (^) (BOOL success))block
 {
-    if( (moment.facebookId && params) || 1)
+    if(moment.facebookId && params)
     {
         // Ask For Permissions
         [self askForPermissions:@[kFbPermissionPublishAction, kFbPermissionPublishStream] type:FacebookPermissionPublishType withEnded:^(BOOL success) {
@@ -857,15 +909,14 @@ static FacebookManager *sharedInstance = nil;
 {
     if(photo) {
         
-        NSString *message = [[NSString stringWithFormat:@"Nouvelle Photo sur %@\n-- Moment --", moment.titre] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+        NSString *message = [[NSString stringWithFormat:@"Je viens d'ajouter une photo à cet évènement sur Moment. %@", photo.uniqueURL] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
         NSString *picture = [photo.urlOriginal stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
         
         NSDictionary *params = @{@"message":message,
                                  @"picture":picture,
                                  @"name":moment.titre,
-                                 @"description":moment.descriptionString,
                                  @"type":@"photo",
-                                 @"caption":moment.adresse};
+                                 @"caption":@"L'application Moment vous permet d'organisez, vivre et revivre tout vos évènements entre proche."};
         
         [self postMessageOnEventWall:moment parameters:params withEnded:block];
     }

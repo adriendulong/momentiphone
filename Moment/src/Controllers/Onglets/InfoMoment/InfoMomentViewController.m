@@ -27,6 +27,8 @@
 #import "DEFacebookComposeViewController.h"
 #import <Twitter/Twitter.h>
 #import <Social/Social.h>
+#import "FacebookManager.h"
+#import "MomentClass+Server.h"
 
 // Font Sizes
 enum InfoMomentFontSize {
@@ -407,7 +409,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
     [self.avatarImage addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(clicProfile)]];
     
     // Owner Description
-    self.ownerNameLabel.text = [NSString stringWithFormat:@"par %@ %@", self.moment.owner.prenom?:@"", self.moment.owner.nom?:@""];
+    self.ownerNameLabel.text =  [NSString stringWithFormat:@"par %@ %@", self.moment.owner.prenom?:@"", self.moment.owner.nom?:@""];
     
 #ifdef HASHTAG_ENABLE
     if(self.moment.hashtag)
@@ -1088,17 +1090,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
 }
 
 - (void) initPartageView
-{
-    /*
-    // Sparateur
-    InfoMomentSeparateurView *separator = [[InfoMomentSeparateurView alloc] initAtPosition:(59 + 5)];
-    [self.partageView addSubview:separator];
-    
-    CGRect frame = self.partageView.frame;
-    frame.size.height = separator.frame.origin.y + separator.frame.size.height + 5;
-    self.partageView.frame = frame;
-     */
-    
+{    
     if(firstLoad)
         [self addSubviewAtAutomaticPosition:self.partageView];
 }
@@ -1166,6 +1158,35 @@ static CGFloat DescriptionBoxHeightMax = 100;
     [self layoutImage];
     [self updateOffsets];
     */
+    
+    // Load RSVP From Facebook
+    [[FacebookManager sharedInstance] getRSVP:self.moment withEnded:^(enum UserState rsvp) {
+        if(self.moment.state.intValue != rsvp) {
+            
+            // Informer User
+            [[MTStatusBarOverlay sharedInstance] postImmediateFinishMessage:@"Status Facebook Importé" duration:1 animated:YES];
+            
+            // Update View
+            UIButton *buttonSimulation = nil;
+            switch (rsvp) {
+                case UserStateValid:
+                    buttonSimulation = self.rsvpYesButton;
+                    break;
+                    
+                case UserStateRefused:
+                    buttonSimulation = self.rsvpNoButton;
+                    break;
+                                        
+                default:
+                    buttonSimulation = self.rsvpMaybeButton;
+                    break;
+            }
+            
+            [self clicRSVPButton:buttonSimulation];
+        }
+    }];
+
+    
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -1242,7 +1263,12 @@ static CGFloat DescriptionBoxHeightMax = 100;
     [self.moment updateMomentFromServerWithEnded:^(BOOL success) {
         if(success)
         {
-            #warning optimiser update !!
+            // Force Reload Image
+            self.moment.uimage = nil;
+            self.moment.dataImage = nil;
+            self.momentImageView.image = nil;
+            self.momentImageView.imageString = nil;
+            
             [self initTitreView];
             [self initRsvpView];
             [self initDescriptionView];

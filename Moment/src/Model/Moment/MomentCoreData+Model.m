@@ -393,6 +393,8 @@
     MomentCoreData *momentCoreData = [MomentCoreData requestMomentAsCoreDataWithMoment:moment];
     [momentCoreData setupWithMoment:moment];
     [[Config sharedInstance] saveContext];
+    
+    //NSLog(@"####### CoreData #######\n%@\n#####################", momentCoreData);
 }
 
 + (void)updateMomentsWithArray:(NSArray*)array 

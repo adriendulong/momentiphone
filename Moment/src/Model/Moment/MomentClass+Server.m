@@ -572,24 +572,24 @@
     
     NSMutableDictionary *params = [self mappingToWeb].mutableCopy;
     
+    NSLog(@"Params = %@", params);
+    
     NSData *file = nil;
     // Si il y a une image
-    if(params[@"dataImage"]) {
+    if(params[@"photo"]) {
         
         // Conversion si nécessaire
-        if([params[@"dataImage"] isKindOfClass:[UIImage class]]) {
-            file = UIImagePNGRepresentation(params[@"dataImage"]);
+        if([params[@"photo"] isKindOfClass:[UIImage class]]) {
+            file = UIImagePNGRepresentation(params[@"photo"]);
         }
-        else if([params[@"dataImage"] isKindOfClass:[NSData class]]) {
-            file = params[@"dataImage"];
+        else if([params[@"photo"] isKindOfClass:[NSData class]]) {
+            file = params[@"photo"];
         }
         
         [params removeObjectForKey:@"photo"];
     }
-    
-    NSDictionary *mapped = [MomentClass mappingToWebWithAttributes:params];
-    
-    NSMutableURLRequest *request = [[AFMomentAPIClient sharedClient] multipartFormRequestWithMethod:@"POST" path:path parameters:mapped constructingBodyWithBlock: ^(id <AFMultipartFormData>formData) {
+        
+    NSMutableURLRequest *request = [[AFMomentAPIClient sharedClient] multipartFormRequestWithMethod:@"POST" path:path parameters:params constructingBodyWithBlock: ^(id <AFMultipartFormData>formData) {
         if(file)
             [formData appendPartWithFileData:file name:@"photo" fileName:@"photo.png" mimeType:@"image/png"];
     }];
@@ -607,8 +607,15 @@
     
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id JSON) {
         
+        NSLog(@"Moment Modified = %@", JSON);
+        //NSLog(@"Local Moment = %@", self);
+        // Save Headers
         [[AFMomentAPIClient sharedClient] saveHeaderResponse:operation.response];
         
+        // Save URL
+        self.imageString = JSON[@"photo"];
+        
+        // Mettre à jour CoreData
         [MomentCoreData updateMoment:self];
                 
         if(block)
@@ -658,7 +665,6 @@
 - (void)getPhotosWithEnded:( void (^) (NSArray* photos) )block
 {
     NSString *path = [NSString stringWithFormat:@"photosmoment/%d", self.momentId.intValue];
-    NSLog(@"path tried = %@", path);
     
     [[AFMomentAPIClient sharedClient] getPath:path parameters:nil encoding:AFFormURLParameterEncoding success:^(AFHTTPRequestOperation *operation, id JSON) {
                         
@@ -711,7 +717,6 @@
         
         Photos *photo = [[Photos alloc] initWithAttributesFromWeb:JSON[@"success"]];
         
-#warning FB Notif
         // Notify Facebook Notification
         if(self.facebookId)
         {
@@ -721,7 +726,6 @@
                 }
             }];
         }
-        
         
         if(endBlock)
             endBlock(photo);

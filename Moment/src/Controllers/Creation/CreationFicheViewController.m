@@ -23,6 +23,8 @@
     @private
     BOOL isEdition;
     BOOL adresseTextFieldShouldClear;
+    
+    UIImage *modifiedCover;
 }
 
 @end
@@ -680,11 +682,15 @@
 #endif
         if(self.moment && self.moment.facebookId)
             attributes[@"facebbokId"] = self.moment.facebookId;
-        if(_coverImage)
-            attributes[@"dataImage"] = _coverImage;
+        if(modifiedCover)
+            attributes[@"dataImage"] = modifiedCover;
         
         // Mettre à jour Moment Local
         [self.moment setupWithAttributes:attributes];
+        // Si nouvelle image, supprimer url pour mettre à jour
+        if(modifiedCover) {
+            self.moment.imageString = nil;
+        }
         
         MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
         hud.labelText = NSLocalizedString(@"MBProgressHUD_Loading", nil);
@@ -987,6 +993,7 @@
     UIImage *image = [[Config sharedInstance] imageWithMaxSize:info[@"UIImagePickerControllerOriginalImage"] maxSize:600];
     
     self.coverImage = image;
+    modifiedCover = image;
     self.coverView.contentMode = UIViewContentModeScaleAspectFill;
     self.coverView.image = image;
     

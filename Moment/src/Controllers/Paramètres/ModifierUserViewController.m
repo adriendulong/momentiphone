@@ -239,50 +239,6 @@ enum PhotoPickerDestination {
     [actionSheet showInView:self.view];
 }
 
-#pragma mark - UIImagePickerController Delegate
-
--(void) imagePickerController:(UIImagePickerController *)UIPicker didFinishPickingMediaWithInfo:(NSDictionary *) info
-{
-    UIImage *image = [[Config sharedInstance] imageWithMaxSize:info[@"UIImagePickerControllerOriginalImage"] maxSize:600];
-    
-    switch (imagePickerDestination) {
-        case PhotoPickerDestinationProfilPicture:
-            self.profilePictureImage = [[Config sharedInstance] imageWithMaxSize:image maxSize:600];
-            self.medallion.image = image;
-            break;
-            
-        case PhotoPickerDestinationCover:
-            self.coverImage = image;
-            break;
-    }
-    
-    [[VersionControl sharedInstance] dismissModalViewControllerFromRoot:UIPicker animated:YES];
-}
-
-#pragma mark - UIActionSheet
-
-- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
-{
-    if(buttonIndex == 2)
-        return;
-    
-    UIImagePickerController *picker = [[UIImagePickerController alloc] init];
-    picker.delegate = self;
-    
-    // Album photo
-    if(buttonIndex == 0) {
-        picker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
-    }
-    else {
-        picker.sourceType = UIImagePickerControllerSourceTypeCamera;
-    }
-    
-    [[VersionControl sharedInstance] presentModalViewController:picker fromRoot:self animated:YES];
-}
-
-#pragma mark - Actions
-
-
 - (IBAction)clicValider
 {
     // Cacher clavier
@@ -379,7 +335,7 @@ enum PhotoPickerDestination {
                 invalideTextField = self.secondPhoneTextField;
             }
         }
-                
+            
         // --------- Si les données sont valides ---------
         if(!invalideTextField)
         {
@@ -560,6 +516,47 @@ enum PhotoPickerDestination {
         [[FacebookManager sharedInstance] updateCurrentUserFacebookIdOnServer:nil];
     }
     
+}
+
+#pragma mark - UIActionSheet
+
+- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if(buttonIndex == 2)
+        return;
+    
+    UIImagePickerController *picker = [[UIImagePickerController alloc] init];
+    picker.delegate = self;
+    
+    // Album photo
+    if(buttonIndex == 0) {
+        picker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+    }
+    else {
+        picker.sourceType = UIImagePickerControllerSourceTypeCamera;
+    }
+    
+    [[VersionControl sharedInstance] presentModalViewController:picker fromRoot:self animated:YES];
+}
+
+#pragma mark - UIImagePickerController Delegate
+
+-(void) imagePickerController:(UIImagePickerController *)UIPicker didFinishPickingMediaWithInfo:(NSDictionary *) info
+{
+    UIImage *image = [[Config sharedInstance] imageWithMaxSize:info[@"UIImagePickerControllerOriginalImage"] maxSize:600];
+    
+    switch (imagePickerDestination) {
+        case PhotoPickerDestinationProfilPicture:
+            self.profilePictureImage = [[Config sharedInstance] imageWithMaxSize:image maxSize:600];
+            self.medallion.image = image;
+            break;
+            
+        case PhotoPickerDestinationCover:
+            self.coverImage = image;
+            break;
+    }
+    
+    [[VersionControl sharedInstance] dismissModalViewControllerFromRoot:UIPicker animated:YES];
 }
 
 @end

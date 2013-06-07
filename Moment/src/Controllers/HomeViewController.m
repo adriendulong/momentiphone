@@ -61,7 +61,7 @@
 {
     self = [super initWithNibName:@"HomeViewController" bundle:nil];
     if(self) {
-        _isShowFormLogin = NO;        
+        _isShowFormLogin = NO;
     }
     return self;
 }
@@ -91,7 +91,7 @@
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    
+        
     //on check si autologin actif et utilisateur fourni
     UserClass *currentUser = [UserCoreData getCurrentUser];
     if( currentUser ){
@@ -121,7 +121,6 @@
     {
         [self showTutorialAnimated:YES];
     }
-    
     
     // iPhone 5 support
     NSInteger allElementsHeight =  (self.boxView.frame.origin.y + self.boxView.frame.size.height) - self.logoView.frame.origin.y;

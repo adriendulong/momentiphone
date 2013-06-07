@@ -23,6 +23,7 @@ static NSDateFormatter *dateFormatter;
 @synthesize photoId = _photoId;
 @synthesize imageOriginal = _imageOriginal;
 @synthesize imageThumbnail = _imageThumbnail;
+@synthesize uniqueURL;
 
 @synthesize photoSource = _photoSource;
 @synthesize size = _size;
@@ -34,6 +35,7 @@ static NSDateFormatter *dateFormatter;
            owner:(UserClass*)owner
     urlThumbnail:(NSString*)urlThumbnail
      urlOriginal:(NSString*)urlOriginal
+       uniqueURL:(NSString*)uniqueURL
           nbLike:(NSInteger)nbLike
             date:(NSDate*)date
             size:(CGSize)size
@@ -48,6 +50,7 @@ static NSDateFormatter *dateFormatter;
         self.date = date;
         self.photoSource = nil;
         self.size = size;
+        self.uniqueURL = uniqueURL;
         
         if(!dateFormatter) {
             dateFormatter = [[NSDateFormatter alloc] init];
@@ -81,6 +84,7 @@ static NSDateFormatter *dateFormatter;
                       owner:[[UserClass alloc]  initWithAttributesFromWeb:attributes[@"taken_by"]]
                urlThumbnail:attributes[@"url_thumbnail"]
                 urlOriginal:attributes[@"url_original"]
+                  uniqueURL:attributes[@"unique_url"]
                      nbLike:[attributes[@"nb_like"]intValue]
                     date:[NSDate dateWithTimeIntervalSince1970:[attributes[@"time"] doubleValue]]
                        size:size

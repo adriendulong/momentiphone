@@ -19,6 +19,7 @@
 @property (nonatomic, strong) UserClass* owner;
 @property (nonatomic, strong) NSString *urlThumbnail;
 @property (nonatomic, strong) NSString *urlOriginal;
+@property (nonatomic, strong) NSString *uniqueURL;
 @property (nonatomic, strong) NSDate *date;
 @property (nonatomic, strong) UIImage *imageThumbnail;
 @property (nonatomic, strong) UIImage *imageOriginal;
@@ -36,6 +37,7 @@
            owner:(UserClass*)owner
     urlThumbnail:(NSString*)urlThumbnail
      urlOriginal:(NSString*)urlOriginal
+       uniqueURL:(NSString*)uniqueURL
           nbLike:(NSInteger)nbLike
             date:(NSDate*)date
             size:(CGSize)size;

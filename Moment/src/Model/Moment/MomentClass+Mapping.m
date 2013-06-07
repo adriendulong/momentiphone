@@ -235,9 +235,6 @@ static NSDateFormatter *smallDateFormatter = nil;
         dico[@"endTime"] = [dfHeure stringFromDate:self.dateDebut];
     }
     
-    if(self.imageString)
-        dico[@"photo_url"] = self.imageString;
-    
     if(self.titre)
         dico[@"name"] = self.titre;
     else
@@ -303,6 +300,5 @@ static NSDateFormatter *smallDateFormatter = nil;
     
     return dico.copy;
 }
-
 
 @end

@@ -669,7 +669,7 @@ withDelegate:(PhotoViewController*)photoViewController
         if([MFMailComposeViewController canSendMail])
         {
             // URL
-            NSString *urlPhoto = ((Photos*)self.photos[self.selectedIndex]).urlOriginal;
+            NSString *urlPhoto = ((Photos*)self.photos[self.selectedIndex]).uniqueURL;
             
             // Email Subject
             NSString *emailTitle = @"Moment - Reporter Photo";
@@ -726,7 +726,7 @@ withDelegate:(PhotoViewController*)photoViewController
     Photos *photo = self.photos[self.selectedIndex];
     UIImage *image = photo.imageOriginal;
     NSString *initialText = [NSString stringWithFormat:@"Bon Moment @%@ !\n", self.moment.titre];
-    NSURL *url = [NSURL URLWithString:photo.urlOriginal];
+    NSURL *url = [NSURL URLWithString:photo.uniqueURL];
     
     // iOS 6 -> Social Framework
     if ( (NSClassFromString(@"SLComposeViewController") != nil) && [SLComposeViewController isAvailableForServiceType:SLServiceTypeFacebook])
@@ -783,7 +783,7 @@ withDelegate:(PhotoViewController*)photoViewController
         [initialText appendFormat:@" #%@\n", self.moment.hashtag];
     else
         [initialText appendString:@"\n"];
-    NSURL *url = [NSURL URLWithString:photo.urlOriginal];
+    NSURL *url = [NSURL URLWithString:photo.uniqueURL];
     
     // iOS 6 -> Social Framework
     if( (NSClassFromString(@"SLComposeViewController") != nil) && [SLComposeViewController isAvailableForServiceType:SLServiceTypeTwitter])
