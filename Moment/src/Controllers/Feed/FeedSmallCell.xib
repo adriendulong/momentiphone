@@ -54,7 +54,7 @@
 					<object class="IBUILabel" id="103074100">
 						<reference key="NSNextResponder" ref="191373211"/>
 						<int key="NSvFlags">292</int>
-						<string key="NSFrame">{{90, 130}, {71, 15}}</string>
+						<string key="NSFrame">{{90, 123}, {71, 15}}</string>
 						<reference key="NSSuperview" ref="191373211"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="141621012"/>
@@ -85,7 +85,7 @@
 					<object class="IBUILabel" id="1002285960">
 						<reference key="NSNextResponder" ref="191373211"/>
 						<int key="NSvFlags">292</int>
-						<string key="NSFrame">{{90, 111}, {118, 21}}</string>
+						<string key="NSFrame">{{90, 108}, {118, 21}}</string>
 						<reference key="NSSuperview" ref="191373211"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="382663621"/>
@@ -116,7 +116,7 @@
 					<object class="IBUILabel" id="382663621">
 						<reference key="NSNextResponder" ref="191373211"/>
 						<int key="NSvFlags">292</int>
-						<string key="NSFrame">{{216, 114}, {89, 15}}</string>
+						<string key="NSFrame">{{216, 111}, {89, 15}}</string>
 						<reference key="NSSuperview" ref="191373211"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="103074100"/>
@@ -140,7 +140,7 @@
 					<object class="IBUILabel" id="141621012">
 						<reference key="NSNextResponder" ref="191373211"/>
 						<int key="NSvFlags">292</int>
-						<string key="NSFrame">{{161, 129}, {120, 16}}</string>
+						<string key="NSFrame">{{161, 122}, {120, 16}}</string>
 						<reference key="NSSuperview" ref="191373211"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="675996519"/>
@@ -265,7 +265,6 @@
 						<string key="NSFrame">{{0, 159}, {320, 2}}</string>
 						<reference key="NSSuperview" ref="191373211"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<bool key="IBUIUserInteractionEnabled">NO</bool>
 						<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
