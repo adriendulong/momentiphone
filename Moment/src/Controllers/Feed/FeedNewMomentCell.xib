@@ -126,6 +126,16 @@
 						<bool key="IBUIUserInteractionEnabled">NO</bool>
 						<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
 					</object>
+					<object class="IBUIImageView" id="1031436152">
+						<reference key="NSNextResponder" ref="877205782"/>
+						<int key="NSvFlags">292</int>
+						<string key="NSFrame">{{23, 67}, {53, 53}}</string>
+						<reference key="NSSuperview" ref="877205782"/>
+						<reference key="NSWindow"/>
+						<reference key="NSNextKeyView" ref="419154673"/>
+						<string key="NSReuseIdentifierKey">_NS:9</string>
+						<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
+					</object>
 					<object class="IBUIImageView" id="873668957">
 						<reference key="NSNextResponder" ref="877205782"/>
 						<int key="NSvFlags">292</int>
@@ -138,18 +148,8 @@
 						<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
 						<object class="NSCustomResource" key="IBUIImage">
 							<string key="NSClassName">NSImage</string>
-							<string key="NSResourceName">bg_profil</string>
+							<string key="NSResourceName">bg_profil.png</string>
 						</object>
-					</object>
-					<object class="IBUIImageView" id="1031436152">
-						<reference key="NSNextResponder" ref="877205782"/>
-						<int key="NSvFlags">292</int>
-						<string key="NSFrame">{{23, 67}, {53, 53}}</string>
-						<reference key="NSSuperview" ref="877205782"/>
-						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView" ref="419154673"/>
-						<string key="NSReuseIdentifierKey">_NS:9</string>
-						<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
 					</object>
 					<object class="IBUIView" id="286373639">
 						<reference key="NSNextResponder" ref="877205782"/>
@@ -201,6 +201,7 @@
 						<string key="NSFrame">{{0, 148}, {320, 2}}</string>
 						<reference key="NSSuperview" ref="877205782"/>
 						<reference key="NSWindow"/>
+						<reference key="NSNextKeyView"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<bool key="IBUIUserInteractionEnabled">NO</bool>
 						<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
@@ -540,7 +541,7 @@
 		<bool key="IBDocument.PluginDeclaredDependenciesTrackSystemTargetVersion">YES</bool>
 		<int key="IBDocument.defaultPropertyAccessControl">3</int>
 		<dictionary class="NSMutableDictionary" key="IBDocument.LastKnownImageSizes">
-			<string key="bg_profil">{91, 90}</string>
+			<string key="bg_profil.png">{91, 90}</string>
 			<string key="feed_back_creation.png">{309, 122}</string>
 			<string key="feed_rsvp_picto.png">{27, 21}</string>
 			<string key="separateur_feed.png">{320, 2}</string>
