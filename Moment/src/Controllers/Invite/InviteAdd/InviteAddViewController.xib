@@ -46,7 +46,7 @@
 						<string key="NSFrame">{{0, 100}, {320, 404}}</string>
 						<reference key="NSSuperview" ref="195632736"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView" ref="703920080"/>
+						<reference key="NSNextKeyView"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<object class="NSColor" key="IBUIBackgroundColor" id="983437112">
 							<int key="NSColorSpace">3</int>
@@ -64,7 +64,7 @@
 					<object class="IBUILabel" id="1032873420">
 						<reference key="NSNextResponder" ref="195632736"/>
 						<int key="NSvFlags">292</int>
-						<string key="NSFrame">{{7, 16}, {80, 19}}</string>
+						<string key="NSFrame">{{25, 16}, {80, 19}}</string>
 						<reference key="NSSuperview" ref="195632736"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="462837388"/>
@@ -96,7 +96,7 @@
 					<object class="IBUILabel" id="462837388">
 						<reference key="NSNextResponder" ref="195632736"/>
 						<int key="NSvFlags">292</int>
-						<string key="NSFrame">{{82, 16}, {19, 19}}</string>
+						<string key="NSFrame">{{100, 16}, {19, 19}}</string>
 						<reference key="NSSuperview" ref="195632736"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="854696978"/>
@@ -121,7 +121,7 @@
 					<object class="IBUILabel" id="854696978">
 						<reference key="NSNextResponder" ref="195632736"/>
 						<int key="NSvFlags">292</int>
-						<string key="NSFrame">{{106, 16}, {126, 19}}</string>
+						<string key="NSFrame">{{124, 16}, {126, 19}}</string>
 						<reference key="NSSuperview" ref="195632736"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="437048320"/>
@@ -145,7 +145,7 @@
 						<string key="NSFrame">{{0, 49}, {320, 2}}</string>
 						<reference key="NSSuperview" ref="195632736"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView" ref="784432788"/>
+						<reference key="NSNextKeyView" ref="703920080"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<object class="NSColor" key="IBUIBackgroundColor" id="13401655">
 							<int key="NSColorSpace">3</int>
@@ -261,7 +261,7 @@
 						<string key="NSFrameSize">{320, 50}</string>
 						<reference key="NSSuperview" ref="195632736"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView"/>
+						<reference key="NSNextKeyView" ref="784432788"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<bool key="IBUIOpaque">NO</bool>
 						<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
@@ -758,24 +758,33 @@
 					<string key="className">InviteAddViewController</string>
 					<string key="superclassName">UIViewController</string>
 					<dictionary class="NSMutableDictionary" key="actions">
+						<string key="clicNavigationBarButtonContact">id</string>
+						<string key="clicNavigationBarButtonFacebook">id</string>
+						<string key="clicNavigationBarButtonFavoris">id</string>
 						<string key="clicValider">id</string>
-						<string key="searchBarChangeValue:">UITextField</string>
 					</dictionary>
 					<dictionary class="NSMutableDictionary" key="actionInfosByName">
+						<object class="IBActionInfo" key="clicNavigationBarButtonContact">
+							<string key="name">clicNavigationBarButtonContact</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="clicNavigationBarButtonFacebook">
+							<string key="name">clicNavigationBarButtonFacebook</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="clicNavigationBarButtonFavoris">
+							<string key="name">clicNavigationBarButtonFavoris</string>
+							<string key="candidateClassName">id</string>
+						</object>
 						<object class="IBActionInfo" key="clicValider">
 							<string key="name">clicValider</string>
 							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="searchBarChangeValue:">
-							<string key="name">searchBarChangeValue:</string>
-							<string key="candidateClassName">UITextField</string>
 						</object>
 					</dictionary>
 					<dictionary class="NSMutableDictionary" key="outlets">
 						<string key="contactButton">UIButton</string>
 						<string key="facebookButton">UIButton</string>
 						<string key="favorisButton">UIButton</string>
-						<string key="momentLabel">CustomLabel</string>
 						<string key="navBarRigthButtonsView">UIView</string>
 						<string key="nbInvitesLabel">UILabel</string>
 						<string key="phraseLabel">UILabel</string>
@@ -795,10 +804,6 @@
 						<object class="IBToOneOutletInfo" key="favorisButton">
 							<string key="name">favorisButton</string>
 							<string key="candidateClassName">UIButton</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="momentLabel">
-							<string key="name">momentLabel</string>
-							<string key="candidateClassName">CustomLabel</string>
 						</object>
 						<object class="IBToOneOutletInfo" key="navBarRigthButtonsView">
 							<string key="name">navBarRigthButtonsView</string>
