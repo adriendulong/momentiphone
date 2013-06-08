@@ -108,10 +108,12 @@ withNavigationController:(UINavigationController*)navController
 {
     // Google Analytics
     if(self.isShowingPrivateTimeLine) {
-        [FeedViewController sendGoogleAnalyticsView];
+        [TimeLineViewController sendGoogleAnalyticsView];
+        [AppDelegate updateActualViewController:self.privateTimeLine];
     }
     else {
-        [TimeLineViewController sendGoogleAnalyticsView];
+        [FeedViewController sendGoogleAnalyticsView];
+        [AppDelegate updateActualViewController:self.publicFeedList];
     }
     
     // Add new TimeLine

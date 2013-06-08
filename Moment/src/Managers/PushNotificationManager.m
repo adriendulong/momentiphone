@@ -95,22 +95,36 @@ static PushNotificationManager *sharedInstance = nil;
             break;
             
         case NotificationTypeInvitation:
-            [[MTStatusBarOverlay sharedInstance] postImmediateFinishMessage:@"Nouvelle invitation" duration:1 animated:YES];
+            [[MTStatusBarOverlay sharedInstance]
+             postImmediateFinishMessage:NSLocalizedString(@"StatusBarOverlay_PushNotification_NewInvitation", nil)
+             duration:1 animated:YES];
             break;
             
         case NotificationTypeModification:
-            [[MTStatusBarOverlay sharedInstance] postImmediateFinishMessage:@"Nouvelle modification" duration:1 animated:YES];
+            [[MTStatusBarOverlay sharedInstance]
+             postImmediateFinishMessage:NSLocalizedString(@"StatusBarOverlay_PushNotification_NewModification", nil)
+             duration:1 animated:YES];
             break;
             
         case NotificationTypeNewPhoto: {
-            if(momentId) {
             [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationNewPhoto
                                                                 object:@{
                                                                          @"momentId":momentId
                                                                          }
              ];
-            }
         } break;
+            
+        case NotificationTypeFollowRequest:
+            [[MTStatusBarOverlay sharedInstance]
+             postImmediateFinishMessage:NSLocalizedString(@"StatusBarOverlay_PushNotification_NewFollowRequest", nil)
+             duration:1 animated:YES];
+            break;
+            
+        case NotificationTypeNewFollower:
+            [[MTStatusBarOverlay sharedInstance]
+             postImmediateFinishMessage:NSLocalizedString(@"StatusBarOverlay_PushNotification_NewFollower", nil)
+             duration:1 animated:YES];
+            break;
         
         default:
             [[[UIAlertView alloc] initWithTitle:@"Moment"
@@ -293,10 +307,14 @@ static PushNotificationManager *sharedInstance = nil;
     if([actualViewController isMemberOfClass:[ChatViewController class]]) {
         
         ChatViewController *chatViewController = (ChatViewController*)actualViewController;
-        [chatViewController loadMessagesForPage:1 atPosition:ChatViewControllerMessagePositionBottom
-                                      withEnded:^{
-            // Bloc nécessaire pour ne pas afficher le loader de rechargement
-        }];
+        // Si c'est le même Moment
+        if([chatViewController.moment.momentId isEqualToNumber:actualMoment.momentId]) {
+            // Reload Chat
+            [chatViewController loadMessagesForPage:1 atPosition:ChatViewControllerMessagePositionBottom
+                                          withEnded:^{
+                // Bloc nécessaire pour ne pas afficher le loader de rechargement
+            }];
+        }
         
     }
     // On est dans un moment
@@ -307,19 +325,31 @@ static PushNotificationManager *sharedInstance = nil;
         // Si c'est le même moment
         if(actualMoment.momentId == momentViewController.moment.momentId) {
             chatNotifAction = @selector(chatActionScrollToChat);
+            [self alertViewWithChatMessage:message];
         }
+        /*
         // C'est un autre moment
         else {
             chatNotifAction = @selector(chatActionPopToTimeLineAndOpenNewMoment);
         }
         
         [self alertViewWithChatMessage:message];
+         */
     }
+    /*
     // On est sur la timeLine
     else if([actualViewController isMemberOfClass:[TimeLineViewController class]]) {
         chatNotifAction = @selector(chatActionOpenNewMoment);
         [self alertViewWithChatMessage:message];
     }
+    // On est sur le feed
+    else if([actualViewController isMemberOfClass:[FeedViewController class]]) {
+        FeedViewController *feed = (FeedViewController*)actualViewController;
+        [feed.rootViewController clicChangeTimeLine];
+        photoNotifAction = @selector(chatActionOpenNewMoment);
+        [self alertViewWithChatMessage:message];
+    }
+     */
     
 }
 
@@ -360,7 +390,7 @@ static PushNotificationManager *sharedInstance = nil;
     
     // Status Bar Message
     [[MTStatusBarOverlay sharedInstance]
-     postImmediateFinishMessage:NSLocalizedString(@"StatusBarOverlay_PushNotification_NewMessage", nil)
+     postImmediateFinishMessage:NSLocalizedString(@"StatusBarOverlay_PushNotification_NewPhoto", nil)
      duration:1
      animated:YES];
     
@@ -368,7 +398,11 @@ static PushNotificationManager *sharedInstance = nil;
     if([actualViewController isMemberOfClass:[PhotoViewController class]]) {
         
         PhotoViewController *photoViewController = (PhotoViewController*)actualViewController;
-        [photoViewController loadPhotos];
+        // C'est le même Moment
+        if([photoViewController.moment.momentId isEqualToNumber:actualMoment.momentId]) {
+            // Reload Photos
+            [photoViewController loadPhotos];
+        }
         
     }
     // On est dans un moment
@@ -377,22 +411,34 @@ static PushNotificationManager *sharedInstance = nil;
         UIViewController <OngletViewController> *momentViewController = (UIViewController <OngletViewController> *)actualViewController;
         
         // Si c'est le même moment
-        if(actualMoment.momentId == momentViewController.moment.momentId) {
+        if([actualMoment.momentId isEqualToNumber:momentViewController.moment.momentId]) {
             photoNotifAction = @selector(photoActionScrollToPhoto);
+            [self alertViewPhotoWithMessage:message];
         }
         // C'est un autre moment
+        /*
         else {
             photoNotifAction = @selector(photoActionPopToTimeLineAndOpenNewMoment);
         }
+         */
         
-        [self alertViewPhotoWithMessage:message];
+        //[self alertViewPhotoWithMessage:message];
     }
+    /*
     // On est sur la timeLine
     else if([actualViewController isMemberOfClass:[TimeLineViewController class]]) {
         photoNotifAction = @selector(photoActionOpenNewMoment);
         [self alertViewPhotoWithMessage:message];
     }
-    
+    // On est sur le feed
+    else if([actualViewController isMemberOfClass:[FeedViewController class]]) {
+        FeedViewController *feed = (FeedViewController*)actualViewController;
+        [feed.rootViewController clicChangeTimeLine];
+        photoNotifAction = @selector(photoActionOpenNewMoment);
+        [self alertViewPhotoWithMessage:message];
+    }
+     */
+        
 }
 - (void)photoActionScrollToPhoto {
     [self actionScrollToOnglet:OngletPhoto];

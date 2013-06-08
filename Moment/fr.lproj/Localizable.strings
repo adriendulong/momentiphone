@@ -93,8 +93,18 @@
 /* ---------------- PushNotifications ------------------ */
 // Chat
 "PushNotification_NewChat_AlertView_Title" = "Nouveau Message";
+"StatusBarOverlay_PushNotification_NewMessage" = "Nouveau Message !";
 // Photos
 "PushNotification_NewPhoto_AlertView_Title" = "Nouvelle Photo";
+"StatusBarOverlay_PushNotification_NewPhoto" = "Nouvelle Photo !";
+// Invitation
+"StatusBarOverlay_PushNotification_NewInvitation" = "Nouvelle Invitation !";
+// Follow
+"StatusBarOverlay_PushNotification_NewFollower" = "Nouvel abonné !";
+// Demande de Follow
+"StatusBarOverlay_PushNotification_NewFollowRequest" = "Nouvelle demande d'abonnement !";
+// Modification
+"StatusBarOverlay_PushNotification_NewModification" = "Nouvelle modification !";
 // Push Notifications Désactivées AlertView
 "PushNotification_Disabled_AlertView_Title" = "Notifications Désactivées";
 "PushNotification_Disabled_AlertView_Message" = "Les notifications sont désactivées. Veuillez changer vos paramètres de notifications";
@@ -113,8 +123,6 @@
 "VoletSearchViewController_EmptyCell_Utilisateurs" = "Aucun utlisateur correspondant à votre recherche. Essayez en enlevant les majuscules et les accents ! ";
 
 /* ----------- MTStatusBarOverlay ---------- */
-// Push Notification
-"StatusBarOverlay_PushNotification_NewMessage" = "Nouveau message !";
 // Loading Failure
 "StatusBarOverlay_LoadingFailure" = "Le chargement a échoué";
 
