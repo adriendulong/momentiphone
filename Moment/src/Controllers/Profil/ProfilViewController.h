@@ -19,7 +19,7 @@ enum FollowButtonState {
     FollowButtonStateWaiting = 2
 };
 
-@interface ProfilViewController : GAITrackedViewController
+@interface ProfilViewController : GAITrackedViewController <UIAlertViewDelegate>
 
 @property (strong, nonatomic) UserClass *user;
 

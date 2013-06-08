@@ -192,6 +192,10 @@
 "ProfilViewController_HeadFollowButtonLabel_Follow" = "Follow";
 "ProfilViewController_AcceptFollow_Message" = "Follow Accepté";
 "ProfilViewController_RefuseFollow_Message" = "Follow Refusé";
+// Unfollow
+"ProfilViewController_Unfollow_AlertView_Title" = "Unfollow";
+"ProfilViewController_Unfollow_AlertView_Message" = "Êtes-vous sûr de vouloir annuler le suivi de cette personne ? Vous ne pourrez plus accéder à ses informations.";
+"ProfilViewController_Unfollow_AlertView_ConfirmButton" = "Unfollow";
 
 /* ------------ FeedViewController ------------- */
 "FeedViewController_lire_messages_label1" = "Lire les";

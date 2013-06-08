@@ -292,16 +292,17 @@ enum ProfilOnglet {
             if( (self.user.privacy == nil) || ![self.user.privacy isKindOfClass:[NSNumber class]]) {
                 hideInformations = YES;
             }
-            // -> On ne peut pas follow/voir les infos d'un profil privé
-            if(self.user.privacy.intValue == UserPrivacyClosed)
-            {
-                // Hide Follow Button
-                [self showHeadFollowButton:NO];
-                hideInformations = YES;
-            }
             // -> On ne peut pas voir les infos d'un profil qu'on ne follow pas
-            else if( !self.user.is_followed.boolValue ) {
+            if( !self.user.is_followed.boolValue ) {
                 hideInformations = YES;
+                
+                // -> On ne peut pas follow un profil privé
+                if(self.user.privacy.intValue == UserPrivacyClosed)
+                {
+                    // Hide Follow Button
+                    [self showHeadFollowButton:NO];
+                }
+                
             }
             
             // Cacher infos
@@ -578,43 +579,61 @@ enum ProfilOnglet {
     // Google Analytics
     [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Bouton pour Follow" value:nil];
     
-    enum FollowButtonState previousState = headFollowButtonState;
-    
     // Requete pas encore envoyée
     if( (headFollowButtonState != FollowButtonStateWaiting) && (!self.user.request_follower.boolValue) )
     {
-        [self setHeadFollowButtonState:(!self.headFollowButton.selected)? FollowButtonStateFollowed : FollowButtonStateNotFollowed];
         
-        // Follow / UnFollow user selectionné
-        [self.user toggleFollowWithEnded:^(BOOL success, BOOL waitForResponse) {
-            
-            // Success
-            if(success) {
-                
-                enum FollowButtonState newState = waitForResponse ? FollowButtonStateWaiting : ((previousState == FollowButtonStateFollowed)? FollowButtonStateNotFollowed : FollowButtonStateFollowed );
-                
-                [self setHeadFollowButtonState:newState];
-                
-                // Update Content
-                [self.followerTableViewController loadUsersList];
-                [self reloadData];
-                
-            }
-            // Si il y a eu un erreur
-            else {
-                
-                // On remet le bouton dans le bonne état
-                [self setHeadFollowButtonState:previousState];
-                
-                // On informe l'utilisateur
-                [[MTStatusBarOverlay sharedInstance] postImmediateErrorMessage:NSLocalizedString(@"FollowTableViewController_AddFollow_ErrorMessage", nil)
-                                                                      duration:1
-                                                                      animated:YES];
+        // Si on veut unfollow -> AlertView pour prévenir
+        if(headFollowButtonState == FollowButtonStateFollowed) {
+            [[[UIAlertView alloc]
+              initWithTitle:NSLocalizedString(@"ProfilViewController_Unfollow_AlertView_Title", nil)
+              message:NSLocalizedString(@"ProfilViewController_Unfollow_AlertView_Message", nil)
+              delegate:self
+              cancelButtonTitle:NSLocalizedString(@"AlertView_Button_Cancel", nil)
+              otherButtonTitles:NSLocalizedString(@"ProfilViewController_Unfollow_AlertView_ConfirmButton", nil), nil]
+             show];
+        }
+        else {
+            [self sendToggleFollowRequest];
+        }
 
-            }
-        }];
-    
     }
+}
+
+- (void)sendToggleFollowRequest {
+    
+    enum FollowButtonState previousState = headFollowButtonState;
+    
+    [self setHeadFollowButtonState:(!self.headFollowButton.selected)? FollowButtonStateFollowed : FollowButtonStateNotFollowed];
+    
+    // Follow / UnFollow user selectionné
+    [self.user toggleFollowWithEnded:^(BOOL success, BOOL waitForResponse) {
+        
+        // Success
+        if(success) {
+            
+            enum FollowButtonState newState = waitForResponse ? FollowButtonStateWaiting : ((previousState == FollowButtonStateFollowed)? FollowButtonStateNotFollowed : FollowButtonStateFollowed );
+            
+            [self setHeadFollowButtonState:newState];
+            
+            // Update Content
+            [self.followerTableViewController loadUsersList];
+            [self reloadData];
+            
+        }
+        // Si il y a eu un erreur
+        else {
+            
+            // On remet le bouton dans le bonne état
+            [self setHeadFollowButtonState:previousState];
+            
+            // On informe l'utilisateur
+            [[MTStatusBarOverlay sharedInstance] postImmediateErrorMessage:NSLocalizedString(@"FollowTableViewController_AddFollow_ErrorMessage", nil)
+                                                                  duration:1
+                                                                  animated:YES];
+            
+        }
+    }];
 }
 
 - (IBAction)clicAcceptFollow {
@@ -715,6 +734,17 @@ enum ProfilOnglet {
 
     }
     return _followerTableViewController;
+}
+
+#pragma mark - UIAlertView Delegate
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    // Confirmation de la demande de unfollow
+    if(buttonIndex == 1)
+    {
+        [self sendToggleFollowRequest];
+    }
 }
 
 @end

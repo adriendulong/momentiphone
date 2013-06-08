@@ -65,8 +65,9 @@ navigationController:(UINavigationController*)navController
         
         // Boutons
         // -> On ne peut pas se follow soi-même
+        // -> On ne peut pas follow un user private
         UserClass *current = nil;
-        if( (self.user.state.intValue == UserStateCurrent) || ( (current = [UserCoreData getCurrentUser]) && [self.user.userId isEqualToNumber:current.userId]) ) {
+        if( ((self.user.state.intValue == UserStateCurrent) || ( (current = [UserCoreData getCurrentUser]) && [self.user.userId isEqualToNumber:current.userId])) || ((self.user.privacy == nil) || (self.user.privacy.intValue == UserPrivacyClosed)) ) {
             self.followButton.hidden = YES;
         }
         else {
@@ -92,41 +93,69 @@ navigationController:(UINavigationController*)navController
 {
     if(self.buttonState != FollowButtonStateWaiting)
     {
-        enum FollowButtonState previousState = self.buttonState;
-        
-        [self.followButton setSelected:!self.followButton.selected];
-        
-        // Follow / UnFollow user selectionné
-        [self.user toggleFollowWithEnded:^(BOOL success, BOOL waitForResponse) {
-            
-            // Success
-            if(success) {
-                
-                enum FollowButtonState newState = waitForResponse ? FollowButtonStateWaiting : ((previousState == FollowButtonStateFollowed)? FollowButtonStateNotFollowed : FollowButtonStateFollowed );
-                
-                self.buttonState = newState;
-            }
-            // Si il y a eu un erreur
-            else {
-                
-                // On remet le bouton dans le bonne état
-                [self.followButton setSelected:!self.followButton.selected];
-                self.buttonState = previousState;
-                
-                // On informe l'utilisateur
-                [[MTStatusBarOverlay sharedInstance] postImmediateErrorMessage:NSLocalizedString(@"FollowTableViewController_AddFollow_ErrorMessage", nil)
-                                                                      duration:1
-                                                                      animated:YES];
-                
-            }
-        }];
+        // Si on veut unfollow -> AlertView pour prévenir
+        if(self.buttonState == FollowButtonStateFollowed) {
+            [[[UIAlertView alloc]
+              initWithTitle:NSLocalizedString(@"ProfilViewController_Unfollow_AlertView_Title", nil)
+              message:NSLocalizedString(@"ProfilViewController_Unfollow_AlertView_Message", nil)
+              delegate:self
+              cancelButtonTitle:NSLocalizedString(@"AlertView_Button_Cancel", nil)
+              otherButtonTitles:NSLocalizedString(@"ProfilViewController_Unfollow_AlertView_ConfirmButton", nil), nil]
+             show];
+        }
+        else {
+            [self sendToggleFollowRequest];
+        }
         
     }
+}
+
+- (void)sendToggleFollowRequest {
+    
+    enum FollowButtonState previousState = self.buttonState;
+    
+    [self.followButton setSelected:!self.followButton.selected];
+    
+    // Follow / UnFollow user selectionné
+    [self.user toggleFollowWithEnded:^(BOOL success, BOOL waitForResponse) {
+        
+        // Success
+        if(success) {
+            
+            enum FollowButtonState newState = waitForResponse ? FollowButtonStateWaiting : ((previousState == FollowButtonStateFollowed)? FollowButtonStateNotFollowed : FollowButtonStateFollowed );
+            
+            self.buttonState = newState;
+        }
+        // Si il y a eu un erreur
+        else {
+            
+            // On remet le bouton dans le bonne état
+            [self.followButton setSelected:!self.followButton.selected];
+            self.buttonState = previousState;
+            
+            // On informe l'utilisateur
+            [[MTStatusBarOverlay sharedInstance] postImmediateErrorMessage:NSLocalizedString(@"FollowTableViewController_AddFollow_ErrorMessage", nil)
+                                                                  duration:1
+                                                                  animated:YES];
+            
+        }
+    }];
 }
 
 - (void)clicProfile {
     ProfilViewController *profil = [[ProfilViewController alloc] initWithUser:self.user];
     [self.navigationController pushViewController:profil animated:YES];
+}
+
+#pragma mark - UIAlertView Delegate
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    // Confirmation de la demande de unfollow
+    if(buttonIndex == 1)
+    {
+        [self sendToggleFollowRequest];
+    }
 }
 
 @end

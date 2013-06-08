@@ -10,7 +10,7 @@
 #import "CustomAGMedallionView.h"
 #import "ProfilViewController.h"
 
-@interface FollowTableViewCell : UITableViewCell
+@interface FollowTableViewCell : UITableViewCell <UIAlertViewDelegate>
 
 @property (nonatomic, strong) UserClass *user;
 @property (nonatomic) NSInteger index;
