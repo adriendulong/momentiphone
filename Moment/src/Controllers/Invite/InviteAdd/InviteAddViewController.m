@@ -56,8 +56,6 @@ enum InviteAddFontSize {
 @synthesize validerLabel = _validerLabel;
 @synthesize nbInvitesLabel = _nbInvitesLabel;
 @synthesize phraseLabel = _phraseLabel;
-@synthesize momentLabel = _momentLabel;
-@synthesize ttMomentLabel = _ttMomentLabel;
 @synthesize ttValiderLabel = _ttValiderLabel;
 
 - (id)initWithOwner:(UserClass*)owner withMoment:(MomentClass*)moment
@@ -95,15 +93,7 @@ enum InviteAddFontSize {
     // phrase Label
     [self.phraseLabel sizeToFit];
     [self placerLabel:self.phraseLabel afterView:self.nbInvitesLabel withMarginX:margin withMarginY:-1];
-    
-    // Moment Label
-    if(self.ttMomentLabel) {
-        [self placerLabel:self.ttMomentLabel afterView:self.phraseLabel withMarginX:margin withMarginY:1];
-    }
-    else {
-        [self placerLabel:self.momentLabel afterView:self.phraseLabel withMarginX:margin withMarginY:1];
-    }
-    
+        
 }
 
 - (void)viewDidLoad
@@ -135,7 +125,7 @@ enum InviteAddFontSize {
     self.phraseLabel.textColor = [[Config sharedInstance] textColor];
     
     // Moment Label
-    [self setMomentLabelText:@"MOMENT"];
+    //[self setMomentLabelText:@"MOMENT"];
     
     // Frames
     [self updateHeaderFrames];
@@ -206,6 +196,7 @@ enum InviteAddFontSize {
     }
 }
 
+/*
 - (void)setMomentLabelText:(NSString*)texteLabel
 {
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:texteLabel];
@@ -259,6 +250,7 @@ enum InviteAddFontSize {
         self.momentLabel.hidden = YES;
     }
 }
+*/
 
 #pragma mark - InviteViewController Delegate
 

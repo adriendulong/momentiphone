@@ -7,11 +7,14 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "InviteAddViewController.h"
 
 @interface InviteAddTableViewCellEmpty : UITableViewCell
 
 @property (nonatomic, weak) IBOutlet UILabel *noResultsLabel;
 
-- (id)initWithSize:(CGFloat)height reuseIdentifier:(NSString*)reuseIdentifier;
+- (id)initWithSize:(CGFloat)height
+   reuseIdentifier:(NSString*)reuseIdentifier
+             style:(enum InviteAddTableViewControllerStyle)style;
 
 @end

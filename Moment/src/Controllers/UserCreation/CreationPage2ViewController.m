@@ -119,7 +119,7 @@
         
         // Si valide -> Activer bouton
         BOOL enable = (newString.length == 0 ||
-                                   [[Config sharedInstance] isValidPhoneNumber:newString]);
+                                   [[Config sharedInstance] isMobilePhoneNumber:newString forceValidation:YES]);
         self.sendButton.enabled = enable;
         self.boutonValider.enabled = enable;
     }

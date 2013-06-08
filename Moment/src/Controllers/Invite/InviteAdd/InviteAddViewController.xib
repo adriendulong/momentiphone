@@ -46,7 +46,7 @@
 						<string key="NSFrame">{{0, 100}, {320, 404}}</string>
 						<reference key="NSSuperview" ref="195632736"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView"/>
+						<reference key="NSNextKeyView" ref="703920080"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<object class="NSColor" key="IBUIBackgroundColor" id="983437112">
 							<int key="NSColorSpace">3</int>
@@ -124,35 +124,14 @@
 						<string key="NSFrame">{{106, 16}, {126, 19}}</string>
 						<reference key="NSSuperview" ref="195632736"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView" ref="784300314"/>
+						<reference key="NSNextKeyView" ref="437048320"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<bool key="IBUIOpaque">NO</bool>
 						<bool key="IBUIClipsSubviews">YES</bool>
 						<int key="IBUIContentMode">6</int>
 						<bool key="IBUIUserInteractionEnabled">NO</bool>
 						<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
-						<string key="IBUIText">amis invités à ton </string>
-						<reference key="IBUITextColor" ref="477483865"/>
-						<nil key="IBUIHighlightedColor"/>
-						<int key="IBUIBaselineAdjustment">0</int>
-						<reference key="IBUIFontDescription" ref="828830744"/>
-						<reference key="IBUIFont" ref="68838045"/>
-						<bool key="IBUIAdjustsFontSizeToFit">NO</bool>
-					</object>
-					<object class="IBUILabel" id="784300314">
-						<reference key="NSNextResponder" ref="195632736"/>
-						<int key="NSvFlags">292</int>
-						<string key="NSFrame">{{225, 16}, {66, 19}}</string>
-						<reference key="NSSuperview" ref="195632736"/>
-						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView" ref="437048320"/>
-						<string key="NSReuseIdentifierKey">_NS:9</string>
-						<bool key="IBUIOpaque">NO</bool>
-						<bool key="IBUIClipsSubviews">YES</bool>
-						<int key="IBUIContentMode">7</int>
-						<bool key="IBUIUserInteractionEnabled">NO</bool>
-						<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
-						<string key="IBUIText">mOment</string>
+						<string key="IBUIText">amis invités </string>
 						<reference key="IBUITextColor" ref="477483865"/>
 						<nil key="IBUIHighlightedColor"/>
 						<int key="IBUIBaselineAdjustment">0</int>
@@ -282,7 +261,7 @@
 						<string key="NSFrameSize">{320, 50}</string>
 						<reference key="NSSuperview" ref="195632736"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView" ref="1032873420"/>
+						<reference key="NSNextKeyView"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<bool key="IBUIOpaque">NO</bool>
 						<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
@@ -301,7 +280,7 @@
 				<string key="NSFrame">{{0, 64}, {320, 504}}</string>
 				<reference key="NSSuperview"/>
 				<reference key="NSWindow"/>
-				<reference key="NSNextKeyView" ref="703920080"/>
+				<reference key="NSNextKeyView" ref="1032873420"/>
 				<string key="NSReuseIdentifierKey">_NS:9</string>
 				<object class="NSColor" key="IBUIBackgroundColor">
 					<int key="NSColorSpace">3</int>
@@ -458,14 +437,6 @@
 						<reference key="destination" ref="232910874"/>
 					</object>
 					<int key="connectionID">9</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBCocoaTouchOutletConnection" key="connection">
-						<string key="label">momentLabel</string>
-						<reference key="source" ref="372490531"/>
-						<reference key="destination" ref="784300314"/>
-					</object>
-					<int key="connectionID">16</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBCocoaTouchOutletConnection" key="connection">
@@ -629,7 +600,6 @@
 							<reference ref="1032873420"/>
 							<reference ref="462837388"/>
 							<reference ref="854696978"/>
-							<reference ref="784300314"/>
 							<reference ref="221941851"/>
 							<reference ref="198874429"/>
 							<reference ref="944022467"/>
@@ -662,12 +632,6 @@
 					<object class="IBObjectRecord">
 						<int key="objectID">12</int>
 						<reference key="object" ref="854696978"/>
-						<array class="NSMutableArray" key="children"/>
-						<reference key="parent" ref="195632736"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">13</int>
-						<reference key="object" ref="784300314"/>
 						<array class="NSMutableArray" key="children"/>
 						<reference key="parent" ref="195632736"/>
 					</object>
@@ -741,8 +705,6 @@
 				<string key="103.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 				<string key="11.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 				<string key="12.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
-				<string key="13.CustomClassName">CustomLabel</string>
-				<string key="13.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 				<string key="22.CustomClassName">InfoMomentSeparateurView</string>
 				<string key="22.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 				<string key="5.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
@@ -795,17 +757,20 @@
 				<object class="IBPartialClassDescription">
 					<string key="className">InviteAddViewController</string>
 					<string key="superclassName">UIViewController</string>
-					<object class="NSMutableDictionary" key="actions">
-						<string key="NS.key.0">clicValider</string>
-						<string key="NS.object.0">id</string>
-					</object>
-					<object class="NSMutableDictionary" key="actionInfosByName">
-						<string key="NS.key.0">clicValider</string>
-						<object class="IBActionInfo" key="NS.object.0">
+					<dictionary class="NSMutableDictionary" key="actions">
+						<string key="clicValider">id</string>
+						<string key="searchBarChangeValue:">UITextField</string>
+					</dictionary>
+					<dictionary class="NSMutableDictionary" key="actionInfosByName">
+						<object class="IBActionInfo" key="clicValider">
 							<string key="name">clicValider</string>
 							<string key="candidateClassName">id</string>
 						</object>
-					</object>
+						<object class="IBActionInfo" key="searchBarChangeValue:">
+							<string key="name">searchBarChangeValue:</string>
+							<string key="candidateClassName">UITextField</string>
+						</object>
+					</dictionary>
 					<dictionary class="NSMutableDictionary" key="outlets">
 						<string key="contactButton">UIButton</string>
 						<string key="facebookButton">UIButton</string>

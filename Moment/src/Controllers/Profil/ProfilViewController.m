@@ -121,6 +121,30 @@ enum ProfilOnglet {
     self.buttonsView.frame = frame;
     [self.leftBarView addSubview:self.buttonsView];
     
+    // Boutons
+    // Réduire la taille de la police si nécessaire
+    // --> Ne semble pas marcher
+    /*
+    self.momentButton.titleLabel.adjustsFontSizeToFitWidth = YES;
+    self.followButton.titleLabel.adjustsFontSizeToFitWidth = YES;
+    self.followerButton.titleLabel.adjustsFontSizeToFitWidth = YES;
+    self.photoButton.titleLabel.adjustsFontSizeToFitWidth = YES;
+    CGFloat minimumFontSize = 9.0f;
+    CGFloat defaultFontSize = 13.0f;
+    if([[VersionControl sharedInstance] supportIOS6]) {
+        self.momentButton.titleLabel.minimumScaleFactor = minimumFontSize/defaultFontSize;
+        self.photoButton.titleLabel.minimumScaleFactor = minimumFontSize/defaultFontSize;
+        self.followerButton.titleLabel.minimumScaleFactor = minimumFontSize/defaultFontSize;
+        self.followButton.titleLabel.minimumScaleFactor = minimumFontSize/defaultFontSize;
+    }
+    else {
+        self.momentButton.titleLabel.minimumFontSize = minimumFontSize;
+        self.photoButton.titleLabel.minimumFontSize = minimumFontSize;
+        self.followerButton.titleLabel.minimumFontSize = minimumFontSize;
+        self.followButton.titleLabel.minimumFontSize = minimumFontSize;
+    }
+     */
+    
     // Follow Bar
     frame = self.acceptFollowBarView.frame;
     frame.origin.y = self.headerView.frame.size.height;
@@ -132,6 +156,7 @@ enum ProfilOnglet {
     self.acceptFollowBarInfoLabel.font = [[Config sharedInstance] defaultFontWithSize:12];
     self.acceptFollowBarNameLabel.text = self.user.formatedUsername;
     self.acceptFollowBarInfoLabel.text = NSLocalizedString(@"ProfilViewController_AcceptFollowBar_InfoLabel", nil);
+    self.acceptFollowBarInfoLabel.adjustsFontSizeToFitWidth = YES;
     
     [self reloadData];
     

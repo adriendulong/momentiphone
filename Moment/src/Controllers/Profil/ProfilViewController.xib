@@ -60,7 +60,6 @@
 						<string key="NSFrame">{{67, 100}, {253, 404}}</string>
 						<reference key="NSSuperview" ref="191373211"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<object class="NSColor" key="IBUIBackgroundColor" id="842015794">
 							<int key="NSColorSpace">3</int>
@@ -508,11 +507,11 @@
 						</object>
 						<nil key="IBUIHighlightedColor"/>
 						<int key="IBUIBaselineAdjustment">0</int>
+						<float key="IBUIMinimumFontSize">7</float>
 						<int key="IBUINumberOfLines">2</int>
 						<int key="IBUITextAlignment">1</int>
 						<reference key="IBUIFontDescription" ref="28180877"/>
 						<reference key="IBUIFont" ref="942076630"/>
-						<bool key="IBUIAdjustsFontSizeToFit">NO</bool>
 						<double key="preferredMaxLayoutWidth">67</double>
 					</object>
 					<object class="IBUILabel" id="612352363">
@@ -521,7 +520,6 @@
 						<string key="NSFrame">{{0, 224}, {67, 30}}</string>
 						<reference key="NSSuperview" ref="616955008"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<bool key="IBUIOpaque">NO</bool>
 						<bool key="IBUIClipsSubviews">YES</bool>
@@ -535,11 +533,11 @@
 						</object>
 						<nil key="IBUIHighlightedColor"/>
 						<int key="IBUIBaselineAdjustment">0</int>
+						<float key="IBUIMinimumFontSize">7</float>
 						<int key="IBUINumberOfLines">2</int>
 						<int key="IBUITextAlignment">1</int>
 						<reference key="IBUIFontDescription" ref="28180877"/>
 						<reference key="IBUIFont" ref="942076630"/>
-						<bool key="IBUIAdjustsFontSizeToFit">NO</bool>
 						<double key="preferredMaxLayoutWidth">67</double>
 					</object>
 				</array>
@@ -566,7 +564,6 @@
 						<string key="NSFrame">{{268, 0}, {52, 42}}</string>
 						<reference key="NSSuperview" ref="789061634"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<object class="NSColor" key="IBUIBackgroundColor">
 							<int key="NSColorSpace">1</int>

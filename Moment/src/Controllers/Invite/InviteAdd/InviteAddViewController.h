@@ -51,11 +51,13 @@
 @property (nonatomic, weak) IBOutlet CustomLabel *validerLabel;
 @property (nonatomic, weak) IBOutlet UILabel *nbInvitesLabel;
 @property (nonatomic, weak) IBOutlet UILabel *phraseLabel;
-@property (nonatomic, weak) IBOutlet CustomLabel *momentLabel;
 @property (nonatomic, strong) TTTAttributedLabel *ttValiderLabel;
-@property (nonatomic, strong) TTTAttributedLabel *ttMomentLabel;
 
 - (id)initWithOwner:(UserClass*)owner withMoment:(MomentClass*)moment;
 - (IBAction)clicValider;
+
+- (IBAction)clicNavigationBarButtonFavoris;
+- (IBAction)clicNavigationBarButtonFacebook;
+- (IBAction)clicNavigationBarButtonContact;
 
 @end

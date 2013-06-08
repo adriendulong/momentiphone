@@ -13,7 +13,9 @@
 
 @synthesize noResultsLabel = _noResultsLabel;
 
-- (id)initWithSize:(CGFloat)height reuseIdentifier:(NSString*)reuseIdentifier
+- (id)initWithSize:(CGFloat)height
+   reuseIdentifier:(NSString*)reuseIdentifier
+             style:(enum InviteAddTableViewControllerStyle)style
 {
     self = [super initWithStyle:UITableViewCellStyleDefault reuseIdentifier:reuseIdentifier];
     if(self) {
@@ -28,12 +30,19 @@
         self.frame = frame;
         
         // Set text
-        self.noResultsLabel.text = NSLocalizedString(@"InviteAddTableViewController_EmptyCell_noResultsLabel", nil);
-        self.noResultsLabel.font = [[Config sharedInstance] defaultFontWithSize:15];
+        if(style == InviteAddTableViewControllerFavorisStyle) {
+            self.noResultsLabel.text = NSLocalizedString(@"InviteAddTableViewController_EmptyCell_noResultsLabel_favoris", nil);
+            self.noResultsLabel.font = [[Config sharedInstance] defaultFontWithSize:15];
+            [self.noResultsLabel sizeToFit];
+        }
+        else {
+            self.noResultsLabel.hidden = YES;
+        }
         
         // Centrer
         frame = self.noResultsLabel.frame;
-        frame.origin.y = (height/2.0f - frame.size.height)/2.0 - 20.0f;
+        frame.origin.y = (height - frame.size.height)/2.0 - 20.0f;
+        frame.origin.x = (320 - frame.size.width)/2.0f;
         self.noResultsLabel.frame = frame;
         
     }

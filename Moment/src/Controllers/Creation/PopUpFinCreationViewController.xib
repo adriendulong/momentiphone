@@ -206,7 +206,7 @@
 					<object class="IBUIButton" id="54878791">
 						<reference key="NSNextResponder" ref="902515507"/>
 						<int key="NSvFlags">292</int>
-						<string key="NSFrame">{{83, 238}, {133, 39}}</string>
+						<string key="NSFrame">{{83, 232}, {133, 39}}</string>
 						<reference key="NSSuperview" ref="902515507"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="351640519"/>
@@ -470,7 +470,7 @@
 					<object class="IBUILabel" id="351640519">
 						<reference key="NSNextResponder" ref="902515507"/>
 						<int key="NSvFlags">292</int>
-						<string key="NSFrame">{{14, 280}, {45, 21}}</string>
+						<string key="NSFrame">{{14, 273}, {45, 21}}</string>
 						<reference key="NSSuperview" ref="902515507"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="985792295"/>
@@ -494,7 +494,7 @@
 					<object class="IBUILabel" id="985792295">
 						<reference key="NSNextResponder" ref="902515507"/>
 						<int key="NSvFlags">292</int>
-						<string key="NSFrame">{{67, 280}, {218, 21}}</string>
+						<string key="NSFrame">{{67, 273}, {218, 27}}</string>
 						<reference key="NSSuperview" ref="902515507"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="60875162"/>
@@ -861,10 +861,15 @@
 					<string key="className">PopUpFinCreationViewController</string>
 					<string key="superclassName">UIViewController</string>
 					<dictionary class="NSMutableDictionary" key="actions">
+						<string key="changePrivacy:">UIButton</string>
 						<string key="clicInviter">id</string>
 						<string key="clicSwitchButton">id</string>
 					</dictionary>
 					<dictionary class="NSMutableDictionary" key="actionInfosByName">
+						<object class="IBActionInfo" key="changePrivacy:">
+							<string key="name">changePrivacy:</string>
+							<string key="candidateClassName">UIButton</string>
+						</object>
 						<object class="IBActionInfo" key="clicInviter">
 							<string key="name">clicInviter</string>
 							<string key="candidateClassName">id</string>

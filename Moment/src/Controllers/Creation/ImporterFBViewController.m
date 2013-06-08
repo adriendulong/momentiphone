@@ -137,8 +137,10 @@
             emptyLabel.font = [[Config sharedInstance] defaultFontWithSize:15];
             emptyLabel.textColor = [Config sharedInstance].textColor;
             emptyLabel.backgroundColor = [UIColor clearColor];
-            [emptyLabel sizeToFit];
-            frame = emptyLabel.frame;
+            emptyLabel.numberOfLines = 0;
+            emptyLabel.textAlignment = NSTextAlignmentCenter;
+            frame = cell.frame;
+            frame.size.width -= 20;
             frame.origin.x = (cell.frame.size.width - frame.size.width)/2.0f;
             frame.origin.y = (emptyCellSize - frame.size.height)/2.0f;
             emptyLabel.frame = frame;

@@ -113,7 +113,9 @@
         CellIdentifier = @"InviteAddTableViewCellEmpty";
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
         if(cell == nil)
-            cell = [[InviteAddTableViewCellEmpty alloc] initWithSize:emptyCellSize reuseIdentifier:CellIdentifier];
+            cell = [[InviteAddTableViewCellEmpty alloc] initWithSize:emptyCellSize
+                                                     reuseIdentifier:CellIdentifier
+                                                               style:self.inviteTableViewStyle];
         return cell;
     }
     
