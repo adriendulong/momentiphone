@@ -322,8 +322,9 @@
         [[AFMomentAPIClient sharedClient] clearConnexionCookie];
         
         // Delete Current User
-        [[Config sharedInstance].managedObjectContext deleteObject:user];
-        [[Config sharedInstance] saveContext];
+        //[[Config sharedInstance].managedObjectContext deleteObject:user];
+        //[[Config sharedInstance] saveContext];
+        [UserCoreData resetUsersLocal];
         
         // Clear data
         [MomentCoreData resetMomentsLocal];
