@@ -165,20 +165,20 @@
              */
             
             // Préload Vue de Droite et Gauche
-            if(!_photoViewController)
+            if( (!_photoViewController) || (![self.photoViewController.view isDescendantOfView:self.scrollView]) )
                 [self addOngletView:self.photoViewController.view rank:OngletPhoto];
-            if(!_chatViewController)
+            if( (!_chatViewController) || (![self.chatViewController.view isDescendantOfView:self.scrollView]) )
                 [self addOngletView:self.chatViewController.view rank:OngletChat];
              
             break;
             
         case OngletPhoto:
-            if(!_photoViewController)
+            if( (!_photoViewController) || (![self.photoViewController.view isDescendantOfView:self.scrollView]) )
                 [self addOngletView:self.photoViewController.view rank:onglet];
             break;
             
         case OngletChat:
-            if(!_chatViewController)
+            if( (!_chatViewController) || (![self.chatViewController.view isDescendantOfView:self.scrollView]) )
                 [self addOngletView:self.chatViewController.view rank:onglet];
             break;
     }
