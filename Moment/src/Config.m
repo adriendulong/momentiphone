@@ -282,6 +282,18 @@ static Config *sharedInstance = nil;
     return [test evaluateWithObject:phoneNumber];
 }
 
+- (BOOL)isMobilePhoneNumber:(NSString*)phoneNumber forceValidation:(BOOL)force
+{
+    if(force) {
+        NSString *regex = @"0[67]((([0-9]{2}){4})|((\\s[0-9]{2}){4})|((-[0-9]{2}){4}))";
+        NSPredicate *test = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", regex];
+        return [test evaluateWithObject:phoneNumber];
+    }
+
+    NSString *start = [phoneNumber substringWithRange:NSMakeRange(0, 2)];
+    return [start isEqualToString:@"06"] || [start isEqualToString:@"07"];
+}
+
 #pragma mark - Cover Image
 
 - (NSString*)coverImageFullPath {

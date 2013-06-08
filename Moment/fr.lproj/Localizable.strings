@@ -22,6 +22,8 @@
 "InviteAddViewController_NewUser_Invalide_Title" = "Invalide";
 "InviteAddViewController_NewUser_Invalide_Email" = "Email invalide";
 "InviteAddViewController_NewUser_Invalide_Phone" = "Numéro de téléphone invalide";
+"InviteAddViewController_NewUser_Invalide_Phone_Mobile" = "Veuillez rentrer un numéro de téléphone portable";
+
 // Envoi SMS
 "InviteAddViewController_SendSMS_Message" = "Je viens de t'inviter à : %@ sur l'application Moment : %@.\n%@";
 "InviteAddViewController_SendSMS_Fail" = "L'envoi des sms à échoué";

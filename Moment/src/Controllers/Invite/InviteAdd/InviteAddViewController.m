@@ -469,10 +469,13 @@ enum InviteAddFontSize {
                     NSMutableSet *smsList = [[NSMutableSet alloc] init];
                     for(UserClass *user in self.notifSelectedFriends)
                     {
-                        if(user.numeroMobile)
+                        // Envoyer que aux 06 ou 07
+                        if(user.numeroMobile && [[Config sharedInstance] isMobilePhoneNumber:user.numeroMobile forceValidation:NO]) {
                             [smsList addObject:[user.numeroMobile stringByReplacingOccurrencesOfString:@" " withString:@""]];
-                        if(user.secondPhone)
+                        }
+                        if(user.secondPhone && [[Config sharedInstance] isMobilePhoneNumber:user.secondPhone forceValidation:NO]) {
                             [smsList addObject:[user.secondPhone stringByReplacingOccurrencesOfString:@" " withString:@""]];
+                        }
                     }
                     
                     if([smsList count] > 0)

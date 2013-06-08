@@ -64,6 +64,7 @@
 - (NSString*)formatedPhoneNumber:(NSString*)phoneNumber;
 - (BOOL)isValidEmail:(NSString*)email;
 - (BOOL)isValidPhoneNumber:(NSString*)phoneNumber;
+- (BOOL)isMobilePhoneNumber:(NSString*)phoneNumber forceValidation:(BOOL)force;
 
 #pragma mark - Cover Image
 - (void)saveNewCoverImage:(UIImage *)image;

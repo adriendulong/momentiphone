@@ -211,17 +211,34 @@
                 else {
                     
                     // Valide ?
-                    if([[Config sharedInstance] isValidPhoneNumber:[(UserClass*)person[@"user"] numeroMobile]]) {
-                        // Ajout
-                        person[@"isSelected"] = @(YES);
-                        NSMutableArray *friends = self.friends.mutableCopy;
-                        [friends addObject:person];
-                        self.friends = friends;
-                        [self.delegate addNewSelectedFriend:person[@"user"] notif:YES];
-                        // Vide la barre de recherche
-                        [self.delegate.searchTextField setText:@""];
-                        self.visibleFriends = friends;
-                        [self.tableView reloadData];
+                    NSString *phone = [(UserClass*)person[@"user"] numeroMobile];
+                    if([[Config sharedInstance] isValidPhoneNumber:phone]) {
+                        
+                        // Numéro de Mobile
+                        if([[Config sharedInstance] isMobilePhoneNumber:phone forceValidation:NO]) {
+                            // Ajout
+                            person[@"isSelected"] = @(YES);
+                            NSMutableArray *friends = self.friends.mutableCopy;
+                            [friends addObject:person];
+                            self.friends = friends;
+                            [self.delegate addNewSelectedFriend:person[@"user"] notif:YES];
+                            // Vide la barre de recherche
+                            [self.delegate.searchTextField setText:@""];
+                            self.visibleFriends = friends;
+                            [self.tableView reloadData];
+                        }
+                        else {
+                            // Invalide
+                            [[[UIAlertView alloc]
+                              initWithTitle:NSLocalizedString(@"InviteAddViewController_NewUser_Invalide_Title", nil)
+                              message:NSLocalizedString(@"InviteAddViewController_NewUser_Invalide_Phone_Mobile", nil)
+                              delegate:nil
+                              cancelButtonTitle:NSLocalizedString(@"AlertView_Button_OK", nil)
+                              otherButtonTitles:nil]
+                             show];
+                            [self.tableView deselectRowAtIndexPath:indexPath animated:NO];
+                        }
+                        
                     }
                     else {
                         // Invalide
