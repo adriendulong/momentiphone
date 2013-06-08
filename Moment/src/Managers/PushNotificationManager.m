@@ -102,14 +102,15 @@ static PushNotificationManager *sharedInstance = nil;
             [[MTStatusBarOverlay sharedInstance] postImmediateFinishMessage:@"Nouvelle modification" duration:1 animated:YES];
             break;
             
-        case NotificationTypeNewPhoto:            
+        case NotificationTypeNewPhoto: {
+            if(momentId) {
             [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationNewPhoto
                                                                 object:@{
                                                                          @"momentId":momentId
                                                                          }
              ];
-            
-            break;
+            }
+        } break;
         
         default:
             [[[UIAlertView alloc] initWithTitle:@"Moment"

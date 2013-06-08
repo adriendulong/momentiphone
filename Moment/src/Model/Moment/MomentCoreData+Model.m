@@ -289,15 +289,12 @@
             if(attributes[@"dateDebut"] && attributes[@"dateFin"] && attributes[@"adresse"]) {
                 return [self insertWithMemoryReleaseNewMoment:moment];
             }
-            
-            /* * * * * * * * * * * * * * * * * * * * *
-             * * * * * * PEUT ETRE INUTILE * * * * * *
-             * * * * * * * * * * * * * * * * * * * * */
-            
+                        
             // Sinon récupère informations depuis le server
             [moment updateMomentFromServerWithEnded:^(BOOL success) {
 
             } waitUntilFinished:YES];
+            
             return [self insertWithMemoryReleaseNewMoment:moment];
         }
 
