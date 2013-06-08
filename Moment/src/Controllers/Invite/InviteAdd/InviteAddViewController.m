@@ -744,10 +744,11 @@ enum InviteAddFontSize {
          show];
     }
     
+    // Cacher Fenetre SMS
+    [self dismissModalViewControllerAnimated:YES];
+    
     // Send Facebook Notif
     [self sendNotifToFacebookFriends];
-    
-	[self dismissModalViewControllerAnimated:YES];
 }
 
 #pragma mark - Util
