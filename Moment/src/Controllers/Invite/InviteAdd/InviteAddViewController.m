@@ -453,12 +453,64 @@ enum InviteAddFontSize {
             
             if(success)
             {                
-                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"InviteAddTableViewController_AlertView_InviteSuccess_Title", nil)
-                                                                message:NSLocalizedString(@"InviteAddTableViewController_AlertView_InviteSuccess_Message", nil)
-                                                               delegate:self
-                                                      cancelButtonTitle:NSLocalizedString(@"AlertView_Button_OK", nil)
-                                                      otherButtonTitles:nil];
-                [alert show];
+                // Envoyer SMS d'invitation
+                BOOL smsSend = NO;
+                
+                if([MFMessageComposeViewController canSendText])
+                {
+                    // Empeche les doublons
+                    NSMutableSet *smsList = [[NSMutableSet alloc] init];
+                    for(UserClass *user in self.selectedFriends)
+                    {
+                        if(user.numeroMobile)
+                            [smsList addObject:[user.numeroMobile stringByReplacingOccurrencesOfString:@" " withString:@""]];
+                        if(user.secondPhone)
+                            [smsList addObject:[user.secondPhone stringByReplacingOccurrencesOfString:@" " withString:@""]];
+                    }
+                    
+                    if([smsList count] > 0)
+                    {
+                        // SMS Composer
+                        MFMessageComposeViewController *controller = [[MFMessageComposeViewController alloc] init];
+                        
+                        // Paramètres
+                        NSString *titre = self.moment.titre;
+                        NSString *url = @"http://www.appmoment.fr";
+                        NSString *currentUserName = [self currentUserName];
+                        
+                        // SMS body
+                        controller.body =
+                        [NSString stringWithFormat:
+                         NSLocalizedString(@"InviteAddViewController_SendSMS_Message", nil),titre, url, currentUserName];
+                        
+                        // Numéros de téléphones
+                        controller.recipients = smsList.allObjects;
+                        
+                        // Delegate
+                        controller.messageComposeDelegate = self;
+                        smsSend = YES;
+                        [self presentModalViewController:controller animated:YES];
+                    }
+                }
+                else {
+                    [TestFlight passCheckpoint:@"DEVICE CAN'T SEND SMS"];
+                }
+                
+                // Envoyer Notification d'invitations Facebook
+                if(!smsSend) {
+                    
+                    // Si il n'y a pas d'invitations Facebook
+                    if(![self sendNotifToFacebookFriends]) {
+                        
+                        // Informer l'utilisateur que les invitations ont été envoyées
+                        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"InviteAddTableViewController_AlertView_InviteSuccess_Title", nil)
+                                                                        message:NSLocalizedString(@"InviteAddTableViewController_AlertView_InviteSuccess_Message", nil)
+                                                                       delegate:self
+                                                              cancelButtonTitle:NSLocalizedString(@"AlertView_Button_OK", nil)
+                                                              otherButtonTitles:nil];
+                        [alert show];
+                    }
+                }
                 
             }
             else
@@ -626,7 +678,7 @@ enum InviteAddFontSize {
 
 #pragma mark - UIAlertView Delegate
 
-- (void)sendNotifToFacebookFriends
+- (BOOL)sendNotifToFacebookFriends
 {
     
     // Liste les id facebook
@@ -671,61 +723,13 @@ enum InviteAddFontSize {
     }
     else
     {
-        // Retour à la vue info
-        [self.navigationController popViewControllerAnimated:YES];
+        // Invitations Facebook pas envoyées
+        return NO;
     }
     
-   
-}
-
-// Envoi des notifs SMS
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
-{
-    BOOL smsSend = NO;
+    // Invitations Facebook envoyées
+    return YES;
     
-	if([MFMessageComposeViewController canSendText])
-	{
-        // Empeche les doublons
-        NSMutableSet *smsList = [[NSMutableSet alloc] init];
-        for(UserClass *user in self.selectedFriends)
-        {
-            if(user.numeroMobile)
-                [smsList addObject:[user.numeroMobile stringByReplacingOccurrencesOfString:@" " withString:@""]];
-            if(user.secondPhone)
-                [smsList addObject:[user.secondPhone stringByReplacingOccurrencesOfString:@" " withString:@""]];
-        }
-        
-        if([smsList count] > 0)
-        {
-            // SMS Composer
-            MFMessageComposeViewController *controller = [[MFMessageComposeViewController alloc] init];
-            
-            // Paramètres
-            NSString *titre = self.moment.titre;
-            NSString *url = @"http://www.appmoment.fr";
-            NSString *currentUserName = [self currentUserName];
-            
-            // SMS body
-            controller.body =
-            [NSString stringWithFormat:
-             NSLocalizedString(@"InviteAddViewController_SendSMS_Message", nil),titre, url, currentUserName];
-            
-            // Numéros de téléphones
-            controller.recipients = smsList.allObjects;
-            
-            // Delegate
-            controller.messageComposeDelegate = self;
-            smsSend = YES;
-            [self presentModalViewController:controller animated:YES];
-        }
-	}
-    else {
-        [TestFlight passCheckpoint:@"DEVICE CAN'T SEND SMS"];
-    }
-    
-    if(!smsSend) {
-        [self sendNotifToFacebookFriends];
-    }
 }
 
 #pragma mark - MFMessageComposeViewController Delegate
@@ -756,6 +760,14 @@ enum InviteAddFontSize {
 - (NSString*)currentUserName {
     // Nom de l'expéditeur
     return [[UserCoreData getCurrentUser] formatedUsername];
+}
+
+#pragma mark - UIAlertView Delegate
+
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+    // Retour à la vue info
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 @end
