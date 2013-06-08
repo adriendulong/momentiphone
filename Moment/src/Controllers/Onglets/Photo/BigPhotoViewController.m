@@ -674,7 +674,7 @@ withDelegate:(PhotoViewController*)photoViewController
             // Email Subject
             NSString *emailTitle = @"Moment - Reporter Photo";
             // Email Content
-            NSMutableString *messageBody = [NSMutableString stringWithFormat:@"<p>Bonjour,</p><p>Je souhaiterais faire enlever cette photo car :</p><p>...</p><br><br><p>URL de la photo : <a href=\"%@\">%@</a> </p>", urlPhoto, urlPhoto];
+            NSMutableString *messageBody = [NSMutableString stringWithFormat:@"<p>Bonjour,</p><p>Je souhaiterais faire enlever cette photo car :</p><p></p><br><br><p>URL de la photo : <a href=\"%@\">%@</a> </p>", urlPhoto, urlPhoto];
             
             if(self.moment.uniqueURL) {
                 [messageBody appendFormat:@"<p>URL De l'event : <a href=\"%@\">%@</a></p>", self.moment.uniqueURL, self.moment.titre];
@@ -778,11 +778,20 @@ withDelegate:(PhotoViewController*)photoViewController
     // Paramètres
     Photos *photo = self.photos[self.selectedIndex];
     UIImage *image = photo.imageOriginal;
-    NSMutableString *initialText = [NSMutableString stringWithFormat:@"Bon Moment @%@ !", self.moment.titre];
-    if(self.moment.hashtag)
-        [initialText appendFormat:@" #%@\n", self.moment.hashtag];
-    else
-        [initialText appendString:@"\n"];
+    
+    // Limitation à 140 caractères max
+    NSInteger defaultNBMaxCarac = 140;
+    NSInteger nbMaxCarac = photo.uniqueURL ? (defaultNBMaxCarac - photo.uniqueURL.length) : defaultNBMaxCarac;
+    NSMutableString *initialText = [[[Config sharedInstance] twitterShareTextForMoment:self.moment nbMaxCaracters:nbMaxCarac]
+                                    mutableCopy];
+    
+#ifdef HASHTAG_ENABLE
+    // Hashtag
+    if(self.moment.hashtag && (self.moment.hashtag.length <= (nbMaxCarac - initialText.length)))
+        [initialText appendFormat:@" #%@", self.moment.hashtag];
+#endif
+    
+    // URL
     NSURL *url = [NSURL URLWithString:photo.uniqueURL];
     
     // iOS 6 -> Social Framework

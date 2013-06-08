@@ -339,4 +339,43 @@ static Config *sharedInstance = nil;
     [self deleteFileAtPath:fullPath];
 }
 
+#pragma mark - Texte Formatage
+
+- (NSString*)twitterShareTextForMoment:(MomentClass*)moment nbMaxCaracters:(NSInteger)nbMaxCarac
+{
+    // Limitation à 160 caractères max
+    NSString *format = @"Bon Moment @%@ !";
+    NSInteger taille = moment.titre.length + format.length - 2;
+    NSString *initialText = nil;
+    NSInteger tailleRestante;
+    
+    // Titre seul trop grand = ne pas afficher titre
+    if(moment.titre.length >= nbMaxCarac) {
+        initialText = @"Bon Moment !";
+        tailleRestante = 0;
+    }
+    // Taille totale assez petite
+    else if(taille <= nbMaxCarac) {
+        initialText = [NSString stringWithFormat:format, moment.titre];
+        tailleRestante = nbMaxCarac - taille;
+    }
+    // Taille totale trop grande
+    else {
+        NSInteger lastPosition = nbMaxCarac - (format.length - 2) - 3;
+        // Réduction du titre
+        if(lastPosition > 0) {
+            NSString *titre = [NSString stringWithFormat:@"%@...", [moment.titre substringWithRange:NSMakeRange(0, lastPosition)]];
+            initialText = [NSString stringWithFormat:format, titre];
+            tailleRestante = 0;
+        }
+        // Pas la place de réduire le titre = ne pas afficher le titre
+        else {
+            initialText = [NSMutableString stringWithFormat:format, moment.titre];
+            tailleRestante = nbMaxCarac - taille;
+        }
+    }
+    
+    return initialText;
+}
+
 @end

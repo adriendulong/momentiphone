@@ -1686,15 +1686,15 @@ static CGFloat DescriptionBoxHeightMax = 100;
     // Google Analytics
     [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Partager Twitter" value:nil];
     
-    // Paramètres
-    NSMutableString *initialText = [NSMutableString stringWithFormat:@"Bon Moment @%@ !", self.moment.titre];
+    // Limitation à 140 caractères max
+    NSInteger defaultNBMaxCarac = 140;
+    NSInteger nbMaxCarac = self.moment.uniqueURL ? (defaultNBMaxCarac - self.moment.uniqueURL.length) : defaultNBMaxCarac;
+    NSMutableString *initialText = [[[Config sharedInstance] twitterShareTextForMoment:self.moment nbMaxCaracters:nbMaxCarac]
+                                    mutableCopy];
+    
 #ifdef HASHTAG_ENABLE
-    if(self.moment.hashtag)
+    if(self.moment.hashtag && (self.moment.hashtag.length <= (nbMaxCarac - initialText.length)))
         [initialText appendFormat:@" #%@\n", self.moment.hashtag];
-    else
-        [initialText appendString:@"\n"];
-#else
-    [initialText appendString:@"\n"];
 #endif
     
     // iOS 6 -> Social Framework
