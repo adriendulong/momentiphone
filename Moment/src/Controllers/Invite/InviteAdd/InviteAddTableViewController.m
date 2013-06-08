@@ -24,6 +24,8 @@
     @private
     CGFloat emptyCellSize;
     BOOL isEmpty;
+    
+    BOOL notifSelectedFriends;
 }
 
 @end
@@ -46,6 +48,7 @@
         self.visibleFriends = self.friends;
         self.inviteTableViewStyle = style;
         self.delegate = delegate;
+        notifSelectedFriends = (style != InviteAddTableViewControllerFavorisStyle);
         isEmpty = YES;
     }
     return self;
@@ -185,7 +188,7 @@
                         NSMutableArray *friends = self.friends.mutableCopy;
                         [friends addObject:person];
                         self.friends = friends;
-                        [self.delegate addNewSelectedFriend:person[@"user"]];
+                        [self.delegate addNewSelectedFriend:person[@"user"] notif:YES];
                         // Vide la barre de recherche
                         [self.delegate.searchTextField setText:@""];
                         self.visibleFriends = friends;
@@ -214,7 +217,7 @@
                         NSMutableArray *friends = self.friends.mutableCopy;
                         [friends addObject:person];
                         self.friends = friends;
-                        [self.delegate addNewSelectedFriend:person[@"user"]];
+                        [self.delegate addNewSelectedFriend:person[@"user"] notif:YES];
                         // Vide la barre de recherche
                         [self.delegate.searchTextField setText:@""];
                         self.visibleFriends = friends;
@@ -239,7 +242,7 @@
         else if(![person[@"isSelected"] boolValue]) {
             NSLog(@"Select Cell %d", indexPath.row);
             person[@"isSelected"] = @(YES);
-            [self.delegate addNewSelectedFriend:person[@"user"]];
+            [self.delegate addNewSelectedFriend:person[@"user"] notif:notifSelectedFriends];
         }
     }
 }

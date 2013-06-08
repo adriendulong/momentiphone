@@ -36,6 +36,7 @@ enum InviteAddFontSize {
 @synthesize owner = _owner;
 @synthesize moment = _moment;
 @synthesize selectedFriends = _selectedFriends;
+@synthesize notifSelectedFriends = _notifSelectedFriends;
 @synthesize scrollView = _scrollView;
 @synthesize selectedOnglet = _selectedOnglet;
 
@@ -66,6 +67,7 @@ enum InviteAddFontSize {
         self.owner = owner;
         self.moment = moment;
         self.selectedFriends = [[NSMutableArray alloc] init];
+        self.notifSelectedFriends = [[NSMutableArray alloc] init];
         self.selectedOnglet = 0;
     }
     return self;
@@ -260,10 +262,12 @@ enum InviteAddFontSize {
 
 #pragma mark - InviteViewController Delegate
 
-- (void)addNewSelectedFriend:(UserClass*)friend
+- (void)addNewSelectedFriend:(UserClass*)friend notif:(BOOL)notif
 {
     [self.selectedFriends addObject:friend];
     [self updateSelectedFriendsLabel];
+    if(notif)
+        [self.notifSelectedFriends addObject:friend];
 }
 
 - (void)removeSelectedFriend:(UserClass*)friend
@@ -271,6 +275,9 @@ enum InviteAddFontSize {
     if([self.selectedFriends containsObject:friend]) {
         [self.selectedFriends removeObject:friend];
         [self updateSelectedFriendsLabel];
+    }
+    if([self.notifSelectedFriends containsObject:friend]) {
+        [self.notifSelectedFriends removeObject:friend];
     }
 }
 
@@ -460,7 +467,7 @@ enum InviteAddFontSize {
                 {
                     // Empeche les doublons
                     NSMutableSet *smsList = [[NSMutableSet alloc] init];
-                    for(UserClass *user in self.selectedFriends)
+                    for(UserClass *user in self.notifSelectedFriends)
                     {
                         if(user.numeroMobile)
                             [smsList addObject:[user.numeroMobile stringByReplacingOccurrencesOfString:@" " withString:@""]];
@@ -683,7 +690,7 @@ enum InviteAddFontSize {
     
     // Liste les id facebook
     NSMutableSet *fbId = [[NSMutableSet alloc] init];
-    for( UserClass* user in self.selectedFriends )
+    for( UserClass* user in self.notifSelectedFriends )
     {
         if(user.facebookId)
             [fbId addObject:user.facebookId];
@@ -736,7 +743,6 @@ enum InviteAddFontSize {
 
 - (void)messageComposeViewController:(MFMessageComposeViewController *)controller didFinishWithResult:(MessageComposeResult)result
 {
-    
     if(result == MessageComposeResultFailed) {
         // L'envoi a échoué
         [[[UIAlertView alloc]
@@ -752,7 +758,10 @@ enum InviteAddFontSize {
     [self dismissModalViewControllerAnimated:YES];
     
     // Send Facebook Notif
-    [self sendNotifToFacebookFriends];
+    if(![self sendNotifToFacebookFriends]) {
+        // Retour à la vue info
+        [self.navigationController popViewControllerAnimated:YES];
+    }
 }
 
 #pragma mark - Util

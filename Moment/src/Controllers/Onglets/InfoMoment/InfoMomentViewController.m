@@ -1694,7 +1694,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
     
 #ifdef HASHTAG_ENABLE
     if(self.moment.hashtag && (self.moment.hashtag.length <= (nbMaxCarac - initialText.length)))
-        [initialText appendFormat:@" #%@\n", self.moment.hashtag];
+        [initialText appendFormat:@" #%@", self.moment.hashtag];
 #endif
     
     // iOS 6 -> Social Framework
