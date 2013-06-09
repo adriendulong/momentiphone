@@ -29,6 +29,7 @@
 #import <Social/Social.h>
 #import "FacebookManager.h"
 #import "MomentClass+Server.h"
+#import "UserClass+Server.h"
 
 // Font Sizes
 enum InfoMomentFontSize {
@@ -364,6 +365,8 @@ static CGFloat DescriptionBoxHeightMax = 100;
 
 - (void) initTopImageView
 {
+    self.user = [UserCoreData getCurrentUser];
+    
     // Background image
     [self.momentImageView setImage:self.moment.uimage imageString:self.moment.imageString placeHolder:[UIImage imageNamed:@"cover_defaut"] withSaveBlock:^(UIImage *image) {
         [self.moment setUimage:image];
@@ -498,11 +501,18 @@ static CGFloat DescriptionBoxHeightMax = 100;
 
 - (void)initRsvpView
 {
+    self.user = [UserCoreData getCurrentUser];
+    
+    // User State
+    enum UserState state = self.moment.state.intValue;
+    if(state == 0) {
+        state = ([self.moment.owner.userId isEqualToNumber:self.user.userId]) ? UserStateOwner : UserStateNoInvited;
+    }
+    
     // Police
     self.rsvpLabel.font = [[Config sharedInstance] defaultFontWithSize:12];
     
     // Wordings
-    enum UserState state = self.moment.state.intValue;
     NSString *message = nil;
     
     switch (state) {
@@ -533,6 +543,9 @@ static CGFloat DescriptionBoxHeightMax = 100;
         // Unknown
         default:
             message = @"Serez-vous présent au moment ?";
+            self.rsvpMaybeButton.selected = NO;
+            self.rsvpYesButton.selected = NO;
+            self.rsvpNoButton.selected = NO;
             break;
     }
     
@@ -553,7 +566,6 @@ static CGFloat DescriptionBoxHeightMax = 100;
     
     if(firstLoad)
         [self addSubviewAtAutomaticPosition:self.rsvpView];
-    
     
 }
 
@@ -590,7 +602,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
                 [seeMoreButton setTitle:@"Voir plus" forState:UIControlStateNormal];
                 [seeMoreButton setTitleColor:[Config sharedInstance].textColor forState:UIControlStateNormal];
                 seeMoreButton.titleLabel.textAlignment = [[VersionControl sharedInstance] alignment:TextAlignmentCenter];
-                seeMoreButton.titleLabel.font = [[Config sharedInstance] defaultFontWithSize:InfoMomentFontSizeMedium];
+                seeMoreButton.titleLabel.font = [[Config sharedInstance] defaultFontWithSize:13];
                 [seeMoreButton addTarget:self action:@selector(clicExpandDescriptionView) forControlEvents:UIControlEventTouchUpInside];
                 [seeMoreButton sizeToFit];
                 CGSize size = CGSizeMake(self.descriptionLabel.frame.size.width - 10, seeMoreButton.frame.size.height + 5);
@@ -818,6 +830,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
 - (void) initInvitesView
 {
     // Attributed string
+    self.user = [UserCoreData getCurrentUser];
     
     int nb = self.moment.guests_number.intValue;
     
@@ -881,7 +894,13 @@ static CGFloat DescriptionBoxHeightMax = 100;
     self.nbInvitesValidesLabel.textColor = color;
     
     // Non Admin
-    if( (!self.moment.isOpen) && (self.moment.state.intValue != UserStateAdmin) && (self.moment.state.intValue != UserStateOwner) )
+    
+    enum UserState state = self.moment.state.intValue;
+    if(state == 0) {
+        state = ([self.moment.owner.userId isEqualToNumber:self.user.userId]) ? UserStateOwner : UserStateNoInvited;
+    }
+    
+    if( (!self.moment.isOpen.boolValue) && (state != UserStateAdmin) && (state != UserStateOwner) )
     {
         self.inviteButton.hidden = YES;
         
@@ -1172,6 +1191,8 @@ static CGFloat DescriptionBoxHeightMax = 100;
 {
     [super viewDidLoad];
     
+    self.user = [UserCoreData getCurrentUser];
+    
     // View
     CGRect frame = self.view.frame;
     frame.size.height = [[VersionControl sharedInstance] screenHeight] - TOPBAR_HEIGHT;
@@ -1182,6 +1203,14 @@ static CGFloat DescriptionBoxHeightMax = 100;
     self.foregroundView = [[IgnoreTouchView alloc] initWithFrame:CGRectMake(0, 0, 320, 0)];
     self.foregroundView.backgroundColor = [[UIColor alloc] initWithPatternImage:[UIImage imageNamed:@"bg.png"]];
     self.foregroundView.autoresizesSubviews = NO;
+    
+    /***********************************************
+     *                 User State                  *
+     ***********************************************/
+    enum UserState state = self.moment.state.intValue;
+    if(state == 0) {
+        state = ([self.moment.owner.userId isEqualToNumber:self.user.userId]) ? UserStateOwner : UserStateNoInvited;
+    }
     
     /***********************************************
      *                   Views                     *
@@ -1216,11 +1245,13 @@ static CGFloat DescriptionBoxHeightMax = 100;
     /***********************************************
      *              ExpandingButtonBar             *
      ***********************************************/
-    self.expandButton = [[CustomExpandingButton alloc] initWithDelegate:self withState:self.moment.state.intValue];
-    //[self.ownerDescripionView addSubview:self.expandButton];
+    // Description
     UIView *retain = self.ownerDescripionView;
     [retain removeFromSuperview];
     [self.parallaxView.scrollView addSubview:retain];
+    
+    // RSVP Expand Button
+    self.expandButton = [[CustomExpandingButton alloc] initWithDelegate:self withState:state];
     [self.parallaxView.scrollView addSubview:self.expandButton];
     
     // First Load Complete
@@ -1236,33 +1267,35 @@ static CGFloat DescriptionBoxHeightMax = 100;
     */
     
     // Load RSVP From Facebook
-    [[FacebookManager sharedInstance] getRSVP:self.moment withEnded:^(enum UserState rsvp) {
-        if(self.moment.state.intValue != rsvp) {
-            
-            // Informer User
-            [[MTStatusBarOverlay sharedInstance] postImmediateFinishMessage:@"Status Facebook Importé" duration:1 animated:YES];
-            
-            // Update View
-            UIButton *buttonSimulation = nil;
-            switch (rsvp) {
-                case UserStateValid:
-                    buttonSimulation = self.rsvpYesButton;
-                    break;
-                    
-                case UserStateRefused:
-                    buttonSimulation = self.rsvpNoButton;
-                    break;
-                                        
-                default:
-                    buttonSimulation = self.rsvpMaybeButton;
-                    break;
+    if(state != UserStateNoInvited)
+    {
+        [[FacebookManager sharedInstance] getRSVP:self.moment withEnded:^(enum UserState rsvp) {
+            if(self.moment.state.intValue != rsvp) {
+                
+                // Informer User
+                [[MTStatusBarOverlay sharedInstance] postImmediateFinishMessage:@"Status Facebook Importé" duration:1 animated:YES];
+                
+                // Update View
+                UIButton *buttonSimulation = nil;
+                switch (rsvp) {
+                    case UserStateValid:
+                        buttonSimulation = self.rsvpYesButton;
+                        break;
+                        
+                    case UserStateRefused:
+                        buttonSimulation = self.rsvpNoButton;
+                        break;
+                        
+                    default:
+                        buttonSimulation = self.rsvpMaybeButton;
+                        break;
+                }
+                
+                [self clicRSVPButton:buttonSimulation];
             }
-            
-            [self clicRSVPButton:buttonSimulation];
-        }
-    }];
+        }];
+    }
 
-    
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -1368,6 +1401,9 @@ static CGFloat DescriptionBoxHeightMax = 100;
             self.parallaxView.scrollView.contentSize = CGSizeMake(self.view.frame.size.width, 150 + hauteur);
         }
     }];
+    
+    // GetCurrent User
+    self.user = [UserCoreData getCurrentUser];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -1442,6 +1478,52 @@ static CGFloat DescriptionBoxHeightMax = 100;
 
 #pragma mark - Actions
 
+- (void)changeRSVP:(enum UserState)state
+{
+    if(self.moment.state.intValue != state) {
+        
+        self.user = [UserCoreData getCurrentUser];
+        
+        // User State
+        enum UserState userState = self.moment.state.intValue;
+        if(userState == 0) {
+            userState = ([self.moment.owner.userId isEqualToNumber:self.user.userId]) ? UserStateOwner : UserStateNoInvited;
+        }
+        
+        // Moment public -> Demande de follow du moment
+        if(userState == UserStateNoInvited) {
+            [self.user followPublicMoment:self.moment withEnded:^(BOOL success) {
+                if(success) {
+                    
+                    // Update RSVP
+                    [self.moment updateCurrentUserState:state withEnded:^(BOOL success) {
+                        expandingBarState = state;
+                        expandingBarNeedUpdate = YES;
+                        [self.expandButton hideButtonsAnimated:YES];
+                        //[self selectRSVPButtonForState:state];
+                        [self reloadData];
+                    }];
+                }
+            }];
+        }
+        // Moment privé -> Répondre RSVP
+        else {
+            // Action
+            [self.moment updateCurrentUserState:state withEnded:^(BOOL success) {
+                expandingBarState = state;
+                expandingBarNeedUpdate = YES;
+                [self.expandButton hideButtonsAnimated:YES];
+                //[self selectRSVPButtonForState:state];
+                [self reloadData];
+            }];
+        }
+        
+    }
+    else
+        [self.expandButton hideButtonsAnimated:YES];
+}
+
+// Clic RSVP Button expand
 - (void)clicRespond:(UIButton*)sender {
     
     // Google Analytics
@@ -1459,22 +1541,9 @@ static CGFloat DescriptionBoxHeightMax = 100;
         state = UserStateRefused;
     }
     
-    if(self.moment.state.intValue != state) {
-        
-        //self.moment.state = @(state);
-        // Action
-        [self.moment updateCurrentUserState:state withEnded:^(BOOL success) {
-            expandingBarState = state;
-            expandingBarNeedUpdate = YES;
-            [self.expandButton hideButtonsAnimated:YES];
-            [self reloadData];
-        }];
-    }
-    else
-        [self.expandButton hideButtonsAnimated:YES];
-    
+    [self changeRSVP:state];
 }
-
+// Clic Bloc RSVP
 - (IBAction)clicRSVPButton:(UIButton*)sender {
     
     // Google Analytics
@@ -1493,23 +1562,11 @@ static CGFloat DescriptionBoxHeightMax = 100;
         state = UserStateValid;
     }
     
-    if(self.moment.state.intValue != state) {
-        
-        // Action
-        [self.moment updateCurrentUserState:state withEnded:^(BOOL success) {
-            expandingBarState = state;
-            expandingBarNeedUpdate = YES;
-            [self.expandButton hideButtonsAnimated:YES];
-            [self reloadData];
-        }];
-    }
-    else
-        [self.expandButton hideButtonsAnimated:YES];
-    
+    [self changeRSVP:state];
 }
 
 - (void)clicEdit {
-    CreationFicheViewController *editViewController = [[CreationFicheViewController alloc] initWithUser:self.user withMoment:self.moment withTimeLine:self.rootViewController.timeLine];
+    CreationFicheViewController *editViewController = [[CreationFicheViewController alloc] initWithUser:[UserCoreData getCurrentUser] withMoment:self.moment withTimeLine:self.rootViewController.timeLine];
     [self.rootViewController.navigationController pushViewController:editViewController animated:YES];
 }
 
@@ -1518,7 +1575,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
     // Google Analytics
     [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Ajout Invité depuis Info" value:nil];
     
-    InviteAddViewController *inviteViewController = [[InviteAddViewController alloc] initWithOwner:self.user withMoment:self.moment];
+    InviteAddViewController *inviteViewController = [[InviteAddViewController alloc] initWithOwner:[UserCoreData getCurrentUser] withMoment:self.moment];
     [self.rootViewController.navigationController pushViewController:inviteViewController animated:YES];
 }
 
@@ -1527,7 +1584,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
     // Google Analytics
     [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Invités" value:nil];
     
-    InvitePresentsViewController *inviteViewController = [[InvitePresentsViewController alloc] initWithOwner:self.user withMoment:self.moment];
+    InvitePresentsViewController *inviteViewController = [[InvitePresentsViewController alloc] initWithOwner:[UserCoreData getCurrentUser] withMoment:self.moment];
     [self.rootViewController.navigationController pushViewController:inviteViewController animated:YES];
 }
 

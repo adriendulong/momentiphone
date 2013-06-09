@@ -103,7 +103,7 @@
         [self initBouton:self.buttonDelete];
         
         // Afficher bouton supprimer que si owner
-        if(self.moment.state.intValue != UserStateOwner) {
+        if(![self.moment.owner.userId isEqualToNumber:[UserCoreData getCurrentUser].userId]) {
             self.buttonDelete.hidden = YES;
         }
         

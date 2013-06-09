@@ -57,6 +57,7 @@
             
         case UserStateWaiting:
         case UserStateUnknown:
+        case UserStateNoInvited:
             //NSLog(@"User Waiting : %d\n", state);
             images = @[self.waitingImage, self.refusedImage, self.validImage];
             break;

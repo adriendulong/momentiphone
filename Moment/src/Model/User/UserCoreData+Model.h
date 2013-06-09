@@ -16,7 +16,8 @@ enum UserState {
     UserStateValid = 2,
     UserStateRefused = 3,
     UserStateUnknown = 4,
-    UserStateWaiting = 5
+    UserStateWaiting = 5,
+    UserStateNoInvited = 6
 };
 
 enum UserPrivacy {
