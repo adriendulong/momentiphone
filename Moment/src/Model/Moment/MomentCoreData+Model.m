@@ -124,7 +124,7 @@
     
     return storedMoment;
 }
-
+/*
 + (MomentCoreData*)insertWithMemoryReleaseNewMoment:(MomentClass*)moment
 {
     // Store new moment
@@ -135,11 +135,11 @@
     
     return storedMoment;
 }
-
+*/
 + (MomentClass*)newMomentWithAttributesFromLocal:(NSDictionary*)attributes
 {    
     MomentClass *moment = [[MomentClass alloc] initWithAttributesFromLocal:attributes];
-    [self insertWithMemoryReleaseNewMoment:moment];
+    [self insertMoment:moment];
     
     return moment;
 }
@@ -147,7 +147,7 @@
 + (MomentClass*)newMomentWithAttributesFromWeb:(NSDictionary*)attributes
 {
     MomentClass *moment = [[MomentClass alloc] initWithAttributesFromWeb:attributes];
-    [self insertWithMemoryReleaseNewMoment:moment];
+    [self insertMoment:moment];
     
     return moment;
 }
@@ -158,7 +158,7 @@
         return nil;
     
     MomentClass *moment = [[MomentClass alloc] initWithFacebookEvent:event];
-    [self insertWithMemoryReleaseNewMoment:moment];
+    [self insertMoment:moment];
     
     return moment;
 }
@@ -287,7 +287,7 @@
             
             // Si les informations passées en paramètres sont complètes -> Retourne Nouveau Moment initialisé
             if(attributes[@"dateDebut"] && attributes[@"dateFin"] && attributes[@"adresse"]) {
-                return [self insertWithMemoryReleaseNewMoment:moment];
+                return [self insertMoment:moment];
             }
                         
             // Sinon récupère informations depuis le server
@@ -295,7 +295,7 @@
 
             } waitUntilFinished:YES];
             
-            return [self insertWithMemoryReleaseNewMoment:moment];
+            return [self insertMoment:moment];
         }
 
     }
@@ -341,7 +341,7 @@
     }
     else if ([matches count] == 0) {
         MomentClass *moment = [[MomentClass alloc] initWithFacebookEvent:event];
-        return [self insertWithMemoryReleaseNewMoment:moment];
+        return [self insertMoment:moment];
     }
     
     return matches[0];
@@ -367,7 +367,7 @@
         abort();
     }
     else if ([matches count] == 0) {
-        return [self insertWithMemoryReleaseNewMoment:moment];
+        return [self insertMoment:moment];
     }
     
     return matches[0];
@@ -453,6 +453,85 @@
     }
     
     [[Config sharedInstance] saveContext];
+}
+
++ (void)deleteMomentsWhileEnteringBackground
+{
+    // On récupère tous les moments
+    // -> Ils sont triés par date de début ascendant
+    NSMutableArray *moments = [[MomentCoreData getMomentsAsCoreData] mutableCopy];
+    
+    // Si il y a moins de 20 moments, on ne supprime pas
+    if([moments count] <= 20)
+        return;
+    
+    // Identifier le moment le plus proche d'aujourd'hui    
+    NSInteger row = 0, tempRow = -1;
+    NSDate *today = [NSDate date];
+    NSTimeInterval timeInterval = [((MomentCoreData*)moments[0]).dateDebut timeIntervalSinceDate:today], temp = 0;
+    for(MomentCoreData *m in moments)
+    {
+        tempRow++;
+        temp = [m.dateDebut timeIntervalSinceDate:today];
+        if ( abs(temp) < abs(timeInterval) ) {
+            row = tempRow;
+            timeInterval = temp;
+        }
+    }
+    // Le moment le plus proche d'aujourd'hui est à l'index "row"
+    
+    // On enlève les 20 moments les plus proche d'aujourd'hui du tableau
+    NSInteger nb = 0;
+    NSInteger length;
+    while( (nb <= 20) && ((length = [moments count]) > 0) )
+    {
+        if((row < length) && (row >= 0) ) {
+            [moments removeObjectAtIndex:row];
+            nb++;
+        }
+        else if(row == 0) {
+            row++;
+        }
+        else if(row == length) {
+            row--;
+        }
+    }
+    
+    // Enregistrer la tentative de suppression
+    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"MomentsDeleteTry"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    
+    // Supprimer tous les autres moments
+    @try {
+        for(MomentCoreData* m in moments) {
+            [[Config sharedInstance].managedObjectContext deleteObject:m];
+        }
+        [[Config sharedInstance] saveContext];
+    }
+    @catch (NSException *exception) {
+        // Enregistrer l'erreur
+        [[NSUserDefaults standardUserDefaults] setValue:exception.description forKey:@"MomentsDeleteFail"];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+        
+        // TestFlight
+        [TestFlight passCheckpoint:@"MomentsDeleteFail"];
+        
+        // Google Analytics
+        [[[GAI sharedInstance] defaultTracker] sendException:NO withNSException:exception];
+        
+        [[[UIAlertView alloc]
+          initWithTitle:@"CoreData Error"
+          message:exception.description
+          delegate:nil
+          cancelButtonTitle:@"OK"
+          otherButtonTitles:nil]
+         show];
+    }
+    @finally {
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"MomentsDeleteTry"];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+    }
+    
 }
 
 + (void)deleteMoment:(MomentClass*)moment
