@@ -17,6 +17,9 @@
 + (void)getUserFromServerWithId:(NSInteger)userId withEnded:(void (^) (UserClass *user))block;
 + (void)updateCurrentUserInformationsOnServerWithAttributes:(NSDictionary *)modifications
                                                   withEnded:(void (^) (BOOL success))block;
++ (void)changeCurrentUserPassword:(NSString*)newPassword
+                      oldPassword:(NSString*)oldPassword
+                        withEnded:(void (^) (NSInteger status))block;
 // Login
 + (void)getLoggedUserFromServerWithEnded:( void (^) (UserClass *user) )block waitUntilFinished:(BOOL)waitUntilFinished;
 + (void)getLoggedUserFromServerWithEnded:( void (^) (UserClass *user) )block;

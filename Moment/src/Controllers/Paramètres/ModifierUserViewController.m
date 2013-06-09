@@ -23,6 +23,8 @@ enum PhotoPickerDestination {
 @interface ModifierUserViewController () {
     @private
     enum PhotoPickerDestination imagePickerDestination;
+    
+    NSString *newPassword, *oldPassword;
 }
 
 @end
@@ -110,7 +112,7 @@ enum PhotoPickerDestination {
         self.secondPhoneTextField.text = user.secondPhone;
     if(user.descriptionString)
         self.descriptionTextView.text = user.descriptionString;
-    NSLog(@"privacy = %@", user.privacy);
+    //NSLog(@"privacy = %@", user.privacy);
     if(user.privacy != nil) {
         enum UserPrivacy privacy = user.privacy.intValue;
         switch (privacy) {
@@ -177,6 +179,8 @@ enum PhotoPickerDestination {
         [self.descriptionTextView becomeFirstResponder];
     else if(textField == self.secondEmailTextField)
         [self.secondPhoneTextField becomeFirstResponder];
+    else if(textField == self.secondPhoneTextField)
+        [self.oldPasswordTextField becomeFirstResponder];
     else if(textField == self.oldPasswordTextField)
         [self.nouveauPasswordTextField becomeFirstResponder];
     else
@@ -321,6 +325,17 @@ enum PhotoPickerDestination {
                 invalideTextField = self.secondPhoneTextField;
             }
         }
+        
+        // Si on a rentré un mot de passe, il faut que le nouveau et l'ancien soient remplis
+        if( !invalideTextField && ((self.nouveauPasswordTextField.text.length > 0) || (self.oldPasswordTextField.text.length > 0) )) {
+            if( !((self.nouveauPasswordTextField.text.length > 0) && (self.oldPasswordTextField.text.length > 0) )) {
+                invalideTextField = (self.oldPasswordTextField.text.length == 0) ? self.oldPasswordTextField : self.nouveauPasswordTextField;
+            }
+            else {
+                newPassword = self.nouveauPasswordTextField.text;
+                oldPassword = self.oldPasswordTextField.text;
+            }
+        }
             
         // --------- Si les données sont valides ---------
         if(!invalideTextField)
@@ -353,11 +368,6 @@ enum PhotoPickerDestination {
             if(self.profilePictureImage) {
                 [modifications setValue:self.profilePictureImage forKey:@"photo"];
             }
-            // Password
-            // -> Manque vérification de l'ancien mot de passe
-            if([self.modifications containsObject:self.nouveauPasswordTextField]) {
-                [modifications setValue:self.nouveauPasswordTextField forKey:@"password"];
-            }
             // Privacy
             if([self.modifications containsObject:@"privacy"]) {
                 enum UserPrivacy privacy;
@@ -383,27 +393,89 @@ enum PhotoPickerDestination {
                 
                 if(success)
                 {
-                    [[MTStatusBarOverlay sharedInstance]
-                     postImmediateFinishMessage:NSLocalizedString(@"ModifierUserViewController_StatusBarMessage_EditSuccess", nil)
-                     duration:1
-                     animated:YES];
                     
-                    // Update UI
-                    if(phoneNumber)
-                        self.phoneTextField.text = phoneNumber;
-                    if(secondPhoneNumber)
-                        self.secondEmailTextField.text = secondPhoneNumber;
+                    // Changement du Mot de passe
+                    if(newPassword && oldPassword) {
+                        
+                        [UserClass changeCurrentUserPassword:newPassword oldPassword:oldPassword withEnded:^(NSInteger status) {
+                            
+                            switch (status) {
+                                    
+                                // Changement effectué
+                                case 200: {
+                                    
+                                    // Success
+                                    [[MTStatusBarOverlay sharedInstance]
+                                     postImmediateFinishMessage:NSLocalizedString(@"ModifierUserViewController_StatusBarMessage_EditSuccess", nil)
+                                     duration:1
+                                     animated:YES];
+                                } break;
+                                    
+                                // Ancien Mot de passe incorrect
+                                case 400: {
+                                    [[[UIAlertView alloc]
+                                      initWithTitle:NSLocalizedString(@"ModifierUserViewController_WrongPassword_Title", nil)
+                                      message:NSLocalizedString(@"ModifierUserViewController_WrongPassword_Message", nil)
+                                      delegate:nil
+                                      cancelButtonTitle:NSLocalizedString(@"AlertView_Button_OK", nil)
+                                      otherButtonTitles:nil]
+                                     show];
+                                }break;
+                                    
+                                default:
+                                    break;
+                            }
+                            
+                            // Update UI
+                            if(phoneNumber)
+                                self.phoneTextField.text = phoneNumber;
+                            if(secondPhoneNumber)
+                                self.secondEmailTextField.text = secondPhoneNumber;
+                            
+                            // Save Cover image
+                            [[Config sharedInstance] saveNewCoverImage:self.coverImage];
+                            
+                            // Update Profile
+                            [UserCoreData currentUserNeedsUpdate];
+                            
+                            // Reinit Modifs
+                            self.coverImage = nil;
+                            self.profilePictureImage = nil;
+                            [self.modifications removeAllObjects];
+                            
+                            // Réinitialiser Mot de passe
+                            newPassword = nil;
+                            oldPassword = nil;
+                            self.nouveauPasswordTextField.text = @"";
+                            self.oldPasswordTextField.text = @"";
+                            
+                        }];
+                        
+                    }
+                    else {
+                        [[MTStatusBarOverlay sharedInstance]
+                         postImmediateFinishMessage:NSLocalizedString(@"ModifierUserViewController_StatusBarMessage_EditSuccess", nil)
+                         duration:1
+                         animated:YES];
+                        
+                        // Update UI
+                        if(phoneNumber)
+                            self.phoneTextField.text = phoneNumber;
+                        if(secondPhoneNumber)
+                            self.secondEmailTextField.text = secondPhoneNumber;
+                        
+                        // Save Cover image
+                        [[Config sharedInstance] saveNewCoverImage:self.coverImage];
+                        
+                        // Update Profile
+                        [UserCoreData currentUserNeedsUpdate];
+                        
+                        // Reinit Modifs
+                        self.coverImage = nil;
+                        self.profilePictureImage = nil;
+                        [self.modifications removeAllObjects];
+                    }
                     
-                    // Save Cover image
-                    [[Config sharedInstance] saveNewCoverImage:self.coverImage];
-                    
-                    // Update Profile
-                    [UserCoreData currentUserNeedsUpdate];
-                    
-                    // Reinit Modifs
-                    self.coverImage = nil;
-                    self.profilePictureImage = nil;
-                    [self.modifications removeAllObjects];
                 }
                 else
                 {

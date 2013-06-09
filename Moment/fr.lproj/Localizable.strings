@@ -187,6 +187,8 @@
 "ModifierUserViewController_StatusBarMessage_EditSuccess" = "Modifications effectuées";
 "ModifierUserViewController_AlertUnvalide_Title" = "Oops !";
 "ModifierUserViewController_AlertUnvalide_Message" = "Les informations renseignées sont incorrectes";
+"ModifierUserViewController_WrongPassword_Title" = "Oops !";
+"ModifierUserViewController_WrongPassword_Message" = "Ancien mot de passe incorrect !";
 
 /* ------------ CreationPage2ViewController ------------- */
 // Confirm Empty Phone Number
