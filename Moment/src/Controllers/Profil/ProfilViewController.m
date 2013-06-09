@@ -45,6 +45,8 @@ enum ProfilOnglet {
 @synthesize headFollowButton = _headFollowButton, headFollowLabel = _headFollowLabel, pictureView = _pictureView;
 @synthesize acceptFollowBarView = _acceptFollowBarView, acceptFollowBarNameLabel = _acceptFollowBarNameLabel, acceptFollowBarInfoLabel = _acceptFollowBarInfoLabel;
 
+#pragma mark - Init
+
 - (id)initWithUser:(UserClass *)user
 {
     self = [super initWithNibName:@"ProfilViewController" bundle:nil];
@@ -312,14 +314,22 @@ enum ProfilOnglet {
         {
             //--------------- Cacher Informations ----------------
             BOOL hideInformations = NO;
+            BOOL disableButtons = NO;
             
             // -> Blindage
             if( (self.user.privacy == nil) || ![self.user.privacy isKindOfClass:[NSNumber class]]) {
                 hideInformations = YES;
+                disableButtons = YES;
+            }
+            // -> Désactiver les autres écrans que la TimeLine si on est sur un profil public non followed
+            if( (self.user.privacy.intValue == UserPrivacyOpen) && !self.user.is_followed.boolValue) {
+                [self clicMoment];
+                disableButtons = YES;
             }
             // -> On ne peut pas voir les infos d'un profil qu'on ne follow pas
-            if( !self.user.is_followed.boolValue ) {
+            else if( !self.user.is_followed.boolValue ) {
                 hideInformations = YES;
+                disableButtons = YES;
                 
                 // -> On ne peut pas follow un profil privé
                 if(self.user.privacy.intValue == UserPrivacyClosed)
@@ -332,11 +342,14 @@ enum ProfilOnglet {
             
             // Cacher infos
             if(hideInformations) {
+                [self clearContentView];
+            }
+            // Désactiver les boutons
+            if(disableButtons) {
                 self.momentButton.enabled = NO;
                 self.photoButton.enabled = NO;
                 self.followButton.enabled = NO;
                 self.followerButton.enabled = NO;
-                [self clearContentView];
             }
         }
         
