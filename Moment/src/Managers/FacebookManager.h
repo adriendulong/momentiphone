@@ -18,6 +18,9 @@ enum FacebookPermissionType {
     FacebookPermissionPublishType = 2
     };
 
+// Facebook connecté
+#define kFacebookConnected @"FacebookConnected"
+
 @interface FacebookManager : NSObject
 
 @property (nonatomic, strong) AFHTTPClient *httpClient;
@@ -27,6 +30,9 @@ enum FacebookPermissionType {
 
 // Singleton
 + (FacebookManager*)sharedInstance;
+
+// Facebook Connected : Compte facebook associé
+- (BOOL)facebookIsConnected;
 
 // Login / Logout
 - (void)loginReadPermissionsWithEnded:( void (^) (BOOL success) )block;

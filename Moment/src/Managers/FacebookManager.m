@@ -97,6 +97,12 @@ static FacebookManager *sharedInstance = nil;
     return openSessionResult;
 }
 
+#pragma mark - Facebook Connected
+
+- (BOOL)facebookIsConnected {
+    return [self openActiveSessionWithPermissions:@[] type:FacebookPermissionReadType allowLoginUI:NO completionHandler:nil];
+}
+
 #pragma mark - Login/Logout
 
 - (void)loginWithPermissions:(NSArray*)perms type:(enum FacebookPermissionType)type withEnded:(void (^) (BOOL success))block

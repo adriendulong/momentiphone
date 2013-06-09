@@ -30,6 +30,7 @@
 
 #import "TutorialViewController.h"
 #import "GAI.h"
+#import "FacebookManager.h"
 
 @interface HomeViewController ()
 
@@ -227,7 +228,7 @@
         
         // Si Connexion Facebook, Récupération des Events Facebook
         NSString *fbId = [[UserCoreData getCurrentUser] facebookId];
-        if(fbId && (fbId.intValue != 0)) {
+        if(fbId && (fbId.intValue != 0) && [[FacebookManager sharedInstance] facebookIsConnected]) {
             [MomentClass importFacebookEventsWithEnded:nil];
         }
         
