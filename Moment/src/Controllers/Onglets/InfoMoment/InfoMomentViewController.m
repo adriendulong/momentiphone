@@ -1908,7 +1908,10 @@ static CGFloat DescriptionBoxHeightMax = 100;
     [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Feedback" value:nil];
     
     // TestFlight SDK
-    [TestFlight openFeedbackView];
+    //[TestFlight openFeedbackView];
+    
+    // Send FeedBack as Mail
+    [[Config sharedInstance] feedBackMailComposerWithDelegate:self root:self.rootViewController];
 }
 
 - (IBAction)clicComptesButton {

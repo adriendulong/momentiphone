@@ -400,11 +400,12 @@
 }
 
 ///////////////////////////////////////////
-#pragma mark - TestFlight SDK
-#pragma mark DEBUG
+//#pragma mark - TestFlight SDK
+//#pragma mark DEBUG
 
 -(IBAction)launchFeedback {
-    [TestFlight openFeedbackView];
+    //[TestFlight openFeedbackView];
+    [[Config sharedInstance] feedBackMailComposerWithDelegate:self root:self];
 }
 
 @end

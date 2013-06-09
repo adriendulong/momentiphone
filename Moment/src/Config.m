@@ -390,4 +390,37 @@ static Config *sharedInstance = nil;
     return initialText;
 }
 
+#pragma mark - FeedBack
+- (void)feedBackMailComposerWithDelegate:(id<MFMailComposeViewControllerDelegate>)delegate
+                                    root:(UIViewController*)rootViewController
+{
+    if([MFMailComposeViewController canSendMail])
+    {
+        // Email Subject
+        NSString *emailTitle = @"Moment - FeedBack";
+        // Email Content
+        NSString *messageBody = [NSString stringWithFormat:@"Une petite remarque : \n\n\n%@.", [[UserCoreData getCurrentUser] formatedUsernameWithStyle:UsernameStyleCapitalized]];
+        
+        MFMailComposeViewController *mc = [[MFMailComposeViewController alloc] init];
+        mc.mailComposeDelegate = delegate;
+        [mc setSubject:emailTitle];
+        [mc setMessageBody:messageBody isHTML:NO];
+        [mc setToRecipients:@[kParameterContactMail]];
+        
+        // Present mail view controller on screen
+        [[VersionControl sharedInstance] presentModalViewController:mc fromRoot:rootViewController animated:YES];
+    }
+    else
+    {
+        NSLog(@"mail composer fail");
+        
+        [[[UIAlertView alloc] initWithTitle:@"Envoi impossible"
+                                    message:@"Votre appareil ne supporte pas l'envoi d'email"
+                                   delegate:nil
+                          cancelButtonTitle:@"OK"
+                          otherButtonTitles:nil]
+         show];
+    }
+}
+
 @end
