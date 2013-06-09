@@ -894,12 +894,12 @@ withDelegate:(PhotoViewController*)photoViewController
                     int index = [self convertIndexForDataForCurrentStyle:self.selectedIndex];
                     [self.delegate.imageShowCase deleteImage:self.delegate.imageShowCase.itemsInShowCase[index] imageIndex:index];
                     
-                     NSInteger count = [self.photos count];
+                    NSInteger count = [self.photos count];
                     NSInteger deleteIndex;
+
+                    deleteIndex = (photoViewStyle == PhotoViewControllerStyleComplete) ? count+1 : count;
 #ifdef ACTIVE_PRINT_MODE
-                    deleteIndex = (count+1>=PHOTOVIEW_PRINT_BUTTON_INDEX)?count+2 : count+1;
-#else
-                    deleteIndex = count+1;
+                    deleteIndex = (count>=PHOTOVIEW_PRINT_BUTTON_INDEX)?deleteIndex+1 : deleteIndex;
 #endif
                     [self.delegate.imageShowCase updateItemsShowCaseWithSize:deleteIndex];
                     //[self updateBackground];

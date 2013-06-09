@@ -107,9 +107,11 @@ withRootViewController:(UIViewController *)rootViewController
         return index - 1;
         //return index;
     }
+#else
+    if(self.style == PhotoViewControllerStyleComplete)
+        return index;
+    return index - 1;
 #endif
-    
-    return index;
 }
 
 - (void)loadPhotos
@@ -123,7 +125,8 @@ withRootViewController:(UIViewController *)rootViewController
         dispatch_async(loadingQueue, ^{
             
             self.photos = photos.mutableCopy;
-            [self.imageShowCase updateItemsShowCaseWithSize:[self.photos count]+1];
+            NSInteger size = (self.style == PhotoViewControllerStyleComplete) ? [self.photos count]+1 : [self.photos count];
+            [self.imageShowCase updateItemsShowCaseWithSize:size];
             
             int i=0;
 
@@ -140,7 +143,6 @@ withRootViewController:(UIViewController *)rootViewController
                             [self.imageShowCase addImage:nil atIndex:index isPlusButton:NO isPrintButton:YES];
                         }
 #endif
-                        
                         // Index varie selon le numero de la photo et la page sur laquelle on est (Profil / Onglet)
                         index = [self convertIndexForCurrentStyle:index];
                         // Ajout photo classique
