@@ -763,7 +763,7 @@ enum InviteAddFontSize {
 
 - (NSString*)currentUserName {
     // Nom de l'expéditeur
-    return [[UserCoreData getCurrentUser] formatedUsername];
+    return [[UserCoreData getCurrentUser] formatedUsernameWithStyle:UsernameStyleCapitalized];
 }
 
 #pragma mark - UIAlertView Delegate
