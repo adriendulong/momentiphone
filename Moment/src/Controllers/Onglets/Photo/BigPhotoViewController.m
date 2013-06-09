@@ -1024,6 +1024,7 @@ withDelegate:(PhotoViewController*)photoViewController
     
     shouldAnimate = NO;
     ((RotationNavigationControllerViewController*)self.navigationController).activeRotation = YES;
+    [self.fullScreenViewController showPhoto:self.photos[self.selectedIndex]];
     [self.navigationController pushViewController:self.fullScreenViewController animated:NO];
 }
 

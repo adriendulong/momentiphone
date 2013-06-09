@@ -34,7 +34,7 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    [self showPhotoAtIndex:self.delegate.selectedIndex];
+    //[self showPhotoAtIndex:self.delegate.selectedIndex];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -79,10 +79,9 @@
 }
  */
 
-- (void)showPhotoAtIndex:(NSInteger)index
+- (void)showPhoto:(id<TTPhoto>)photo
 {
-    NSLog(@"show photo at index %d", index);
-    _centerPhotoIndex = index;
+    self.centerPhoto = photo;
 }
 
 #pragma mark - TTPhotoViewController
