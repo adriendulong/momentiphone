@@ -589,13 +589,20 @@ enum ProfilOnglet {
     self.headFollowLabel.textColor = selected ? [UIColor colorWithHex:0x50504f] : [[Config sharedInstance] orangeColor];
     [self.headFollowButton setSelected:selected];
     
-    if(newState == FollowButtonStateWaiting) {
-        self.headFollowLabel.text = NSLocalizedString(@"ProfilViewController_HeadFollowButtonLabel_Waiting", nil);
+    switch (newState) {
+        case FollowButtonStateWaiting:
+            self.headFollowLabel.text = NSLocalizedString(@"ProfilViewController_HeadFollowButtonLabel_Waiting", nil);
+            break;
+            
+        case FollowButtonStateFollowed:
+            self.headFollowLabel.text = NSLocalizedString(@"ProfilViewController_HeadFollowButtonLabel_isFollowed", nil);
+            break;
+            
+        case FollowButtonStateNotFollowed:
+            self.headFollowLabel.text = NSLocalizedString(@"ProfilViewController_HeadFollowButtonLabel_Follow", nil);
+            break;
     }
-    else {
-        self.headFollowLabel.text = NSLocalizedString(@"ProfilViewController_HeadFollowButtonLabel_Follow", nil);
-    }
-    
+        
     headFollowButtonState = newState;
 }
 

@@ -202,6 +202,7 @@
 "ProfilViewController_AcceptFollowBar_InfoLabel" = "Souhaite s'abonné à votre activité";//"SOUHAITE VOUS SUIVRE.";
 "ProfilViewController_HeadFollowButtonLabel_Waiting" = "En attente";
 "ProfilViewController_HeadFollowButtonLabel_Follow" = "S'abonner";
+"ProfilViewController_HeadFollowButtonLabel_isFollowed" = "Abonné";
 "ProfilViewController_AcceptFollow_Message" = "Abonnement Accepté";
 "ProfilViewController_RefuseFollow_Message" = "Abonnement Refusé";
 // Unfollow
