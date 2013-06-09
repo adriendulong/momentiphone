@@ -175,7 +175,7 @@
         MomentClass *moment = self.moments[indexPath.row];
         
         // Owner / Admin --> Edition
-        if(moment.state.intValue == UserStateAdmin || moment.state.intValue == UserStateOwner) {
+        if(moment.state.intValue == UserStateAdmin || ([moment.owner.userId isEqualToNumber:[UserCoreData getCurrentUser].userId]) ) {
             CreationFicheViewController *editViewController = [[CreationFicheViewController alloc] initWithUser:[UserCoreData getCurrentUser] withMoment:moment withTimeLine:nil];
             [self.navigationController pushViewController:editViewController animated:YES];
         }
