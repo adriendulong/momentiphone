@@ -184,6 +184,10 @@ static VoletViewController *actualVoletViewController;
     CGSize expectedSize;
     CGRect frame;
     
+    // Update Badge
+    NSInteger badgeNumber = nbNewInvitations + nbNewNotifications;
+    [[PushNotificationManager sharedInstance] setNbNotifcations:badgeNumber];
+    
     // Notifications
     int taille = nbNewNotifications;//[self.notifications count];
     if(taille == 0)
