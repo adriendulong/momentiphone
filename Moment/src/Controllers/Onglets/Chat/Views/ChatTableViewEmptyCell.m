@@ -33,7 +33,7 @@
         label.textColor = [Config sharedInstance].textColor;
         label.font = font;
         label.backgroundColor = [UIColor clearColor];
-        label.frame = CGRectMake(20/2.0, 0 , frame.size.width - 20, frame.size.height);
+        label.frame = CGRectMake(20/2.0, 30 , frame.size.width - 20, frame.size.height - 30);
         
         [self addSubview:label];
     }

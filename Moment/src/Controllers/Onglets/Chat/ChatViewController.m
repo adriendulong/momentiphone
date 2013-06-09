@@ -21,6 +21,8 @@
     BOOL isLoading;
     UIActivityIndicatorView *activityIndicatorView;
     NSInteger previousScrolledPoint;
+    
+    NSInteger keyboardTop;
 }
 
 @end
@@ -59,6 +61,8 @@
         isEmpty = YES;
         isScrolling = NO;
         isLoading = NO;
+        
+        keyboardTop = 216;
     }
     return self;
 }
@@ -391,7 +395,25 @@
 - (BOOL)textViewShouldBeginEditing:(UITextView *)textView
 {
     // Remonter Scroll View
-    [self.keyboardScrollView scrollRectToVisible:CGRectMake(0, 216, 320, self.view.frame.size.height) animated:YES];
+    [self.keyboardScrollView scrollRectToVisible:CGRectMake(0, keyboardTop, 320, self.view.frame.size.height) animated:YES];
+        
+    // On réduit la taille de la vue pour voir les messages
+    CGRect frame = self.tableView.frame;
+    frame.origin.y = keyboardTop;
+    frame.size.height = self.view.frame.size.height - keyboardTop - TOPBAR_HEIGHT;
+    self.tableView.frame = frame;
+    [self scrollToLastMessage];
+    /*
+    NSInteger realSize = self.view.frame.size.height - self.sendboxView.frame.size.height - keyboardTop;
+    if(totalSize < realSize) {
+        CGRect frame = self.tableView.frame;
+        frame.size.height = totalSize;
+        //frame.origin.y = realSize - totalSize + TOPBAR_HEIGHT + self.sendboxView.frame.size.height;
+        frame.origin.y = self.view.frame.size.height - keyboardTop - totalSize + TOPBAR_HEIGHT + 7;
+        self.tableView.frame = frame;
+    }
+    */
+    
     return YES;
 }
 
@@ -435,8 +457,10 @@
         
         // TableView Frame
         frame = self.tableView.frame;
-        frame.size.height = self.view.frame.size.height - self.sendboxView.frame.size.height;
+        frame.origin.y = keyboardTop;
+        frame.size.height = self.view.frame.size.height - keyboardTop - TOPBAR_HEIGHT;
         self.tableView.frame = frame;
+        [self scrollToLastMessage];
         
         // Button Frame
         frame = self.sendButton.frame;
@@ -449,6 +473,12 @@
 {
     // Descendre Scroll View
     [self.keyboardScrollView scrollRectToVisible:CGRectMake(0, 0, 320, self.view.frame.size.height) animated:YES];
+    
+    // Rétablir la taille de la tableView
+    CGRect frame = self.tableView.frame;
+    frame.origin.y = 0;
+    frame.size.height = self.view.frame.size.height - self.sendboxView.frame.size.height;
+    self.tableView.frame = frame;
 }
 
 - (void)cancelTouch {
@@ -485,7 +515,6 @@
         [self addMessage:message atPosition:ChatViewControllerMessagePositionBottom];
         [self reloadData];
         [self scrollToLastMessage];
-        
     }
 }
 
