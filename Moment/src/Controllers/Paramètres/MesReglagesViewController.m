@@ -243,6 +243,9 @@
 
 - (void)loadParametresNotifications
 {
+    // Si les push notifications sont désactivés
+    BOOL loadPush = [[PushNotificationManager sharedInstance] pushNotificationEnabled];
+    
     // Si des données sont déjà stockées en local, on les charge en attendant
     if([ParametreNotification settingsStoredLocally]) {
         
@@ -251,19 +254,25 @@
                            @(ParametreNotificationTypeNewChat),
                            @(ParametreNotificationTypeNewPhoto)
                            ];
-        NSArray *modes = @[@(ParametreNotificationModePush),
-                           @(ParametreNotificationModeEmail)
-                           ];
         
         for( NSNumber *t in types ) {
-            for( NSNumber *m in modes ) {
-                
-                enum ParametreNotificationType type = t.intValue;
-                enum ParametreNotificationMode mode = m.intValue;
-                BOOL val = [ParametreNotification localValueForType:type mode:mode];
-                
-                [self updateNotificationButton:type mode:mode value:val];
+            
+            enum ParametreNotificationType type = t.intValue;
+            BOOL val;
+            
+            // Push
+            if(loadPush) {
+                val = [ParametreNotification localValueForType:type mode:ParametreNotificationModePush];
+                [self updateNotificationButton:type mode:ParametreNotificationModePush value:val];
             }
+            else {
+                // Désactiver Boutons
+                [self updateNotificationButton:type mode:ParametreNotificationModePush value:NO];
+            }
+            
+            // Email
+            val = [ParametreNotification localValueForType:type mode:ParametreNotificationModeEmail];
+            [self updateNotificationButton:type mode:ParametreNotificationModeEmail value:val];
         }
         
     }
@@ -278,7 +287,10 @@
                 BOOL push  = [params[@"push"] boolValue];
                 BOOL email = [params[@"mail"] boolValue];
                 
-                [self updateNotificationButton:type mode:ParametreNotificationModePush value:push];
+                if(loadPush)
+                    [self updateNotificationButton:type mode:ParametreNotificationModePush value:push];
+                else
+                    [self updateNotificationButton:type mode:ParametreNotificationModePush value:NO];
                 [self updateNotificationButton:type mode:ParametreNotificationModeEmail value:email];
             }
         }
