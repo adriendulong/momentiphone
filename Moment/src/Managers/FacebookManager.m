@@ -763,11 +763,14 @@ static FacebookManager *sharedInstance = nil;
 
 - (void)getRSVP:(MomentClass*)moment withEnded:(void (^) (enum UserState rsvp))block
 {
-    if(!moment)
+    if(!moment) {
+        if(block)
+            block(-1);
         return;
-    
+    }
+        
     enum UserState currentState = moment.state.intValue;
-    if(moment.facebookId && !( (currentState == UserStateAdmin) || (currentState == UserStateOwner) ) )
+    if(moment.facebookId && !( (currentState == UserStateAdmin) || ([moment.owner.userId isEqualToNumber:[UserCoreData getCurrentUser].userId]) ) )
     {
         // Connection
         FBRequestConnection *connection = [[FBRequestConnection alloc] init];
@@ -782,6 +785,7 @@ static FacebookManager *sharedInstance = nil;
             if(block) {
                 if(error) {
                     NSLog(@"GET RSVP FB ERROR : %@", error.localizedDescription);
+                    block(-1);
                 }
                 else {
                     
@@ -803,6 +807,8 @@ static FacebookManager *sharedInstance = nil;
                         }
                         
                         block(state);
+                    }else {
+                        block(-1);
                     }
                     
                 }
@@ -810,6 +816,9 @@ static FacebookManager *sharedInstance = nil;
         }];
         
         [connection start];
+    }
+    else if(block) {
+        block(-1);
     }
 }
 

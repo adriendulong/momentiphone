@@ -90,6 +90,9 @@
 // Erreur suppression
 "TimeLineViewController_DeleteMoment_Fail_Message" = "Erreur lors de la suppression, merci de réessayer ultérieurement";
 
+/* --------------- InfoMomentViewController --------------- */
+"MBProgressHUD_Loading_updateRSVP" = "Mise à jour";
+
 /* ---------------- PushNotifications ------------------ */
 // Chat
 "PushNotification_NewChat_AlertView_Title" = "Nouveau Message";

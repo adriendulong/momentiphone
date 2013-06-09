@@ -1269,8 +1269,14 @@ static CGFloat DescriptionBoxHeightMax = 100;
     // Load RSVP From Facebook
     if(state != UserStateNoInvited)
     {
+        MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+        hud.labelText = NSLocalizedString(@"MBProgressHUD_Loading_updateRSVP", nil);
+        
         [[FacebookManager sharedInstance] getRSVP:self.moment withEnded:^(enum UserState rsvp) {
-            if(self.moment.state.intValue != rsvp) {
+            
+            [MBProgressHUD hideHUDForView:self.view animated:YES];
+            
+            if( (rsvp != -1) && (self.moment.state.intValue != rsvp)) {
                 
                 // Informer User
                 [[MTStatusBarOverlay sharedInstance] postImmediateFinishMessage:@"Status Facebook Importé" duration:1 animated:YES];
