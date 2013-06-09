@@ -170,8 +170,6 @@ enum PhotoPickerDestination {
     if(textField == self.prenomTextField)
         [self.nomTextField becomeFirstResponder];
     else if(textField == self.nomTextField)
-        [self.emailTextField becomeFirstResponder];
-    else if(textField == self.emailTextField)
         [self.phoneTextField becomeFirstResponder];
     else if(textField == self.phoneTextField)
         [self.adresseTextField becomeFirstResponder];
@@ -256,7 +254,7 @@ enum PhotoPickerDestination {
         // --------- Validation des données -------------
         
         NSString *phoneNumber = nil, *secondPhoneNumber = nil;
-        BOOL emailOK = NO, secondEmailOK = NO;
+        BOOL secondEmailOK = NO;
         BOOL prenomOK = NO, nomOK = NO;
         UITextField *invalideTextField = nil;
         
@@ -283,19 +281,7 @@ enum PhotoPickerDestination {
                 invalideTextField = self.nomTextField;
             }
         }
-        
-        // Si on a modifié l'email
-        if( !invalideTextField && [self.modifications containsObject:self.emailTextField])
-        {
-            // Vérification de la validité des données --> Ne peux pas être vide
-            if([[Config sharedInstance] isValidEmail:self.emailTextField.text]) {
-                emailOK = YES;
-            }
-            else {
-                invalideTextField = self.emailTextField;
-            }
-        }
-        
+                
         // Si on a modifier le numéro de téléphone
         if(!invalideTextField && [self.modifications containsObject:self.phoneTextField]) {
             
@@ -346,11 +332,6 @@ enum PhotoPickerDestination {
             }
             if(nomOK) {
                 [modifications setValue:self.nomTextField.text forKey:@"nom"];
-            }
-            if(emailOK) {
-                [modifications setValue:self.emailTextField.text forKey:@"email"];
-                // Update liste des mails
-                [[TextFieldAutocompletionManager sharedInstance] addEmailToFavoriteEmails:self.emailTextField.text];
             }
             if([self.modifications containsObject:self.adresseTextField]) {
                 [modifications setValue:self.adresseTextField.text forKey:@"adresse"];
