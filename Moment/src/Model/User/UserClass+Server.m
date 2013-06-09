@@ -193,8 +193,7 @@
                       oldPassword:(NSString*)oldPassword
                         withEnded:(void (^) (NSInteger status))block
 {
-    //NSString *path = [NSString stringWithFormat:@"changepassword/%@/%@", newPassword, oldPassword];
-    NSString *path = [NSString stringWithFormat:@"changepassword/%@/%@/%@", [UserCoreData getCurrentUser].email, newPassword, oldPassword];
+    NSString *path = [NSString stringWithFormat:@"changepassword/%@/%@", newPassword, oldPassword];
     
     [[AFMomentAPIClient sharedClient] getPath:path parameters:nil encoding:AFFormURLParameterEncoding success:^(AFHTTPRequestOperation *operation, id JSON) {
         if(block) {
