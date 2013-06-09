@@ -277,7 +277,7 @@ static Config *sharedInstance = nil;
 
 - (BOOL)isValidPhoneNumber:(NSString*)phoneNumber
 {
-    NSString *regex = @"0[1-9]((([0-9]{2}){4})|((\\s[0-9]{2}){4})|((-[0-9]{2}){4}))";
+    NSString *regex = @"(0|0033|\\+33)[1-9]((([0-9]{2}){4})|((\\s[0-9]{2}){4})|((-[0-9]{2}){4}))";
     NSPredicate *test = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", regex];
     return [test evaluateWithObject:phoneNumber];
 }
@@ -285,7 +285,7 @@ static Config *sharedInstance = nil;
 - (BOOL)isMobilePhoneNumber:(NSString*)phoneNumber forceValidation:(BOOL)force
 {
     if(force) {
-        NSString *regex = @"0[67]((([0-9]{2}){4})|((\\s[0-9]{2}){4})|((-[0-9]{2}){4}))";
+        NSString *regex = @"(0|0033|\\+33)[67]((([0-9]{2}){4})|((\\s[0-9]{2}){4})|((-[0-9]{2}){4}))";
         NSPredicate *test = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", regex];
         return [test evaluateWithObject:phoneNumber];
     }

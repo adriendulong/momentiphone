@@ -196,8 +196,21 @@ enum PhotoPickerDestination {
     // Si le textfield a déjà été ajouté, il n'est pas réajouté (NSSet)
     [self.modifications addObject:textField];
     
-    if( (textField == self.phoneTextField) || (textField == self.secondPhoneTextField) )
-        return ( (string.length == 0) || [[Config sharedInstance] isNumeric:string] || ([string isEqualToString:@"-"]) || ([string isEqualToString:@" "]) );
+    if( (textField == self.phoneTextField) || (textField == self.secondPhoneTextField) ) {
+        
+        BOOL result =  ( (string.length == 0) || [[Config sharedInstance] isNumeric:string] || ([string isEqualToString:@"-"]) || ([string isEqualToString:@" "]) || ([string isEqualToString:@"+"]) );
+        
+        // Si on a copié-collé un numéro
+        if(!result) {
+            NSCharacterSet *characterSet = [[NSCharacterSet characterSetWithCharactersInString:@"+- 0123456789"] invertedSet];
+            if([string rangeOfCharacterFromSet:characterSet].location == NSNotFound) {
+                // Contient que des caratères autorisés
+                result = YES;
+            }
+        }
+        
+        return result;
+    }
     return YES;
 }
 
