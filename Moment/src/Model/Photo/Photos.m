@@ -23,7 +23,7 @@ static NSDateFormatter *dateFormatter;
 @synthesize photoId = _photoId;
 @synthesize imageOriginal = _imageOriginal;
 @synthesize imageThumbnail = _imageThumbnail;
-@synthesize uniqueURL;
+@synthesize uniqueURL = _uniqueURL;
 
 @synthesize photoSource = _photoSource;
 @synthesize size = _size;
