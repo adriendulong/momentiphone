@@ -272,11 +272,14 @@ const static NSString *kParameterContactMail = @"hello@appmoment.fr";
         if(currentUser.secondPhone.length != 0) {
             
             removePhoneNumber = [[UIAlertView alloc] initWithTitle:@"2 numéros enregistrés"
-                                                                  message:[NSString stringWithFormat:@"Veuillez en supprimer un:\n %@\n%@", currentUser.numeroMobile, currentUser.secondPhone]
+                                                                  message:@"Supprimer un numéro:"
                                                                  delegate:self
                                                         cancelButtonTitle:@"Annuler"
-                                                   otherButtonTitles:@"Valider", nil];
-            [removePhoneNumber setAlertViewStyle:UIAlertViewStylePlainTextInput];
+                                                   otherButtonTitles:nil, nil];
+            
+            [removePhoneNumber addButtonWithTitle:currentUser.numeroMobile];
+            [removePhoneNumber addButtonWithTitle:currentUser.secondPhone];
+            
             [removePhoneNumber show];
         } else {
             
@@ -487,8 +490,70 @@ const static NSString *kParameterContactMail = @"hello@appmoment.fr";
             }
         }
     } else if (alertView == removePhoneNumber) {
+        UserClass *currentUser = [UserCoreData getCurrentUser];
         
-        NSLog(@"alertView == removePhoneNumber not implemented yet...");
+        if(buttonIndex == 1)
+        {
+            // Envoi - Suppression 1er numéro
+            [UserClass updateCurrentUserInformationsOnServerWithAttributes:@{@"numeroMobile":[[Config sharedInstance] formatedPhoneNumber:@""]} withEnded:^(BOOL success) {
+                
+                // Informe user of success
+                [MBProgressHUD hideHUDForView:self.view animated:YES];
+                
+                if(!success)
+                {
+                    [[MTStatusBarOverlay sharedInstance]
+                     postImmediateErrorMessage:NSLocalizedString(@"Error", nil)
+                     duration:1
+                     animated:YES];
+                }
+            }];
+            
+            // Envoi - Remplacement 1er numéro par 2nd numéro
+            [UserClass updateCurrentUserInformationsOnServerWithAttributes:@{@"numeroMobile":[[Config sharedInstance] formatedPhoneNumber:currentUser.secondPhone]} withEnded:^(BOOL success) {
+                
+                // Informe user of success
+                [MBProgressHUD hideHUDForView:self.view animated:YES];
+                
+                if(!success)
+                {
+                    [[MTStatusBarOverlay sharedInstance]
+                     postImmediateErrorMessage:NSLocalizedString(@"Error", nil)
+                     duration:1
+                     animated:YES];
+                }
+            }];
+            
+            // Envoi - Suppression 2nd numéro
+            [UserClass updateCurrentUserInformationsOnServerWithAttributes:@{@"secondPhone":[[Config sharedInstance] formatedPhoneNumber:@""]} withEnded:^(BOOL success) {
+                
+                // Informe user of success
+                [MBProgressHUD hideHUDForView:self.view animated:YES];
+                
+                if(!success)
+                {
+                    [[MTStatusBarOverlay sharedInstance]
+                     postImmediateErrorMessage:NSLocalizedString(@"Error", nil)
+                     duration:1
+                     animated:YES];
+                }
+            }];
+        } else if (buttonIndex == 2) {
+            // Envoi - Suppression 2nd numéro
+            [UserClass updateCurrentUserInformationsOnServerWithAttributes:@{@"secondPhone":[[Config sharedInstance] formatedPhoneNumber:@""]} withEnded:^(BOOL success) {
+                
+                // Informe user of success
+                [MBProgressHUD hideHUDForView:self.view animated:YES];
+                
+                if(!success)
+                {
+                    [[MTStatusBarOverlay sharedInstance]
+                     postImmediateErrorMessage:NSLocalizedString(@"Error", nil)
+                     duration:1
+                     animated:YES];
+                }
+            }];
+        }
     }
 }
 
