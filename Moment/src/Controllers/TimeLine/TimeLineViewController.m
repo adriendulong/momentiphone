@@ -949,7 +949,9 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
         if(moment.owner) {
             [self setNomOwnerLabelText:moment.owner.formatedUsername];
         }
-        
+        else {
+            [self setNomOwnerLabelText:@""];
+        }
         
         [self setDateLabelTextFromDate:moment.dateDebut];
         
