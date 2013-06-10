@@ -8,11 +8,9 @@
 
 #import "EventMissingViewController.h"
 #import "Config.h"
-
 #import "UserClass+Server.h"
 #import "FacebookManager.h"
 
-const static NSString *kParameterContactMail = @"hello@appmoment.fr";
 
 @interface EventMissingViewController () {
 @private

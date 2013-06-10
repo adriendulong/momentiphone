@@ -642,7 +642,9 @@ static UIImageView *splashScreen = nil;
 {
     // Centrer view même quand le clavier monte
     // (Sur écran non iPhone 5)
-    if( (![[VersionControl sharedInstance] isIphone5]) && ([_loginTextField isFirstResponder]) ) {
+    //if( (![[VersionControl sharedInstance] isIphone5]) && ([_loginTextField isFirstResponder]) ) {
+    if( (![[VersionControl sharedInstance] isIphone5]) || [_loginTextField isFirstResponder] || [_passwordTextField isFirstResponder] ) {
+        
         
         [UIView animateWithDuration:0.2 animations:^{
             [scrollView scrollRectToVisible:CGRectMake(0, -125, scrollView.contentSize.width, scrollView.contentSize.height) animated:NO];
