@@ -56,4 +56,6 @@
 - (IBAction)clicLogin;
 - (IBAction)clicForgotPassword;
 
++ (void)hideSplashScreen;
+
 @end

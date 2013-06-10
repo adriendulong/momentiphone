@@ -90,9 +90,7 @@
     [TestFlight takeOff:@"85ba03e5-22dc-45c5-9810-be2274ed75d1"];
     // ------------------------------------------
     
-    // ---------------- Initialisation -----------------
-    [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationFade];
-    
+    // ---------------- Initialisation -----------------    
     HomeViewController *homeViewController = [[HomeViewController alloc] initWithXib];
     CustomNavigationController *navigationController = [[CustomNavigationController alloc] initWithRootViewController:homeViewController];
     [navigationController.navigationBar setHidden:YES];

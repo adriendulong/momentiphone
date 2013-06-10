@@ -333,7 +333,7 @@
 {
     NSLog(@"LOGOUT");
     
-    UserCoreData *user = [UserCoreData getCurrentUserAsCoreData];
+    UserCoreData *user = [UserCoreData getCurrentUserAsCoreData:NO];
     if(user)
     {
         // Prévenir Server d'arreter Push Notifications
@@ -345,14 +345,15 @@
         // Delete Current User
         //[[Config sharedInstance].managedObjectContext deleteObject:user];
         //[[Config sharedInstance] saveContext];
-        [UserCoreData resetUsersLocal];
         
         // Clear data
-        [MomentCoreData resetMomentsLocal];
         [ChatMessageCoreData resetChatMessagesLocal];
+        [MomentCoreData resetMomentsLocal];
+        [UserCoreData resetUsersLocal];
         
         // Unsubscribe to local notifications
         [[PushNotificationManager sharedInstance] removeNotifications];
+        [[Config sharedInstance] saveContext];
         
         // Suppression des préférences des push notifications
         [ParametreNotification clearSettingsLocal];

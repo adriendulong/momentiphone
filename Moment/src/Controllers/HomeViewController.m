@@ -32,9 +32,13 @@
 #import "GAI.h"
 #import "FacebookManager.h"
 
-@interface HomeViewController ()
-
+@interface HomeViewController () {
+    @private
+    BOOL firstViewDidAppear;
+}
 @end
+
+static UIImageView *splashScreen = nil;
 
 @implementation HomeViewController
 
@@ -63,6 +67,7 @@
     self = [super initWithNibName:@"HomeViewController" bundle:nil];
     if(self) {
         _isShowFormLogin = NO;
+        firstViewDidAppear = YES;
     }
     return self;
 }
@@ -89,15 +94,27 @@
 
 #pragma mark - View cycle life
 
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    if(!firstViewDidAppear) {
+        if([VersionControl sharedInstance].screenHeight == 568)
+            self.view.bounds = CGRectMake(0, 0, 320, [VersionControl sharedInstance].screenHeight);
+        else {
+            self.view.bounds = CGRectMake(0, STATUS_BAR_HEIGHT, 320, [VersionControl sharedInstance].screenHeight);
+        }
+    }
+}
+
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
     
     // Actual View Controller
     [AppDelegate updateActualViewController:self];
-        
+    
     //on check si autologin actif et utilisateur fourni
-    UserClass *currentUser = [UserCoreData getCurrentUser];
+    UserClass *currentUser = [UserCoreData getCurrentUser:YES];
     if( currentUser ){
         
         // Si un cookie de connexion existe, on le charge et on logue le user
@@ -105,12 +122,29 @@
             [self entrerDansMomentAnimated:NO];
         }];
     }
-    // Sinon si on doit se déconnecter -> se déconnecter
-    // --> Est appelé si il y a eu une erreur lors de la déconnexion
-    // --> Force déconnexion du server pour ne pas recevoir de push notifications alors qu'on est déconnecté
-    else if([DeviceModel deviceShouldLogout]) {
-        [DeviceModel logout];
+    // Login Manuel
+    else {
+        
+        // Si on doit se déconnecter -> se déconnecter
+        // --> Est appelé si il y a eu une erreur lors de la déconnexion
+        // --> Force déconnexion du server pour ne pas recevoir de push notifications alors qu'on est déconnecté
+        if([DeviceModel deviceShouldLogout]) {
+            [DeviceModel logout];
+        }
+        
+        // Connexion manuelle -> Cacher SplashScreen
+        [UIView animateWithDuration:1 animations:^{
+            splashScreen.alpha = 0;
+        } completion:^(BOOL finished) {
+            [HomeViewController hideSplashScreen];
+        }];
+        if(firstViewDidAppear) {
+            [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationNone];
+            self.view.bounds = CGRectMake(0, -STATUS_BAR_HEIGHT, 320, [VersionControl sharedInstance].screenHeight);
+            firstViewDidAppear = NO;
+        }
     }
+   
 }
 
 - (void)viewDidLoad
@@ -173,6 +207,21 @@
     
     //on resize la box
     [self caculateHeightBox];
+    
+    // ---------- Splash Screen Imitation ---------
+    // On affiche le SpashScreen par dessus la vue pour de pas afficher la vue de connexion si il y a une connexion automatique
+    NSString *imageName = nil;
+    if([[VersionControl sharedInstance] screenHeight] == 568) {
+        imageName = @"Default-568h";
+    } else {
+        imageName = @"Default";
+    }
+    splashScreen = [[UIImageView alloc] initWithImage:[UIImage imageNamed:imageName]];
+    CGRect frame = splashScreen.frame;
+    frame.origin = CGPointZero;
+    splashScreen.frame = frame;
+    [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationNone];
+    [self.view addSubview:splashScreen];
 }
 
 - (void)viewDidUnload {
@@ -212,6 +261,13 @@
        [self reinit];
 }
 
++ (void)hideSplashScreen {
+    if(splashScreen) {
+        [splashScreen removeFromSuperview];
+        splashScreen = nil;
+    }
+}
+
 #pragma mark - Show Views
 - (void)showTutorialAnimated:(BOOL)animated
 {    
@@ -223,11 +279,65 @@
 
 - (void) entrerDansMomentAnimated:(BOOL)animated {
     
-    // Vérifier la dernière date de modification
-    if(1)
+    // Loading
+    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    hud.labelText = NSLocalizedString(@"MBProgressHUD_Loading_Moments", nil);
+    
+    // --------- Block de création de l'interface
+    typedef void (^InterfaceBlock) (void);
+    InterfaceBlock interface = [^{
+        
+        /* ------ Local Notifications Subscribe ------- */
+        [[PushNotificationManager sharedInstance] addNotificationObservers];
+        
+        
+        /* ----------------- TIMELINE ----------------- */
+        // create the content view controller
+        RootTimeLineViewController *timeLineRoot = [[RootTimeLineViewController alloc]
+                                                    initWithUser:[UserCoreData getCurrentUser]
+                                                    withSize:CGSizeMake(320, [VersionControl sharedInstance].screenHeight - TOPBAR_HEIGHT)
+                                                    withStyle:TimeLineStyleComplete
+                                                    withNavigationController:nil];
+        
+        
+        // Navigation controller
+        CustomNavigationController *navController = [[CustomNavigationController alloc] initWithRootViewController:timeLineRoot];
+        
+        navController.view.frame = CGRectMake(0, 0, 320, [[VersionControl sharedInstance] screenHeight] );
+        
+        /* ------------------ DDMENU ------------------- */
+        // create a DDMenuController setting the content as the root
+        DDMenuController *menuController = [[DDMenuController alloc] initWithRootViewController:navController];
+        timeLineRoot.ddMenuViewController = menuController;
+        
+        // set the left view controller property of the menu controller
+        VoletViewController *leftController = [[VoletViewController alloc]
+                                               initWithDDMenuDelegate:menuController
+                                               withRootTimeLine:timeLineRoot];
+        menuController.leftViewController = leftController;
+        menuController.delegate = leftController;
+        
+        /* ------------------- PUSH ------------------- */
+        [MBProgressHUD hideHUDForView:self.view animated:YES];
+        // Afficher Status bar
+        if([[UIApplication sharedApplication] isStatusBarHidden]) {
+            [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationNone];
+        }
+        // Push
+        [self.navigationController pushViewController:menuController animated:animated];
+        
+        
+    } copy];
+    
+    
+    // --------- Connection automatique
+    if(!animated)
     {
-        MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-        hud.labelText = NSLocalizedString(@"MBProgressHUD_Loading_Moments", nil);
+        // On affiche la timeline avant et on charge les moments en local avant de charger le reste
+        interface();
+    }
+    else {
+        // Chargement
         
         // Si Connexion Facebook, Récupération des Events Facebook
         NSString *fbId = [[UserCoreData getCurrentUser] facebookId];
@@ -240,39 +350,7 @@
             
             if(success) {
                 
-                /* ------ Local Notifications Subscribe ------- */
-                [[PushNotificationManager sharedInstance] addNotificationObservers];
-                
-                
-                /* ----------------- TIMELINE ----------------- */
-                // create the content view controller
-                RootTimeLineViewController *timeLineRoot = [[RootTimeLineViewController alloc]
-                                                            initWithUser:[UserCoreData getCurrentUser]
-                                                            withSize:CGSizeMake(320, [VersionControl sharedInstance].screenHeight - TOPBAR_HEIGHT)
-                                                            withStyle:TimeLineStyleComplete
-                                                            withNavigationController:nil];
-                
-                
-                // Navigation controller
-                CustomNavigationController *navController = [[CustomNavigationController alloc] initWithRootViewController:timeLineRoot];
-                
-                navController.view.frame = CGRectMake(0, 0, 320, [[VersionControl sharedInstance] screenHeight] );
-                
-                /* ------------------ DDMENU ------------------- */
-                // create a DDMenuController setting the content as the root
-                DDMenuController *menuController = [[DDMenuController alloc] initWithRootViewController:navController];
-                timeLineRoot.ddMenuViewController = menuController;
-                
-                // set the left view controller property of the menu controller
-                VoletViewController *leftController = [[VoletViewController alloc]
-                                                       initWithDDMenuDelegate:menuController
-                                                       withRootTimeLine:timeLineRoot];
-                menuController.leftViewController = leftController;
-                menuController.delegate = leftController;
-                
-                /* ------------------- PUSH ------------------- */
-                [MBProgressHUD hideHUDForView:self.view animated:YES];
-                [self.navigationController pushViewController:menuController animated:animated];
+                interface();
                 
             }else {
                 [MBProgressHUD hideHUDForView:self.view animated:YES];
@@ -288,8 +366,6 @@
         }];
         
     }
-    
-    
 }
 
 - (void) showLoginForm:(BOOL)isDisplay{
@@ -566,8 +642,7 @@
 {
     // Centrer view même quand le clavier monte
     // (Sur écran non iPhone 5)
-    if( ([VersionControl sharedInstance].screenHeight == 480) && ([_loginTextField isFirstResponder]) ) {
-        
+    if( ([VersionControl sharedInstance].screenHeight == 480) || [_loginTextField isFirstResponder] || [_passwordTextField isFirstResponder] ) {
         [UIView animateWithDuration:0.2 animations:^{
             [scrollView scrollRectToVisible:CGRectMake(0, -125, scrollView.contentSize.width, scrollView.contentSize.height) animated:NO];
         }];

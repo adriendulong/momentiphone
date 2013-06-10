@@ -59,7 +59,8 @@ enum UserPrivacy {
 
 // Current User
 + (void)currentUserNeedsUpdate;
-+ (UserCoreData*)getCurrentUserAsCoreData;
++ (UserCoreData*)getCurrentUserAsCoreData:(BOOL)localOnly;
++ (UserClass*)getCurrentUser:(BOOL)localOnly;
 + (UserClass*)getCurrentUser;
 + (void)updateCurrentUserWithAttributes:(NSDictionary*)attributes;
 

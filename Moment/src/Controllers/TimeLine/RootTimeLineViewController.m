@@ -9,6 +9,7 @@
 #import "RootTimeLineViewController.h"
 #import "MomentClass+Server.h"
 #import "VoletViewController.h"
+#import "HomeViewController.h"
 
 @interface RootTimeLineViewController () {
     @private
@@ -36,6 +37,10 @@ withNavigationController:(UINavigationController*)navController
 {
     self = [super initWithNibName:@"RootTimeLineViewController" bundle:nil];
     if(self) {
+        
+        // Cacher Splash Screnn
+        [HomeViewController hideSplashScreen];
+        
         self.user = user;
         self.navController = navController;
         self.size = size;

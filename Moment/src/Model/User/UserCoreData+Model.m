@@ -130,7 +130,7 @@ static NSTimeInterval lastUpdateTime = 0;
     [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationCurrentUserNeedsUpdate object:nil];
 }
 
-+ (UserCoreData*)getCurrentUserAsCoreData
++ (UserCoreData*)getCurrentUserAsCoreData:(BOOL)localOnly
 {
     static BOOL isLoading = NO;
     
@@ -158,50 +158,55 @@ static NSTimeInterval lastUpdateTime = 0;
         user = match[0];
     }
     
-    
-    // Si ca fait un moment qu'on a pas rechargé les infos, on recharge depuis le server
-    NSTimeInterval now = [NSDate timeIntervalSinceReferenceDate];
-    if( !isLoading && ( (now - lastUpdateTime > UPDATE_USER_DIFFERENCE_TIME) ||
-       // Ou si les données du user sont incomplète
-       !(user && user.userId && user.email && user.nom && user.prenom && user.nb_follows && user.nb_followers) ) )
+    if(!localOnly)
     {
-        //NSLog(@"----- UPDATE CURRENT USER BECAUSE OF %f DIFFERENCE TIME (force = %d) -----", now - lastUpdateTime, currentUserNeedsUpdateCoreData);
-        lastUpdateTime = now;
-        // Ask Server
-        isLoading = YES;
-        [UserClass getLoggedUserFromServerWithEnded:^(UserClass *userServer) {
-            if(userServer)
-            {
-                if(!user)
-                    user = [UserCoreData insertUser:userServer];
-                else
-                    [user setupWithUser:userServer];
-                [[Config sharedInstance] saveContext];
-                
-                // Update did happen, udpate view
-                [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationCurrentUserDidUpdate object:nil];
-                isLoading = NO;
-            }
-        } waitUntilFinished:YES];
-        
+        // Si ca fait un moment qu'on a pas rechargé les infos, on recharge depuis le server
+        NSTimeInterval now = [NSDate timeIntervalSinceReferenceDate];
+        if( !isLoading && ( (now - lastUpdateTime > UPDATE_USER_DIFFERENCE_TIME) ||
+                           // Ou si les données du user sont incomplète
+                           !(user && user.userId && user.email && user.nom && user.prenom && user.nb_follows && user.nb_followers) ) )
+        {
+            //NSLog(@"----- UPDATE CURRENT USER BECAUSE OF %f DIFFERENCE TIME (force = %d) -----", now - lastUpdateTime, currentUserNeedsUpdateCoreData);
+            lastUpdateTime = now;
+            // Ask Server
+            isLoading = YES;
+            [UserClass getLoggedUserFromServerWithEnded:^(UserClass *userServer) {
+                if(userServer)
+                {
+                    if(!user)
+                        user = [UserCoreData insertUser:userServer];
+                    else
+                        [user setupWithUser:userServer];
+                    [[Config sharedInstance] saveContext];
+                    
+                    // Update did happen, udpate view
+                    [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationCurrentUserDidUpdate object:nil];
+                    isLoading = NO;
+                }
+            } waitUntilFinished:YES];
+            
+        }
     }
     
     return user;
 }
 
-+ (UserClass*)getCurrentUser {
++ (UserClass*)getCurrentUser:(BOOL)localOnly {
     
     // Update si ca fait longtemps
-    UserCoreData *user = [self getCurrentUserAsCoreData];
+    UserCoreData *user = [self getCurrentUserAsCoreData:localOnly];
         
     return [user localCopy];
 }
 
++ (UserClass*)getCurrentUser {
+    return [self getCurrentUser:NO];
+}
 
 + (void)updateCurrentUserWithAttributes:(NSDictionary*)attributes
 {    
     // Get Current
-    UserClass *current = [UserCoreData getCurrentUser];
+    UserClass *current = [UserCoreData getCurrentUser:NO];
         
     // Update attributes
     NSMutableDictionary *dico = attributes.mutableCopy;
