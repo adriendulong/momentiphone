@@ -16,6 +16,7 @@
 @property (nonatomic, weak) BigPhotoViewController *delegate;
 
 - (id)initWithTitle:(NSString*)title withPhotos:(NSArray*)photos delegate:(BigPhotoViewController*)delegate;
+- (void)showPhoto:(id<TTPhoto>)photo;
 
 @end
 

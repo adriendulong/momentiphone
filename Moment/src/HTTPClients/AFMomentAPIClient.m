@@ -95,6 +95,7 @@ static NSString * const kAFLastHeaderResponse = @"lastHeaderResponse";
     
     // Suppression du header enregistré
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:kAFLastHeaderResponse];
+    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 #pragma mark - Requests

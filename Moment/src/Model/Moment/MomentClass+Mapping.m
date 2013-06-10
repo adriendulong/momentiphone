@@ -22,7 +22,7 @@ static NSDateFormatter *smallDateFormatter = nil;
         NSString *startDate = attributes[@"startDate"];
         NSString *endDate = attributes[@"endDate"];
         NSString *startTime = attributes[@"startTime"];
-        NSString *endTime = attributes[@"entTime"];
+        NSString *endTime = attributes[@"endTime"];
         
         if(!fullDateFormatter) {
             fullDateFormatter = [[NSDateFormatter alloc] init];
@@ -193,6 +193,9 @@ static NSDateFormatter *smallDateFormatter = nil;
         if(attributes[@"privacy"])
             dico[@"privacy"] = attributes[@"privacy"];
         
+        if(attributes[@"unique_url"])
+            dico[@"unique_url"] = attributes[@"unique_url"];
+        
         return dico;
     }
     
@@ -231,9 +234,6 @@ static NSDateFormatter *smallDateFormatter = nil;
         dico[@"endDate"] = [dfJour stringFromDate:[self.dateDebut dateByAddingTimeInterval:24*3600]];
         dico[@"endTime"] = [dfHeure stringFromDate:self.dateDebut];
     }
-    
-    if(self.imageString)
-        dico[@"photo_url"] = self.imageString;
     
     if(self.titre)
         dico[@"name"] = self.titre;
@@ -289,6 +289,9 @@ static NSDateFormatter *smallDateFormatter = nil;
     if(self.isOpen)
         dico[@"isOpenInvit"] = self.isOpen;
     
+    if(self.uniqueURL)
+        dico[@"unique_url"] = self.uniqueURL;
+    
     //NSLog(@"\n--------------------------------------------------------------------------\n--------------------------------------------------------------------------\n");
     
     //NSLog(@"* = %@", dico);
@@ -297,6 +300,5 @@ static NSDateFormatter *smallDateFormatter = nil;
     
     return dico.copy;
 }
-
 
 @end

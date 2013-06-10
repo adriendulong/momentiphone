@@ -15,11 +15,6 @@
 #import "TutorialViewController.h"
 #import "HomeViewController.h"
 
-const static NSString *kParameterFacebookPageID = @"277911125648059";
-const static NSString *kParameterFacebookPageName = @"appmoment";
-const static NSString *kParameterTwitterPageName = @"appmoment";
-const static NSString *kParameterContactMail = @"hello@appmoment.fr";
-
 @interface MesReglagesViewController ()
 
 @end
@@ -51,7 +46,8 @@ const static NSString *kParameterContactMail = @"hello@appmoment.fr";
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    // Do any additional setup after loading the view from its nib.
+    // Google Analytics
+    self.trackedViewName = @"Vue Paramètre";
     
     // iPhone 5
     CGRect frame = self.view.frame;
@@ -164,6 +160,7 @@ const static NSString *kParameterContactMail = @"hello@appmoment.fr";
 }
 
 - (IBAction)clicCGU {
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:kAppMomentCGU]];
 }
 
 - (IBAction)clicContactUs {
@@ -246,6 +243,9 @@ const static NSString *kParameterContactMail = @"hello@appmoment.fr";
 
 - (void)loadParametresNotifications
 {
+    // Si les push notifications sont désactivés
+    BOOL loadPush = [[PushNotificationManager sharedInstance] pushNotificationEnabled];
+    
     // Si des données sont déjà stockées en local, on les charge en attendant
     if([ParametreNotification settingsStoredLocally]) {
         
@@ -254,19 +254,25 @@ const static NSString *kParameterContactMail = @"hello@appmoment.fr";
                            @(ParametreNotificationTypeNewChat),
                            @(ParametreNotificationTypeNewPhoto)
                            ];
-        NSArray *modes = @[@(ParametreNotificationModePush),
-                           @(ParametreNotificationModeEmail)
-                           ];
         
         for( NSNumber *t in types ) {
-            for( NSNumber *m in modes ) {
-                
-                enum ParametreNotificationType type = t.intValue;
-                enum ParametreNotificationMode mode = m.intValue;
-                BOOL val = [ParametreNotification localValueForType:type mode:mode];
-                
-                [self updateNotificationButton:type mode:mode value:val];
+            
+            enum ParametreNotificationType type = t.intValue;
+            BOOL val;
+            
+            // Push
+            if(loadPush) {
+                val = [ParametreNotification localValueForType:type mode:ParametreNotificationModePush];
+                [self updateNotificationButton:type mode:ParametreNotificationModePush value:val];
             }
+            else {
+                // Désactiver Boutons
+                [self updateNotificationButton:type mode:ParametreNotificationModePush value:NO];
+            }
+            
+            // Email
+            val = [ParametreNotification localValueForType:type mode:ParametreNotificationModeEmail];
+            [self updateNotificationButton:type mode:ParametreNotificationModeEmail value:val];
         }
         
     }
@@ -281,7 +287,10 @@ const static NSString *kParameterContactMail = @"hello@appmoment.fr";
                 BOOL push  = [params[@"push"] boolValue];
                 BOOL email = [params[@"mail"] boolValue];
                 
-                [self updateNotificationButton:type mode:ParametreNotificationModePush value:push];
+                if(loadPush)
+                    [self updateNotificationButton:type mode:ParametreNotificationModePush value:push];
+                else
+                    [self updateNotificationButton:type mode:ParametreNotificationModePush value:NO];
                 [self updateNotificationButton:type mode:ParametreNotificationModeEmail value:email];
             }
         }
@@ -403,11 +412,12 @@ const static NSString *kParameterContactMail = @"hello@appmoment.fr";
 }
 
 ///////////////////////////////////////////
-#pragma mark - TestFlight SDK
-#pragma mark DEBUG
+//#pragma mark - TestFlight SDK
+//#pragma mark DEBUG
 
 -(IBAction)launchFeedback {
-    [TestFlight openFeedbackView];
+    //[TestFlight openFeedbackView];
+    [[Config sharedInstance] feedBackMailComposerWithDelegate:self root:self];
 }
 
 @end

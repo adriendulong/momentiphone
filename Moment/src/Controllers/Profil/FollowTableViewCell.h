@@ -8,12 +8,14 @@
 
 #import <UIKit/UIKit.h>
 #import "CustomAGMedallionView.h"
+#import "ProfilViewController.h"
 
-@interface FollowTableViewCell : UITableViewCell
+@interface FollowTableViewCell : UITableViewCell <UIAlertViewDelegate>
 
 @property (nonatomic, strong) UserClass *user;
 @property (nonatomic) NSInteger index;
 @property (nonatomic, weak) UINavigationController *navigationController;
+@property (nonatomic) enum FollowButtonState buttonState;
 
 @property (nonatomic, weak) IBOutlet UILabel *nomLabel;
 @property (nonatomic, weak) IBOutlet UIButton *followButton;

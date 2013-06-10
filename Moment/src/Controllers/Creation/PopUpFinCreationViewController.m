@@ -9,6 +9,7 @@
 #import "PopUpFinCreationViewController.h"
 #import "MomentClass+Server.h"
 #import "Config.h"
+#import "UILabel+BottomAlign.h"
 
 @interface PopUpFinCreationViewController ()
 
@@ -66,6 +67,20 @@
     self.privacyDetailsLabel.font = font;
     self.privacyTitleLabel.text = NSLocalizedString(@"PopUpFunCreationViewController_Privacy_Public_Title", nil);
     self.privacyDetailsLabel.text = NSLocalizedString(@"PopUpFunCreationViewController_Privacy_Public_Details", nil);
+    [self.privacyTitleLabel sizeToFit];
+    
+    frame = self.privacyDetailsLabel.frame;
+    frame.origin.y += 2;
+    frame.origin.x = self.privacyTitleLabel.frame.origin.x + self.privacyTitleLabel.frame.size.width + 4;
+    frame.size.width = self.generalView.frame.size.width - frame.origin.x - 5;
+    self.privacyDetailsLabel.frame = frame;
+    
+    frame = self.privacyTitleLabel.frame;
+    frame.size.height = self.privacyDetailsLabel.frame.size.height;
+    frame.origin.y = self.privacyDetailsLabel.frame.origin.y;
+    self.privacyTitleLabel.frame = frame;
+    self.privacyDetailsLabel.adjustsFontSizeToFitWidth = YES;
+    self.privacyDetailsLabel.numberOfLines = 0;
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -200,6 +215,20 @@
             self.privacyTitleLabel.text = NSLocalizedString(@"PopUpFunCreationViewController_Privacy_Private_Title", nil);
             self.privacyDetailsLabel.text = NSLocalizedString(@"PopUpFunCreationViewController_Privacy_Private_Details", nil);
         }
+        
+        // Mettre à jour tailles
+        [self.privacyTitleLabel sizeToFit];
+        
+        CGRect frame = self.privacyTitleLabel.frame;
+        frame.origin.y = self.privacyDetailsLabel.frame.origin.y;
+        frame.size.height = self.privacyDetailsLabel.frame.size.height;
+        self.privacyTitleLabel.frame = frame;
+        
+        frame = self.privacyDetailsLabel.frame;
+        frame.origin.x = self.privacyTitleLabel.frame.origin.x + self.privacyTitleLabel.frame.size.width + 4;
+        frame.size.width = self.generalView.frame.size.width - frame.origin.x - 5;
+        self.privacyDetailsLabel.frame = frame;
+        
     }
 }
 

@@ -17,6 +17,9 @@
 + (void)getUserFromServerWithId:(NSInteger)userId withEnded:(void (^) (UserClass *user))block;
 + (void)updateCurrentUserInformationsOnServerWithAttributes:(NSDictionary *)modifications
                                                   withEnded:(void (^) (BOOL success))block;
++ (void)changeCurrentUserPassword:(NSString*)newPassword
+                      oldPassword:(NSString*)oldPassword
+                        withEnded:(void (^) (NSInteger status))block;
 // Login
 + (void)getLoggedUserFromServerWithEnded:( void (^) (UserClass *user) )block waitUntilFinished:(BOOL)waitUntilFinished;
 + (void)getLoggedUserFromServerWithEnded:( void (^) (UserClass *user) )block;
@@ -40,7 +43,9 @@
 // Follows/Followers
 - (void)getFollowsWithEnded:(void (^) (NSArray *follows))block;
 - (void)getFollowersWithEnded:(void (^) (NSArray *followers))block;
-- (void)toggleFollowWithEnded:(void (^) (BOOL success))block;
+- (void)toggleFollowWithEnded:(void (^) (BOOL success, BOOL waitForReponse))block;
++ (void)acceptFollowOfUser:(UserClass*)user withEnded:(void (^) (BOOL success))block;
++ (void)refuseFollowOfUser:(UserClass*)user withEnded:(void (^) (BOOL success))block;
 
 // Photos
 - (void)getPhotosWithEnded:(void (^) (NSArray *photos))block;

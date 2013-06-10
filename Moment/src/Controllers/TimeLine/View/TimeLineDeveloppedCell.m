@@ -79,7 +79,7 @@
         self.medallion.borderWidth = 3.0;
         self.medallion.defaultStyle = MedallionStyleCover;
         __weak TimeLineDeveloppedCell *dp = self;
-        [self.medallion addTarget:self action:@selector(buttonInfoClic) forControlEvents:UIControlEventTouchUpInside];
+        [self.medallion addTarget:self action:@selector(medaillionClic) forControlEvents:UIControlEventTouchUpInside];
         [self.medallion setImage:self.moment.uimage imageString:self.moment.imageString withSaveBlock:^(UIImage *image) {
             [dp.moment setUimage:image];
         }];
@@ -103,7 +103,7 @@
         [self initBouton:self.buttonDelete];
         
         // Afficher bouton supprimer que si owner
-        if(self.moment.state.intValue != UserStateOwner) {
+        if(![self.moment.owner.userId isEqualToNumber:[UserCoreData getCurrentUser].userId]) {
             self.buttonDelete.hidden = YES;
         }
         
@@ -121,17 +121,27 @@
 {
     // On réduit la taille pour faire un effet de grandissement
     CGRect frame = self.medallion.frame, tempFrame = self.medallion.frame;
-    tempFrame.origin.y -= tempFrame.size.height/3.0;
+    //tempFrame.origin.y -= tempFrame.size.height/3.0;
     self.medallion.frame = tempFrame;
-    self.medallion.transform =  CGAffineTransformScale(originalMedallionTransform, 0.2, 0.2);
+    self.medallion.transform =  CGAffineTransformScale(originalMedallionTransform, 0.35, 0.35);
     //self.transform = CGAffineTransformMakeTranslation(0, -0.6);
     self.buttonInfo.alpha = 0;
     self.buttonMessage.alpha = 0;
     self.buttonPhoto.alpha = 0;
     self.buttonDelete.alpha = 0;
     
+    /*
+    [self.medallion setNeedsDisplay];
+    [UIView animateWithDuration:0.5 delay:0 options:UIViewAnimationOptionTransitionCrossDissolve animations:^{
+        self.medallion.transform = originalMedallionTransform;
+        self.medallion.center = originalMedallionCenter;
+        self.medallion.frame = frame;
+        
+        [self.medallion.layer displayIfNeeded];
+        */
+        
     // On remet à la taille de base
-    [UIView animateWithDuration:0.5 animations:^{
+    [UIView animateWithDuration:0.5 delay:0.3 options:UIViewAnimationOptionTransitionCrossDissolve animations:^{
         self.medallion.transform = originalMedallionTransform;
         self.medallion.center = originalMedallionCenter;
         self.medallion.frame = frame;
@@ -195,19 +205,43 @@
 }
 
 - (IBAction)buttonPhotoClic {
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Direct icone Photo" value:nil];
+    
     [self.timeLineDelegate showPhotoView:self.moment];
 }
 
 - (IBAction)buttonInfoClic {
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Direct icone Infos" value:nil];
+    [self.timeLineDelegate showInfoMomentView:self.moment];
+}
+
+- (void)medaillionClic {
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic ouvrir Moment" value:nil];
     [self.timeLineDelegate showInfoMomentView:self.moment];
 }
 
 - (IBAction)buttonMessageClic {
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Direct icone Chat" value:nil];
+    
     [self.timeLineDelegate showTchatView:self.moment];
 }
 
 - (IBAction)buttonDeleteClic {
     [self.timeLineDelegate deleteMoment:self.moment];
+}
+
+#pragma mark - Google Analytics
+
+- (void)sendGoogleAnalyticsEvent:(NSString*)action label:(NSString*)label value:(NSNumber*)value {
+    [[[GAI sharedInstance] defaultTracker]
+     sendEventWithCategory:@"Timeline"
+     withAction:action
+     withLabel:label
+     withValue:value];
 }
 
 @end

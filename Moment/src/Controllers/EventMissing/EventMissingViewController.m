@@ -73,6 +73,8 @@ const static NSString *kParameterContactMail = @"hello@appmoment.fr";
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    // Google Analytics
+    self.trackedViewName = @"Vue Moments Manquant";
     
     self.contentView.backgroundColor = [[UIColor alloc] initWithPatternImage:[UIImage imageNamed:@"bg.png"]];
     

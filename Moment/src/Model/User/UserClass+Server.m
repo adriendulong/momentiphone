@@ -18,6 +18,7 @@
 #import "LocalNotification.h"
 #import "ParametreNotification.h"
 #import "Config.h"
+#import "FacebookManager.h"
 
 @implementation UserClass (Server)
 
@@ -188,6 +189,27 @@
     [operation start];
 }
 
++ (void)changeCurrentUserPassword:(NSString*)newPassword
+                      oldPassword:(NSString*)oldPassword
+                        withEnded:(void (^) (NSInteger status))block
+{
+    NSString *path = [NSString stringWithFormat:@"changepassword/%@/%@", newPassword, oldPassword];
+    
+    [[AFMomentAPIClient sharedClient] getPath:path parameters:nil encoding:AFFormURLParameterEncoding success:^(AFHTTPRequestOperation *operation, id JSON) {
+        if(block) {
+            block(operation.response.statusCode);
+        }
+        
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+
+        HTTP_ERROR(operation, error);
+        
+        if(block)
+            block(operation.response.statusCode);
+        
+    } waitUntilFinisehd:NO];
+}
+
 #pragma mark - Login
 
 + (void)getLoggedUserFromServerWithEnded:( void (^) (UserClass *user) )block waitUntilFinished:(BOOL)waitUntilFinished
@@ -311,28 +333,33 @@
 {
     NSLog(@"LOGOUT");
     
-    UserCoreData *user = [UserCoreData getCurrentUserAsCoreData];
+    UserCoreData *user = [UserCoreData getCurrentUserAsCoreData:NO];
     if(user)
     {
-        // Delete Current User
-        [[Config sharedInstance].managedObjectContext deleteObject:user];
-        [[Config sharedInstance] saveContext];
-        
-        // Clear data
-        [MomentCoreData resetMomentsLocal];
-        [ChatMessageCoreData resetChatMessagesLocal];
+        // Prévenir Server d'arreter Push Notifications
+        [DeviceModel logout];
         
         // Suppression cookie de connexion automatique
         [[AFMomentAPIClient sharedClient] clearConnexionCookie];
         
+        // Delete Current User
+        //[[Config sharedInstance].managedObjectContext deleteObject:user];
+        //[[Config sharedInstance] saveContext];
+        
+        // Clear data
+        [ChatMessageCoreData resetChatMessagesLocal];
+        [MomentCoreData resetMomentsLocal];
+        [UserCoreData resetUsersLocal];
+        
         // Unsubscribe to local notifications
         [[PushNotificationManager sharedInstance] removeNotifications];
+        [[Config sharedInstance] saveContext];
         
         // Suppression des préférences des push notifications
         [ParametreNotification clearSettingsLocal];
         
-        // Prévenir Server d'arreter Push Notifications
-        [DeviceModel logout];
+        // Logout Facebook
+        [[FacebookManager sharedInstance] logout];
     }
     
     if(block)
@@ -477,27 +504,80 @@
     }];
 }
 
-- (void)toggleFollowWithEnded:(void (^) (BOOL success))block
+- (void)toggleFollowWithEnded:(void (^) (BOOL success, BOOL waitForReponse))block
 {
     NSString *path = [NSString stringWithFormat:@"addfollow/%@", self.userId];
     
     [[AFMomentAPIClient sharedClient] getPath:path parameters:nil encoding:AFFormURLParameterEncoding success:^(AFHTTPRequestOperation *operation, id JSON) {
         
-        self.is_followed = @(!self.is_followed.boolValue);
+        BOOL waitForResponse = [JSON[@"code_follow"] boolValue];
+        if(!waitForResponse)
+            self.is_followed = @(!self.is_followed.boolValue);
         
         [UserCoreData currentUserNeedsUpdate];
         
         if(block) {
-            block(YES);
+            block(YES, waitForResponse);
         }
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         HTTP_ERROR(operation, error);
         
         if(block)
-            block(NO);
+            block(NO, NO);
     }];
 }
+
++ (void)acceptFollowOfUser:(UserClass*)user withEnded:(void (^) (BOOL success))block {
+    
+    if(user.request_follow_me.boolValue) {
+        
+        NSString *path = [NSString stringWithFormat:@"acceptfollow/%@", user.userId];
+        
+        [[AFMomentAPIClient sharedClient] getPath:path parameters:nil encoding:AFFormURLParameterEncoding success:^(AFHTTPRequestOperation *operation, id JSON) {
+            
+            [UserCoreData currentUserNeedsUpdate];
+            
+            if(block) {
+                block(YES);
+            }
+            
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            HTTP_ERROR(operation, error);
+            
+            if(block)
+                block(NO);
+        }];
+        
+    }
+}
+
++ (void)refuseFollowOfUser:(UserClass*)user withEnded:(void (^) (BOOL success))block {
+    
+    if(user.request_follow_me.boolValue) {
+        
+        NSString *path = [NSString stringWithFormat:@"refusefollow/%@", user.userId];
+        
+        [[AFMomentAPIClient sharedClient] getPath:path parameters:nil encoding:AFFormURLParameterEncoding success:^(AFHTTPRequestOperation *operation, id JSON) {
+            
+            NSLog(@"JSON = %@", JSON);
+            
+            [UserCoreData currentUserNeedsUpdate];
+            
+            if(block) {
+                block(YES);
+            }
+            
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            HTTP_ERROR(operation, error);
+            
+            if(block)
+                block(NO);
+        }];
+        
+    }
+}
+
 
 #pragma mark - Photos
 

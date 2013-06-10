@@ -47,6 +47,7 @@
 #import "CreationHomeViewController.h"
 #import "RootOngletsViewController.h"
 #import "TTTAttributedLabel.h"
+#import "GAI.h"
 
 enum TimeLineStyle {
     TimeLineStyleComplete = 0,
@@ -109,6 +110,9 @@ withRootViewController:(RootTimeLineViewController*)rootViewController;
 - (void)deleteMoment:(MomentClass*)moment;
 
 - (IBAction)clicButtonClock;
+
+// Google Analytics
++ (void)sendGoogleAnalyticsView ;
 
 @end
 

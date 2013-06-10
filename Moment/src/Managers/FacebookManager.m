@@ -11,6 +11,7 @@
 #import "AFJSONRequestOperation.h"
 #import "FacebookEvent.h"
 #import "UserClass+Server.h"
+#import "UserClass+Mapping.h"
 
 @implementation FacebookManager
 
@@ -18,6 +19,7 @@
 @synthesize dateFormatter = _dateFormatter;
 @synthesize defaultReadPermissions = _defaultReadPermissions;
 @synthesize defaultPublishPermissions = _defaultPublishPermissions;
+@synthesize tokenCachingStrategy = _tokenCachingStrategy;
 
 static NSString *kFbGraphBaseURL = @"http://graph.facebook.com/";
 static NSString *FBSessionStateChangedNotification = @"com.appMoment.Moment:FBSessionStateChangedNotification";
@@ -48,6 +50,57 @@ static FacebookManager *sharedInstance = nil;
         sharedInstance = [[super alloc] init];
     }
     return sharedInstance;
+}
+
+#pragma mark - TokenCachingStrategy
+
+- (BOOL)openActiveSessionWithPermissions:(NSArray*)perms
+                                    type:(enum FacebookPermissionType)type
+                            allowLoginUI:(BOOL)allowLoginUI
+                       completionHandler:(void (^)(FBSession *session, FBSessionState status, NSError *error))completionHandler
+{
+    BOOL openSessionResult = NO;
+    
+    // Set up token strategy, if needed
+    if(!self.tokenCachingStrategy) {
+        self.tokenCachingStrategy = [[FacebookTokenCachingStrategy alloc] init];
+    }
+    
+    // Initialize a session object with the tokenCacheStrategy
+    FBSession *session = [[FBSession alloc] initWithAppID:nil
+                                              permissions:perms
+                                          urlSchemeSuffix:nil
+                                       tokenCacheStrategy:self.tokenCachingStrategy];
+    
+    // If showing the login UI, or if a cached token is available,
+    // then open the session.
+    if (allowLoginUI || session.state == FBSessionStateCreatedTokenLoaded) {
+        // For debugging purposes log if cached token was found
+        if (session.state == FBSessionStateCreatedTokenLoaded) {
+            NSLog(@"Cached token found.");
+        }
+        
+        // Set the active session
+        [FBSession setActiveSession:session];
+        
+        // Open the session.
+        [session openWithBehavior:FBSessionLoginBehaviorUseSystemAccountIfPresent
+                completionHandler:completionHandler];
+        
+        // Return the result - will be set to open immediately from the session
+        // open call if a cached token was previously found.
+        openSessionResult = session.isOpen;
+    }
+    // If showing the login UI, or if a cached token is available,
+    // then open the session.
+    
+    return openSessionResult;
+}
+
+#pragma mark - Facebook Connected
+
+- (BOOL)facebookIsConnected {
+    return [self openActiveSessionWithPermissions:@[] type:FacebookPermissionReadType allowLoginUI:NO completionHandler:nil];
 }
 
 #pragma mark - Login/Logout
@@ -83,7 +136,7 @@ static FacebookManager *sharedInstance = nil;
                 
             } copy];
             
-            
+            /*
             // Login by type
             switch (type) {
                     
@@ -114,7 +167,9 @@ static FacebookManager *sharedInstance = nil;
                                                   completionHandler:completionHandler];
                 } break;
             }
+            */
             
+            [self openActiveSessionWithPermissions:perms type:type allowLoginUI:YES completionHandler:completionHandler];
             
             
         }else if(block) {
@@ -321,6 +376,45 @@ static FacebookManager *sharedInstance = nil;
     }
 }
 
+- (void)updateCurrentUserFacebookIdOnServer:(void (^) (BOOL success))block {
+    
+    // Block Update
+    typedef void (^UpdateBlock) (void);
+    UpdateBlock localBlock = [^ {
+        [self getCurrentUserFacebookIdWithEnded:^(NSString *fbId) {
+            if(fbId) {
+                // Update Server & CoreData
+                [UserClass updateCurrentUserInformationsOnServerWithAttributes:@{@"facebookId":fbId} withEnded:nil];
+                
+                if(block)
+                    block(YES);
+            }
+            else if(block)
+                block(NO);
+        }];
+    } copy];
+    
+    // Save FB id
+    UserClass *user = [UserCoreData getCurrentUser];
+    if(user)
+    {
+        if(!user.facebookId || [user.facebookId intValue] == 0) {
+            localBlock();
+        }
+        else if(block)
+            block(YES);
+    }
+    else {
+        // Load User Informations
+        [UserClass getLoggedUserFromServerWithEnded:^(UserClass *user) {
+            if(user)
+                localBlock();
+            else if(block)
+                block(NO);
+        }];
+    }
+}
+
 - (void)getUserInformationsWithId:(NSString*)facebookId withEnded:(void (^) (UserClass* user))block
 {
     if(block)
@@ -446,36 +540,42 @@ static FacebookManager *sharedInstance = nil;
 
 - (void)loadFriends:( void (^) (NSArray* friends) )block
 {
-    [self askForPermissions:@[kFbPermissionFriendAboutMe ,kFbPermissionFriendHomeTown, kFbPermissionFriendLocation]
-                       type:FacebookPermissionReadType
-                  withEnded:^(BOOL success) {
-                      
-        FBRequest* friendsRequest = [FBRequest requestForMyFriends];
-        friendsRequest.session = [FBSession activeSession];
+    // Update Facebook Id
+    [self updateCurrentUserFacebookIdOnServer:^(BOOL success) {
         
-        [friendsRequest startWithCompletionHandler: ^(FBRequestConnection *connection,
-                                                      NSDictionary* result,
-                                                      NSError *error) {
-            if(!error) {
-                NSArray* friends = result[@"data"];
-                
-                if(block) {
-                    
-                    NSArray *users = [UserClass arrayOfUsersWithArrayOfAttributesFromLocal:[self mappingArrayToLocalFromFacebook:friends]];
-                    
-                    block(users);
-                }
-            }
-            else {
-                NSLog(@"Facebook Get Friends Error : %@", error.localizedDescription);
-                NSLog(@"Response = %@", connection.urlResponse);
-                NSLog(@"Headers = %@", connection.urlResponse.allHeaderFields);
-                NSLog(@"Request = %@", connection.urlRequest);
-                NSLog(@"Connection = %@", connection);
-                if(block) block(nil);
-            }
-            
-        }];
+        // Permissions
+        [self askForPermissions:@[kFbPermissionFriendAboutMe ,kFbPermissionFriendHomeTown, kFbPermissionFriendLocation]
+                           type:FacebookPermissionReadType
+                      withEnded:^(BOOL success) {
+                          
+                          FBRequest* friendsRequest = [FBRequest requestForMyFriends];
+                          friendsRequest.session = [FBSession activeSession];
+                          
+                          [friendsRequest startWithCompletionHandler: ^(FBRequestConnection *connection,
+                                                                        NSDictionary* result,
+                                                                        NSError *error) {
+                              if(!error) {
+                                  NSArray* friends = result[@"data"];
+                                  
+                                  if(block) {
+                                      
+                                      NSArray *users = [UserClass arrayOfUsersWithArrayOfAttributesFromLocal:[self mappingArrayToLocalFromFacebook:friends]];
+                                      
+                                      block(users);
+                                  }
+                              }
+                              else {
+                                  NSLog(@"Facebook Get Friends Error : %@", error.localizedDescription);
+                                  NSLog(@"Response = %@", connection.urlResponse);
+                                  NSLog(@"Headers = %@", connection.urlResponse.allHeaderFields);
+                                  NSLog(@"Request = %@", connection.urlRequest);
+                                  NSLog(@"Connection = %@", connection);
+                                  if(block) block(nil);
+                              }
+                              
+                          }];
+                      }];
+        
     }];
 }
 
@@ -536,7 +636,6 @@ static FacebookManager *sharedInstance = nil;
 {
     if(block)
     {
-        [TestFlight passCheckpoint:@"Load Facebook Event - Start"];
         // Ask Permissions for Events
         [self askForPermissions:@[kFbPermissionUserEvents] type:FacebookPermissionReadType
                           withEnded:^(BOOL success) {
@@ -601,7 +700,6 @@ static FacebookManager *sharedInstance = nil;
                                                            }];
                                                            
                                                            // Final block
-                                                           [TestFlight passCheckpoint:@"Load Facebook Event - Success"];
                                                            block(finalArray);
                                                            
                                                        }];
@@ -614,7 +712,6 @@ static FacebookManager *sharedInstance = nil;
                                            
                                        }
                                        else{
-                                           [TestFlight passCheckpoint:@"Load Facebook Event - Fail"];
                                            NSLog(@"Facebook Load Events Error : %@", error.localizedDescription);
                                            NSLog(@"Response = %@", connection.urlResponse);
                                            NSLog(@"Headers = %@", connection.urlResponse.allHeaderFields);
@@ -669,6 +766,67 @@ static FacebookManager *sharedInstance = nil;
 }
 
 #pragma mark - RSVP
+
+- (void)getRSVP:(MomentClass*)moment withEnded:(void (^) (enum UserState rsvp))block
+{
+    if(!moment) {
+        if(block)
+            block(-1);
+        return;
+    }
+        
+    enum UserState currentState = moment.state.intValue;
+    if(moment.facebookId && !( (currentState == UserStateAdmin) || ([moment.owner.userId isEqualToNumber:[UserCoreData getCurrentUser].userId]) ) )
+    {
+        // Connection
+        FBRequestConnection *connection = [[FBRequestConnection alloc] init];
+        FBRequest *request = [FBRequest requestForGraphPath:@"fql"];
+        
+        // Requete
+        NSString *query = [NSString stringWithFormat:@"SELECT rsvp_status FROM event_member WHERE eid=%@ AND uid=me()",  moment.facebookId];
+        [request.parameters setObject:query forKey:@"q"];
+        
+        // Completion
+        [connection addRequest:request completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
+            if(block) {
+                if(error) {
+                    NSLog(@"GET RSVP FB ERROR : %@", error.localizedDescription);
+                    block(-1);
+                }
+                else {
+                    
+                    // Result
+                    if(result[@"data"] && ([result[@"data"] count] > 0) && result[@"data"][0][@"rsvp_status"])
+                    {
+                        NSString *rsvp = result[@"data"][0][@"rsvp_status"];
+                        enum UserState state;
+                        
+                        // Identification
+                        if([rsvp isEqualToString:@"attending"]) {
+                            state = UserStateValid;
+                        }
+                        else if([rsvp isEqualToString:@"declined"]) {
+                            state = UserStateRefused;
+                        }
+                        else {
+                            state = UserStateWaiting;
+                        }
+                        
+                        block(state);
+                    }else {
+                        block(-1);
+                    }
+                    
+                }
+            }
+        }];
+        
+        [connection start];
+    }
+    else if(block) {
+        block(-1);
+    }
+}
 
 - (void)updateRSVP:(enum UserState)rsvp
             moment:(MomentClass*)moment
@@ -758,7 +916,7 @@ static FacebookManager *sharedInstance = nil;
                     parameters:(NSDictionary*)params
                      withEnded:(void (^) (BOOL success))block
 {
-    if( (moment.facebookId && params) || 1)
+    if(moment.facebookId && params)
     {
         // Ask For Permissions
         [self askForPermissions:@[kFbPermissionPublishAction, kFbPermissionPublishStream] type:FacebookPermissionPublishType withEnded:^(BOOL success) {
@@ -768,14 +926,15 @@ static FacebookManager *sharedInstance = nil;
                 FBRequestConnection *connection = [[FBRequestConnection alloc] init];
                                 
                 // Post Request
-                FBRequest *request = [[FBRequest alloc] initWithSession:[FBSession activeSession] graphPath:@"454455871307842/feed" parameters:params HTTPMethod:@"POST"];
-                
                 /*
+                FBRequest *request = [[FBRequest alloc] initWithSession:[FBSession activeSession] graphPath:@"454455871307842/feed" parameters:params HTTPMethod:@"POST"];
+                */
+                
                 FBRequest *request = [[FBRequest alloc]
                                       initWithSession:[FBSession activeSession]
                                       graphPath:[NSString stringWithFormat:@"%@/feed", moment.facebookId]
                                       parameters:params HTTPMethod:@"POST"];
-                */
+                
                 
                 // Completion Handler
                 [connection addRequest:request completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
@@ -813,15 +972,14 @@ static FacebookManager *sharedInstance = nil;
 {
     if(photo) {
         
-        NSString *message = [[NSString stringWithFormat:@"Nouvelle Photo sur %@\n-- Moment --", moment.titre] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+        NSString *message = [[NSString stringWithFormat:@"Je viens d'ajouter une photo à cet évènement sur Moment. %@", photo.uniqueURL] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
         NSString *picture = [photo.urlOriginal stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
         
         NSDictionary *params = @{@"message":message,
                                  @"picture":picture,
                                  @"name":moment.titre,
-                                 @"description":moment.descriptionString,
                                  @"type":@"photo",
-                                 @"caption":moment.adresse};
+                                 @"caption":@"L'application Moment vous permet d'organisez, vivre et revivre tout vos évènements entre proche."};
         
         [self postMessageOnEventWall:moment parameters:params withEnded:block];
     }
@@ -894,17 +1052,7 @@ static FacebookManager *sharedInstance = nil;
             // responsiveness when the user tags their friends.
             
             // Save FB id
-            UserClass *user = [UserCoreData getCurrentUser];
-            if(user)
-            {
-                if(!user.facebookId || [user.facebookId intValue] == 0)
-                {
-                    [self getCurrentUserFacebookIdWithEnded:^(NSString *fbId) {
-                        if(fbId)
-                            [UserCoreData updateCurrentUserWithAttributes:@{@"facebookId":fbId}];
-                    }];
-                }
-            }
+            [self updateCurrentUserFacebookIdOnServer:nil];
             
         }
             break;
@@ -930,13 +1078,41 @@ static FacebookManager *sharedInstance = nil;
                                                         object:session];
     
     if (error) {
-        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"Error: %@",
-                                                                     [FacebookManager FBErrorCodeDescription:error.code]]
-                                                            message:error.localizedDescription
-                                                           delegate:nil
-                                                  cancelButtonTitle:@"OK"
-                                                  otherButtonTitles:nil];
-        [alertView show];
+        
+        UIAlertView *alertView = nil;
+        
+        // Gestion des erreurs
+        switch (error.code) {
+                
+            // Login impossible -> Facebook Refusé ?
+            case FBErrorLoginFailedOrCancelled: {
+                
+                // Marche à suivre selon l'OS
+                NSString *localizedKey = [[VersionControl sharedInstance] supportIOS6] ?@"FacebookManager_ErrorLoginFailed_Message_iOS6" : @"FacebookManager_ErrorLoginFailed_Message";
+                
+                alertView = [[UIAlertView alloc]
+                             initWithTitle:NSLocalizedString(@"FacebookManager_ErrorLoginFailed_Title", nil)
+                             message:NSLocalizedString(localizedKey, nil)
+                             delegate:nil
+                             cancelButtonTitle:NSLocalizedString(@"AlertView_Button_OK", nil)
+                             otherButtonTitles:nil];
+                }   break;
+                
+            // Autre Erreur
+            default:
+                
+                alertView = [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"Error: %@",
+                                                                [FacebookManager FBErrorCodeDescription:error.code]]
+                                                       message:error.localizedDescription
+                                                      delegate:nil
+                                             cancelButtonTitle:NSLocalizedString(@"AlertView_Button_OK", nil)
+                                             otherButtonTitles:nil];
+                
+                break;
+        }
+        
+        if(alertView)
+            [alertView show];
     }
 }
 

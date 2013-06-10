@@ -21,6 +21,8 @@
     BOOL isLoading;
     UIActivityIndicatorView *activityIndicatorView;
     NSInteger previousScrolledPoint;
+    
+    NSInteger keyboardTop;
 }
 
 @end
@@ -59,6 +61,8 @@
         isEmpty = YES;
         isScrolling = NO;
         isLoading = NO;
+        
+        keyboardTop = 216;
     }
     return self;
 }
@@ -140,10 +144,30 @@
     [super viewDidUnload];
 }
 
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    [self sendGoogleAnalyticsView];
+}
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+#pragma mark - Google Analytics
+
+- (void)sendGoogleAnalyticsView {
+    [[[GAI sharedInstance] defaultTracker] sendView:@"Vue Chat"];
+}
+
+- (void)sendGoogleAnalyticsEvent:(NSString*)action label:(NSString*)label value:(NSNumber*)value {
+    [[[GAI sharedInstance] defaultTracker]
+     sendEventWithCategory:@"Chat"
+     withAction:action
+     withLabel:label
+     withValue:value];
 }
 
 #pragma mark - Table view data source
@@ -371,11 +395,33 @@
 - (BOOL)textViewShouldBeginEditing:(UITextView *)textView
 {
     // Remonter Scroll View
-    [self.keyboardScrollView scrollRectToVisible:CGRectMake(0, 216, 320, self.view.frame.size.height) animated:YES];
+    [self.keyboardScrollView scrollRectToVisible:CGRectMake(0, keyboardTop, 320, self.view.frame.size.height) animated:YES];
+        
+    // On réduit la taille de la vue pour voir les messages
+    CGRect frame = self.tableView.frame;
+    frame.origin.y = keyboardTop;
+    frame.size.height = self.view.frame.size.height - keyboardTop - TOPBAR_HEIGHT;
+    self.tableView.frame = frame;
+    [self scrollToLastMessage];
+    /*
+    NSInteger realSize = self.view.frame.size.height - self.sendboxView.frame.size.height - keyboardTop;
+    if(totalSize < realSize) {
+        CGRect frame = self.tableView.frame;
+        frame.size.height = totalSize;
+        //frame.origin.y = realSize - totalSize + TOPBAR_HEIGHT + self.sendboxView.frame.size.height;
+        frame.origin.y = self.view.frame.size.height - keyboardTop - totalSize + TOPBAR_HEIGHT + 7;
+        self.tableView.frame = frame;
+    }
+    */
+    
     return YES;
 }
 
 - (void)textViewDidChange:(UITextView *)textView {
+    
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Entrée Clavier" label:@"Ecrit dans le Chat" value:nil];
+    
     [self updateSendBoxSize];
 }
 
@@ -411,8 +457,10 @@
         
         // TableView Frame
         frame = self.tableView.frame;
-        frame.size.height = self.view.frame.size.height - self.sendboxView.frame.size.height;
+        frame.origin.y = keyboardTop;
+        frame.size.height = self.view.frame.size.height - keyboardTop - TOPBAR_HEIGHT;
         self.tableView.frame = frame;
+        [self scrollToLastMessage];
         
         // Button Frame
         frame = self.sendButton.frame;
@@ -425,6 +473,12 @@
 {
     // Descendre Scroll View
     [self.keyboardScrollView scrollRectToVisible:CGRectMake(0, 0, 320, self.view.frame.size.height) animated:YES];
+    
+    // Rétablir la taille de la tableView
+    CGRect frame = self.tableView.frame;
+    frame.origin.y = 0;
+    frame.size.height = self.view.frame.size.height - self.sendboxView.frame.size.height;
+    self.tableView.frame = frame;
 }
 
 - (void)cancelTouch {
@@ -449,6 +503,9 @@
 {
     if([self.sendboxTextView.text length] > 0) {
         
+        // Google Analytics
+        [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Post un Chat" value:nil];
+        
         // Ajout du message en local
         ChatMessage *message = [[ChatMessage alloc] initWithText:self.sendboxTextView.text withDate:[NSDate date] withUser:[UserCoreData getCurrentUser] withId:nil];
         [ChatMessage sendNewMessageForMoment:self.moment withText:self.sendboxTextView.text withEnded:nil];
@@ -458,7 +515,6 @@
         [self addMessage:message atPosition:ChatViewControllerMessagePositionBottom];
         [self reloadData];
         [self scrollToLastMessage];
-        
     }
 }
 
@@ -470,6 +526,9 @@
         
         isLoading = YES;
         [activityIndicatorView startAnimating];
+        
+        // Google Analytics
+        [self sendGoogleAnalyticsEvent:@"Swipe" label:@"Recharge le Chat" value:nil];
         
         [self loadMessagesForPage:self.nextPage atPosition:ChatViewControllerMessagePositionTop withEnded:^ {
             [activityIndicatorView stopAnimating];

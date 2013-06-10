@@ -25,6 +25,7 @@
 #import "MDCParallaxView.h"
 #import "IgnoreTouchView.h"
 #import <MessageUI/MessageUI.h>
+#import "GAI.h"
 
 @interface InfoMomentViewController : UIViewController <RNExpandingButtonBarDelegate, UIScrollViewDelegate, OngletViewController, MFMailComposeViewControllerDelegate> {
     
@@ -63,7 +64,6 @@
 @property (weak, nonatomic) IBOutlet UIButton *rsvpMaybeButton;
 @property (weak, nonatomic) IBOutlet UIButton *rsvpYesButton;
 @property (weak, nonatomic) IBOutlet UIButton *rsvpNoButton;
-
 
 /* ----- Description View ----- */
 @property (nonatomic, strong) IBOutlet UIView *descriptionView;
@@ -125,17 +125,27 @@
 
 /* ------ Partage View ----- */
 @property (nonatomic, strong) IBOutlet UIView *partageView;
-- (IBAction)clicShareMail;
-- (IBAction)clicShareLink;
-- (IBAction)clicShareFacebook;
-- (IBAction)clicShareTwitter;
-- (IBAction)clicShareInstagram;
 
 
-- (id)initWithMoment:(MomentClass*)moment withRootViewController:(UIViewController*)rootViewController;
+// ------------------- METHODES ------------------------ //
+- (id)initWithMoment:(MomentClass*)moment withRootViewController:(RootOngletsViewController*)rootViewController;
 
 - (IBAction)clicInviteButton;
 - (void)reloadData;
 - (IBAction)clicRSVPButton:(UIButton*)sender;
+
+- (IBAction)clicShareMail;
+- (IBAction)clicShareLink;
+- (IBAction)clicShareFacebook;
+- (IBAction)clicShareTwitter;
+//- (IBAction)clicShareInstagram;
+
+- (IBAction)clicCagnotteButton;
+//- (IBAction)clicCoursesButton;
+- (IBAction)clicComptesButton;
+- (IBAction)clicFeedBackButton;
+
+// Google Analytics
+- (void)sendGoogleAnalyticsView;
 
 @end

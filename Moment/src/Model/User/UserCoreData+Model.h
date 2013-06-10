@@ -16,8 +16,15 @@ enum UserState {
     UserStateValid = 2,
     UserStateRefused = 3,
     UserStateUnknown = 4,
-    UserStateWaiting = 5
+    UserStateWaiting = 5,
+    UserStateNoInvited = 6
 };
+
+enum UserPrivacy {
+    UserPrivacyClosed = 0,
+    UserPrivacyPrivate = 1,
+    UserPrivacyOpen = 2
+    };
 
 #define USERS_NO_LIMIT -1
 
@@ -52,7 +59,8 @@ enum UserState {
 
 // Current User
 + (void)currentUserNeedsUpdate;
-+ (UserCoreData*)getCurrentUserAsCoreData;
++ (UserCoreData*)getCurrentUserAsCoreData:(BOOL)localOnly;
++ (UserClass*)getCurrentUser:(BOOL)localOnly;
 + (UserClass*)getCurrentUser;
 + (void)updateCurrentUserWithAttributes:(NSDictionary*)attributes;
 

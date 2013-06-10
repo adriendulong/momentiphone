@@ -24,6 +24,7 @@ enum ProfilOnglet {
     @private
     enum ProfilOnglet selectedOnglet;
     CGRect insertionFrame;
+    enum FollowButtonState headFollowButtonState;
 }
 
 @end
@@ -42,6 +43,9 @@ enum ProfilOnglet {
 @synthesize followerButton = _followerButton, followerLabel = _followerLabel;
 @synthesize titreLabel = _titreLabel, descriptionLabel = _descriptionLabel;
 @synthesize headFollowButton = _headFollowButton, headFollowLabel = _headFollowLabel, pictureView = _pictureView;
+@synthesize acceptFollowBarView = _acceptFollowBarView, acceptFollowBarNameLabel = _acceptFollowBarNameLabel, acceptFollowBarInfoLabel = _acceptFollowBarInfoLabel;
+
+#pragma mark - Init
 
 - (id)initWithUser:(UserClass *)user
 {
@@ -85,7 +89,8 @@ enum ProfilOnglet {
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    // Do any additional setup after loading the view from its nib.
+    // Google Analytics
+    self.trackedViewName = @"Vue Profil";
     
     // Navigation bar
     [CustomNavigationController setBackButtonWithViewController:self];
@@ -118,6 +123,43 @@ enum ProfilOnglet {
     self.buttonsView.frame = frame;
     [self.leftBarView addSubview:self.buttonsView];
     
+    // Boutons
+    // Réduire la taille de la police si nécessaire
+    // --> Ne semble pas marcher
+    /*
+    self.momentButton.titleLabel.adjustsFontSizeToFitWidth = YES;
+    self.followButton.titleLabel.adjustsFontSizeToFitWidth = YES;
+    self.followerButton.titleLabel.adjustsFontSizeToFitWidth = YES;
+    self.photoButton.titleLabel.adjustsFontSizeToFitWidth = YES;
+    CGFloat minimumFontSize = 9.0f;
+    CGFloat defaultFontSize = 13.0f;
+    if([[VersionControl sharedInstance] supportIOS6]) {
+        self.momentButton.titleLabel.minimumScaleFactor = minimumFontSize/defaultFontSize;
+        self.photoButton.titleLabel.minimumScaleFactor = minimumFontSize/defaultFontSize;
+        self.followerButton.titleLabel.minimumScaleFactor = minimumFontSize/defaultFontSize;
+        self.followButton.titleLabel.minimumScaleFactor = minimumFontSize/defaultFontSize;
+    }
+    else {
+        self.momentButton.titleLabel.minimumFontSize = minimumFontSize;
+        self.photoButton.titleLabel.minimumFontSize = minimumFontSize;
+        self.followerButton.titleLabel.minimumFontSize = minimumFontSize;
+        self.followButton.titleLabel.minimumFontSize = minimumFontSize;
+    }
+     */
+    
+    // Follow Bar
+    frame = self.acceptFollowBarView.frame;
+    frame.origin.y = self.headerView.frame.size.height;
+    self.acceptFollowBarView.frame = frame;
+    self.acceptFollowBarView.hidden = YES;
+    self.acceptFollowBarView.alpha = 0;
+    [self.view insertSubview:self.acceptFollowBarView belowSubview:self.headerView];
+    self.acceptFollowBarNameLabel.font = [[Config sharedInstance] defaultFontWithSize:13];
+    self.acceptFollowBarInfoLabel.font = [[Config sharedInstance] defaultFontWithSize:12];
+    self.acceptFollowBarNameLabel.text = self.user.formatedUsername;
+    self.acceptFollowBarInfoLabel.text = NSLocalizedString(@"ProfilViewController_AcceptFollowBar_InfoLabel", nil);
+    self.acceptFollowBarInfoLabel.adjustsFontSizeToFitWidth = YES;
+    
     [self reloadData];
     
     // Default -> Time Line
@@ -139,11 +181,55 @@ enum ProfilOnglet {
         self.navigationItem.rightBarButtonItem = barButton;
         
         // Hide Follow Button
-        self.headFollowButton.hidden = YES;
-        self.headFollowLabel.hidden = YES;
+        [self showHeadFollowButton:NO];
         self.user.state = @(UserStateCurrent);
     }
+    
+    NSLog(@"User = %@", self.user);
 
+}
+
+- (void)clearContentView
+{
+    NSArray *subviews = self.contentView.subviews;
+    for( UIView *v in subviews ) {
+        [v removeFromSuperview];
+    }
+    
+    self.backgroundContentView.backgroundColor = [UIColor clearColor];
+}
+
+- (void)drawBackground:(UIImage*)background
+{
+    // Background
+    CGRect frame = self.backgroundContentView.frame;
+    frame.origin.x = 0; frame.origin.y = 0;
+    
+    UIGraphicsBeginImageContext(frame.size);
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    
+    background = [[Config sharedInstance] scaleAndCropImage:background forSize:frame.size];
+    [background drawInRect:frame];
+    
+    // Ligne Blanche
+    CGContextSetStrokeColorWithColor(context, [[[UIColor whiteColor] colorWithAlphaComponent:0.4] CGColor] );
+    CGContextBeginPath(context);
+    CGContextMoveToPoint(context, (frame.size.width-1)/2.0, 0);
+    CGContextAddLineToPoint(context, (frame.size.width-1)/2.0, frame.size.height);
+    CGContextSetLineWidth(context, 2);
+    CGContextSetLineCap(context, kCGLineCapRound);
+    CGContextStrokePath(context);
+    
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    
+    UIGraphicsEndImageContext();
+    self.backgroundContentView.backgroundColor = [UIColor colorWithPatternImage:image];
+}
+
+
+- (void)showHeadFollowButton:(BOOL)show {
+    self.headFollowButton.hidden = !show;
+    self.headFollowLabel.hidden = !show;
 }
 
 - (void)reloadData
@@ -151,69 +237,190 @@ enum ProfilOnglet {
     // Update data view core data
     //self.user = [[UserCoreData requestUserAsCoreDataWithUser:self.user] localCopy];
     
-    // Load TimeLine
-    [MomentClass getMomentsForUser:self.user withEnded:^(NSArray *moments) {
-        if(moments) {
-            [self.timeLineViewController reloadDataWithMoments:moments];
+    [UserClass getUserFromServerWithId:self.user.userId.intValue withEnded:^(UserClass *user) {
+        
+        // Update User
+        if(user)
+            self.user = user;
+        
+        // Load TimeLine
+        [MomentClass getMomentsForUser:self.user withEnded:^(NSArray *moments) {
+            if(moments) {
+                [self.timeLineViewController reloadDataWithMoments:moments];
+            }
+        }];
+        
+        // Titre
+        self.titreLabel.text = [NSString stringWithFormat:@"%@ %@", self.user.prenom?[self.user.prenom capitalizedString]:@"", self.user.nom?[self.user.nom capitalizedString]:@""];
+        self.titreLabel.font = [[Config sharedInstance] defaultFontWithSize:14];
+        
+        // Description
+        self.descriptionLabel.text = self.user.descriptionString ?: @"";
+        
+        // Photo
+        UIImage *picture = self.user.uimage?self.user.uimage : [UIImage imageNamed:@"profil_defaut"];
+        UIImage *cropped = [CropImageUtility cropImage:picture intoCircle:CircleSizeProfil];
+        if(!self.user.uimage) {
+            [self.pictureView setImage:nil imageString:self.user.imageString placeHolder:cropped withSaveBlock:^(UIImage *image) {
+                
+                //self.user.uimage = image;
+                UIImage *cropped = [CropImageUtility cropImage:image intoCircle:CircleSizeProfil];
+                self.pictureView.image = cropped;
+                
+                /*
+                 UserCoreData *coredata = [UserCoreData requestUserAsCoreDataWithUser:self.user];
+                 if(coredata)
+                 {
+                 [coredata setDataImageWithUIImage:image];
+                 [[Config sharedInstance] saveContext];
+                 }
+                 */
+                
+            }];
         }
+        else
+            self.pictureView.image = cropped;
+        
+        // Nb Followers
+        NSString *texte = NSLocalizedString(@"ProfilViewController_FollowersLabel", nil);
+        self.followerLabel.text = (self.user.nb_followers.intValue > 0)? [NSString stringWithFormat:@"%@\n%@", self.user.nb_followers, texte] : texte;
+        
+        // Nb Follows
+        texte = NSLocalizedString(@"ProfilViewController_FollowLabel", nil);
+        self.followLabel.text = (self.user.nb_follows.intValue > 0)? [NSString stringWithFormat:@"%@\n%@", self.user.nb_follows, texte] : texte;
+        
+        // Nb Moments
+        texte = NSLocalizedString(@"ProfilViewController_MomentsLabel", nil);
+        self.momentLabel.text = (self.user.nb_moments.intValue > 0)? [NSString stringWithFormat:@"%@\n%@", self.user.nb_moments, texte] : texte;
+        
+        // Nb Photos
+        texte = NSLocalizedString(@"ProfilViewController_PhotosLabel", nil);
+        self.photoLabel.text = (self.user.nb_photos.intValue > 0)? [NSString stringWithFormat:@"%@\n%@", self.user.nb_photos, texte] : texte;
+        
+        // -------- Activer les boutons par défaut --------
+        self.momentButton.enabled = YES;
+        self.photoButton.enabled = YES;
+        self.followButton.enabled = YES;
+        self.followerButton.enabled = YES;
+        
+        // --------- Profil du user connecté ----------
+        // -> On ne peut pas se follow soi-même
+        if( (self.user.state.intValue == UserStateCurrent) || ([self.user.userId isEqualToNumber:[UserCoreData getCurrentUser].userId]) )
+        {
+            // Hide Follow Button
+            [self showHeadFollowButton:NO];
+        }
+        else
+        {
+            //--------------- Cacher Informations ----------------
+            BOOL hideInformations = NO;
+            BOOL disableButtons = NO;
+            
+            // -> Blindage
+            if( (self.user.privacy == nil) || ![self.user.privacy isKindOfClass:[NSNumber class]]) {
+                hideInformations = YES;
+                disableButtons = YES;
+            }
+            // -> Désactiver les autres écrans que la TimeLine si on est sur un profil public non followed
+            if( (self.user.privacy.intValue == UserPrivacyOpen) && !self.user.is_followed.boolValue) {
+                [self clicMoment];
+                disableButtons = YES;
+            }
+            // -> On ne peut pas voir les infos d'un profil qu'on ne follow pas
+            else if( !self.user.is_followed.boolValue ) {
+                hideInformations = YES;
+                disableButtons = YES;
+                
+                // -> On ne peut pas follow un profil privé
+                if(self.user.privacy.intValue == UserPrivacyClosed)
+                {
+                    // Hide Follow Button
+                    [self showHeadFollowButton:NO];
+                }
+                
+            }
+            
+            // Cacher infos
+            if(hideInformations) {
+                [self clearContentView];
+            }
+            // Désactiver les boutons
+            if(disableButtons) {
+                self.momentButton.enabled = NO;
+                self.photoButton.enabled = NO;
+                self.followButton.enabled = NO;
+                self.followerButton.enabled = NO;
+            }
+        }
+        
+        //----------- Bouton Head Follow ------------
+        enum FollowButtonState state;
+        // Waiting for follow request
+        if(self.user.request_follower.boolValue) {
+            state = FollowButtonStateWaiting;
+        }
+        else {
+            state = (self.user.is_followed.boolValue) ? FollowButtonStateFollowed : FollowButtonStateNotFollowed;
+        }
+        [self setHeadFollowButtonState:state];
+
+        //----------- Barre de réponse à une demande de Follow ------------
+        // -> Si une requete de follow est en attente
+        if(self.user.request_follow_me.boolValue)
+            [self showAcceptFollowBar:YES];
+        else
+            [self hideAcceptFollowBar:YES];
+        
     }];
     
-    // Titre
-    self.titreLabel.text = [NSString stringWithFormat:@"%@ %@", self.user.prenom?[self.user.prenom capitalizedString]:@"", self.user.nom?[self.user.nom capitalizedString]:@""];
-    self.titreLabel.font = [[Config sharedInstance] defaultFontWithSize:14];
+}
+
+- (void)showAcceptFollowBar:(BOOL)animated {
     
-    // Description
-    self.descriptionLabel.text = self.user.descriptionString ?: @"";
-    
-    // Photo
-    UIImage *picture = self.user.uimage?self.user.uimage : [UIImage imageNamed:@"profil_defaut"];
-    UIImage *cropped = [CropImageUtility cropImage:picture intoCircle:CircleSizeProfil];
-    if(!self.user.uimage) {
-        [self.pictureView setImage:nil imageString:self.user.imageString placeHolder:cropped withSaveBlock:^(UIImage *image) {
+    if( (self.acceptFollowBarView.hidden == YES) && (self.acceptFollowBarView.alpha == 0) )
+    {
+        self.acceptFollowBarView.hidden = NO;
         
-            //self.user.uimage = image;
-            UIImage *cropped = [CropImageUtility cropImage:image intoCircle:CircleSizeProfil];
-            self.pictureView.image = cropped;
-                        
-            /*
-            UserCoreData *coredata = [UserCoreData requestUserAsCoreDataWithUser:self.user];
-            if(coredata)
-            {
-                [coredata setDataImageWithUIImage:image];
-                [[Config sharedInstance] saveContext];
-            }
-             */
+        if(!animated) {
+            self.acceptFollowBarView.alpha = 1;
+        }
+        else {
+            CGRect frame = self.acceptFollowBarView.frame;
+            frame.origin.y -= frame.size.height;
+            self.acceptFollowBarView.frame = frame;
+            frame.origin.y += frame.size.height;
             
-        }];
+            [UIView animateWithDuration:0.3 animations:^{
+                self.acceptFollowBarView.frame = frame;
+                self.acceptFollowBarView.alpha = 1;
+            }];
+        }
     }
-    else
-        self.pictureView.image = cropped;
+}
+
+- (void)hideAcceptFollowBar:(BOOL)animated {
     
-    // Nb Followers
-    NSString *texte = NSLocalizedString(@"ProfilViewController_FollowersLabel", nil);
-    self.followerLabel.text = (self.user.nb_followers.intValue > 0)? [NSString stringWithFormat:@"%@\n%@", self.user.nb_followers, texte] : texte;
-    //self.followerLabel.text = [NSString stringWithFormat:@"%d\n%@", (rand()%2)? 2354 : 18240, texte];
-    
-    // Nb Follows
-    texte = NSLocalizedString(@"ProfilViewController_FollowLabel", nil);
-    self.followLabel.text = (self.user.nb_follows.intValue > 0)? [NSString stringWithFormat:@"%@\n%@", self.user.nb_follows, texte] : texte;
-    //self.followLabel.text = [NSString stringWithFormat:@"%d\n%@", (rand()%2)? 125 : 327, texte];
-    
-    // Nb Moments
-    texte = NSLocalizedString(@"ProfilViewController_MomentsLabel", nil);
-    self.momentLabel.text = (self.user.nb_moments.intValue > 0)? [NSString stringWithFormat:@"%@\n%@", self.user.nb_moments, texte] : texte;
-    
-    // Nb Photos
-    texte = NSLocalizedString(@"ProfilViewController_PhotosLabel", nil);
-    self.photoLabel.text = (self.user.nb_photos.intValue > 0)? [NSString stringWithFormat:@"%@\n%@", self.user.nb_photos, texte] : texte;
-    
-    // Is Followed
-    // On ne peut pas se follow soi-même
-    if(self.user.state.intValue != UserStateCurrent) {
-        NSLog(@"IS FOLLOWED : %@", self.user.is_followed);
-        [self setHeadFollowButtonSelected:self.user.is_followed.boolValue];
+    if( (self.acceptFollowBarView.hidden == NO) && (self.acceptFollowBarView.alpha == 1) )
+    {
+        if(!animated) {
+            self.acceptFollowBarView.alpha = 0;
+            self.acceptFollowBarView.hidden = YES;
+        }
+        else {
+            CGRect frame = self.acceptFollowBarView.frame;
+            frame.origin.y -= frame.size.height;
+            
+            [UIView animateWithDuration:0.3 animations:^{
+                self.acceptFollowBarView.frame = frame;
+                self.acceptFollowBarView.alpha = 0;
+            } completion:^(BOOL finished) {
+                self.acceptFollowBarView.hidden = YES;
+                CGRect frame = self.acceptFollowBarView.frame;
+                frame.origin.y += frame.size.height;
+                self.acceptFollowBarView.frame = frame;
+            }];
+        }
     }
-    
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -290,46 +497,23 @@ enum ProfilOnglet {
     [[NSNotificationCenter defaultCenter] removeObserver:self name:kNotificationCurrentUserDidUpdate object:nil];
 }
 
-// Actions
+#pragma mark - Google Analytics
 
-- (void)clearContentView
-{
-    NSArray *subviews = self.contentView.subviews;
-    for( UIView *v in subviews ) {
-        [v removeFromSuperview];
-    }
-    
-    self.backgroundContentView.backgroundColor = [UIColor clearColor];
+- (void)sendGoogleAnalyticsEvent:(NSString*)action label:(NSString*)label value:(NSNumber*)value {
+    [[[GAI sharedInstance] defaultTracker]
+     sendEventWithCategory:@"Profil"
+     withAction:action
+     withLabel:label
+     withValue:value];
 }
 
-- (void)drawBackground:(UIImage*)background
-{
-    // Background
-    CGRect frame = self.backgroundContentView.frame;
-    frame.origin.x = 0; frame.origin.y = 0;
-    
-    UIGraphicsBeginImageContext(frame.size);
-    CGContextRef context = UIGraphicsGetCurrentContext();
-    
-    background = [[Config sharedInstance] scaleAndCropImage:background forSize:frame.size];
-    [background drawInRect:frame];
-    
-    // Ligne Blanche
-    CGContextSetStrokeColorWithColor(context, [[[UIColor whiteColor] colorWithAlphaComponent:0.4] CGColor] );
-    CGContextBeginPath(context);
-    CGContextMoveToPoint(context, (frame.size.width-1)/2.0, 0);
-    CGContextAddLineToPoint(context, (frame.size.width-1)/2.0, frame.size.height);
-    CGContextSetLineWidth(context, 2);
-    CGContextSetLineCap(context, kCGLineCapRound);
-    CGContextStrokePath(context);
-    
-    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
-    
-    UIGraphicsEndImageContext();
-    self.backgroundContentView.backgroundColor = [UIColor colorWithPatternImage:image];
-}
+#pragma mark - Actions 
 
 - (IBAction)clicMoment {
+    
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Moments" value:nil];
+    
     if(selectedOnglet != ProfilOngletMoments) {
         selectedOnglet = ProfilOngletMoments;
         [self.momentButton setSelected:YES];
@@ -345,6 +529,10 @@ enum ProfilOnglet {
 }
 
 - (IBAction)clicPhotos {
+    
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Photos" value:nil];
+    
     if(selectedOnglet != ProfilOngletPhotos) {
         selectedOnglet = ProfilOngletPhotos;
         [self.momentButton setSelected:NO];
@@ -358,6 +546,10 @@ enum ProfilOnglet {
 }
 
 - (IBAction)clicFollow {
+    
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Liste des Follow" value:nil];
+    
     if(selectedOnglet != ProfilOngletFollow) {
         selectedOnglet = ProfilOngletFollow;
         [self.momentButton setSelected:NO];
@@ -375,6 +567,10 @@ enum ProfilOnglet {
 }
 
 - (IBAction)clicFollowers {
+    
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Liste des Followers" value:nil];
+    
     if(selectedOnglet != ProfilOngletFollower) {
         selectedOnglet = ProfilOngletFollower;
         [self.momentButton setSelected:NO];
@@ -392,28 +588,89 @@ enum ProfilOnglet {
 }
 
 - (void)clicEdit {
+    
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Editer Profil" value:nil];
+    
     ModifierUserViewController *edit = [[ModifierUserViewController alloc] initWithDefaults];
     [self.navigationController pushViewController:edit animated:YES];
 }
 
-- (void)setHeadFollowButtonSelected:(BOOL)newState
+- (void)setHeadFollowButtonState:(enum FollowButtonState)newState
 {
-    self.headFollowLabel.textColor = newState ? [UIColor colorWithHex:0x515050] : [UIColor whiteColor];
-    [self.headFollowButton setSelected:newState];
+    BOOL selected = (newState != FollowButtonStateNotFollowed);
+    self.headFollowLabel.textColor = selected ? [UIColor colorWithHex:0x50504f] : [[Config sharedInstance] orangeColor];
+    [self.headFollowButton setSelected:selected];
+    
+    switch (newState) {
+        case FollowButtonStateWaiting:
+            self.headFollowLabel.text = NSLocalizedString(@"ProfilViewController_HeadFollowButtonLabel_Waiting", nil);
+            break;
+            
+        case FollowButtonStateFollowed:
+            self.headFollowLabel.text = NSLocalizedString(@"ProfilViewController_HeadFollowButtonLabel_isFollowed", nil);
+            break;
+            
+        case FollowButtonStateNotFollowed:
+            self.headFollowLabel.text = NSLocalizedString(@"ProfilViewController_HeadFollowButtonLabel_Follow", nil);
+            break;
+    }
+        
+    headFollowButtonState = newState;
 }
 
 - (IBAction)clicHeadFollow
 {
-    [self setHeadFollowButtonSelected:!self.headFollowButton.selected];
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Bouton pour Follow" value:nil];
+    
+    // Requete pas encore envoyée
+    if( (headFollowButtonState != FollowButtonStateWaiting) && (!self.user.request_follower.boolValue) )
+    {
+        
+        // Si on veut unfollow -> AlertView pour prévenir
+        if(headFollowButtonState == FollowButtonStateFollowed) {
+            [[[UIAlertView alloc]
+              initWithTitle:NSLocalizedString(@"ProfilViewController_Unfollow_AlertView_Title", nil)
+              message:NSLocalizedString(@"ProfilViewController_Unfollow_AlertView_Message", nil)
+              delegate:self
+              cancelButtonTitle:NSLocalizedString(@"AlertView_Button_Cancel", nil)
+              otherButtonTitles:NSLocalizedString(@"ProfilViewController_Unfollow_AlertView_ConfirmButton", nil), nil]
+             show];
+        }
+        else {
+            [self sendToggleFollowRequest];
+        }
+
+    }
+}
+
+- (void)sendToggleFollowRequest {
+    
+    enum FollowButtonState previousState = headFollowButtonState;
+    
+    [self setHeadFollowButtonState:(!self.headFollowButton.selected)? FollowButtonStateFollowed : FollowButtonStateNotFollowed];
     
     // Follow / UnFollow user selectionné
-    [self.user toggleFollowWithEnded:^(BOOL success) {
+    [self.user toggleFollowWithEnded:^(BOOL success, BOOL waitForResponse) {
         
+        // Success
+        if(success) {
+            
+            enum FollowButtonState newState = waitForResponse ? FollowButtonStateWaiting : ((previousState == FollowButtonStateFollowed)? FollowButtonStateNotFollowed : FollowButtonStateFollowed );
+            
+            [self setHeadFollowButtonState:newState];
+            
+            // Update Content
+            [self.followerTableViewController loadUsersList];
+            [self reloadData];
+            
+        }
         // Si il y a eu un erreur
-        if(!success) {
+        else {
             
             // On remet le bouton dans le bonne état
-            [self setHeadFollowButtonSelected:!self.headFollowButton.selected];
+            [self setHeadFollowButtonState:previousState];
             
             // On informe l'utilisateur
             [[MTStatusBarOverlay sharedInstance] postImmediateErrorMessage:NSLocalizedString(@"FollowTableViewController_AddFollow_ErrorMessage", nil)
@@ -422,9 +679,57 @@ enum ProfilOnglet {
             
         }
     }];
-    
 }
 
+- (IBAction)clicAcceptFollow {
+    
+    [UserClass acceptFollowOfUser:self.user withEnded:^(BOOL success) {
+        if(success) {
+            // Hide Accept Follow Bar
+            [self hideAcceptFollowBar:YES];
+            
+            // Informer User
+            [[MTStatusBarOverlay sharedInstance]
+             postFinishMessage:NSLocalizedString(@"ProfilViewController_AcceptFollow_Message", nil)
+             duration:1];
+            
+            // Update Content
+            [self.followTableViewController loadUsersList];
+            [self reloadData];
+            
+            // Default -> Time Line
+            selectedOnglet = -1;
+            [self clicMoment];
+            [self.contentView addSubview:self.timeLineViewController.view];
+        }
+        else {
+            [[MTStatusBarOverlay sharedInstance]
+             postImmediateErrorMessage:NSLocalizedString(@"Error_Classic", nil)
+             duration:1 animated:YES];
+        }
+    }];
+}
+
+- (IBAction)clicRefuseFollow {
+    
+    [UserClass refuseFollowOfUser:self.user withEnded:^(BOOL success) {
+        if(success) {
+            // Hide Accept Follow Bar
+            [self hideAcceptFollowBar:YES];
+            
+            // Informer User
+            [[MTStatusBarOverlay sharedInstance]
+             postFinishMessage:NSLocalizedString(@"ProfilViewController_RefuseFollow_Message", nil)
+             duration:1];
+            
+        }
+        else {
+            [[MTStatusBarOverlay sharedInstance]
+             postImmediateErrorMessage:NSLocalizedString(@"Error_Classic", nil)
+             duration:1 animated:YES];
+        }
+    }];
+}
 
 #pragma mark - Getters & Setters
 
@@ -474,6 +779,17 @@ enum ProfilOnglet {
 
     }
     return _followerTableViewController;
+}
+
+#pragma mark - UIAlertView Delegate
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    // Confirmation de la demande de unfollow
+    if(buttonIndex == 1)
+    {
+        [self sendToggleFollowRequest];
+    }
 }
 
 @end

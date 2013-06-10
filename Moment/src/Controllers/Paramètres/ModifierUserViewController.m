@@ -23,6 +23,8 @@ enum PhotoPickerDestination {
 @interface ModifierUserViewController () {
     @private
     enum PhotoPickerDestination imagePickerDestination;
+    
+    NSString *newPassword, *oldPassword;
 }
 
 @end
@@ -39,6 +41,7 @@ enum PhotoPickerDestination {
 @synthesize oldPasswordTextField = _oldPasswordTextField, nouveauPasswordTextField = _nouveauPasswordTextField;
 @synthesize adresseTextField = _adresseTextField;
 @synthesize backgroundDescriptionView = _backgroundDescriptionView, descriptionTextView = _descriptionTextView;
+
 
 - (id)initWithDefaults
 {
@@ -58,7 +61,8 @@ enum PhotoPickerDestination {
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    // Do any additional setup after loading the view from its nib.
+    // Google Analytics
+    self.trackedViewName = @"Vue Edition Profil";
     
     // iPhone 5
     CGRect frame = self.view.frame;
@@ -108,6 +112,23 @@ enum PhotoPickerDestination {
         self.secondPhoneTextField.text = user.secondPhone;
     if(user.descriptionString)
         self.descriptionTextView.text = user.descriptionString;
+    //NSLog(@"privacy = %@", user.privacy);
+    if(user.privacy != nil) {
+        enum UserPrivacy privacy = user.privacy.intValue;
+        switch (privacy) {
+            case UserPrivacyClosed:
+                self.privacyClosedButton.selected = YES;
+                break;
+                
+            case UserPrivacyOpen:
+                self.privacyPublicButton.selected = YES;
+                break;
+                
+            case UserPrivacyPrivate:
+                self.privacyFriendButton.selected = YES;
+                break;
+        }
+    }
 }
 
 - (void)didReceiveMemoryWarning
@@ -136,6 +157,11 @@ enum PhotoPickerDestination {
     [self setProfilePictureImage:nil];
     [self setBackgroundDescriptionView:nil];
     [self setDescriptionTextView:nil];
+    [self setPrivacyTitleLabels:nil];
+    [self setPrivacyDetailLabels:nil];
+    [self setPrivacyPublicButton:nil];
+    [self setPrivacyFriendButton:nil];
+    [self setPrivacyClosedButton:nil];
     [super viewDidUnload];
 }
 
@@ -146,8 +172,6 @@ enum PhotoPickerDestination {
     if(textField == self.prenomTextField)
         [self.nomTextField becomeFirstResponder];
     else if(textField == self.nomTextField)
-        [self.emailTextField becomeFirstResponder];
-    else if(textField == self.emailTextField)
         [self.phoneTextField becomeFirstResponder];
     else if(textField == self.phoneTextField)
         [self.adresseTextField becomeFirstResponder];
@@ -155,6 +179,8 @@ enum PhotoPickerDestination {
         [self.descriptionTextView becomeFirstResponder];
     else if(textField == self.secondEmailTextField)
         [self.secondPhoneTextField becomeFirstResponder];
+    else if(textField == self.secondPhoneTextField)
+        [self.oldPasswordTextField becomeFirstResponder];
     else if(textField == self.oldPasswordTextField)
         [self.nouveauPasswordTextField becomeFirstResponder];
     else
@@ -170,8 +196,21 @@ enum PhotoPickerDestination {
     // Si le textfield a déjà été ajouté, il n'est pas réajouté (NSSet)
     [self.modifications addObject:textField];
     
-    if( (textField == self.phoneTextField) || (textField == self.secondPhoneTextField) )
-        return ( (string.length == 0) || [[Config sharedInstance] isNumeric:string] || ([string isEqualToString:@"-"]) || ([string isEqualToString:@" "]) );
+    if( (textField == self.phoneTextField) || (textField == self.secondPhoneTextField) ) {
+        
+        BOOL result =  ( (string.length == 0) || [[Config sharedInstance] isNumeric:string] || ([string isEqualToString:@"-"]) || ([string isEqualToString:@" "]) || ([string isEqualToString:@"+"]) );
+        
+        // Si on a copié-collé un numéro
+        if(!result) {
+            NSCharacterSet *characterSet = [[NSCharacterSet characterSetWithCharactersInString:@"+- 0123456789"] invertedSet];
+            if([string rangeOfCharacterFromSet:characterSet].location == NSNotFound) {
+                // Contient que des caratères autorisés
+                result = YES;
+            }
+        }
+        
+        return result;
+    }
     return YES;
 }
 
@@ -215,7 +254,7 @@ enum PhotoPickerDestination {
     [actionSheet showInView:self.view];
 }
 
-- (void)clicValider
+- (IBAction)clicValider
 {
     // Cacher clavier
     [self.view endEditing:YES];
@@ -232,7 +271,7 @@ enum PhotoPickerDestination {
         // --------- Validation des données -------------
         
         NSString *phoneNumber = nil, *secondPhoneNumber = nil;
-        BOOL emailOK = NO, secondEmailOK = NO;
+        BOOL secondEmailOK = NO;
         BOOL prenomOK = NO, nomOK = NO;
         UITextField *invalideTextField = nil;
         
@@ -259,19 +298,7 @@ enum PhotoPickerDestination {
                 invalideTextField = self.nomTextField;
             }
         }
-        
-        // Si on a modifié l'email
-        if( !invalideTextField && [self.modifications containsObject:self.emailTextField])
-        {
-            // Vérification de la validité des données --> Ne peux pas être vide
-            if([[Config sharedInstance] isValidEmail:self.emailTextField.text]) {
-                emailOK = YES;
-            }
-            else {
-                invalideTextField = self.emailTextField;
-            }
-        }
-        
+                
         // Si on a modifier le numéro de téléphone
         if(!invalideTextField && [self.modifications containsObject:self.phoneTextField]) {
             
@@ -312,7 +339,17 @@ enum PhotoPickerDestination {
             }
         }
         
-        
+        // Si on a rentré un mot de passe, il faut que le nouveau et l'ancien soient remplis
+        if( !invalideTextField && ((self.nouveauPasswordTextField.text.length > 0) || (self.oldPasswordTextField.text.length > 0) )) {
+            if( !((self.nouveauPasswordTextField.text.length > 0) && (self.oldPasswordTextField.text.length > 0) )) {
+                invalideTextField = (self.oldPasswordTextField.text.length == 0) ? self.oldPasswordTextField : self.nouveauPasswordTextField;
+            }
+            else {
+                newPassword = self.nouveauPasswordTextField.text;
+                oldPassword = self.oldPasswordTextField.text;
+            }
+        }
+            
         // --------- Si les données sont valides ---------
         if(!invalideTextField)
         {
@@ -323,11 +360,6 @@ enum PhotoPickerDestination {
             }
             if(nomOK) {
                 [modifications setValue:self.nomTextField.text forKey:@"nom"];
-            }
-            if(emailOK) {
-                [modifications setValue:self.emailTextField.text forKey:@"email"];
-                // Update liste des mails
-                [[TextFieldAutocompletionManager sharedInstance] addEmailToFavoriteEmails:self.emailTextField.text];
             }
             if([self.modifications containsObject:self.adresseTextField]) {
                 [modifications setValue:self.adresseTextField.text forKey:@"adresse"];
@@ -349,10 +381,16 @@ enum PhotoPickerDestination {
             if(self.profilePictureImage) {
                 [modifications setValue:self.profilePictureImage forKey:@"photo"];
             }
-            // Password
-            // -> Manque vérification de l'ancien mot de passe
-            if([self.modifications containsObject:self.nouveauPasswordTextField]) {
-                [modifications setValue:self.nouveauPasswordTextField forKey:@"password"];
+            // Privacy
+            if([self.modifications containsObject:@"privacy"]) {
+                enum UserPrivacy privacy;
+                if(self.privacyFriendButton.isSelected)
+                    privacy = UserPrivacyPrivate;
+                else if(self.privacyPublicButton.isSelected)
+                    privacy = UserPrivacyOpen;
+                else
+                    privacy = UserPrivacyClosed;
+                [modifications setValue:@(privacy) forKey:@"privacy"];
             }
             
             // Manque Cover
@@ -368,27 +406,89 @@ enum PhotoPickerDestination {
                 
                 if(success)
                 {
-                    [[MTStatusBarOverlay sharedInstance]
-                     postImmediateFinishMessage:NSLocalizedString(@"ModifierUserViewController_StatusBarMessage_EditSuccess", nil)
-                     duration:1
-                     animated:YES];
                     
-                    // Update UI
-                    if(phoneNumber)
-                        self.phoneTextField.text = phoneNumber;
-                    if(secondPhoneNumber)
-                        self.secondEmailTextField.text = secondPhoneNumber;
+                    // Changement du Mot de passe
+                    if(newPassword && oldPassword) {
+                        
+                        [UserClass changeCurrentUserPassword:newPassword oldPassword:oldPassword withEnded:^(NSInteger status) {
+                            
+                            switch (status) {
+                                    
+                                // Changement effectué
+                                case 200: {
+                                    
+                                    // Success
+                                    [[MTStatusBarOverlay sharedInstance]
+                                     postImmediateFinishMessage:NSLocalizedString(@"ModifierUserViewController_StatusBarMessage_EditSuccess", nil)
+                                     duration:1
+                                     animated:YES];
+                                } break;
+                                    
+                                // Ancien Mot de passe incorrect
+                                case 400: {
+                                    [[[UIAlertView alloc]
+                                      initWithTitle:NSLocalizedString(@"ModifierUserViewController_WrongPassword_Title", nil)
+                                      message:NSLocalizedString(@"ModifierUserViewController_WrongPassword_Message", nil)
+                                      delegate:nil
+                                      cancelButtonTitle:NSLocalizedString(@"AlertView_Button_OK", nil)
+                                      otherButtonTitles:nil]
+                                     show];
+                                }break;
+                                    
+                                default:
+                                    break;
+                            }
+                            
+                            // Update UI
+                            if(phoneNumber)
+                                self.phoneTextField.text = phoneNumber;
+                            if(secondPhoneNumber)
+                                self.secondEmailTextField.text = secondPhoneNumber;
+                            
+                            // Save Cover image
+                            [[Config sharedInstance] saveNewCoverImage:self.coverImage];
+                            
+                            // Update Profile
+                            [UserCoreData currentUserNeedsUpdate];
+                            
+                            // Reinit Modifs
+                            self.coverImage = nil;
+                            self.profilePictureImage = nil;
+                            [self.modifications removeAllObjects];
+                            
+                            // Réinitialiser Mot de passe
+                            newPassword = nil;
+                            oldPassword = nil;
+                            self.nouveauPasswordTextField.text = @"";
+                            self.oldPasswordTextField.text = @"";
+                            
+                        }];
+                        
+                    }
+                    else {
+                        [[MTStatusBarOverlay sharedInstance]
+                         postImmediateFinishMessage:NSLocalizedString(@"ModifierUserViewController_StatusBarMessage_EditSuccess", nil)
+                         duration:1
+                         animated:YES];
+                        
+                        // Update UI
+                        if(phoneNumber)
+                            self.phoneTextField.text = phoneNumber;
+                        if(secondPhoneNumber)
+                            self.secondEmailTextField.text = secondPhoneNumber;
+                        
+                        // Save Cover image
+                        [[Config sharedInstance] saveNewCoverImage:self.coverImage];
+                        
+                        // Update Profile
+                        [UserCoreData currentUserNeedsUpdate];
+                        
+                        // Reinit Modifs
+                        self.coverImage = nil;
+                        self.profilePictureImage = nil;
+                        [self.modifications removeAllObjects];
+                    }
                     
-                    // Save Cover image
-                    [[Config sharedInstance] saveNewCoverImage:self.coverImage];
-                    
-                    // Update Profile
-                    [UserCoreData currentUserNeedsUpdate];
-                    
-                    // Reinit Modifs
-                    self.coverImage = nil;
-                    self.profilePictureImage = nil;
-                    [self.modifications removeAllObjects];
                 }
                 else
                 {
@@ -420,25 +520,68 @@ enum PhotoPickerDestination {
     }
 }
 
-
-#pragma mark - UIImagePickerController Delegate
-
--(void) imagePickerController:(UIImagePickerController *)UIPicker didFinishPickingMediaWithInfo:(NSDictionary *) info
-{
-    UIImage *image = [[Config sharedInstance] imageWithMaxSize:info[@"UIImagePickerControllerOriginalImage"] maxSize:600];
+- (IBAction)clicFacebookBadge {
+    //NSLog(@"GET PERMISSIONS");
+    //[[FacebookManager sharedInstance] getPublishPermissions];
     
-    switch (imagePickerDestination) {
-        case PhotoPickerDestinationProfilPicture:
-            self.profilePictureImage = [[Config sharedInstance] imageWithMaxSize:image maxSize:600];
-            self.medallion.image = image;
-            break;
-            
-        case PhotoPickerDestinationCover:
-            self.coverImage = image;
-            break;
+    [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"CreationHomeViewController_importFBAlertView_Title", nil)
+                                message:NSLocalizedString(@"CreationHomeViewController_importFBAlertView_Message", nil)
+                               delegate:self
+                      cancelButtonTitle:NSLocalizedString(@"AlertView_Button_NO", nil)
+                      otherButtonTitles:NSLocalizedString(@"AlertView_Button_YES", nil), nil]
+     show];
+}
+
+- (IBAction)clicPrivacyButton:(UIButton *)sender {
+    
+    if(sender == self.privacyPublicButton) {
+        [self.privacyPublicButton setSelected:YES];
+        [self.privacyFriendButton setSelected:NO];
+        [self.privacyClosedButton setSelected:NO];
+    }
+    else if(sender == self.privacyClosedButton) {
+        [self.privacyPublicButton setSelected:NO];
+        [self.privacyFriendButton setSelected:NO];
+        [self.privacyClosedButton setSelected:YES];
+    }
+    else if(sender == self.privacyFriendButton) {
+        [self.privacyPublicButton setSelected:NO];
+        [self.privacyFriendButton setSelected:YES];
+        [self.privacyClosedButton setSelected:NO];
+    }
+
+    if(![self.modifications containsObject:@"privacy"]) {
+        [self.modifications addObject:@"privacy"];
+    }
+}
+
+#pragma mark - AlertView Delegate
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    // --- Import FB Alert View ---
+    
+    // Oui -> Importer
+    if(buttonIndex == 1) {
+        
+        /*
+        // Importation
+        ImporterFBViewController *fbViewController = [[ImporterFBViewController alloc] initWithTimeLine:nil];
+        
+        // Remove this view controller
+        // -> On pousse le ImportFB View controller et le bouton BACK retournera à la TimeLine
+        NSMutableArray *viewControllers = self.navigationController.viewControllers.mutableCopy;
+        //[viewControllers removeLastObject];
+        //[viewControllers removeLastObject];
+        [viewControllers addObject:fbViewController];
+        
+        [self.navigationController setViewControllers:viewControllers animated:NO];
+         */
+        
+        // Update Facebook ID
+        [[FacebookManager sharedInstance] updateCurrentUserFacebookIdOnServer:nil];
     }
     
-    [[VersionControl sharedInstance] dismissModalViewControllerFromRoot:UIPicker animated:YES];
 }
 
 #pragma mark - UIActionSheet
@@ -462,40 +605,24 @@ enum PhotoPickerDestination {
     [[VersionControl sharedInstance] presentModalViewController:picker fromRoot:self animated:YES];
 }
 
-#pragma mark - Actions
+#pragma mark - UIImagePickerController Delegate
 
-- (IBAction)clicFacebookBadge {
-    //NSLog(@"GET PERMISSIONS");
-    //[[FacebookManager sharedInstance] getPublishPermissions];
-    
-    [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"CreationHomeViewController_importFBAlertView_Title", nil)
-                                message:NSLocalizedString(@"CreationHomeViewController_importFBAlertView_Message", nil)
-                               delegate:self
-                      cancelButtonTitle:NSLocalizedString(@"AlertView_Button_NO", nil)
-                      otherButtonTitles:NSLocalizedString(@"AlertView_Button_YES", nil), nil]
-     show];
-}
-
-#pragma mark - AlertView Delegate
-
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+-(void) imagePickerController:(UIImagePickerController *)UIPicker didFinishPickingMediaWithInfo:(NSDictionary *) info
 {
-    // --- Import FB Alert View ---
+    UIImage *image = [[Config sharedInstance] imageWithMaxSize:info[@"UIImagePickerControllerOriginalImage"] maxSize:600];
     
-    // Oui -> Importer
-    if(buttonIndex == 1) {
-        ImporterFBViewController *fbViewController = [[ImporterFBViewController alloc] initWithTimeLine:nil];
-        
-        // Remove this view controller
-        // -> On pousse le ImportFB View controller et le bouton BACK retournera à la TimeLine
-        NSMutableArray *viewControllers = self.navigationController.viewControllers.mutableCopy;
-        //[viewControllers removeLastObject];
-        //[viewControllers removeLastObject];
-        [viewControllers addObject:fbViewController];
-        
-        [self.navigationController setViewControllers:viewControllers animated:NO];
+    switch (imagePickerDestination) {
+        case PhotoPickerDestinationProfilPicture:
+            self.profilePictureImage = [[Config sharedInstance] imageWithMaxSize:image maxSize:600];
+            self.medallion.image = image;
+            break;
+            
+        case PhotoPickerDestinationCover:
+            self.coverImage = image;
+            break;
     }
     
+    [[VersionControl sharedInstance] dismissModalViewControllerFromRoot:UIPicker animated:YES];
 }
 
 @end

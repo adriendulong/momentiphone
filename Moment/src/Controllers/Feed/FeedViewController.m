@@ -19,6 +19,8 @@
 #import "FeedFollowCell.h"
 #import "FeedNewMomentCell.h"
 
+#import "GAI.h"
+
 #define TABLEVIEW_SCROLLVIEW_TAG_IDENTIFER -1
 
 @interface FeedViewController () {
@@ -95,8 +97,9 @@
          withSaveBlock:(void (^) (NSArray *feeds))saveBlock
              withEnded:(void (^) (void))endBlock
 {
-    [Feed getFeedsAtPage:nextPage withEnded:^(NSDictionary *feeds) {
+    [Feed getFeedsAtPage:page withEnded:^(NSDictionary *feeds) {
         
+        currentPage = page;
         nextPage = [feeds[@"next_page"] intValue];
         
         if(saveBlock)
@@ -147,6 +150,9 @@
 
 - (void)dropViewDidBeginRefreshing:(ODRefreshControl *)refreshControl
 {
+    // Google Analytics
+    [FeedViewController sendGoogleAnalyticsEvent:@"Swipe" label:@"Rechargement" value:nil];
+    
     [self reloadDataWithEnded:^{
         [refreshControl endRefreshing];
     }];
@@ -330,16 +336,36 @@
     switch (feed.type) {
             
         case FeedTypeChat:
+            
+            // Google Analytics
+            [FeedViewController sendGoogleAnalyticsEvent:@"Clic Motif" label:@"Motif - Chat" value:nil];
+            
             [self showTchatView:feed.moment];
             break;
     
         case FeedTypePhoto:
+            
+            // Google Analytics
+            [FeedViewController sendGoogleAnalyticsEvent:@"Clic Motif" label:@"Motif - Photo" value:nil];
+            
             [self showPhotoView:feed.moment];
             break;
             
         case FeedTypeGoing:
+            
+            // Google Analytics
+            [FeedViewController sendGoogleAnalyticsEvent:@"Clic Motif" label:@"Motif - Va à un Moment" value:nil];
+            
         case FeedTypeInvited:
+            
+            // Google Analytics
+            [FeedViewController sendGoogleAnalyticsEvent:@"Clic Motif" label:@"Motif - Invitation" value:nil];
+            
         case FeedTypeNewEvent:
+            
+            // Google Analytics
+            [FeedViewController sendGoogleAnalyticsEvent:@"Clic Motif" label:@"Motif - Nouveau Moment" value:nil];
+            
             [self showInfoMomentView:feed.moment];
             break;
             
@@ -404,6 +430,20 @@
     }
     
     return texte;
+}
+
+#pragma mark - Google Analytics
+
++ (void)sendGoogleAnalyticsView {
+    [[[GAI sharedInstance] defaultTracker] sendView:@"Vue Feed"];
+}
+
++ (void)sendGoogleAnalyticsEvent:(NSString*)action label:(NSString*)label value:(NSNumber*)value {
+    [[[GAI sharedInstance] defaultTracker]
+     sendEventWithCategory:@"Feed"
+     withAction:action
+     withLabel:label
+     withValue:value];
 }
 
 #pragma mark - UIScrollView Delegate

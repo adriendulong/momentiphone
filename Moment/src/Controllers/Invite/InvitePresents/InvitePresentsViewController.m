@@ -53,7 +53,7 @@
     // ------ Navigation Bar init
     [CustomNavigationController setBackButtonWithViewController:self];
     
-    if( (self.moment.state.intValue == UserStateAdmin) || (self.moment.state.intValue == UserStateOwner) )
+    if((self.moment.state.intValue == UserStateAdmin) || ([self.moment.owner.userId isEqualToNumber:[UserCoreData getCurrentUser].userId]))
     {
         // Remove space at right
         UIBarButtonItem *positiveSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:nil action:nil];
@@ -91,7 +91,7 @@
             [comingList addObjectsFromArray:self.invites[@"admin"]];
             
             // Authorisation
-            BOOL authotisation = ( (self.moment.state.intValue == UserStateOwner)||(self.moment.state.intValue == UserStateAdmin) );
+            BOOL authotisation = ((self.moment.state.intValue == UserStateAdmin)||([self.moment.owner.userId isEqualToNumber:[UserCoreData getCurrentUser].userId]));
             
             // Création ViewControllers
             self.comingTableViewController = [[InvitePresentsTableViewController alloc]

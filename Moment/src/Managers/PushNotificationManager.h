@@ -12,6 +12,7 @@
 
 // AlertViews
 @property (nonatomic, strong) UIAlertView *chatAlertView;
+@property (nonatomic, strong) UIAlertView *photoAlertView;
 @property (nonatomic) NSInteger nbNotifcations;
 
 // Sigleton

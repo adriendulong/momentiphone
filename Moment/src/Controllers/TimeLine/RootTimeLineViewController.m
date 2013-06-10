@@ -9,6 +9,7 @@
 #import "RootTimeLineViewController.h"
 #import "MomentClass+Server.h"
 #import "VoletViewController.h"
+#import "HomeViewController.h"
 
 @interface RootTimeLineViewController () {
     @private
@@ -36,6 +37,10 @@ withNavigationController:(UINavigationController*)navController
 {
     self = [super initWithNibName:@"RootTimeLineViewController" bundle:nil];
     if(self) {
+        
+        // Cacher Splash Screnn
+        [HomeViewController hideSplashScreen];
+        
         self.user = user;
         self.navController = navController;
         self.size = size;
@@ -79,7 +84,8 @@ withNavigationController:(UINavigationController*)navController
     [self showContentViewController:self.privateTimeLine];
     // Préload public timeLine
     [self.publicFeedList.view setNeedsDisplay];
-    self.publicFeedList.view.alpha = 0;    
+    [self.publicFeedList.view setNeedsLayout];
+    self.publicFeedList.view.alpha = 0;
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -106,6 +112,16 @@ withNavigationController:(UINavigationController*)navController
 
 - (void)showContentViewController:(UIViewController*)viewController
 {
+    // Google Analytics
+    if(self.isShowingPrivateTimeLine) {
+        [TimeLineViewController sendGoogleAnalyticsView];
+        [AppDelegate updateActualViewController:self.privateTimeLine];
+    }
+    else {
+        [FeedViewController sendGoogleAnalyticsView];
+        [AppDelegate updateActualViewController:self.publicFeedList];
+    }
+    
     // Add new TimeLine
     viewController.view.alpha = 0;
     [self.view addSubview:viewController.view];
@@ -143,7 +159,11 @@ withNavigationController:(UINavigationController*)navController
 
 - (IBAction)clicChangeTimeLine {    
     
+    // Show Feed
     if(self.isShowingPrivateTimeLine) {
+        
+        // Google Analytics
+        [self sendGoogleAnalyticsEvent:@"Timeline" action:@"Clic Bouton" label:@"Clic Afficher Feed" value:nil];
         
         // Hide Plus Button
         [UIView animateWithDuration:0.3 animations:^{
@@ -161,7 +181,11 @@ withNavigationController:(UINavigationController*)navController
         [self showContentViewController:self.publicFeedList];
         
     }
+    // Show Timeline
     else {
+        
+        // Google Analytics
+        [self sendGoogleAnalyticsEvent:@"Feed" action:@"Clic Bouton" label:@"Clic Afficher Timeline" value:nil];
         
         // Show Plus Button
         [UIView animateWithDuration:0.3 animations:^{
@@ -181,8 +205,25 @@ withNavigationController:(UINavigationController*)navController
 
 - (void)showAddEvent
 {
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Timeline" action:@"Clic Bouton" label:@"Clic Ajout Moment" value:nil];
+    
     CreationHomeViewController *creationViewController = [[CreationHomeViewController alloc] initWithUser:self.user withTimeLine:self.privateTimeLine];
     [self.navController pushViewController:creationViewController animated:YES];
+}
+
+#pragma mark - Google Analytics
+
+- (void)sendGoogleAnalyticsEvent:(NSString*)category
+                          action:(NSString*)action
+                           label:(NSString*)label
+                           value:(NSNumber*)value
+{
+    [[[GAI sharedInstance] defaultTracker]
+     sendEventWithCategory:category
+     withAction:action
+     withLabel:label
+     withValue:value];
 }
 
 #pragma mark - Getters and Setters

@@ -35,13 +35,11 @@
         self.feed = feed;
         self.delegate= delegate;
         
-        // Small or Large View
-        NSInteger taille = [self.feed.messages count];
-        NSString *message = nil;
-        if(taille > 0)
-            message = ((ChatMessage*)self.feed.messages[0]).message;
-        else
-            message = @" ... ";
+        // Limitation du nombre de caractères
+        NSInteger nbMaxCarac = 100;
+        NSInteger lenght = self.feed.message.message.length;
+        NSString *message = (lenght <= nbMaxCarac) ? self.feed.message.message : [NSString stringWithFormat:@"%@ ...", [self.feed.message.message substringWithRange:NSMakeRange(0, nbMaxCarac)]];
+        
         BOOL isLargeView = feed.shouldUseLargeView;
         NSString *xib = isLargeView ? @"FeedChatCell_Large" : @"FeedChatCell_Small";
         
@@ -60,7 +58,7 @@
         
         if(isLargeView) {
             
-            if(taille>1) {
+            if(self.feed.nbChats>1) {
                 // Info
                 UIFont *font = [[Config sharedInstance] defaultFontWithSize:12];
                 self.infoLabel.font = font;
@@ -68,12 +66,12 @@
                 [self.infoLabel sizeToFit];
                 
                 self.nbMessagesLabel.font = font;
-                self.nbMessagesLabel.text = [NSString stringWithFormat:NSLocalizedString(@"FeedViewController_lire_messages_label2", nil), taille];
+                self.nbMessagesLabel.text = [NSString stringWithFormat:NSLocalizedString(@"FeedViewController_lire_messages_label2", nil), (self.feed.nbChats - 1)];
                 [self.nbMessagesLabel sizeToFit];
                 
                 CGRect frame = self.nbMessagesLabel.frame;
                 frame.origin.x = self.infoLabel.frame.origin.x + self.infoLabel.frame.size.width + 5;
-                frame.size.width = 320 - (320 - self.nbMessagesLabel.frame.origin.x - self.nbMessagesLabel.frame.size.width) - frame.origin.x - frame.size.width;
+                frame.size.width = 320 - frame.origin.x - 5;
                 self.nbMessagesLabel.frame = frame;
             }
             else {

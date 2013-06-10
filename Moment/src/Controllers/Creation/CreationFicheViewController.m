@@ -23,6 +23,8 @@
     @private
     BOOL isEdition;
     BOOL adresseTextFieldShouldClear;
+    
+    UIImage *modifiedCover;
 }
 
 @end
@@ -573,6 +575,9 @@
 {
     [super viewDidAppear:animated];
     [AppDelegate updateActualViewController:self];
+    
+    // Google Analytics
+    [[[GAI sharedInstance] defaultTracker] sendView:@"Création Event 1"];
 }
 
 #pragma mark - Util
@@ -606,6 +611,9 @@
 
 - (void)clicNext
 {
+    // Google Analytics
+    [[[GAI sharedInstance] defaultTracker] sendView:@"Création Event 2"];
+    
     // Cacher clavier
     [self.view endEditing:YES];
     
@@ -617,6 +625,9 @@
 
 - (void)clicPrev
 {
+    // Google Analytics
+    [[[GAI sharedInstance] defaultTracker] sendView:@"Création Event 1"];
+    
     // Cacher clavier
     [self.view endEditing:YES];
     
@@ -671,11 +682,15 @@
 #endif
         if(self.moment && self.moment.facebookId)
             attributes[@"facebbokId"] = self.moment.facebookId;
-        if(_coverImage)
-            attributes[@"dataImage"] = _coverImage;
+        if(modifiedCover)
+            attributes[@"dataImage"] = modifiedCover;
         
         // Mettre à jour Moment Local
         [self.moment setupWithAttributes:attributes];
+        // Si nouvelle image, supprimer url pour mettre à jour
+        if(modifiedCover) {
+            self.moment.imageString = nil;
+        }
         
         MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
         hud.labelText = NSLocalizedString(@"MBProgressHUD_Loading", nil);
@@ -978,6 +993,7 @@
     UIImage *image = [[Config sharedInstance] imageWithMaxSize:info[@"UIImagePickerControllerOriginalImage"] maxSize:600];
     
     self.coverImage = image;
+    modifiedCover = image;
     self.coverView.contentMode = UIViewContentModeScaleAspectFill;
     self.coverView.image = image;
     

@@ -11,7 +11,7 @@
 @protocol InviteAddViewControllerDelegate <NSObject>
 
 @property (nonatomic, weak) IBOutlet UITextField *searchTextField;
-- (void)addNewSelectedFriend:(UserClass*)friend;
+- (void)addNewSelectedFriend:(UserClass*)friend notif:(BOOL)notif;
 - (void)removeSelectedFriend:(UserClass*)friend;
 - (BOOL)selectedFriendsEmpty;
 
@@ -30,6 +30,7 @@
 @property (nonatomic, strong) UserClass *owner;
 @property (nonatomic, strong) MomentClass *moment;
 @property (nonatomic, strong) NSMutableArray *selectedFriends;
+@property (nonatomic, strong) NSMutableArray *notifSelectedFriends;
 @property (nonatomic, weak) IBOutlet UIScrollView *scrollView;
 @property (nonatomic) NSInteger selectedOnglet;
 
@@ -50,11 +51,13 @@
 @property (nonatomic, weak) IBOutlet CustomLabel *validerLabel;
 @property (nonatomic, weak) IBOutlet UILabel *nbInvitesLabel;
 @property (nonatomic, weak) IBOutlet UILabel *phraseLabel;
-@property (nonatomic, weak) IBOutlet CustomLabel *momentLabel;
 @property (nonatomic, strong) TTTAttributedLabel *ttValiderLabel;
-@property (nonatomic, strong) TTTAttributedLabel *ttMomentLabel;
 
 - (id)initWithOwner:(UserClass*)owner withMoment:(MomentClass*)moment;
 - (IBAction)clicValider;
+
+- (IBAction)clicNavigationBarButtonFavoris;
+- (IBAction)clicNavigationBarButtonFacebook;
+- (IBAction)clicNavigationBarButtonContact;
 
 @end

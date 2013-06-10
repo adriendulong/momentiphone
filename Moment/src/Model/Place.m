@@ -72,7 +72,7 @@ static NSString *baseURL = @"https://maps.googleapis.com/maps/api/place/autocomp
             
             // Status
             NSString *status = JSON[@"status"];
-            
+                        
             // Success
             if([status isEqualToString:@"OK"]) {
                 

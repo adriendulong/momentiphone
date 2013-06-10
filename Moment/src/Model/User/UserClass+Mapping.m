@@ -51,6 +51,13 @@
     if(attributes[@"description"])
         newAttributes[@"description"] = attributes[@"description"];
     
+    if(attributes[@"privacy"] != nil)
+        newAttributes[@"privacy"] = attributes[@"privacy"];
+    if(attributes[@"request_follower"])
+        newAttributes[@"request_follower"] = attributes[@"request_follower"];
+    if(attributes[@"request_follow_me"])
+        newAttributes[@"request_follow_me"] = attributes[@"request_follow_me"];
+    
     //NSLog(@"Mapped : %@", newAttributes);
     
     return newAttributes;
@@ -81,6 +88,8 @@
         newAttributes[@"secondEmail"] = attributes[@"secondEmail"];
     if(attributes[@"description"])
         newAttributes[@"description"] = attributes[@"description"];
+    if(attributes[@"privacy"] != nil)
+        newAttributes[@"privacy"] = attributes[@"privacy"];
         
     return newAttributes;
 }
@@ -105,8 +114,6 @@
         newAttributes[@"lastname"] = self.nom;
     if(self.prenom)
         newAttributes[@"firstname"] = self.prenom;
-    
-    // Optionnels
     if(self.imageString)
         newAttributes[@"profile_picture_url"] = self.imageString;
     if(self.numeroMobile)
@@ -119,7 +126,38 @@
         newAttributes[@"secondEmail"] = self.secondEmail;
     if(self.descriptionString)
         newAttributes[@"description"] = self.descriptionString;
-    
+    if(self.privacy != nil)
+        newAttributes[@"privacy"] = self.privacy;
+
+    return newAttributes;
+}
+
+- (NSDictionary*) mappingToLocal
+{
+    NSMutableDictionary *newAttributes = [[NSMutableDictionary alloc] init];
+    if(self.userId)
+        newAttributes[@"userId"] = self.userId;
+    if(self.email)
+        newAttributes[@"email"] = self.email;
+    if(self.nom)
+        newAttributes[@"nom"] = self.nom;
+    if(self.prenom)
+        newAttributes[@"prenom"] = self.prenom;
+    if(self.imageString)
+        newAttributes[@"imageString"] = self.imageString;
+    if(self.numeroMobile)
+        newAttributes[@"numeroMobile"] = self.numeroMobile;
+    if(self.secondPhone)
+        newAttributes[@"secondPhone"] = self.secondPhone;
+    if(self.facebookId)
+        newAttributes[@"facebookId"] = self.facebookId;
+    if(self.secondEmail)
+        newAttributes[@"secondEmail"] = self.secondEmail;
+    if(self.descriptionString)
+        newAttributes[@"description"] = self.descriptionString;
+    if(self.privacy != nil)
+        newAttributes[@"privacy"] = self.privacy;
+
     return newAttributes;
 }
 

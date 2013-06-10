@@ -11,20 +11,28 @@
 #import "AFHTTPClient.h"
 #import "Photos.h"
 #import "UserCoreData+Model.h"
+#import "FacebookTokenCachingStrategy.h"
 
 enum FacebookPermissionType {
     FacebookPermissionReadType = 1,
     FacebookPermissionPublishType = 2
     };
 
+// Facebook connecté
+#define kFacebookConnected @"FacebookConnected"
+
 @interface FacebookManager : NSObject
 
 @property (nonatomic, strong) AFHTTPClient *httpClient;
 @property (nonatomic, strong) NSDateFormatter *dateFormatter;
 @property (nonatomic, strong) NSArray *defaultReadPermissions, *defaultPublishPermissions;
+@property (nonatomic, strong) FacebookTokenCachingStrategy *tokenCachingStrategy;
 
 // Singleton
 + (FacebookManager*)sharedInstance;
+
+// Facebook Connected : Compte facebook associé
+- (BOOL)facebookIsConnected;
 
 // Login / Logout
 - (void)loginReadPermissionsWithEnded:( void (^) (BOOL success) )block;
@@ -40,6 +48,7 @@ enum FacebookPermissionType {
 // FB ID
 - (void)getCurrentUserInformationsWithEnded:(void (^) (UserClass* user))block;
 - (void)getCurrentUserFacebookIdWithEnded:(void (^) (NSString *fbId))block;
+- (void)updateCurrentUserFacebookIdOnServer:(void (^) (BOOL success))block;
 - (void)getUserInformationsWithId:(NSString*)facebookId withEnded:(void (^) (UserClass* user))block;
 
 // Friends
@@ -53,6 +62,7 @@ enum FacebookPermissionType {
 - (void)updateRSVP:(enum UserState)rsvp
             moment:(MomentClass*)moment
          withEnded:(void (^) (BOOL success))block;
+- (void)getRSVP:(MomentClass*)moment withEnded:(void (^) (enum UserState rsvp))block;
 
 // Publish
 - (void)getPublishPermissions;

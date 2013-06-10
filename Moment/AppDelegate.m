@@ -27,7 +27,7 @@
 @synthesize HUD = _HUD;
 @synthesize session = _session;
 @synthesize actualViewController = _actualViewController;
-
+@synthesize tracker = _tracker;
 
 #pragma mark - Global View
 
@@ -90,9 +90,7 @@
     [TestFlight takeOff:@"85ba03e5-22dc-45c5-9810-be2274ed75d1"];
     // ------------------------------------------
     
-    // ---------------- Initialisation -----------------
-    [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationFade];
-    
+    // ---------------- Initialisation -----------------    
     HomeViewController *homeViewController = [[HomeViewController alloc] initWithXib];
     CustomNavigationController *navigationController = [[CustomNavigationController alloc] initWithRootViewController:homeViewController];
     [navigationController.navigationBar setHidden:YES];
@@ -180,6 +178,31 @@
     // Perform check for new version of your app
     //[[Harpy sharedInstance] checkVersion];
     
+    // --------------- Google Analytics ------------------
+    //         ----> Initialisation du Tracker <----
+    // ---------------------------------------------------
+    // Optional: automatically send uncaught exceptions to Google Analytics.
+    [GAI sharedInstance].trackUncaughtExceptions = YES;
+    // Optional: set Google Analytics dispatch interval to e.g. 20 seconds.
+    //[GAI sharedInstance].dispatchInterval = 20; // Default = 2 min
+    // Optional: set debug to YES for extra debugging information.
+    //[GAI sharedInstance].debug = YES;
+    // Create tracker instance.
+    self.tracker = [[GAI sharedInstance] trackerWithTrackingId:@"UA-36147731-1"];
+    // Si on reste plus d'1 min inactif, les évenements sont envoyés sur une nouvelle session
+    [self.tracker setSessionTimeout:60];
+    
+    // -------------------- Suppression du CoreData ----------------------
+    //    ----> Vérification que la suppression s'est bien passée <----
+    // -------------------------------------------------------------------
+    /*
+    if([[NSUserDefaults standardUserDefaults] boolForKey:kMomentsDeleteTry]) {
+        
+    }
+    if([[NSUserDefaults standardUserDefaults] boolForKey:kMomentsDeleteFail]) {
+        
+    }
+    */
         
     return YES;
 }
@@ -188,7 +211,6 @@
 {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
     // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
-    
 }
 
 - (void)applicationDidEnterBackground:(UIApplication *)application
@@ -196,13 +218,26 @@
     // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later. 
     // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
     
-    [[Config sharedInstance] saveContext];
-    
+    // Supprimer Moments inutiles
+    [MomentCoreData deleteMomentsWhileEnteringBackground];
+    //[[Config sharedInstance] saveContext];
 }
 
 - (void)applicationWillEnterForeground:(UIApplication *)application
 {
     // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
+    
+    // --------
+    // Mettre à jour TimeLine
+    if([self.actualViewController isKindOfClass:[TimeLineViewController class]]) {
+        TimeLineViewController *timeline = (TimeLineViewController*)self.actualViewController;
+        [timeline reloadData];
+    }
+    // Mettre à jour Feed
+    else if([self.actualViewController isKindOfClass:[FeedViewController class]]) {
+        FeedViewController *feed = (FeedViewController*)self.actualViewController;
+        [feed reloadData];
+    }
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application
@@ -234,10 +269,13 @@
 - (void)applicationWillTerminate:(UIApplication *)application
 {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
-    [[Config sharedInstance] saveContext];
+    
+    // Supprimer Moments inutiles
+    [MomentCoreData deleteMomentsWhileEnteringBackground];
+    //[[Config sharedInstance] saveContext];
+    
     // if the app is going away, we close the session object
     [FBSession.activeSession close];
-    
 }
 
 - (void)application:(UIApplication *)application didChangeStatusBarFrame:(CGRect)oldStatusBarFrame

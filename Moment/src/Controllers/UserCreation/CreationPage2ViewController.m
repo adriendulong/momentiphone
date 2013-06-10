@@ -45,7 +45,8 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    // Do any additional setup after loading the view from its nib.
+    // Google Analytics
+    self.trackedViewName = @"Vue Inscription tel";
     
     //mettre le fond
     self.view.backgroundColor = [[UIColor alloc] initWithPatternImage:[UIImage imageNamed:@"login-bg.jpg"]];
@@ -118,7 +119,7 @@
         
         // Si valide -> Activer bouton
         BOOL enable = (newString.length == 0 ||
-                                   [[Config sharedInstance] isValidPhoneNumber:newString]);
+                                   [[Config sharedInstance] isMobilePhoneNumber:newString forceValidation:YES]);
         self.sendButton.enabled = enable;
         self.boutonValider.enabled = enable;
     }

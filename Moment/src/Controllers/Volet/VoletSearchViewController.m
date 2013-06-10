@@ -248,10 +248,15 @@
     label.backgroundColor = [UIColor clearColor];
     label.font = [[Config sharedInstance] defaultFontWithSize:14];
     label.textColor = [Config sharedInstance].textColor;
-    [label sizeToFit];
-    frame = label.frame;
+    label.numberOfLines = 0;
+    label.contentMode = UIViewContentModeCenter;
+    label.baselineAdjustment = UIBaselineAdjustmentAlignCenters;
+    label.textAlignment = NSTextAlignmentCenter;
+    frame = cell.frame;
+    frame.size.height -= 180;
+    frame.size.width -= 30;
+    frame.origin.y = 0;
     frame.origin.x = (cell.frame.size.width - frame.size.width)/2.0;
-    frame.origin.y = (cell.frame.size.height - frame.size.height)/4.0;
     label.frame = frame;
     [cell addSubview:label];
     

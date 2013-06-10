@@ -27,6 +27,9 @@
 #import "DEFacebookComposeViewController.h"
 #import <Twitter/Twitter.h>
 #import <Social/Social.h>
+#import "FacebookManager.h"
+#import "MomentClass+Server.h"
+#import "UserClass+Server.h"
 
 // Font Sizes
 enum InfoMomentFontSize {
@@ -38,8 +41,9 @@ enum InfoMomentFontSize {
 @implementation InfoMomentViewController {
     @private
     BOOL firstLoad;
+    UIButton *seeMoreButton;
+    BOOL shouldShowFullDescription;
 }
-
 
 static CGFloat DescriptionBoxHeightMax = 100;
 
@@ -81,6 +85,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
 
 @synthesize cagnotteView = _cagnotteView;
 
+
 #pragma mark - Init
 
 - (id)initWithMoment:(MomentClass*)moment withRootViewController:(RootOngletsViewController*)rootViewController {
@@ -97,6 +102,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
         
         // First Load constance
         firstLoad = YES;
+        shouldShowFullDescription = NO;
     }
     return self;
 }
@@ -359,6 +365,8 @@ static CGFloat DescriptionBoxHeightMax = 100;
 
 - (void) initTopImageView
 {
+    self.user = [UserCoreData getCurrentUser];
+    
     // Background image
     [self.momentImageView setImage:self.moment.uimage imageString:self.moment.imageString placeHolder:[UIImage imageNamed:@"cover_defaut"] withSaveBlock:^(UIImage *image) {
         [self.moment setUimage:image];
@@ -407,7 +415,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
     [self.avatarImage addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(clicProfile)]];
     
     // Owner Description
-    self.ownerNameLabel.text = [NSString stringWithFormat:@"par %@ %@", self.moment.owner.prenom?:@"", self.moment.owner.nom?:@""];
+    self.ownerNameLabel.text =  [NSString stringWithFormat:@"par %@ %@", self.moment.owner.prenom?:@"", self.moment.owner.nom?:@""];
     
 #ifdef HASHTAG_ENABLE
     if(self.moment.hashtag)
@@ -493,11 +501,18 @@ static CGFloat DescriptionBoxHeightMax = 100;
 
 - (void)initRsvpView
 {
+    self.user = [UserCoreData getCurrentUser];
+    
+    // User State
+    enum UserState state = self.moment.state.intValue;
+    if(state == 0) {
+        state = ([self.moment.owner.userId isEqualToNumber:self.user.userId]) ? UserStateOwner : UserStateNoInvited;
+    }
+    
     // Police
     self.rsvpLabel.font = [[Config sharedInstance] defaultFontWithSize:12];
     
     // Wordings
-    enum UserState state = self.moment.state.intValue;
     NSString *message = nil;
     
     switch (state) {
@@ -528,14 +543,21 @@ static CGFloat DescriptionBoxHeightMax = 100;
         // Unknown
         default:
             message = @"Serez-vous présent au moment ?";
+            self.rsvpMaybeButton.selected = NO;
+            self.rsvpYesButton.selected = NO;
+            self.rsvpNoButton.selected = NO;
             break;
     }
     
     // Text
     self.rsvpLabel.text = message;
     
+    static InfoMomentSeparateurView *separator = nil;
+    if(separator) {
+        [separator removeFromSuperview];
+    }
     // Sparateur
-    InfoMomentSeparateurView *separator = [[InfoMomentSeparateurView alloc] initAtPosition:(70 + 5)];
+    separator = [[InfoMomentSeparateurView alloc] initAtPosition:(70 + 5)];
     [self.rsvpView addSubview:separator];
     
     CGRect frame = self.rsvpView.frame;
@@ -544,7 +566,6 @@ static CGFloat DescriptionBoxHeightMax = 100;
     
     if(firstLoad)
         [self addSubviewAtAutomaticPosition:self.rsvpView];
-    
     
 }
 
@@ -560,34 +581,43 @@ static CGFloat DescriptionBoxHeightMax = 100;
         CGSize maxSize = CGSizeMake(self.descriptionLabel.frame.size.width, 9999);
         CGSize expectedSize = [self.moment.descriptionString sizeWithFont:font constrainedToSize:maxSize lineBreakMode:self.descriptionLabel.lineBreakMode];
         CGRect frame = self.descriptionLabel.frame;
-        //frame.origin.y = separator.frame.origin.y + separator.frame.size.height + 15;
         
-#warning Description incomplete
         // Limitation de la taille
-        if( expectedSize.height > DescriptionBoxHeightMax )
+        if( (expectedSize.height > DescriptionBoxHeightMax) && (!shouldShowFullDescription) )
         {
             self.descriptionBoxReelHeight = expectedSize.height;
-            frame.size.height = DescriptionBoxHeightMax + 10;
-            self.descriptionLabel.frame = frame;
-            
-            CGRect buttonFrame = CGRectMake((self.backgroundDescripionView.frame.size.width - 50)/2.0, DescriptionBoxHeightMax + 5, 50, 20);
-            
-            // On se place dans la vue global pour ajouter au dessus des éléments et capter le touché
-            buttonFrame = [self.foregroundView convertRect:buttonFrame fromView:self.backgroundDescripionView];
-            
-            UIButton *more = [[UIButton alloc] initWithFrame:buttonFrame];
-            [more setTitle:@"..." forState:UIControlStateNormal];
-            [more setTitleColor:[Config sharedInstance].textColor forState:UIControlStateNormal];
-            more.titleLabel.textAlignment = [[VersionControl sharedInstance] alignment:TextAlignmentCenter];
-            more.titleLabel.font = [[Config sharedInstance] defaultFontWithSize:InfoMomentFontSizeBig];
-            [more addTarget:self action:@selector(clicExpandDescriptionView) forControlEvents:UIControlEventTouchUpInside];
-            [self.foregroundView addSubview:more];
+            frame.size.height = DescriptionBoxHeightMax + 30;
+            self.descriptionLabel.frame = CGRectMake(frame.origin.x, 5, frame.size.width, frame.size.height);
             
             // Background TextField
             frame = self.backgroundDescripionView.frame;
             frame.origin.y = self.descriptionLabel.frame.origin.y - 10;
             frame.size.height = self.descriptionLabel.frame.size.height + 20;
             self.backgroundDescripionView.frame = frame;
+            
+            // Bouton Voir Plus
+            if(!seeMoreButton) {
+                seeMoreButton = [[UIButton alloc] init];
+                seeMoreButton.userInteractionEnabled = YES;
+                [seeMoreButton setTitle:@"Voir plus" forState:UIControlStateNormal];
+                [seeMoreButton setTitleColor:[Config sharedInstance].textColor forState:UIControlStateNormal];
+                seeMoreButton.titleLabel.textAlignment = [[VersionControl sharedInstance] alignment:TextAlignmentCenter];
+                seeMoreButton.titleLabel.font = [[Config sharedInstance] defaultFontWithSize:13];
+                [seeMoreButton addTarget:self action:@selector(clicExpandDescriptionView) forControlEvents:UIControlEventTouchUpInside];
+                [seeMoreButton sizeToFit];
+                CGSize size = CGSizeMake(self.descriptionLabel.frame.size.width - 10, seeMoreButton.frame.size.height + 5);
+                seeMoreButton.frame = CGRectMake(seeMoreButton.frame.origin.x, seeMoreButton.frame.origin.y, size.width, size.height);
+                
+                [self.foregroundView addSubview:seeMoreButton];
+            }
+            
+            // Afficher "Voir Plus"
+            seeMoreButton.hidden = NO;
+            
+            // Frame
+            CGPoint origin = (CGPoint){(320 - seeMoreButton.frame.size.width)/2.0,
+                                        self.rsvpView.frame.origin.y + self.rsvpView.frame.size.height + DescriptionBoxHeightMax + 25};
+            seeMoreButton.frame = CGRectMake(origin.x, origin.y, seeMoreButton.frame.size.width, seeMoreButton.frame.size.height);
         }
         else
         {
@@ -597,20 +627,33 @@ static CGFloat DescriptionBoxHeightMax = 100;
             
             // Background TextField
             frame = self.backgroundDescripionView.frame;
-            frame.origin.y = self.descriptionLabel.frame.origin.y - 10;
-            frame.size.height = self.descriptionLabel.frame.size.height + 20;
+            frame.origin.y = self.descriptionLabel.frame.origin.y - 15;
+            frame.size.height = self.descriptionLabel.frame.size.height + 30;
             self.backgroundDescripionView.frame = frame;
+            
+            // Cacher bouton "Voir plus"
+            if(seeMoreButton) {
+                seeMoreButton.hidden = YES;
+            }
         }
         
+        // Séparateur
+        static InfoMomentSeparateurView *separator = nil;
+        
         if(firstLoad) {
-            // Separateur
-            InfoMomentSeparateurView *separator = [[InfoMomentSeparateurView alloc] initAtPosition:(self.backgroundDescripionView.frame.origin.y + self.backgroundDescripionView.frame.size.height + 5)];
-            [self.descriptionView addSubview:separator];
             
             // View
             frame = self.descriptionView.frame;
-            frame.size.height = separator.frame.origin.y + separator.frame.size.height + 5;
+            frame.size.height =  self.backgroundDescripionView.frame.origin.y + self.backgroundDescripionView.frame.size.height + 10;
             self.descriptionView.frame = frame;
+            
+            if(separator) {
+                [separator removeFromSuperview];
+            }
+            
+            // Separateur
+            separator = [[InfoMomentSeparateurView alloc] initAtPosition:(self.descriptionView.frame.size.height-5)];
+            [self.descriptionView addSubview:separator];
             
             [self addSubviewAtAutomaticPosition:self.descriptionView];
         }
@@ -756,9 +799,15 @@ static CGFloat DescriptionBoxHeightMax = 100;
             self.nomLieuLabel.alpha = 0;
         }
         
+        static InfoMomentSeparateurView *separator = nil;
+        
         if(firstLoad) {
-            // ---- Sparateur ----
-            InfoMomentSeparateurView *separator = [[InfoMomentSeparateurView alloc] initAtPosition:(99 + 5)];
+            if(separator) {
+                [separator removeFromSuperview];
+            }
+            
+            // ---- Separateur ----
+            separator = [[InfoMomentSeparateurView alloc] initAtPosition:(99 + 5)];
             [self.generalMapView addSubview:separator];
             
             
@@ -781,6 +830,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
 - (void) initInvitesView
 {
     // Attributed string
+    self.user = [UserCoreData getCurrentUser];
     
     int nb = self.moment.guests_number.intValue;
     
@@ -844,7 +894,13 @@ static CGFloat DescriptionBoxHeightMax = 100;
     self.nbInvitesValidesLabel.textColor = color;
     
     // Non Admin
-    if( (!self.moment.isOpen) && (self.moment.state.intValue != UserStateAdmin) && (self.moment.state.intValue != UserStateOwner) )
+    
+    enum UserState state = self.moment.state.intValue;
+    if(state == 0) {
+        state = ([self.moment.owner.userId isEqualToNumber:self.user.userId]) ? UserStateOwner : UserStateNoInvited;
+    }
+    
+    if( (!self.moment.isOpen.boolValue) && (state != UserStateAdmin) && (state != UserStateOwner) )
     {
         self.inviteButton.hidden = YES;
         
@@ -879,9 +935,15 @@ static CGFloat DescriptionBoxHeightMax = 100;
         
     }
     
+    static InfoMomentSeparateurView *separator = nil;
+    
     if(firstLoad) {
+        if(separator) {
+            [separator removeFromSuperview];
+        }
+        
         // Sparateur
-        InfoMomentSeparateurView *separator = [[InfoMomentSeparateurView alloc] initAtPosition:(50 + 5)];
+        separator = [[InfoMomentSeparateurView alloc] initAtPosition:(50 + 5)];
         [self.invitesView addSubview:separator];
         
         // Frame
@@ -944,10 +1006,16 @@ static CGFloat DescriptionBoxHeightMax = 100;
         
     }
     
+    static InfoMomentSeparateurView *separator = nil;
+    
     if(firstLoad) {
         
+        if(separator) {
+            [separator removeFromSuperview];
+        }
+        
         // Sparateur
-        InfoMomentSeparateurView *separator = [[InfoMomentSeparateurView alloc] initAtPosition:(76 + 5)];
+        separator = [[InfoMomentSeparateurView alloc] initAtPosition:(76 + 5)];
         [self.dateView addSubview:separator];
         
         CGRect frame = self.dateView.frame;
@@ -965,8 +1033,14 @@ static CGFloat DescriptionBoxHeightMax = 100;
 
 - (void) initPhotosView
 {
+    static InfoMomentSeparateurView *separator = nil;
+    
+    if(separator) {
+        [separator removeFromSuperview];
+    }
+    
     // Sparateur
-    InfoMomentSeparateurView *separator = [[InfoMomentSeparateurView alloc] initAtPosition:(78 + 5)];
+    separator = [[InfoMomentSeparateurView alloc] initAtPosition:(78 + 5)];
     [self.photosView addSubview:separator];
     
     CGRect frame = self.photosView.frame;
@@ -1002,8 +1076,13 @@ static CGFloat DescriptionBoxHeightMax = 100;
 
 - (void) initBadgesView
 {
+    static InfoMomentSeparateurView *separator = nil;
+    if(separator) {
+        [separator removeFromSuperview];
+    }
+    
     // Sparateur
-    InfoMomentSeparateurView *separator = [[InfoMomentSeparateurView alloc] initAtPosition:(78 + 5)];
+    separator = [[InfoMomentSeparateurView alloc] initAtPosition:(78 + 5)];
     [self.badgesView addSubview:separator];
     
     CGRect frame = self.photosView.frame;
@@ -1027,8 +1106,13 @@ static CGFloat DescriptionBoxHeightMax = 100;
         //[self.metroLabel setFontSize:InfoMomentFontSizeMedium];
         self.metroLabel.text = self.moment.infoMetro;
         
+        static InfoMomentSeparateurView *separator = nil;
+        if(separator) {
+            [separator removeFromSuperview];
+        }
+        
         // Sparateur
-        InfoMomentSeparateurView *separator = [[InfoMomentSeparateurView alloc] initAtPosition:(59 + 5)];
+        separator = [[InfoMomentSeparateurView alloc] initAtPosition:(59 + 5)];
         [self.metroView addSubview:separator];
         
         CGRect frame = self.metroView.frame;
@@ -1049,8 +1133,12 @@ static CGFloat DescriptionBoxHeightMax = 100;
         //[self.infoLieuLabel setFontSize:InfoMomentFontSizeMedium];
         self.infoLieuLabel.text = self.moment.infoLieu;
         
+        static InfoMomentSeparateurView *separator = nil;
+        if(separator) {
+            [separator removeFromSuperview];
+        }
         // Sparateur
-        InfoMomentSeparateurView *separator = [[InfoMomentSeparateurView alloc] initAtPosition:(63)];
+        separator = [[InfoMomentSeparateurView alloc] initAtPosition:(63)];
         [self.infoLieuView addSubview:separator];
         
         CGRect frame = self.infoLieuView.frame;
@@ -1064,8 +1152,12 @@ static CGFloat DescriptionBoxHeightMax = 100;
 
 - (void) initCagnotteView
 {
+    static InfoMomentSeparateurView *separator = nil;
+    if(separator) {
+        [separator removeFromSuperview];
+    }
      // Sparateur
-     InfoMomentSeparateurView *separator = [[InfoMomentSeparateurView alloc] initAtPosition:(121)];
+     separator = [[InfoMomentSeparateurView alloc] initAtPosition:(121)];
      [self.cagnotteView addSubview:separator];
      
      CGRect frame = self.cagnotteView.frame;
@@ -1088,17 +1180,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
 }
 
 - (void) initPartageView
-{
-    /*
-    // Sparateur
-    InfoMomentSeparateurView *separator = [[InfoMomentSeparateurView alloc] initAtPosition:(59 + 5)];
-    [self.partageView addSubview:separator];
-    
-    CGRect frame = self.partageView.frame;
-    frame.size.height = separator.frame.origin.y + separator.frame.size.height + 5;
-    self.partageView.frame = frame;
-     */
-    
+{    
     if(firstLoad)
         [self addSubviewAtAutomaticPosition:self.partageView];
 }
@@ -1108,6 +1190,8 @@ static CGFloat DescriptionBoxHeightMax = 100;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    self.user = [UserCoreData getCurrentUser];
     
     // View
     CGRect frame = self.view.frame;
@@ -1119,6 +1203,14 @@ static CGFloat DescriptionBoxHeightMax = 100;
     self.foregroundView = [[IgnoreTouchView alloc] initWithFrame:CGRectMake(0, 0, 320, 0)];
     self.foregroundView.backgroundColor = [[UIColor alloc] initWithPatternImage:[UIImage imageNamed:@"bg.png"]];
     self.foregroundView.autoresizesSubviews = NO;
+    
+    /***********************************************
+     *                 User State                  *
+     ***********************************************/
+    enum UserState state = self.moment.state.intValue;
+    if(state == 0) {
+        state = ([self.moment.owner.userId isEqualToNumber:self.user.userId]) ? UserStateOwner : UserStateNoInvited;
+    }
     
     /***********************************************
      *                   Views                     *
@@ -1147,31 +1239,76 @@ static CGFloat DescriptionBoxHeightMax = 100;
     self.parallaxView.backgroundHeight = 150.0f;
     self.parallaxView.scrollViewDelegate = self;
     self.parallaxView.scrollView.scrollsToTop = YES;
+    self.parallaxView.userInteractionEnabled = YES;
     [self.view addSubview:self.parallaxView];
     
     /***********************************************
      *              ExpandingButtonBar             *
      ***********************************************/
-    self.expandButton = [[CustomExpandingButton alloc] initWithDelegate:self withState:self.moment.state.intValue];
-    //[self.ownerDescripionView addSubview:self.expandButton];
+    // Description
     UIView *retain = self.ownerDescripionView;
     [retain removeFromSuperview];
     [self.parallaxView.scrollView addSubview:retain];
+    
+    // RSVP Expand Button
+    self.expandButton = [[CustomExpandingButton alloc] initWithDelegate:self withState:state];
     [self.parallaxView.scrollView addSubview:self.expandButton];
     
     // First Load Complete
     firstLoad = NO;
     
+    // Ramener bouton "Voir plus" au premier plan
+    if(seeMoreButton)
+        [self.foregroundView bringSubviewToFront:seeMoreButton];
+    
     /*
     [self layoutImage];
     [self updateOffsets];
     */
+    
+    // Load RSVP From Facebook
+    if(state != UserStateNoInvited)
+    {
+        MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+        hud.labelText = NSLocalizedString(@"MBProgressHUD_Loading_updateRSVP", nil);
+        
+        [[FacebookManager sharedInstance] getRSVP:self.moment withEnded:^(enum UserState rsvp) {
+            
+            [MBProgressHUD hideHUDForView:self.view animated:YES];
+            
+            if( (rsvp != -1) && (self.moment.state.intValue != rsvp)) {
+                
+                // Informer User
+                [[MTStatusBarOverlay sharedInstance] postImmediateFinishMessage:@"Status Facebook Importé" duration:1 animated:YES];
+                
+                // Update View
+                UIButton *buttonSimulation = nil;
+                switch (rsvp) {
+                    case UserStateValid:
+                        buttonSimulation = self.rsvpYesButton;
+                        break;
+                        
+                    case UserStateRefused:
+                        buttonSimulation = self.rsvpNoButton;
+                        break;
+                        
+                    default:
+                        buttonSimulation = self.rsvpMaybeButton;
+                        break;
+                }
+                
+                [self clicRSVPButton:buttonSimulation];
+            }
+        }];
+    }
+
 }
 
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
     [self reloadData];
+    [self sendGoogleAnalyticsView];
 }
 
 - (void)viewDidUnload
@@ -1241,7 +1378,12 @@ static CGFloat DescriptionBoxHeightMax = 100;
     [self.moment updateMomentFromServerWithEnded:^(BOOL success) {
         if(success)
         {
-            #warning optimiser update !!
+            // Force Reload Image
+            self.moment.uimage = nil;
+            self.moment.dataImage = nil;
+            self.momentImageView.image = nil;
+            self.momentImageView.imageString = nil;
+            
             [self initTitreView];
             [self initRsvpView];
             [self initDescriptionView];
@@ -1255,8 +1397,19 @@ static CGFloat DescriptionBoxHeightMax = 100;
             [self initTopImageView];
             [self initCagnotteView];
             [self initPartageView];
+            
+            // Ramener bouton "Voir plus" au premier plan
+            if(seeMoreButton)
+                [self.foregroundView bringSubviewToFront:seeMoreButton];
+            
+            // View
+            firstLoad = NO;
+            self.parallaxView.scrollView.contentSize = CGSizeMake(self.view.frame.size.width, 150 + hauteur);
         }
     }];
+    
+    // GetCurrent User
+    self.user = [UserCoreData getCurrentUser];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -1265,6 +1418,22 @@ static CGFloat DescriptionBoxHeightMax = 100;
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
 }
 
+#pragma mark - Google Analytics
+
+- (void)sendGoogleAnalyticsView {
+    //AppDelegate *d = [[UIApplication sharedApplication] delegate];
+    //[d.tracker sendView:@"Vue Info"];
+    [[[GAI sharedInstance] defaultTracker] sendView:@"Vue Info"];
+    
+}
+
+- (void)sendGoogleAnalyticsEvent:(NSString*)action label:(NSString*)label value:(NSNumber*)value {
+    [[[GAI sharedInstance] defaultTracker]
+     sendEventWithCategory:@"Infos"
+     withAction:action
+     withLabel:label
+     withValue:value];
+}
 
 #pragma mark - ExpandingButtonBarDelegate
 
@@ -1315,7 +1484,56 @@ static CGFloat DescriptionBoxHeightMax = 100;
 
 #pragma mark - Actions
 
+- (void)changeRSVP:(enum UserState)state
+{
+    if(self.moment.state.intValue != state) {
+        
+        self.user = [UserCoreData getCurrentUser];
+        
+        // User State
+        enum UserState userState = self.moment.state.intValue;
+        if(userState == 0) {
+            userState = ([self.moment.owner.userId isEqualToNumber:self.user.userId]) ? UserStateOwner : UserStateNoInvited;
+        }
+        
+        // Moment public -> Demande de follow du moment
+        if(userState == UserStateNoInvited) {
+            [self.user followPublicMoment:self.moment withEnded:^(BOOL success) {
+                if(success) {
+                    
+                    // Update RSVP
+                    [self.moment updateCurrentUserState:state withEnded:^(BOOL success) {
+                        expandingBarState = state;
+                        expandingBarNeedUpdate = YES;
+                        [self.expandButton hideButtonsAnimated:YES];
+                        //[self selectRSVPButtonForState:state];
+                        [self reloadData];
+                    }];
+                }
+            }];
+        }
+        // Moment privé -> Répondre RSVP
+        else {
+            // Action
+            [self.moment updateCurrentUserState:state withEnded:^(BOOL success) {
+                expandingBarState = state;
+                expandingBarNeedUpdate = YES;
+                [self.expandButton hideButtonsAnimated:YES];
+                //[self selectRSVPButtonForState:state];
+                [self reloadData];
+            }];
+        }
+        
+    }
+    else
+        [self.expandButton hideButtonsAnimated:YES];
+}
+
+// Clic RSVP Button expand
 - (void)clicRespond:(UIButton*)sender {
+    
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic RSVP" value:nil];
     
     enum UserState state = UserStateWaiting;
     UIImage *image = sender.imageView.image;
@@ -1329,23 +1547,13 @@ static CGFloat DescriptionBoxHeightMax = 100;
         state = UserStateRefused;
     }
     
-    if(self.moment.state.intValue != state) {
-        
-        //self.moment.state = @(state);
-        // Action
-        [self.moment updateCurrentUserState:state withEnded:^(BOOL success) {
-            expandingBarState = state;
-            expandingBarNeedUpdate = YES;
-            [self.expandButton hideButtonsAnimated:YES];
-            [self reloadData];
-        }];
-    }
-    else
-        [self.expandButton hideButtonsAnimated:YES];
-    
+    [self changeRSVP:state];
 }
-
+// Clic Bloc RSVP
 - (IBAction)clicRSVPButton:(UIButton*)sender {
+    
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic RSVP" value:nil];
     
     if(sender.isSelected)
         return;
@@ -1360,55 +1568,71 @@ static CGFloat DescriptionBoxHeightMax = 100;
         state = UserStateValid;
     }
     
-    if(self.moment.state.intValue != state) {
-        
-        // Action
-        [self.moment updateCurrentUserState:state withEnded:^(BOOL success) {
-            expandingBarState = state;
-            expandingBarNeedUpdate = YES;
-            [self.expandButton hideButtonsAnimated:YES];
-            [self reloadData];
-        }];
-    }
-    else
-        [self.expandButton hideButtonsAnimated:YES];
-    
+    [self changeRSVP:state];
 }
 
 - (void)clicEdit {
-    CreationFicheViewController *editViewController = [[CreationFicheViewController alloc] initWithUser:self.user withMoment:self.moment withTimeLine:self.rootViewController.timeLine];
+    CreationFicheViewController *editViewController = [[CreationFicheViewController alloc] initWithUser:[UserCoreData getCurrentUser] withMoment:self.moment withTimeLine:self.rootViewController.timeLine];
     [self.rootViewController.navigationController pushViewController:editViewController animated:YES];
 }
 
 - (IBAction)clicInviteButton {
-    InviteAddViewController *inviteViewController = [[InviteAddViewController alloc] initWithOwner:self.user withMoment:self.moment];
+    
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Ajout Invité depuis Info" value:nil];
+    
+    InviteAddViewController *inviteViewController = [[InviteAddViewController alloc] initWithOwner:[UserCoreData getCurrentUser] withMoment:self.moment];
     [self.rootViewController.navigationController pushViewController:inviteViewController animated:YES];
 }
 
 - (void)clicInviteView {
-    InvitePresentsViewController *inviteViewController = [[InvitePresentsViewController alloc] initWithOwner:self.user withMoment:self.moment];
+    
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Invités" value:nil];
+    
+    InvitePresentsViewController *inviteViewController = [[InvitePresentsViewController alloc] initWithOwner:[UserCoreData getCurrentUser] withMoment:self.moment];
     [self.rootViewController.navigationController pushViewController:inviteViewController animated:YES];
 }
 
 - (void)clicDateView {
+    
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Date" value:nil];
+    
     [CalendarManager addNewEventFromMoment:self.moment];
 }
 
 - (void)clicMapView {
+    
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Map" value:nil];
+    
     [self openMapsWithDirectionsTo:self.coordonateMap title:self.moment.titre];
 }
 
 - (void)clicPhotoView {
+    
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Racourcis Photos" value:nil];
+    
     [self.rootViewController addAndScrollToOnglet:OngletPhoto];
 }
 
 - (void)clicExpandDescriptionView
 {
-    NSLog(@"pop");
+    NSLog(@"Pop");
+    // Forcer recréation de la vue
+    shouldShowFullDescription = YES;
+    firstLoad = YES;
+    hauteur = 0;
+    [self reloadData];
 }
 
 - (IBAction)clicShareMail {
     NSLog(@"Mail");
+    
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Partager Mail" value:nil];
     
     if([MFMailComposeViewController canSendMail])
     {
@@ -1454,10 +1678,25 @@ static CGFloat DescriptionBoxHeightMax = 100;
 
 - (IBAction)clicShareLink {
     NSLog(@"Link");
+    
+    // Copy To Clipboard
+    if(self.moment.uniqueURL) {
+        UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
+        pasteboard.string = self.moment.uniqueURL;
+        
+        [[MTStatusBarOverlay sharedInstance] postImmediateFinishMessage:@"URL Copiée" duration:1 animated:YES];
+    }
+    
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Partager Copié" value:nil];
+    
 }
 
 - (IBAction)clicShareFacebook {
     NSLog(@"Facebook");
+    
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Partager Facebook" value:nil];
     
     // Paramètres
     NSString *initialText = [NSString stringWithFormat:@"Bon Moment @%@ !\n", self.moment.titre];
@@ -1507,15 +1746,18 @@ static CGFloat DescriptionBoxHeightMax = 100;
 - (IBAction)clicShareTwitter {
     NSLog(@"Twitter");
     
-    // Paramètres
-    NSMutableString *initialText = [NSMutableString stringWithFormat:@"Bon Moment @%@ !", self.moment.titre];
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Partager Twitter" value:nil];
+    
+    // Limitation à 140 caractères max
+    NSInteger defaultNBMaxCarac = 140;
+    NSInteger nbMaxCarac = self.moment.uniqueURL ? (defaultNBMaxCarac - self.moment.uniqueURL.length) : defaultNBMaxCarac;
+    NSMutableString *initialText = [[[Config sharedInstance] twitterShareTextForMoment:self.moment nbMaxCaracters:nbMaxCarac]
+                                    mutableCopy];
+    
 #ifdef HASHTAG_ENABLE
-    if(self.moment.hashtag)
-        [initialText appendFormat:@" #%@\n", self.moment.hashtag];
-    else
-        [initialText appendString:@"\n"];
-#else
-    [initialText appendString:@"\n"];
+    if(self.moment.hashtag && (self.moment.hashtag.length <= (nbMaxCarac - initialText.length)))
+        [initialText appendFormat:@" #%@", self.moment.hashtag];
 #endif
     
     // iOS 6 -> Social Framework
@@ -1545,9 +1787,15 @@ static CGFloat DescriptionBoxHeightMax = 100;
     
 }
 
+/*
 - (IBAction)clicShareInstagram {
     NSLog(@"Instagram");
+    
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Partager Instagram" value:nil];
+    
 }
+*/
 
 #pragma mark - UIScrollView Delegate
 
@@ -1635,12 +1883,41 @@ static CGFloat DescriptionBoxHeightMax = 100;
 #pragma mark - Cagnotte
 
 - (IBAction)clicCagnotteButton {
+    
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Soon Cagnotte" value:nil];
+    
+#ifdef CAGNOTTE
     Cagnotte1ViewController *cagnotte = [[Cagnotte1ViewController alloc] initWithMoment:self.moment];
     
     UINavigationController *nav = self.rootViewController.timeLine.navigationController ?: self.rootViewController.navigationController;
     [nav pushViewController:cagnotte animated:YES];
+#endif
+    
 }
 
+/*
+- (IBAction)clicCoursesButton {
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Soon Courses" value:nil];
+}
+*/
+
+- (IBAction)clicFeedBackButton {
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Feedback" value:nil];
+    
+    // TestFlight SDK
+    //[TestFlight openFeedbackView];
+    
+    // Send FeedBack as Mail
+    [[Config sharedInstance] feedBackMailComposerWithDelegate:self root:self.rootViewController];
+}
+
+- (IBAction)clicComptesButton {
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Soon Comptes" value:nil];
+}
 
 #pragma mark - MFMailComposeViewControllerDelegate
 

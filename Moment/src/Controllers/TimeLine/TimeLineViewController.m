@@ -384,7 +384,8 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
 
 - (void)viewDidAppear:(BOOL)animated
 {
-    [super viewDidAppear:animated];    
+    [super viewDidAppear:animated];
+    [TimeLineViewController sendGoogleAnalyticsView];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -407,6 +408,20 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
 {
     // Return YES for supported orientations
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
+}
+
+#pragma mark - Google Analytics
+
++ (void)sendGoogleAnalyticsView {
+    [[[GAI sharedInstance] defaultTracker] sendView:@"Vue Timeline"];
+}
+
++ (void)sendGoogleAnalyticsEvent:(NSString*)action label:(NSString*)label value:(NSNumber*)value {
+    [[[GAI sharedInstance] defaultTracker]
+     sendEventWithCategory:@"Timeline"
+     withAction:action
+     withLabel:label
+     withValue:value];
 }
 
 #pragma mark - Table view data source
@@ -519,6 +534,9 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
     // Si une cellule est selectionnée, la deselectionner
     if(self.selectedIndex != -1)
     {
+        // Google Analytics
+        [TimeLineViewController sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Diminution Moment" value:nil];
+        
         NSIndexPath *previousIndex = [NSIndexPath indexPathForRow:self.selectedIndex inSection:0];
         self.selectedIndex = -1;
         self.selectedMoment = nil;
@@ -629,8 +647,7 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
     TimeLineCell* cell = (TimeLineCell*)[self.tableView cellForRowAtIndexPath:indexPath];
     [cell willDisappear];
     
-    //[self.tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    [self.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:row inSection:0]] withRowAnimation:UITableViewRowAnimationFade];
+    [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
     
     TimeLineDeveloppedCell* bigCell = (TimeLineDeveloppedCell*)[self.tableView cellForRowAtIndexPath:
                                                              [NSIndexPath indexPathForRow:_selectedIndex inSection:0]];
@@ -653,6 +670,7 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
 - (void)showOnglet:(enum OngletRank)onglet forMoment:(MomentClass*)moment
 {
     // Si une nouvelle cellule a été selectionnée
+    /*
     if( (!self.rootOngletsViewController) || (self.rootOngletsViewController.moment != moment) ) {
         self.rootOngletsViewController = [[RootOngletsViewController alloc]
                                           initWithMoment:moment
@@ -661,6 +679,12 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
     }
     else
         [self.rootOngletsViewController addAndScrollToOnglet:onglet];
+    */
+    // Création
+    self.rootOngletsViewController = [[RootOngletsViewController alloc]
+                                      initWithMoment:moment
+                                      withOnglet:onglet
+                                      withTimeLine:self];
     
     if(self.shoulShowInviteView) {
         self.rootOngletsViewController.shouldShowInviteViewController = YES;
@@ -1039,7 +1063,7 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
                     
                     // --Debug
 #warning DEBUG
-                    if([[moments[0] dateDebut] isEarlierThan:[self.moments[1] dateDebut]])
+                    if([[moments[[moments count]-1] dateDebut] isEarlierThan:[self.moments[1] dateDebut]])
                     {
                         // Supprime cellules vides
                         [array removeObjectAtIndex:0];
@@ -1049,11 +1073,21 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
                         NSIndexSet *indexSet = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [moments count])];
                         [array insertObjects:moments atIndexes:indexSet];
                         
+                        // Moment précédement sélectionné
+                        MomentClass *actualMoment = (self.selectedIndex > 0) ? self.moments[self.selectedIndex] : nil;
+                        
                         // Reload data
                         [self reloadDataWithMoments:array];
+                        
+                        if(actualMoment) {
+                            // Sélectionner le moment précedement selectionné
+                            [self updateSelectedMoment:actualMoment atRow:([moments count]+1+self.selectedIndex)];
+                        }
+                        // Scroll à la position précédente
+                        [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:([moments count]+1) inSection:0] atScrollPosition:UITableViewScrollPositionMiddle animated:NO];
+                        
                         NSLog(@"Chargement dans le passé fini");
                     }
-                    
                     
                 }
                 
@@ -1221,6 +1255,10 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
 - (IBAction)clicButtonClock
 {
     if([self.moments count] > 3) {
+        
+        // Google Analytics
+        [TimeLineViewController sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Today" value:nil];
+        
         [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:rowForToday inSection:0] atScrollPosition:UITableViewScrollPositionMiddle animated:YES];
         [self updateBandeauWithMoment:self.moments[rowForToday]];
         [self performSelector:@selector(selectActualMiddleCell) withObject:nil afterDelay:0.3];        

@@ -57,6 +57,7 @@
             
         case UserStateWaiting:
         case UserStateUnknown:
+        case UserStateNoInvited:
             //NSLog(@"User Waiting : %d\n", state);
             images = @[self.waitingImage, self.refusedImage, self.validImage];
             break;
@@ -150,7 +151,7 @@
     }
     else
     {
-        self = [super initWithFrame:CGRectMake(265, 107, 40, 40)];
+        self = [super initWithFrame:CGRectMake(265, 86, 40, 40)];
         if(self) {
             startPositionExpandingButton = background.frame.origin.y + 18;
             heightExpandingButton = 97;

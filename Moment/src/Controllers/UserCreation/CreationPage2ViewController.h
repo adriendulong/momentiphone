@@ -8,8 +8,9 @@
 
 #import <UIKit/UIKit.h>
 #import "HomeViewController.h"
+#import "GAITrackedViewController.h"
 
-@interface CreationPage2ViewController : UIViewController <UITextFieldDelegate, UIAlertViewDelegate, UIScrollViewDelegate>
+@interface CreationPage2ViewController : GAITrackedViewController <UITextFieldDelegate, UIAlertViewDelegate, UIScrollViewDelegate>
 
 @property (nonatomic, weak) id <HomeViewControllerDelegate> delegate;
 

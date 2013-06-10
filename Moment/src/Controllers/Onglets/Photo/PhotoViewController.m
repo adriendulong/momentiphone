@@ -107,9 +107,11 @@ withRootViewController:(UIViewController *)rootViewController
         return index - 1;
         //return index;
     }
+#else
+    if(self.style == PhotoViewControllerStyleComplete)
+        return index;
+    return index - 1;
 #endif
-    
-    return index;
 }
 
 - (void)loadPhotos
@@ -123,7 +125,8 @@ withRootViewController:(UIViewController *)rootViewController
         dispatch_async(loadingQueue, ^{
             
             self.photos = photos.mutableCopy;
-            [self.imageShowCase updateItemsShowCaseWithSize:[self.photos count]+1];
+            NSInteger size = (self.style == PhotoViewControllerStyleComplete) ? [self.photos count]+1 : [self.photos count];
+            [self.imageShowCase updateItemsShowCaseWithSize:size];
             
             int i=0;
 
@@ -140,7 +143,6 @@ withRootViewController:(UIViewController *)rootViewController
                             [self.imageShowCase addImage:nil atIndex:index isPlusButton:NO isPrintButton:YES];
                         }
 #endif
-                        
                         // Index varie selon le numero de la photo et la page sur laquelle on est (Profil / Onglet)
                         index = [self convertIndexForCurrentStyle:index];
                         // Ajout photo classique
@@ -171,7 +173,6 @@ withRootViewController:(UIViewController *)rootViewController
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    // Do any additional setup after loading the view from its nib.
     
     // iPhone 5
     CGRect frame = self.view.frame;
@@ -223,6 +224,25 @@ withRootViewController:(UIViewController *)rootViewController
     [self setPhotosSelectionnesLabel:nil];
     [self setArrowWhiteView:nil];
     [super viewDidUnload];
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    [self sendGoogleAnalyticsView];
+}
+
+#pragma mark - Google Analytics
+
+- (void)sendGoogleAnalyticsView {
+    [[[GAI sharedInstance] defaultTracker] sendView:@"Vue Photo"];
+}
+
+- (void)sendGoogleAnalyticsEvent:(NSString*)action label:(NSString*)label value:(NSNumber*)value {
+    [[[GAI sharedInstance] defaultTracker]
+     sendEventWithCategory:@"Photos"
+     withAction:action
+     withLabel:label
+     withValue:value];
 }
 
 #pragma mark - Image Showcase Protocol
@@ -284,6 +304,9 @@ withRootViewController:(UIViewController *)rootViewController
     // Plus Button
     if( (self.style == PhotoViewControllerStyleComplete) && (imageShowCaseCell.index == 0) && imageShowCaseCell.isSpecial )
     {
+        // Google Analytics
+        [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Ajout" value:nil];
+        
         // Add Picture
         UIActionSheet *actionSheet = [[UIActionSheet alloc]
                                       initWithTitle:NSLocalizedString(@"ActionSheet_PeekPhoto_Title", nil)
@@ -319,6 +342,9 @@ withRootViewController:(UIViewController *)rootViewController
 #ifdef ACTIVE_PRINT_MODE
         if(printMode)
         {
+            // Google Analytics
+            [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Photos sélectionnées" value:@([self.printSelectedCells count])];
+            
             NSInteger index = [self convertIndexForDataForCurrentStyle:imageShowCaseCell.index];
             
             // Ajouter/Retirer Mémoire
@@ -336,6 +362,9 @@ withRootViewController:(UIViewController *)rootViewController
         else
         {
 #endif
+            // Google Analytics
+            [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Photo" value:nil];
+            
             // Afficher Big Photo
             [self.bigPhotoViewController showViewAtIndex:imageShowCaseCell.index fromParent:YES];
             //[[VersionControl sharedInstance] presentModalViewController:self.bigPhotoViewController fromRoot:self.rootViewController animated:NO];
@@ -532,9 +561,16 @@ withRootViewController:(UIViewController *)rootViewController
 
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
+    // Choix de la soirce de la photo
     
     switch (buttonIndex) {
+            
+        // Albums Photo
         case 0: {
+            
+            // Google Analytics
+            [self sendGoogleAnalyticsEvent:@"Clic ActionSheet" label:@"Choix Album" value:nil];
+            
             QBImagePickerController *picker = [[QBImagePickerController alloc] init];
             picker.delegate = self;
             picker.allowsMultipleSelection = YES;
@@ -545,7 +581,12 @@ withRootViewController:(UIViewController *)rootViewController
         }
             break;
             
+        // Camera
         case 1:{
+            
+            // Google Analytics
+            [self sendGoogleAnalyticsEvent:@"Clic ActionSheet" label:@"Choix Appareil Photo" value:nil];
+            
             UIImagePickerController *picker = [[UIImagePickerController alloc] init];
             picker.delegate = self;
             picker.sourceType = UIImagePickerControllerSourceTypeCamera;

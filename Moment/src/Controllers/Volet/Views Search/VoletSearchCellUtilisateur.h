@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "VoletSearchViewController.h"
 #import "CustomAGMedallionView.h"
+#import "ProfilViewController.h"
 
 @interface VoletSearchCellUtilisateur : UITableViewCell
 
@@ -17,6 +18,7 @@
 @property (nonatomic, weak) IBOutlet CustomAGMedallionView *medallion;
 @property (nonatomic, weak) IBOutlet UILabel *nomLabel;
 @property (nonatomic, weak) IBOutlet UIButton *followButton;
+@property (nonatomic) enum FollowButtonState buttonState;
 
 - (id)initWithUser:(UserClass*)user reuseIdentifier:(NSString*)reuseIdentifier;
 

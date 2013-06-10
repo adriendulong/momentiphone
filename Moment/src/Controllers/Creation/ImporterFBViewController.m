@@ -85,6 +85,13 @@
     [super viewDidUnload];
 }
 
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    
+    // Google Analytics
+    [[[GAI sharedInstance] defaultTracker] sendView:@"Ajout Event Facebook"];
+}
+
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
@@ -130,8 +137,10 @@
             emptyLabel.font = [[Config sharedInstance] defaultFontWithSize:15];
             emptyLabel.textColor = [Config sharedInstance].textColor;
             emptyLabel.backgroundColor = [UIColor clearColor];
-            [emptyLabel sizeToFit];
-            frame = emptyLabel.frame;
+            emptyLabel.numberOfLines = 0;
+            emptyLabel.textAlignment = NSTextAlignmentCenter;
+            frame = cell.frame;
+            frame.size.width -= 20;
             frame.origin.x = (cell.frame.size.width - frame.size.width)/2.0f;
             frame.origin.y = (emptyCellSize - frame.size.height)/2.0f;
             emptyLabel.frame = frame;
@@ -166,7 +175,7 @@
         MomentClass *moment = self.moments[indexPath.row];
         
         // Owner / Admin --> Edition
-        if(moment.state.intValue == UserStateAdmin || moment.state.intValue == UserStateOwner) {
+        if(moment.state.intValue == UserStateAdmin || ([moment.owner.userId isEqualToNumber:[UserCoreData getCurrentUser].userId]) ) {
             CreationFicheViewController *editViewController = [[CreationFicheViewController alloc] initWithUser:[UserCoreData getCurrentUser] withMoment:moment withTimeLine:nil];
             [self.navigationController pushViewController:editViewController animated:YES];
         }

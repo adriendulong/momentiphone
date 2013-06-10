@@ -28,6 +28,9 @@
 @synthesize nb_photos = _nb_photos;
 @synthesize is_followed = _is_followed;
 @synthesize descriptionString = _descriptionString;
+@synthesize privacy = _privacy;
+@synthesize request_follow_me = _request_follow_me;
+@synthesize request_follower = _request_follower;
 
 #pragma mark - Setup
 
@@ -69,6 +72,12 @@
         self.is_followed = attributes[@"is_followed"];
     if(attributes[@"description"])
         self.descriptionString = attributes[@"description"];
+    if(attributes[@"privacy"] != nil)
+        self.privacy = attributes[@"privacy"];
+    if(attributes[@"request_follower"])
+        self.request_follower = attributes[@"request_follower"];
+    if(attributes[@"request_follow_me"])
+        self.request_follow_me = attributes[@"request_follow_me"];
 }
 
 - (void)setupWithAttributesFromWeb:(NSDictionary*)attributes {
@@ -178,7 +187,7 @@
 #pragma mark - Debug
 
 - (NSString*)description {
-    return [NSString stringWithFormat:@"USER %@ :\n{\nnom = %@\nprenom = %@\nfacebookId = %@\npictureString = %@\n}\n", self.userId, self.nom, self.prenom, self.facebookId, self.imageString];
+    return [NSString stringWithFormat:@"USER :\n{\nuserId = %@\nnom = %@\nprenom = %@\nfacebookId = %@\npictureString = %@\nrequest_follower = %@\nrequest_follow_me = %@\nprivacy = %@\nstate = %@\n}\n", self.userId, self.nom, self.prenom, self.facebookId, self.imageString, self.request_follower, self.request_follow_me, self.privacy, self.state];
 }
 
 @end

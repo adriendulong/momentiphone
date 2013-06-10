@@ -277,9 +277,21 @@ static Config *sharedInstance = nil;
 
 - (BOOL)isValidPhoneNumber:(NSString*)phoneNumber
 {
-    NSString *regex = @"0[1-9]((([0-9]{2}){4})|((\\s[0-9]{2}){4})|((-[0-9]{2}){4}))";
+    NSString *regex = @"(0|0033|\\+33)[1-9]((([0-9]{2}){4})|((\\s[0-9]{2}){4})|((-[0-9]{2}){4}))";
     NSPredicate *test = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", regex];
     return [test evaluateWithObject:phoneNumber];
+}
+
+- (BOOL)isMobilePhoneNumber:(NSString*)phoneNumber forceValidation:(BOOL)force
+{
+    if(force) {
+        NSString *regex = @"(0|0033|\\+33)[67]((([0-9]{2}){4})|((\\s[0-9]{2}){4})|((-[0-9]{2}){4}))";
+        NSPredicate *test = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", regex];
+        return [test evaluateWithObject:phoneNumber];
+    }
+
+    NSString *start = [phoneNumber substringWithRange:NSMakeRange(0, 2)];
+    return [start isEqualToString:@"06"] || [start isEqualToString:@"07"];
 }
 
 #pragma mark - Cover Image
@@ -337,6 +349,78 @@ static Config *sharedInstance = nil;
 {
     NSString *fullPath = [self coverImageFullPath];
     [self deleteFileAtPath:fullPath];
+}
+
+#pragma mark - Texte Formatage
+
+- (NSString*)twitterShareTextForMoment:(MomentClass*)moment nbMaxCaracters:(NSInteger)nbMaxCarac
+{
+    // Limitation à 160 caractères max
+    NSString *format = @"Bon Moment @%@ !";
+    NSInteger taille = moment.titre.length + format.length - 2;
+    NSString *initialText = nil;
+    NSInteger tailleRestante;
+    
+    // Titre seul trop grand = ne pas afficher titre
+    if(moment.titre.length >= nbMaxCarac) {
+        initialText = @"Bon Moment !";
+        tailleRestante = 0;
+    }
+    // Taille totale assez petite
+    else if(taille <= nbMaxCarac) {
+        initialText = [NSString stringWithFormat:format, moment.titre];
+        tailleRestante = nbMaxCarac - taille;
+    }
+    // Taille totale trop grande
+    else {
+        NSInteger lastPosition = nbMaxCarac - (format.length - 2) - 3;
+        // Réduction du titre
+        if(lastPosition > 0) {
+            NSString *titre = [NSString stringWithFormat:@"%@...", [moment.titre substringWithRange:NSMakeRange(0, lastPosition)]];
+            initialText = [NSString stringWithFormat:format, titre];
+            tailleRestante = 0;
+        }
+        // Pas la place de réduire le titre = ne pas afficher le titre
+        else {
+            initialText = [NSMutableString stringWithFormat:format, moment.titre];
+            tailleRestante = nbMaxCarac - taille;
+        }
+    }
+    
+    return initialText;
+}
+
+#pragma mark - FeedBack
+- (void)feedBackMailComposerWithDelegate:(id<MFMailComposeViewControllerDelegate>)delegate
+                                    root:(UIViewController*)rootViewController
+{
+    if([MFMailComposeViewController canSendMail])
+    {
+        // Email Subject
+        NSString *emailTitle = @"Moment - FeedBack";
+        // Email Content
+        NSString *messageBody = [NSString stringWithFormat:@"Une petite remarque : \n\n\n%@.", [[UserCoreData getCurrentUser] formatedUsernameWithStyle:UsernameStyleCapitalized]];
+        
+        MFMailComposeViewController *mc = [[MFMailComposeViewController alloc] init];
+        mc.mailComposeDelegate = delegate;
+        [mc setSubject:emailTitle];
+        [mc setMessageBody:messageBody isHTML:NO];
+        [mc setToRecipients:@[kParameterContactMail]];
+        
+        // Present mail view controller on screen
+        [[VersionControl sharedInstance] presentModalViewController:mc fromRoot:rootViewController animated:YES];
+    }
+    else
+    {
+        NSLog(@"mail composer fail");
+        
+        [[[UIAlertView alloc] initWithTitle:@"Envoi impossible"
+                                    message:@"Votre appareil ne supporte pas l'envoi d'email"
+                                   delegate:nil
+                          cancelButtonTitle:@"OK"
+                          otherButtonTitles:nil]
+         show];
+    }
 }
 
 @end
