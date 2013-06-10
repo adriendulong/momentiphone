@@ -1062,7 +1062,7 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
                     
                     // --Debug
 #warning DEBUG
-                    if([[moments[0] dateDebut] isEarlierThan:[self.moments[1] dateDebut]])
+                    if([[moments[[moments count]-1] dateDebut] isEarlierThan:[self.moments[1] dateDebut]])
                     {
                         // Supprime cellules vides
                         [array removeObjectAtIndex:0];
@@ -1072,11 +1072,21 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
                         NSIndexSet *indexSet = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [moments count])];
                         [array insertObjects:moments atIndexes:indexSet];
                         
+                        // Moment précédement sélectionné
+                        MomentClass *actualMoment = (self.selectedIndex > 0) ? self.moments[self.selectedIndex] : nil;
+                        
                         // Reload data
                         [self reloadDataWithMoments:array];
+                        
+                        if(actualMoment) {
+                            // Sélectionner le moment précedement selectionné
+                            [self updateSelectedMoment:actualMoment atRow:([moments count]+1+self.selectedIndex)];
+                        }
+                        // Scroll à la position précédente
+                        [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:([moments count]+1) inSection:0] atScrollPosition:UITableViewScrollPositionMiddle animated:NO];
+                        
                         NSLog(@"Chargement dans le passé fini");
                     }
-                    
                     
                 }
                 

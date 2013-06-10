@@ -92,6 +92,9 @@
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
+    
+    // Actual View Controller
+    [AppDelegate updateActualViewController:self];
         
     //on check si autologin actif et utilisateur fourni
     UserClass *currentUser = [UserCoreData getCurrentUser];

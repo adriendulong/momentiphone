@@ -498,7 +498,7 @@
     }
     
     // Enregistrer la tentative de suppression
-    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"MomentsDeleteTry"];
+    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:kMomentsDeleteTry];
     [[NSUserDefaults standardUserDefaults] synchronize];
     
     // Supprimer tous les autres moments
@@ -510,11 +510,11 @@
     }
     @catch (NSException *exception) {
         // Enregistrer l'erreur
-        [[NSUserDefaults standardUserDefaults] setValue:exception.description forKey:@"MomentsDeleteFail"];
+        [[NSUserDefaults standardUserDefaults] setValue:exception.description forKey:kMomentsDeleteFail];
         [[NSUserDefaults standardUserDefaults] synchronize];
         
         // TestFlight
-        [TestFlight passCheckpoint:@"MomentsDeleteFail"];
+        [TestFlight passCheckpoint:kMomentsDeleteFail];
         
         // Google Analytics
         [[[GAI sharedInstance] defaultTracker] sendException:NO withNSException:exception];
@@ -528,7 +528,7 @@
          show];
     }
     @finally {
-        [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"MomentsDeleteTry"];
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:kMomentsDeleteTry];
         [[NSUserDefaults standardUserDefaults] synchronize];
     }
     

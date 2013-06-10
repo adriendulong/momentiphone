@@ -34,6 +34,11 @@
 #define kParameterTwitterPageName @"appmoment"
 #define kParameterContactMail @"hello@appmoment.fr"
 
+// Clé UserDefaults
+// -> Vérification que la suppression des moments c'est bien passé
+#define kMomentsDeleteTry @"MomentsDeleteTry"
+#define kMomentsDeleteFail @"MomentsDeleteFail"
+
 @interface Config : NSObject
 
 #pragma mark - Singleton

@@ -193,6 +193,18 @@
     self.tracker = [[GAI sharedInstance] trackerWithTrackingId:@"UA-36147731-1"];
     // Si on reste plus d'1 min inactif, les évenements sont envoyés sur une nouvelle session
     [self.tracker setSessionTimeout:60];
+    
+    // -------------------- Suppression du CoreData ----------------------
+    //    ----> Vérification que la suppression s'est bien passée <----
+    // -------------------------------------------------------------------
+    /*
+    if([[NSUserDefaults standardUserDefaults] boolForKey:kMomentsDeleteTry]) {
+        
+    }
+    if([[NSUserDefaults standardUserDefaults] boolForKey:kMomentsDeleteFail]) {
+        
+    }
+    */
         
     return YES;
 }
