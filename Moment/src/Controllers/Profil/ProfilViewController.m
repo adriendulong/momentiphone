@@ -314,22 +314,15 @@ enum ProfilOnglet {
         {
             //--------------- Cacher Informations ----------------
             BOOL hideInformations = NO;
-            BOOL disableButtons = NO;
             
             // -> Blindage
             if( (self.user.privacy == nil) || ![self.user.privacy isKindOfClass:[NSNumber class]]) {
                 hideInformations = YES;
-                disableButtons = YES;
-            }
-            // -> Désactiver les autres écrans que la TimeLine si on est sur un profil public non followed
-            if( (self.user.privacy.intValue == UserPrivacyOpen) && !self.user.is_followed.boolValue) {
-                [self clicMoment];
-                disableButtons = YES;
             }
             // -> On ne peut pas voir les infos d'un profil qu'on ne follow pas
-            else if( !self.user.is_followed.boolValue ) {
+            // -> On peut voir les infos d'un profil public
+            else if(  (self.user.privacy.intValue != UserPrivacyOpen) && !self.user.is_followed.boolValue ) {
                 hideInformations = YES;
-                disableButtons = YES;
                 
                 // -> On ne peut pas follow un profil privé
                 if(self.user.privacy.intValue == UserPrivacyClosed)
@@ -343,9 +336,6 @@ enum ProfilOnglet {
             // Cacher infos
             if(hideInformations) {
                 [self clearContentView];
-            }
-            // Désactiver les boutons
-            if(disableButtons) {
                 self.momentButton.enabled = NO;
                 self.photoButton.enabled = NO;
                 self.followButton.enabled = NO;
@@ -630,13 +620,26 @@ enum ProfilOnglet {
         
         // Si on veut unfollow -> AlertView pour prévenir
         if(headFollowButtonState == FollowButtonStateFollowed) {
-            [[[UIAlertView alloc]
-              initWithTitle:NSLocalizedString(@"ProfilViewController_Unfollow_AlertView_Title", nil)
-              message:NSLocalizedString(@"ProfilViewController_Unfollow_AlertView_Message", nil)
-              delegate:self
-              cancelButtonTitle:NSLocalizedString(@"AlertView_Button_Cancel", nil)
-              otherButtonTitles:NSLocalizedString(@"ProfilViewController_Unfollow_AlertView_ConfirmButton", nil), nil]
-             show];
+            
+            // Si c'est un profil public
+            if(self.user.privacy.intValue == UserPrivacyOpen) {
+                [[[UIAlertView alloc]
+                  initWithTitle:NSLocalizedString(@"ProfilViewController_Unfollow_AlertView_Title", nil)
+                  message:NSLocalizedString(@"ProfilViewController_Unfollow_Public_AlertView_Message", nil)
+                  delegate:self
+                  cancelButtonTitle:NSLocalizedString(@"AlertView_Button_Cancel", nil)
+                  otherButtonTitles:NSLocalizedString(@"ProfilViewController_Unfollow_AlertView_ConfirmButton", nil), nil]
+                 show];
+            }
+            else {
+                [[[UIAlertView alloc]
+                  initWithTitle:NSLocalizedString(@"ProfilViewController_Unfollow_AlertView_Title", nil)
+                  message:NSLocalizedString(@"ProfilViewController_Unfollow_AlertView_Message", nil)
+                  delegate:self
+                  cancelButtonTitle:NSLocalizedString(@"AlertView_Button_Cancel", nil)
+                  otherButtonTitles:NSLocalizedString(@"ProfilViewController_Unfollow_AlertView_ConfirmButton", nil), nil]
+                 show];
+            }
         }
         else {
             [self sendToggleFollowRequest];

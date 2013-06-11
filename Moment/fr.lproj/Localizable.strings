@@ -213,6 +213,7 @@
 // Unfollow
 "ProfilViewController_Unfollow_AlertView_Title" = "Se désabonner";
 "ProfilViewController_Unfollow_AlertView_Message" = "Êtes-vous sûr de vouloir annuler le suivi de cette personne ? Vous ne pourrez plus accéder à ses informations.";
+"ProfilViewController_Unfollow_Public_AlertView_Message" = "Êtes-vous sûr de vouloir annuler le suivi de cette personne ? Vous ne serez plus informé de son actualité";
 "ProfilViewController_Unfollow_AlertView_ConfirmButton" = "Se désabonner";
 
 /* ------------ FeedViewController ------------- */
