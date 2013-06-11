@@ -912,54 +912,15 @@ withDelegate:(PhotoViewController*)photoViewController
                         }
                         // Scroll Right
                         else {
-                            [self clicNext];
-                            
-                            /*
-                            NSInteger newIndex = self.selectedIndex + 1;
-                            
-                            if( (newIndex < [self.photos count]) && (newIndex >= 0) ) {
-                                
-                                Photos *photo = (Photos*)self.photos[self.selectedIndex];
-                                if(!photo.imageOriginal) {
-                                    
-                                    // Add photo To Scroll View
-                                    CustomUIImageView *imageView = [[CustomUIImageView alloc] init];
-                                    imageView.frame = CGRectMake( newIndex*self.photoScrollView.frame.size.width,0, self.photoScrollView.frame.size.width, self.photoScrollView.frame.size.height);
-                                    imageView.contentMode = UIViewContentModeScaleAspectFill;
-                                    imageView.clipsToBounds = YES;
-                                    [self.photoScrollView addSubview:imageView];
-                                    
-                                    [imageView setImage:photo.imageOriginal imageString:photo.urlOriginal withSaveBlock:^(UIImage *image) {
-                                        photo.imageOriginal = image;
-                                    }];
-                                    
-                                }
-                                [self scrollToIndex:newIndex animated:YES];
-                                
-                                self.nextButton.enabled = (self.selectedIndex < [self.photos count]-1);
-                                self.previousButton.enabled = (self.selectedIndex > 0);
-                                
-                                // Update bottom
-                                // Si on est owner ou taken_by de la photo -> droit de supprimer
-                                BOOL secondCondition = (photoViewStyle == PhotoViewControllerStyleComplete)? ([self.moment.owner.userId isEqualToNumber:self.currentUser.userId]) : NO;
-                                
-                                if(  [self.currentUser.userId isEqualToNumber:photo.owner.userId] || secondCondition ) {
-                                    [self showSuppressionMode];
-                                }
-                                // Impossible de supprimer
-                                else {
-                                    [self hideSuppressionMode];
-                                }
-                                
-                            }
-                            
+                            [self scrollToIndex:(self.selectedIndex+1) animated:YES];
+                            self.selectedIndex--;
                             if(self.selectedIndex == [self.photos count]-1)
                                 self.nextButton.enabled = NO;
                             if( (!self.previousButton.enabled) && (self.selectedIndex > 0) )
                                 self.previousButton.enabled = YES;
                             else if(self.selectedIndex == 0)
                                 self.previousButton.enabled = NO;
-                             */
+
                         }
                     
                     }
@@ -967,6 +928,8 @@ withDelegate:(PhotoViewController*)photoViewController
                     else {
                         [self clicClose];
                     }
+                    
+                    self.delegate.photos = self.photos;
                 }
                 // -- Fail
                 else {
