@@ -104,8 +104,16 @@ enum PhotoPickerDestination {
         self.nomTextField.text = user.nom;
     if(user.email)
         self.emailTextField.text = user.email;
-    if(user.secondEmail)
+    if(user.secondEmail) {
         self.secondEmailTextField.text = user.secondEmail;
+        
+        //Décommenter lorsqu'on pourra modifier l'adresse email principale
+        /*if (user.secondEmail.length == 0) {
+            [self.emailTextField setEnabled:NO];
+        } else {
+            self.secondEmailTextField.text = user.secondEmail;
+        }*/
+    }
     if(user.numeroMobile)
         self.phoneTextField.text = user.numeroMobile;
     if(user.secondPhone)
@@ -271,7 +279,7 @@ enum PhotoPickerDestination {
         // --------- Validation des données -------------
         
         NSString *phoneNumber = nil, *secondPhoneNumber = nil;
-        BOOL secondEmailOK = NO;
+        BOOL emailOK = NO, secondEmailOK = NO;
         BOOL prenomOK = NO, nomOK = NO;
         UITextField *invalideTextField = nil;
         
@@ -305,15 +313,23 @@ enum PhotoPickerDestination {
             // Vérification de la validité des données
             if( (self.phoneTextField.text.length == 0) || [[Config sharedInstance] isValidPhoneNumber:self.phoneTextField.text])
             {
-                
-                NSLog(@"phoneTextField - vide = %@", self.phoneTextField.text);
                 // Mettre sous une forme convenable pour le server
                 phoneNumber = [[Config sharedInstance] formatedPhoneNumber:self.phoneTextField.text];
-                NSLog(@"phoneNumber = %@", phoneNumber);
-                NSLog(@"phoneNumber.lenght = %i", phoneNumber.length);
             }
             else {
                 invalideTextField = self.phoneTextField;
+            }
+        }
+        
+        // Si on a modifié le premier email
+        if( !invalideTextField && [self.modifications containsObject:self.emailTextField])
+        {
+            // Vérification de la validité des données
+            if( (self.emailTextField.text.length == 0) || [[Config sharedInstance] isValidEmail:self.emailTextField.text]) {
+                emailOK = YES;
+            }
+            else {
+                invalideTextField = self.emailTextField;
             }
         }
         
@@ -372,21 +388,24 @@ enum PhotoPickerDestination {
                 [modifications setValue:self.descriptionTextView.text forKey:@"description"];
             }
             if(phoneNumber) {
-                NSLog(@"phoneNumber.lenght = %i", phoneNumber.length);
-                NSLog(@"secondPhoneNumber.lenght = %i", self.secondPhoneTextField.text.length);
-                NSLog(@"modifications - before = %@", modifications);
-                
-                
                 if (phoneNumber.length == 0 && self.secondPhoneTextField.text.length != 0) {
-                    NSLog(@"On switch les 2 numéros...");
                     [modifications setValue:self.secondPhoneTextField.text forKey:@"numeroMobile"];
                     [modifications setValue:@"" forKey:@"secondPhone"];
-                    
-                    NSLog(@"modifications - after = %@", modifications);
                 } else {
                     [modifications setValue:phoneNumber forKey:@"numeroMobile"];
                 }
             }
+            //Décommenter lorsqu'on pourra modifier l'adresse email principale
+            /*if(emailOK) {
+                if (self.emailTextField.text.length == 0 && self.secondEmailTextField.text.length != 0) {
+                    [modifications setValue:self.secondEmailTextField.text forKey:@"email"];
+                    [modifications setValue:@"" forKey:@"secondEmail"];
+                } else {
+                    [modifications setValue:self.emailTextField.text forKey:@"email"];
+                    // Update liste des mails
+                    [[TextFieldAutocompletionManager sharedInstance] addEmailToFavoriteEmails:self.emailTextField.text];
+                }
+            }*/
             if(secondEmailOK) {
                 [modifications setValue:self.secondEmailTextField.text forKey:@"secondEmail"];
                 // Update liste des mails
@@ -461,16 +480,20 @@ enum PhotoPickerDestination {
                                 if (phoneNumber.length == 0 && self.secondPhoneTextField.text.length != 0) {
                                     self.phoneTextField.text = self.secondPhoneTextField.text;
                                     self.secondPhoneTextField.text = @"";
-                                    
-                                    NSLog(@"self.phoneTextField.text = %@", self.secondPhoneTextField.text);
                                 } else {
                                     self.phoneTextField.text = phoneNumber;
-                                    
-                                    NSLog(@"self.phoneTextField.text = %@", phoneNumber);
                                 }
                             }
                             if(secondPhoneNumber)
                                 self.secondPhoneTextField.text = secondPhoneNumber;
+                            
+                            //Décommenter lorsqu'on pourra modifier l'adresse email principale
+                            /*if(emailOK) {
+                                if (self.emailTextField.text.length == 0 && self.secondEmailTextField.text.length != 0) {
+                                    self.emailTextField.text = self.secondEmailTextField.text;
+                                    self.secondEmailTextField.text = @"";
+                                }
+                            }*/
                             
                             // Save Cover image
                             [[Config sharedInstance] saveNewCoverImage:self.coverImage];
@@ -513,6 +536,14 @@ enum PhotoPickerDestination {
                         }
                         if(secondPhoneNumber)
                             self.secondPhoneTextField.text = secondPhoneNumber;
+                        
+                        //Décommenter lorsqu'on pourra modifier l'adresse email principale
+                        /*if(emailOK) {
+                            if (self.emailTextField.text.length == 0 && self.secondEmailTextField.text.length != 0) {
+                                self.emailTextField.text = self.secondEmailTextField.text;
+                                self.secondEmailTextField.text = @"";
+                            }
+                         }*/
                         
                         // Save Cover image
                         [[Config sharedInstance] saveNewCoverImage:self.coverImage];
