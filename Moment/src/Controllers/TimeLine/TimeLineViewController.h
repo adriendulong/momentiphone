@@ -27,7 +27,7 @@
 
 // Update TimeLine
 - (void)updateSelectedMoment:(MomentClass*)moment atRow:(NSInteger)row;
-- (void)reloadDataWithWaitUntilFinished:(BOOL)waitUntilFinished;
+- (void)reloadDataWithWaitUntilFinished:(BOOL)waitUntilFinished withEnded:(void (^) (BOOL success))block;
 - (void)reloadData;
 
 // Redirection Onglets
@@ -104,7 +104,8 @@ enum TimeLineStyle {
 - (id)initWithMoments:(NSArray*)momentsParam
             withStyle:(enum TimeLineStyle)style
              withSize:(CGSize)size
-withRootViewController:(RootTimeLineViewController*)rootViewController;
+withRootViewController:(RootTimeLineViewController*)rootViewController
+  shouldReloadMoments:(BOOL)reloadMoments;
 
 - (void)updateSelectedMoment:(MomentClass*)moment atRow:(NSInteger)row;
 - (void)reloadData;

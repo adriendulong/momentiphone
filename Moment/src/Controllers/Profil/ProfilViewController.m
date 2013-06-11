@@ -736,7 +736,11 @@ enum ProfilOnglet {
 - (TimeLineViewController*)timeLineViewController {
     if(!_timeLineViewController) {
 
-        _timeLineViewController = [[TimeLineViewController alloc] initWithMoments:@[] withStyle:TimeLineStyleProfil withSize:self.contentView.frame.size withRootViewController:(RootTimeLineViewController*)self];
+        _timeLineViewController = [[TimeLineViewController alloc] initWithMoments:@[]
+                                                                        withStyle:TimeLineStyleProfil
+                                                                         withSize:self.contentView.frame.size
+                                                           withRootViewController:(RootTimeLineViewController*)self
+                                                              shouldReloadMoments:YES];
         
         _timeLineViewController.view.frame = insertionFrame;
     }

@@ -14,6 +14,7 @@
 @interface RootTimeLineViewController () {
     @private
     UIButton *plusButton;
+    BOOL shouldReloadMoments;
 }
 
 @end
@@ -34,12 +35,15 @@
 - (id)initWithUser:(UserClass*)user
           withSize:(CGSize)size withStyle:(enum TimeLineStyle)style
 withNavigationController:(UINavigationController*)navController
+shouldReloadMoments:(BOOL)reloadMoments
 {
     self = [super initWithNibName:@"RootTimeLineViewController" bundle:nil];
     if(self) {
         
         // Cacher Splash Screnn
         [HomeViewController hideSplashScreen];
+        
+        shouldReloadMoments = reloadMoments;
         
         self.user = user;
         self.navController = navController;
@@ -242,7 +246,11 @@ withNavigationController:(UINavigationController*)navController
         
         NSArray *moments = [MomentCoreData getMoments];
         
-        _privateTimeLine = [[TimeLineViewController alloc] initWithMoments:moments withStyle:self.timeLineStyle withSize:self.size withRootViewController:self];
+        _privateTimeLine = [[TimeLineViewController alloc] initWithMoments:moments
+                                                                 withStyle:self.timeLineStyle
+                                                                  withSize:self.size
+                                                    withRootViewController:self
+                                                       shouldReloadMoments:shouldReloadMoments];
         
     }
     return _privateTimeLine;

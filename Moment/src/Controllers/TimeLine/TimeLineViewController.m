@@ -70,6 +70,8 @@ enum ClockState {
     
     CGFloat borderCellSize;
     BOOL isLoading;
+    BOOL firstLoad;
+    BOOL shouldReloadMoments;
     
     MomentClass *momentToDelete;
     
@@ -146,6 +148,7 @@ enum ClockState {
             withStyle:(enum TimeLineStyle)style
              withSize:(CGSize)size
 withRootViewController:(RootTimeLineViewController*)rootViewController
+  shouldReloadMoments:(BOOL)reloadMoments
 {    
     self = [super initWithNibName:@"TimeLineViewController" bundle:nil];
     if(self) {
@@ -161,6 +164,8 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
         //shouldUpdateClock= YES;
         bandeauAnimating = NO;
         isLoading = NO;
+        firstLoad = YES;
+        shouldReloadMoments = reloadMoments;
         self.shoulShowInviteView = NO;
         self.rootViewController = rootViewController;
         momentToDelete = nil;
@@ -180,7 +185,6 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
                                                        object:nil];
         }
         
-    
     }
     return self;
 }
@@ -386,15 +390,36 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
     // Placer labels
     [self placerEchelleLabels];
     
-    
     //Premier lancement de l'application
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     BOOL hasRunOnce = [defaults boolForKey:@"hasRunOnce"];
     NSLog(hasRunOnce ? @"Yes" : @"No");
     if (!hasRunOnce)
     {
-        [self showTutorialOverlayWithFrame:CGRectMake(0, -20, screenSize.width, screenSize.height)];
+        // Start Reload Moment
+        if(shouldReloadMoments && !isLoading) {
+            [self reloadDataWithWaitUntilFinished:NO withEnded:^(BOOL success) {
+                [self showTutorialOverlayWithFrame:CGRectMake(0, -20, screenSize.width, screenSize.height)];
+            }];
+        }
+        else {
+            [self showTutorialOverlayWithFrame:CGRectMake(0, -20, screenSize.width, screenSize.height)];
+        }
+        
     }
+    else {
+        
+        // Start Reload Moment
+        if(shouldReloadMoments && !isLoading) {
+            MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+            hud.labelText = NSLocalizedString(@"MBProgressHUD_Loading_Moments", nil);
+            [self reloadDataWithWaitUntilFinished:NO withEnded:^(BOOL success) {
+                [MBProgressHUD hideHUDForView:self.view animated:YES];
+            }];
+        }
+    }
+    
+    firstLoad = NO;
 }
 
 - (void)viewDidUnload
@@ -586,7 +611,7 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
 
 #pragma mark Update TimeLine
 
-- (void)reloadDataWithWaitUntilFinished:(BOOL)waitUntilFinished
+- (void)reloadDataWithWaitUntilFinished:(BOOL)waitUntilFinished withEnded:(void (^) (BOOL success))block
 {
     if(!isLoading)
     {
@@ -598,14 +623,24 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
                     NSArray *array = [MomentCoreData getMoments];
                     [self reloadDataWithMoments:array];
                 }
+                
                 isLoading = NO;
+                
+                if(block) {
+                    block(success);
+                }
             } waitUntilFinished:NO];
         }
         else {
             [MomentClass getMomentsForUser:self.user withEnded:^(NSArray *moments) {
                 if(moments) {
                     [self reloadDataWithMoments:moments];
-                    isLoading = NO;
+                }
+                
+                isLoading = NO;
+                
+                if(block) {
+                    block(moments != nil);
                 }
             }];
         }
@@ -613,8 +648,11 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
     }
 }
 
-- (void)reloadData
-{
+- (void)reloadDataWithWaitUntilFinished:(BOOL)waitUntilFinished {
+    [self reloadDataWithWaitUntilFinished:waitUntilFinished withEnded:nil];
+}
+
+- (void)reloadData {
     [self reloadDataWithWaitUntilFinished:NO];
 }
 
@@ -1034,7 +1072,7 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
 
 - (void)loadMomentsInFuture
 {
-    if(!isLoading)
+    if(!isLoading && !firstLoad)
     {
         // Si il y a des moments dans la timeLine
         int taille = [self.moments count];
@@ -1073,7 +1111,7 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
 
 - (void)loadMomentsInPast
 {
-    if(!isLoading)
+    if(!isLoading && !firstLoad)
     {
         // Si il y a des moments dans la timeLine
         int taille = [self.moments count];
