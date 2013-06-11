@@ -108,4 +108,8 @@
     
 }
 
+- (void)decallerRow:(NSInteger)decallage {
+    self.row = self.row + decallage;
+}
+
 @end

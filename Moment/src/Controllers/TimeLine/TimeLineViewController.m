@@ -1070,6 +1070,37 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
 
 #pragma mark - Scroll Infinite Load
 
+- (void)updateCellsRowWithDecalage:(NSInteger)decalage {
+    
+    NSInteger taille = [self.moments count];
+    if(taille <= 2)
+        return;
+    if(taille == 3) {
+        // Cell ID
+        MomentClass *moment = self.moments[1];
+        NSString *cellId = [NSString stringWithFormat:@"TimeLineCell_Classique_%@", moment.momentId];
+        // Load
+        TimeLineCell *cell = [self.tableView dequeueReusableCellWithIdentifier:cellId];
+        if(cell) {
+            [cell decallerRow:decalage];
+        }
+    }
+    else {
+        taille = taille - 1;
+        NSInteger i;
+        for(i = 1; i < taille; i++) {
+            MomentClass *moment = self.moments[i];
+            NSString *cellId = [NSString stringWithFormat:@"TimeLineCell_Classique_%@", moment.momentId];
+            // Load
+            TimeLineCell *cell = [self.tableView dequeueReusableCellWithIdentifier:cellId];
+            if(cell) {
+                [cell decallerRow:decalage];
+            }
+        }
+        
+    }
+}
+
 - (void)loadMomentsInFuture
 {
     if(!isLoading && !firstLoad)
@@ -1099,6 +1130,7 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
                     
                     // Reload data
                     [self reloadDataWithMoments:array];
+                    [self updateCellsRowWithDecalage:-[moments count]];
                     NSLog(@"Chargement dans le futur fini");
                 }
                 
@@ -1141,6 +1173,7 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
                     
                     // Reload data
                     [self reloadDataWithMoments:array];
+                    [self updateCellsRowWithDecalage:[moments count]];
                     
                     if(actualMoment) {
                         // Sélectionner le moment précedement selectionné
