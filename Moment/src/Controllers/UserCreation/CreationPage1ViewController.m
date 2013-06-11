@@ -377,8 +377,7 @@
     if( ([_nomLabel.text length] > 0) &&
        ([_prenomLabel.text length] > 0) &&
        ([_emailLabel.text length] > 0) &&
-       ([_mdpLabel.text length] > 0) &&
-       ([_birthdayTextField.text length] > 0)
+       ([_mdpLabel.text length] > 0)
        )
     {
         if( ![[Config sharedInstance] isValidEmail:_emailLabel.text] )
@@ -547,20 +546,33 @@
     if([self validateForm])
     {
         // Birthday
-        NSNumber *timeStamp = @([self.pickerView.datePicker.date timeIntervalSince1970]);
+        NSNumber *timeStamp = nil;
+        if(self.birthdayTextField.text.length > 0) {
+            timeStamp = @([self.pickerView.datePicker.date timeIntervalSince1970]);
+        }
         
         // Sexe
-        NSString *sexe = (self.maleButton.isSelected)? @"M" : @"F";
+        NSString *sexe = nil;
+        if(self.maleButton.isSelected || self.femaleButton.isSelected)
+            sexe = (self.maleButton.isSelected)? @"M" : @"F";
         
         // Params
         NSMutableDictionary *attributes = @{
         @"firstname" : _prenomLabel.text,
         @"lastname" : _nomLabel.text,
         @"email" : _emailLabel.text,
-        @"password" : _mdpLabel.text,
-        @"birth_date":timeStamp,
-        @"sex": sexe
+        @"password" : _mdpLabel.text
         }.mutableCopy;
+        
+        // Date de naissance
+        if(timeStamp) {
+            attributes[@"birth_date"] = timeStamp;
+        }
+        
+        // Sexe
+        if(sexe) {
+            attributes[@"sex"] = sexe;
+        }
         
         if(_imageProfile)
         {
