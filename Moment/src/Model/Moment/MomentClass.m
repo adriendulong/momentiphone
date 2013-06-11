@@ -150,7 +150,8 @@
         self.dateFin = event.endTime;
         self.descriptionString = event.descriptionString;
         self.facebookId = event.eventId;
-        self.isOpen = @(!event.isPrivate);
+        // self.isOpen = @(!event.isPrivate);
+        self.privacy = event.isPrivate ? @(MomentPrivacyPublic) : @(MomentPrivacyOpen);
     }
     return self;
 }
