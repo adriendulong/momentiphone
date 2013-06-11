@@ -18,6 +18,9 @@
     UIAlertView *addFirstPhoneNumber;
     UIAlertView *addSecondPhoneNumber;
     UIAlertView *removePhoneNumber;
+    UIAlertView *addFirstEmailAddress;
+    UIAlertView *addSecondEmailAddress;
+    UIAlertView *removeEmailAddress;
 }
 
 @property (strong, nonatomic) IBOutlet UILabel *mainTitle;
@@ -307,6 +310,64 @@
     }
 }
 
+- (IBAction)clicAddEmailAddress:(id)sender
+{
+    UserClass *currentUser = [UserCoreData getCurrentUser];
+    
+    if(currentUser.email.length != 0) {
+        
+        if(currentUser.secondEmail.length != 0) {
+            
+            removeEmailAddress = [[UIAlertView alloc] initWithTitle:@"Modifier l'email secondaire:"
+                                                            message:[NSString stringWithFormat:@"Email déja enregistré: %@", currentUser.secondEmail]
+                                                           delegate:self
+                                                  cancelButtonTitle:@"Annuler"
+                                                  otherButtonTitles:@"Valider", nil];
+            [removeEmailAddress setAlertViewStyle:UIAlertViewStylePlainTextInput];
+            UITextField* tf = [removeEmailAddress textFieldAtIndex:0];
+            [tf setKeyboardType:UIKeyboardTypeEmailAddress];
+            
+            [removeEmailAddress show];
+            
+            
+            
+            // Décommenter lorsqu'on pourra changer l'adresse principale
+            /*removeEmailAddress = [[UIAlertView alloc] initWithTitle:@"2 email enregistrés"
+             message:@"Supprimer en un:"
+             delegate:self
+             cancelButtonTitle:@"Annuler"
+             otherButtonTitles:nil, nil];
+             
+             [removeEmailAddress addButtonWithTitle:currentUser.email];
+             [removeEmailAddress addButtonWithTitle:currentUser.secondEmail];
+             
+             [removeEmailAddress show];*/
+        } else {
+            
+            addSecondEmailAddress = [[UIAlertView alloc] initWithTitle:@"Ajouter un email secondaire"
+                                                              message:[NSString stringWithFormat:@"Email déja enregistré: %@", currentUser.email]
+                                                             delegate:self
+                                                    cancelButtonTitle:@"Annuler"
+                                                    otherButtonTitles:@"Valider", nil];
+            [addSecondEmailAddress setAlertViewStyle:UIAlertViewStylePlainTextInput];
+            UITextField* tf = [addSecondEmailAddress textFieldAtIndex:0];
+            [tf setKeyboardType:UIKeyboardTypeDefault];
+            [addSecondEmailAddress show];
+        }
+    } else {
+        
+        addFirstEmailAddress = [[UIAlertView alloc] initWithTitle:@"Aucune email existant"
+                                                         message:@"Veuillez en ajouter un:"
+                                                        delegate:self
+                                               cancelButtonTitle:@"Annuler"
+                                               otherButtonTitles:@"Valider", nil];
+        [addFirstEmailAddress setAlertViewStyle:UIAlertViewStylePlainTextInput];
+        UITextField* tf = [addFirstEmailAddress textFieldAtIndex:0];
+        [tf setKeyboardType:UIKeyboardTypeDefault];
+        [addFirstEmailAddress show];
+    }
+}
+
 - (IBAction)clicContactUs:(id)sender
 {
     
@@ -391,12 +452,31 @@
                 
                 if(user)
                 {
-                    UIAlertView *fbPopup = [[UIAlertView alloc] initWithTitle:@"Lier mon compte Facebook"
+                    /*UIAlertView *fbPopup = [[UIAlertView alloc] initWithTitle:@"Lier mon compte Facebook"
                                                                       message:[NSString stringWithFormat:@"nom: %@ | prenom: %@ | email: %@ | fb_ID: %@", user.nom, user.prenom, user.email, user.facebookId]
                                                                      delegate:self
                                                             cancelButtonTitle:@"Refuser"
                                                             otherButtonTitles:@"Accepter", nil];
-                    [fbPopup show];
+                    [fbPopup show];*/
+                    
+                    [[FacebookManager sharedInstance] updateCurrentUserFacebookIdOnServer:nil];
+                    
+                    
+                    // Update Facebook ID
+                    /*NSLog(@"facebookId = %@", user.facebookId);
+                    [UserClass updateCurrentUserInformationsOnServerWithAttributes:@{@"facebookId":user.facebookId} withEnded:^(BOOL success) {
+                        
+                        // Informe user of success
+                        [MBProgressHUD hideHUDForView:self.view animated:YES];
+                        
+                        if(!success)
+                        {
+                            [[MTStatusBarOverlay sharedInstance]
+                             postImmediateErrorMessage:NSLocalizedString(@"Error", nil)
+                             duration:1
+                             animated:YES];
+                        }
+                    }];*/
                     
                     /*self.nomLabel.text = user.nom;
                      self.prenomLabel.text = user.prenom;
@@ -494,7 +574,7 @@
         
         if(buttonIndex == 1)
         {
-            // Envoi - Suppression 1er numéro
+            /*// Envoi - Suppression 1er numéro
             [UserClass updateCurrentUserInformationsOnServerWithAttributes:@{@"numeroMobile":[[Config sharedInstance] formatedPhoneNumber:@""]} withEnded:^(BOOL success) {
                 
                 // Informe user of success
@@ -507,7 +587,7 @@
                      duration:1
                      animated:YES];
                 }
-            }];
+            }];*/
             
             // Envoi - Remplacement 1er numéro par 2nd numéro
             [UserClass updateCurrentUserInformationsOnServerWithAttributes:@{@"numeroMobile":[[Config sharedInstance] formatedPhoneNumber:currentUser.secondPhone]} withEnded:^(BOOL success) {
@@ -554,6 +634,220 @@
                 }
             }];
         }
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    else if (alertView == addFirstEmailAddress) {
+        UITextField *emailAddressTextField = [alertView textFieldAtIndex:0];
+        
+        if(buttonIndex == 1)
+        {
+            [emailAddressTextField resignFirstResponder];
+            
+            if ([[Config sharedInstance] isValidEmail:emailAddressTextField.text]) {
+                // Si le champ est vide, alertview
+                if(emailAddressTextField.text.length == 0)
+                {
+                    
+                    [[[UIAlertView alloc]
+                      initWithTitle:NSLocalizedString(@"CreationPage2ViewController_ConfirmEmptyAlertView_Title", nil)
+                      message:NSLocalizedString(@"CreationPage2ViewController_ConfirmEmptyAlertView_Message", nil)
+                      delegate:self
+                      cancelButtonTitle:NSLocalizedString(@"AlertView_Button_Cancel", nil)
+                      otherButtonTitles:NSLocalizedString(@"AlertView_Button_Continue", nil),nil]
+                     show];
+                    
+                }
+                else
+                {
+                    // Envoi
+                    //[UserClass updateCurrentUserInformationsOnServerWithAttributes:@{@"numeroMobile":[[Config sharedInstance] formatedPhoneNumber:emailAddressTextField.text]} withEnded:^(BOOL success) {
+                    [UserClass updateCurrentUserInformationsOnServerWithAttributes:@{@"email":emailAddressTextField.text} withEnded:^(BOOL success) {
+                    
+                        // Informe user of success
+                        [MBProgressHUD hideHUDForView:self.view animated:YES];
+                    
+                        if(!success)
+                        {
+                            [[MTStatusBarOverlay sharedInstance]
+                             postImmediateErrorMessage:NSLocalizedString(@"Error", nil)
+                             duration:1
+                             animated:YES];
+                        }
+                    }];
+                }
+                
+            } else { // Si l'email a un format non valide
+                [[[UIAlertView alloc]
+                  initWithTitle:@"Format invalide"
+                  message:@"Le format de l'adresse email est invalide."
+                  delegate:self
+                  cancelButtonTitle:@"OK"
+                  otherButtonTitles:nil,nil]
+                 show];
+            }
+        }
+    } else if (alertView == addSecondEmailAddress) {
+        UITextField *emailAddressTextField = [alertView textFieldAtIndex:0];
+        
+        if(buttonIndex == 1)
+        {
+            [emailAddressTextField resignFirstResponder];
+            
+            if ([[Config sharedInstance] isValidEmail:emailAddressTextField.text]) {
+                // Si le champ est vide, alertview
+                if(emailAddressTextField.text.length == 0)
+                {
+                    
+                    [[[UIAlertView alloc]
+                      initWithTitle:NSLocalizedString(@"CreationPage2ViewController_ConfirmEmptyAlertView_Title", nil)
+                      message:NSLocalizedString(@"CreationPage2ViewController_ConfirmEmptyAlertView_Message", nil)
+                      delegate:self
+                      cancelButtonTitle:NSLocalizedString(@"AlertView_Button_Cancel", nil)
+                      otherButtonTitles:NSLocalizedString(@"AlertView_Button_Continue", nil),nil]
+                     show];
+                    
+                }
+                else
+                {
+                    // Envoi
+                    [UserClass updateCurrentUserInformationsOnServerWithAttributes:@{@"secondEmail":emailAddressTextField.text} withEnded:^(BOOL success) {
+                        
+                        // Informe user of success
+                        [MBProgressHUD hideHUDForView:self.view animated:YES];
+                        
+                        if(!success)
+                        {
+                            [[MTStatusBarOverlay sharedInstance]
+                             postImmediateErrorMessage:NSLocalizedString(@"Error", nil)
+                             duration:1
+                             animated:YES];
+                        }
+                    }];
+                }
+            } else { // Si l'email a un format non valide
+                [[[UIAlertView alloc]
+                  initWithTitle:@"Format invalide"
+                  message:@"Le format de l'adresse email est invalide."
+                  delegate:self
+                  cancelButtonTitle:@"OK"
+                  otherButtonTitles:nil,nil]
+                 show];
+            }
+        }
+    } else if (alertView == removeEmailAddress) {
+        UITextField *emailAddressTextField = [alertView textFieldAtIndex:0];
+        
+        if(buttonIndex == 1)
+        {
+            [emailAddressTextField resignFirstResponder];
+            
+            if ([[Config sharedInstance] isValidEmail:emailAddressTextField.text]) {
+                // Si le champ est vide, alertview
+                if(emailAddressTextField.text.length == 0)
+                {
+                    
+                    [[[UIAlertView alloc]
+                      initWithTitle:NSLocalizedString(@"CreationPage2ViewController_ConfirmEmptyAlertView_Title", nil)
+                      message:NSLocalizedString(@"CreationPage2ViewController_ConfirmEmptyAlertView_Message", nil)
+                      delegate:self
+                      cancelButtonTitle:NSLocalizedString(@"AlertView_Button_Cancel", nil)
+                      otherButtonTitles:NSLocalizedString(@"AlertView_Button_Continue", nil),nil]
+                     show];
+                    
+                }
+                else
+                {
+                    // Envoi
+                    [UserClass updateCurrentUserInformationsOnServerWithAttributes:@{@"secondEmail":emailAddressTextField.text} withEnded:^(BOOL success) {
+                        
+                        // Informe user of success
+                        [MBProgressHUD hideHUDForView:self.view animated:YES];
+                        
+                        if(!success)
+                        {
+                            [[MTStatusBarOverlay sharedInstance]
+                             postImmediateErrorMessage:NSLocalizedString(@"Error", nil)
+                             duration:1
+                             animated:YES];
+                        }
+                    }];
+                }
+            } else { // Si l'email a un format non valide
+                [[[UIAlertView alloc]
+                  initWithTitle:@"Format invalide"
+                  message:@"Le format de l'adresse email est invalide."
+                  delegate:self
+                  cancelButtonTitle:@"OK"
+                  otherButtonTitles:nil,nil]
+                 show];
+            }
+        }
+    
+        
+        
+        
+        
+        // Décommenter lorsqu'on pourra changer l'adresse principale
+        /*if(buttonIndex == 1)
+        {            
+            // Envoi - Remplacement 1er numéro par 2nd numéro
+            [UserClass updateCurrentUserInformationsOnServerWithAttributes:@{@"email":currentUser.secondEmail} withEnded:^(BOOL success) {
+                
+                // Informe user of success
+                [MBProgressHUD hideHUDForView:self.view animated:YES];
+                
+                if(!success)
+                {
+                    [[MTStatusBarOverlay sharedInstance]
+                     postImmediateErrorMessage:NSLocalizedString(@"Error", nil)
+                     duration:1
+                     animated:YES];
+                }
+            }];
+            
+            // Envoi - Suppression 2nd numéro
+            [UserClass updateCurrentUserInformationsOnServerWithAttributes:@{@"secondEmail":@""} withEnded:^(BOOL success) {
+                
+                // Informe user of success
+                [MBProgressHUD hideHUDForView:self.view animated:YES];
+                
+                if(!success)
+                {
+                    [[MTStatusBarOverlay sharedInstance]
+                     postImmediateErrorMessage:NSLocalizedString(@"Error", nil)
+                     duration:1
+                     animated:YES];
+                }
+            }];
+        } else if (buttonIndex == 2) {
+            // Envoi - Suppression 2nd numéro
+            [UserClass updateCurrentUserInformationsOnServerWithAttributes:@{@"secondEmail":@""} withEnded:^(BOOL success) {
+                
+                // Informe user of success
+                [MBProgressHUD hideHUDForView:self.view animated:YES];
+                
+                if(!success)
+                {
+                    [[MTStatusBarOverlay sharedInstance]
+                     postImmediateErrorMessage:NSLocalizedString(@"Error", nil)
+                     duration:1
+                     animated:YES];
+                }
+            }];
+        }*/
     }
 }
 
