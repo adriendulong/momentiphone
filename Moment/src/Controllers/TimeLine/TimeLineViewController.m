@@ -20,6 +20,41 @@
 
 #define DEGREES_TO_RADIANS(x) (M_PI * x / 180.0)
 
+#pragma mark - Reverse Array
+
+@implementation NSArray (Reverse)
+
+- (NSArray *)reversedArray {
+    NSMutableArray *array = [NSMutableArray arrayWithCapacity:[self count]];
+    NSEnumerator *enumerator = [self reverseObjectEnumerator];
+    for (id element in enumerator) {
+        [array addObject:element];
+    }
+    return array;
+}
+
+@end
+
+@implementation NSMutableArray (Reverse)
+
+- (void)reverse {
+    if ([self count] == 0)
+        return;
+    NSUInteger i = 0;
+    NSUInteger j = [self count] - 1;
+    while (i < j) {
+        [self exchangeObjectAtIndex:i
+                  withObjectAtIndex:j];
+        
+        i++;
+        j--;
+    }
+}
+
+@end
+
+#pragma mark - TimeLineViewController
+
 enum ClockState {
     ClockStateUp = 0,
     ClockStateDown = 1
@@ -1016,24 +1051,17 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
                     // Merge des tableau
                     NSMutableArray *array = self.moments.mutableCopy;
                     
-                    // ---Debug
-#warning DEBUG
-                    if([[moments[0] dateDebut] isLaterThan:[self.moments[taille - 2] dateDebut]])
-                    {
-                        // Supprime cellules vides
-                        [array removeObjectAtIndex:0];
-                        [array removeLastObject];
-                        
-                        // Ajout à la fin du tableau
-                        NSIndexSet *indexSet = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange([array count], [moments count])];
-                        [array insertObjects:moments atIndexes:indexSet];
-                        
-                        // Reload data
-                        [self reloadDataWithMoments:array];
-                        NSLog(@"Chargement dans le futur fini");
-                    }
+                    // Supprime cellules vides
+                    [array removeObjectAtIndex:0];
+                    [array removeLastObject];
                     
+                    // Ajout à la fin du tableau
+                    NSIndexSet *indexSet = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange([array count], [moments count])];
+                    [array insertObjects:moments atIndexes:indexSet];
                     
+                    // Reload data
+                    [self reloadDataWithMoments:array];
+                    NSLog(@"Chargement dans le futur fini");
                 }
                 
                 isLoading = NO;
@@ -1061,34 +1089,29 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
                     // Merge des tableau
                     NSMutableArray *array = self.moments.mutableCopy;
                     
+                    // Supprime cellules vides
+                    [array removeObjectAtIndex:0];
+                    [array removeLastObject];
                     
-                    // --Debug
-#warning DEBUG
-                    if([[moments[[moments count]-1] dateDebut] isEarlierThan:[self.moments[1] dateDebut]])
-                    {
-                        // Supprime cellules vides
-                        [array removeObjectAtIndex:0];
-                        [array removeLastObject];
-                        
-                        // Ajout au début du tableau
-                        NSIndexSet *indexSet = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [moments count])];
-                        [array insertObjects:moments atIndexes:indexSet];
-                        
-                        // Moment précédement sélectionné
-                        MomentClass *actualMoment = (self.selectedIndex > 0) ? self.moments[self.selectedIndex] : nil;
-                        
-                        // Reload data
-                        [self reloadDataWithMoments:array];
-                        
-                        if(actualMoment) {
-                            // Sélectionner le moment précedement selectionné
-                            [self updateSelectedMoment:actualMoment atRow:([moments count]+1+self.selectedIndex)];
-                        }
-                        // Scroll à la position précédente
-                        [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:([moments count]+1) inSection:0] atScrollPosition:UITableViewScrollPositionMiddle animated:NO];
-                        
-                        NSLog(@"Chargement dans le passé fini");
+                    // Ajout au début du tableau
+                    moments = [moments reversedArray]; // Inverser le tableau
+                    NSIndexSet *indexSet = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [moments count])];
+                    [array insertObjects:moments atIndexes:indexSet];
+                    
+                    // Moment précédement sélectionné
+                    MomentClass *actualMoment = (self.selectedIndex > 0) ? self.moments[self.selectedIndex] : nil;
+                    
+                    // Reload data
+                    [self reloadDataWithMoments:array];
+                    
+                    if(actualMoment) {
+                        // Sélectionner le moment précedement selectionné
+                        [self updateSelectedMoment:actualMoment atRow:([moments count]+1+self.selectedIndex)];
                     }
+                    // Scroll à la position précédente
+                    [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:([moments count]+1) inSection:0] atScrollPosition:UITableViewScrollPositionMiddle animated:NO];
+                    
+                    NSLog(@"Chargement dans le passé fini");
                     
                 }
                 
