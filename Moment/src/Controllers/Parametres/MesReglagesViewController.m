@@ -166,17 +166,11 @@
 - (IBAction)clicContactUs {
         
     if([MFMailComposeViewController canSendMail])
-    {
-        
-        // Email Subject
-        NSString *emailTitle = @"Hello Moment, un petit mot";
-        // Email Content
-        NSString *messageBody = @"<i>C'était juste pour vous dire</i>";
-        
+    {        
         MFMailComposeViewController *mc = [[MFMailComposeViewController alloc] init];
         mc.mailComposeDelegate = self;
-        [mc setSubject:emailTitle];
-        [mc setMessageBody:messageBody isHTML:YES];
+        [mc setSubject:NSLocalizedString(@"MFMailComposeViewController_Moment_Subject", nil)];
+        [mc setMessageBody:NSLocalizedString(@"MFMailComposeViewController_Moment_MessageBody", nil) isHTML:YES];
         [mc setToRecipients:@[kParameterContactMail]];
         
         // Present mail view controller on screen
