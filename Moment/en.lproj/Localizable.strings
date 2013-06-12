@@ -6,72 +6,117 @@
  Copyright (c) 2013 Moment. All rights reserved.
  */
 
+/* ---------------- EventMissingViewController ------------------ */
+// LABEL
+"EventMissingViewController_mainTitle" = "IL VOUS MANQUE UN ÉVÈNEMENT ?";
+"EventMissingViewController_subTitle" = "IL SE PEUT QUE VOUS AYEZ ÉTÉ INVITÉ À UNE ÉVÈNEMENT ET QU'IL N'APPARAISSE PAS DANS VOTRE TIMELINE POUR PLUSIEURS RAISONS";
+"EventMissingViewController_facebookTitle" = "VOUS AVEZ REÇU UNE INVITATION SUR FACEBOOK MAIS VOUS N'AVEZ PAS LIÉ VOTRE COMPTE MOMENT AVEC VOTRE COMPTE FACEBOOK :";
+"EventMissingViewController_callTitle" = "VOUS AVEZ REÇU L'INVITATION PAR SMS MAIS VOUS N'AVEZ PAS AJOUTÉ DE NUMÉRO DE TÉLÉPHONE À VOTRE COMPTE MOMENT :";
+"EventMissingViewController_mailTitle" = "VOUS AVEZ REÇU L'INVITATION PAR EMAIL MAIS VOUS N'AVEZ PAS RENSEIGNÉ VOTRE ADRESSE MAIL SECONDAIRE :";
+"EventMissingViewController_contactTitle" = "TOUJOURS PAS ? EXPLIQUEZ-NOUS VOTRE PROBLÈME, NOUS TÂCHERONS DE LE RÉSOUDRE AU PLUS VITE !";
+
+// BUTTON
+"EventMissingViewController_facebookButton" = "LIER MON COMPTE FACEBOOK";
+"EventMissingViewController_callButton" = "AJOUTER UN TÉLÉPHONE";
+"EventMissingViewController_mailButton" = "AJOUTER UNE ADRESSE MAIL";
+"EventMissingViewController_contactButton" = "CONTACTEZ-NOUS";
+
+
+
+// ALL POPUP
+"EventMissingViewController_addObject_Message" = "Veuillez en ajouter un:";
+
+// Facebook Popup
+"EventMissingViewController_fbLoginPopup_Title" = "Lier mon compte Facebook";
+"EventMissingViewController_fbLoginPopup_Message" = "Vous avez reçu une invitation sur Facebook. Lier votre compte mOment avec votre compte Facebook:";
+
+// Phone Number Popup
+"EventMissingViewController_removePhoneNumber_Title" = "2 numéros enregistrés";
+"EventMissingViewController_removePhoneNumber_Message" = "Supprimer un numéro:";
+
+"EventMissingViewController_addSecondPhoneNumber_Title" = "Ajouter un second numéro";
+"EventMissingViewController_addSecondPhoneNumber_Message" = "Numéro déja enregistré: %@";
+
+"EventMissingViewController_addFirstPhoneNumber_Title" = "Aucun numéro existant";
+
+// Email Popup
+"EventMissingViewController_EmailAlreadySave_Message" = "Email déja enregistré: %@";
+
+"EventMissingViewController_removeEmailAddress_Title" = "Modifier l'email secondaire:";
+
+"EventMissingViewController_addSecondEmailAddress_Title" = "Ajouter un email secondaire";
+"EventMissingViewController_addFirstEmailAddress_Title" = "Aucune email existant";
+
 /* ---------------- InviteAddViewController ------------------ */
 // HeaderView
-"InviteAddViewController_validerLabel" = "VALIDER LES";
-"InviteAddViewController_phraseLabel" = "AMIS INVITÉS À TON ";
+"InviteAddViewController_validerLabel" = "INVITER LES";
+"InviteAddViewController_phraseLabel" = "AMIS SELECTIONNÉS";
 // Empty Cell Label
 "InviteAddTableViewController_EmptyCell_noResultsLabel" = "Aucun contact correspondant";
+"InviteAddTableViewController_EmptyCell_noResultsLabel_favoris" = "Aucun contact dans favoris pour le moment. Au bout de quelques évènements, vous verrez automatiquement apparaitre les personnes qui vous sont proches !";
 // AlertView Invite with no guest selected
-"InviteAddTableViewController_AlertView_InviteWithNoGuest_Title" = "Incomplet";
-"InviteAddTableViewController_AlertView_InviteWithNoGuest_Message" = "Veuillez sélectionner des contacts à inviter";
+"InviteAddTableViewController_AlertView_InviteWithNoGuest_Title" = "Oops !";
+"InviteAddTableViewController_AlertView_InviteWithNoGuest_Message" = "Veuillez sélectionner au moins un contact ! ";
 // AlertView Invite Success
 "InviteAddTableViewController_AlertView_InviteSuccess_Title" = "Inivtations envoyées";
 "InviteAddTableViewController_AlertView_InviteSuccess_Message" = "Les invitations ont bien été envoyées à vos contacts";
 // NewUser AlertView
-"InviteAddViewController_NewUser_Invalide_Title" = "Invalide";
+"InviteAddViewController_NewUser_Invalide_Title" = "Erreur !";
 "InviteAddViewController_NewUser_Invalide_Email" = "Email invalide";
 "InviteAddViewController_NewUser_Invalide_Phone" = "Numéro de téléphone invalide";
+"InviteAddViewController_NewUser_Invalide_Phone_Mobile" = "Veuillez rentrer un numéro de téléphone portable";
+
 // Envoi SMS
-"InviteAddViewController_SendSMS_Message" = "Je viens de t'inviter à : %@ sur l'application Moment : %@.\n%@";
-"InviteAddViewController_SendSMS_Fail" = "L'envoi des sms à échoué";
+"InviteAddViewController_SendSMS_Message" = "Je viens de t'inviter à : %@ sur l'application Moment : %@.\n. Rejoins nous pour partager toutes les photos, et organisez l'évènement. A bientôt, %@";
+"InviteAddViewController_SendSMS_Fail" = "L'envoi de(s) sms à échoué";
 // Notifs Facebook
-"InviteAddViewController_NotifsFB_Message" = "%@ t'invites à l'évènement : %@ sur l'application Moment.";
+"InviteAddViewController_NotifsFB_Message" = "%@ vient de t'inviter à son évènement : %@ sur l'application Moment.";
 "InviteAddViewController_NotifsFB_Fail" = "L'envoi d'invitations Facebook a échoué";
 
 /* ---------------- InvitePresentsViewController ------------------ */
 // AlertView Loading Fail
-"InvitePresentsViewController_AlertView_LoadingFail_Title" = "Echec connexion";
-"InvitePresentsViewController_AlertView_LoadingFail_Message" = "Une erreur est survenue durant la connexion, merci de réesseyer ultérieurement";
+"InvitePresentsViewController_AlertView_LoadingFail_Title" = "Echec lors de la connexion";
+"InvitePresentsViewController_AlertView_LoadingFail_Message" = "Une erreur est survenue durant le chargement, merci de réesseyer ultérieurement";
 // Empty Cell
-"InvitePresentsTableView_EmptyCell_emptyLabel" = "Aucun contact";
+"InvitePresentsTableView_EmptyCell_emptyLabel" = "Aucun invités";
 // Custom Segmented Control
-"CustomSegmentedControl_Coming" = "PRÉSENTS";
-"CustomSegmentedControl_Unknown" = "NON RÉPONDU";
-"CustomSegmentedControl_Maybe" = "PEUT-ÊTRE";
+"CustomSegmentedControl_Coming" = "Participants";
+"CustomSegmentedControl_Unknown" = "Invités";
+"CustomSegmentedControl_Maybe" = "Peut-être";
 // Cell
-"InvitePresentsTableViewCell_AdminLabel" = "Admin";
+"InvitePresentsTableViewCell_AdminLabel" = "Chef !";
 
 /* ---------------- ChatViewController ------------------ */
 // Empty Cell
-"ChatViewController_EmptyCell_label" = "Aucun message";
+"ChatViewController_EmptyCell_label" = "Aucun message pour le moment, alors allez y, lachez vous ! Une blague, une info, un scoop, ce chat est fait pour ça.";
 // SendBoxView
-"ChatViewController_SendBoxView_placeHolder" = "Tapez votre message";
+"ChatViewController_SendBoxView_placeHolder" = "Tapez votre message ici !";
 // Infinite Scroll
-"ChatViewController_InfiniteScroll_LoadMore" = "Charger plus de messages";
+"ChatViewController_InfiniteScroll_LoadMore" = "Charger les messages plus ancien";
 
 /* ---------------- MBProgressHUD ------------------ */
 "MBProgressHUD_Loading" = "Chargement...";
 "MBProgressHUD_Loading_Moments" = "Chargement des moments...";
-"MBProgressHUD_Loading_Login" = "Chargement login ...";
+"MBProgressHUD_Loading_Login" = "Connexion ...";
 "MBProgressHUD_Deleting" = "Suppression en cours ...";
 
 /* ---------------- HomeViewController ------------------ */
 // ButtonLabel
-"HomeViewController_InscriptionButtonLabel" = "S'inscrire";
+//"HomeViewController_InscriptionButtonLabel" = "S'inscrire";
+"HomeViewController_InscriptionButtonLabel" = "Créer un compte";
 "HomeViewController_LoginButtonLabel" = "Se Connecter";
 // AlertView Load Moments Fail
 "HomeViewController_AlertView_LoadMomentsFail_Title" = "Erreur";
-"HomeViewController_AlertView_LoadMomentsFail_Message" = "Une erreur est survenue. Veuillez réessayer ultérieurement";
+"HomeViewController_AlertView_LoadMomentsFail_Message" = "Une erreur est survenue. Merci de réessayer";
 // AlertView Incomplete Form
-"HomeViewController_AlertView_IncompleteForm_Title" = "Champs vides";
-"HomeViewController_AlertView_IncompleteForm_Message" = "Merci de remplir votre login et mot de passe";
+"HomeViewController_AlertView_IncompleteForm_Title" = "Bien essayé !";
+"HomeViewController_AlertView_IncompleteForm_Message" = "Merci de remplir votre login et mot de passe ;)";
 // AlertView Authentification Fail
 "HomeViewController_AlertView_AuthentificationFail_Title" = "Echec Authentification";
 "HomeViewController_AlertView_AuthentificationFail_Message" = "Login et/ou mot de passe invalide";
 // AlertView Forgot Password
 "HomeViewController_AlertView_ForgotPassword_Title" = "Mot de passe oublié";
-"HomeViewController_AlertView_ForgotPassword_Message" = "Rentrez votre Email : ";
+"HomeViewController_AlertView_ForgotPassword_Message" = "Saisissez votre Email : ";
 // Status Bar Forgot Password
 "HomeViewController_Status_ForgotPassword_Success" = "Un Email vous a été envoyé";
 
@@ -81,37 +126,53 @@
 "TimeLineViewController_Echelle_TodayLabel" = "Aujourd'hui -";
 "TimeLineViewController_Echelle_PasseLabel" = "Passé -";
 // Delete Moment AlertView
-"TimeLineViewController_DeleteMomentAlertView_Title" = "Supprimer Moment";
-"TimeLineViewController_DeleteMomentAlertView_Message" = "Etes vous sur de vouloir supprimer ce moment ? Cette action ne peut être annulée";
+"TimeLineViewController_DeleteMomentAlertView_Title" = "Supprimer ce Moment";
+"TimeLineViewController_DeleteMomentAlertView_Message" = "Êtes vous sûr de vouloir supprimer ce moment ? Cette action est irréverssible !";
 // Erreur suppression
 "TimeLineViewController_DeleteMoment_Fail_Message" = "Erreur lors de la suppression, merci de réessayer ultérieurement";
+
+/* --------------- InfoMomentViewController --------------- */
+"MBProgressHUD_Loading_updateRSVP" = "Mise à jour";
 
 /* ---------------- PushNotifications ------------------ */
 // Chat
 "PushNotification_NewChat_AlertView_Title" = "Nouveau Message";
+"StatusBarOverlay_PushNotification_NewMessage" = "Nouveau Message !";
+// Photos
+"PushNotification_NewPhoto_AlertView_Title" = "Nouvelle Photo";
+"StatusBarOverlay_PushNotification_NewPhoto" = "Nouvelle Photo !";
+// Invitation
+"StatusBarOverlay_PushNotification_NewInvitation" = "Nouvelle Invitation !";
+// Follow
+"StatusBarOverlay_PushNotification_NewFollower" = "Nouvel abonné !";
+// Demande de Follow
+"StatusBarOverlay_PushNotification_NewFollowRequest" = "Nouvelle demande d'abonnement !";
+// Modification
+"StatusBarOverlay_PushNotification_NewModification" = "Nouvelle modification !";
+// Push Notifications Désactivées AlertView
+"PushNotification_Disabled_AlertView_Title" = "Notifications Désactivées";
+"PushNotification_Disabled_AlertView_Message" = "Les notifications sont désactivées. Veuillez changer vos paramètres de notifications";
 
 /* ---------------- VoletViewController ------------------ */
 // Empty Cell
-"VoletViewController_EmptyCell_invitationView" = "Aucune invitation";
-"VoletViewController_EmptyCell_notificationView" = "Aucune notification";
+"VoletViewController_EmptyCell_invitationView" = "Aucune invitation pour l'instant. Appuyez sur Moment Manquant dans le volet si vous ne retrouvez pas toutes vos invitations";
+"VoletViewController_EmptyCell_notificationView" = "Aucune notification pour le moment :(";
 // Section
 "VoletViewController_Section_Invitations" = "INVITATIONS";
 "VoletViewController_Section_Notifications" = "NOTIFICATIONS";
 
 /* ---------------- VoletSearchViewController ------------------ */
 // Empty Cell
-"VoletSearchViewController_EmptyCell_Moments" = "Aucun moment correspondant";
-"VoletSearchViewController_EmptyCell_Utilisateurs" = "Aucun utlisateur correspondant";
+"VoletSearchViewController_EmptyCell_Moments" = "Aucun moment correspondant à votre recherche. Essayez en enlevant les majuscules et les accents ! ";
+"VoletSearchViewController_EmptyCell_Utilisateurs" = "Aucun utlisateur correspondant à votre recherche. Essayez en enlevant les majuscules et les accents ! ";
 
 /* ----------- MTStatusBarOverlay ---------- */
-// Push Notification
-"StatusBarOverlay_PushNotification_NewMessage" = "Nouveau message";
 // Loading Failure
 "StatusBarOverlay_LoadingFailure" = "Le chargement a échoué";
 
 /* ------------ PhotoViewController ------------- */
 // Upload Photo
-"StatusBarOverlay_Photo_Uploading" = "Upload en cours ...";
+"StatusBarOverlay_Photo_Uploading" = "Envoi en cours ...";
 "StatusBarOverlay_Photo_UploadEnded" = "Envoi Terminé";
 // Download Photo
 "PhotoViewController_DownloadPhoto_success" = "Téléchargement terminé";
@@ -121,8 +182,8 @@
 
 /* ------------ BigPhotoViewController ------------- */
 // Suppression
-"BigPhotoViewController_DeleteActionSheet_Title" = "Confirmation de suppression";
-"BigPhotoViewController_DeleteActionSheet_Delete" = "Supprimer";
+"BigPhotoViewController_DeleteActionSheet_Title" = "Confirmation de suppression ?";
+"BigPhotoViewController_DeleteActionSheet_Delete" = "Supprimer !";
 // Suppression Fail
 "BigPhotoViewController_DeleteFailAlertView_Title" = "Echec Suppression";
 "BigPhotoViewController_DeleteFailAlertView_Message" = "La suppression de la photo a échouée, merci de réessayer ultérieurement";
@@ -152,39 +213,52 @@
 "CalendarManager_EventCreationSuccees" = "Evènement ajouté";
 // Event Création - Ask User
 "CalendarManager_EventCreation_AskUserAlertView_Title" = "Ajout au calendrier";
-"CalendarManager_EventCreation_AskUserAlertView_Message" = "Ajouter le Moment au calendrier ?";
+"CalendarManager_EventCreation_AskUserAlertView_Message" = "Ajouter le Moment au calendrier du téléphone ?";
 
 /* -------------- ImporterFBViewController ------------- */
-"MBProgressHUD_Loading_FBEvents" = "Importation des événements Facebook";
-"ImporterFBViewController_EmptyLabel" = "Aucun nouvel événement";
+"MBProgressHUD_Loading_FBEvents" = "Importation en cours ...";
+"ImporterFBViewController_EmptyLabel" = "Aucun nouvel événement trouvé. Pour votre confort, nous importons uniquement les évènements auxquels vous avez répondu sur Facebook. Pensez donc à indiquez votre présence à l'évènement puis à l'importer sur Moment !";
 
 /* -------------- CreationHomeViewController ------------- */
 // Import FB Alert View
-"CreationHomeViewController_importFBAlertView_Title" = "Importation Facebook";
-"CreationHomeViewController_importFBAlertView_Message" = "Importer vos événements depuis Facebook ?";
+"CreationHomeViewController_importFBAlertView_Title" = "Importation depuis Facebook";
+"CreationHomeViewController_importFBAlertView_Message" = "Souhaitez vous importer vos événements depuis Facebook ?";
 
 /* -------------- ModifierUserViewController ------------- */
 "ModifierUserViewController_StatusBarMessage_EditSuccess" = "Modifications effectuées";
-"ModifierUserViewController_AlertUnvalide_Title" = "Invalide";
-"ModifierUserViewController_AlertUnvalide_Message" = "Les informations renseignées sont invalides";
+"ModifierUserViewController_AlertUnvalide_Title" = "Oops !";
+"ModifierUserViewController_AlertUnvalide_Message" = "Les informations renseignées sont incorrectes";
+"ModifierUserViewController_WrongPassword_Title" = "Oops !";
+"ModifierUserViewController_WrongPassword_Message" = "Ancien mot de passe incorrect !";
 
 /* ------------ CreationPage2ViewController ------------- */
 // Confirm Empty Phone Number
-"CreationPage2ViewController_ConfirmEmptyAlertView_Title" = "Confirmation";
-"CreationPage2ViewController_ConfirmEmptyAlertView_Message" = "Ton numéro de téléphone te permettra de recevoir un maximum d'invitations. Es-tu sûr de ne pas vouloir le renseigner ?";
+"CreationPage2ViewController_ConfirmEmptyAlertView_Title" = "! ATTENTION !";
+"CreationPage2ViewController_ConfirmEmptyAlertView_Message" = "Vous ne recevrez aucune invitation de toutes les personnes qui vous inviteront depuis leurs carnets d'adresse. Êtes vous certains de ne pas vouloir le renseigner ? Aucune publicité ne vous sera envoyé !";
 // Invalide
 "CreationPage2ViewController_Invalide_Title" = "Numéro invalide";
 "CreationPage2ViewController_Invalide_Message" = "Veuillez rentrez un numéro de téléphone valide";
 
 /* ------------ ProfilViewController ------------- */
 // Buttons
-"ProfilViewController_FollowLabel" = "Follow";
-"ProfilViewController_FollowersLabel" = "Followers";
+"ProfilViewController_FollowLabel" = "Abos";
+"ProfilViewController_FollowersLabel" = "Abonnés";
 "ProfilViewController_PhotosLabel" = "Photos";
 "ProfilViewController_MomentsLabel" = "Moments";
+"ProfilViewController_AcceptFollowBar_InfoLabel" = "Souhaite s'abonné à votre activité";//"SOUHAITE VOUS SUIVRE.";
+"ProfilViewController_HeadFollowButtonLabel_Waiting" = "En attente";
+"ProfilViewController_HeadFollowButtonLabel_Follow" = "S'abonner";
+"ProfilViewController_HeadFollowButtonLabel_isFollowed" = "Abonné";
+"ProfilViewController_AcceptFollow_Message" = "Abonnement Accepté";
+"ProfilViewController_RefuseFollow_Message" = "Abonnement Refusé";
+// Unfollow
+"ProfilViewController_Unfollow_AlertView_Title" = "Se désabonner";
+"ProfilViewController_Unfollow_AlertView_Message" = "Êtes-vous sûr de vouloir annuler le suivi de cette personne ? Vous ne pourrez plus accéder à ses informations.";
+"ProfilViewController_Unfollow_AlertView_ConfirmButton" = "Se désabonner";
 
 /* ------------ FeedViewController ------------- */
-"FeedViewController_aboutMoment_label" = "À PROPOS DE";
+"FeedViewController_lire_messages_label1" = "Lire les";
+"FeedViewController_lire_messages_label2" = "%d autres messages";
 
 /* ------------ Cagnotte2ViewController ------------- */
 "Cagnotte2ViewController_EmptyCell" = "Aucun cadeau correspondant";
@@ -195,12 +269,32 @@
 /* ------------ Cagnotte4ViewController ------------- */
 "Cagnotte4ViewController_EmptyCell" = "Aucun participant";
 
+/* ------------ PlacesTableViewController ----------- */
+"PlacesViewController_EmptyCell" = "Saisissez les premières lettres du lieu dans la barre de recherche ci-dessus";
+
 /* ------------ FollowTableViewController ------------- */
 // Add Follow (Toggle) Error
-"FollowTableViewController_AddFollow_ErrorMessage" = "Follow a échoué, Réessayez";
+"FollowTableViewController_AddFollow_ErrorMessage" = "L'abonnement a échoué, Pouvez vous réessayez ?";
 // EmptyCell
-"FollowTableViewController_Follows_EmptyCellLabel" = "Aucun Follows";
-"FollowTableViewController_Followers_EmptyCellLabel" = "Aucun Followers";
+"FollowTableViewController_Follows_EmptyCellLabel" = "Aucun abonnement pour le moment, montrez lui comment faire ;)";
+"FollowTableViewController_Followers_EmptyCellLabel" = "Aucun abonnés pour le moment, soyez sympa abonnez vous à lui pour qu'il en est au moins un !";
+
+/* ------------ PopUpFunCreationViewController ---------- */
+// Privacy Open
+"PopUpFunCreationViewController_Privacy_Open_Title" = "Public :";
+"PopUpFunCreationViewController_Privacy_Open_Details" = "Tout le monde peut voir ce moment !";
+// Privacy Public
+"PopUpFunCreationViewController_Privacy_Public_Title" = "Privé :";
+"PopUpFunCreationViewController_Privacy_Public_Details" = "Seuls les invités et les amis des invités peuvent voir ce moment";
+// Privacy Private
+"PopUpFunCreationViewController_Privacy_Private_Title" = "Secret :";
+"PopUpFunCreationViewController_Privacy_Private_Details" = "Seuls les invités peuvent voir ce moment";
+
+/* -------------------- Facebook Manager ------------------ */
+// Erreur AlertView
+"FacebookManager_ErrorLoginFailed_Title" = "Facebook";
+"FacebookManager_ErrorLoginFailed_Message" = "Connection impossible. Tentez de vous reconnecter à Facebook";
+"FacebookManager_ErrorLoginFailed_Message_iOS6" = "Connection impossible. Veuillez autoriser Moment à se connecter à votre compte Facebook     (Réglages -> Facebook)";
 
 /* ---------------- Defautl AlertView ------------------ */
 "AlertView_Button_OK" = "OK";
@@ -209,16 +303,29 @@
 "AlertView_Button_NO" = "Non";
 "AlertView_Button_Continue" = "Continuer";
 "AlertView_Button_Valide" = "Valider";
+"AlertView_Button_Accept" = "Accepter";
+"AlertView_Button_Decline" = "Refuser";
 
 /* ------------- Peek Photo Action Sheet --------------- */
 "ActionSheet_PeekPhoto_Title" = "Source de la photo";
 "ActionSheet_PeekPhoto_Button_Cancel" = "Annuler";
-"ActionSheet_PeekPhoto_Button_PhotoLibrary" = "Album Photo";
+"ActionSheet_PeekPhoto_Button_PhotoLibrary" = "Albums Photo";
 "ActionSheet_PeekPhoto_Button_Camera" = "Appareil Photo";
+
+/* ------------- MFMailComposeViewController Moment --------------- */
+"MFMailComposeViewController_Moment_Subject" = "Hello Moment, un petit mot";
+"MFMailComposeViewController_Moment_MessageBody" = "<i>C'était juste pour vous dire</i>";
+
+"MFMailComposeViewController_Moment_Popup_Title" = "Envoi impossible";
+"MFMailComposeViewController_Moment_Popup_Message" = "Votre appareil ne supporte pas l'envoi d'email";
+
+"MFMailComposeViewController_Moment_InvalideFormat_Title" = "Format invalide";
+"MFMailComposeViewController_Moment_InvalideFormat_Message" = "Le format de l'adresse email est invalide.";
 
 /* ------------- Error --------------- */
 "Error_Title" = "Erreur";
 "Error_Classic" = "Une erreur est surnevue";
-"Error_Server" = "Erreur Server, Veuillez nous excuser pour la gène occasionnée ^^";
+"Error_Server" = "Erreur Serveur, Merci de réessayer ulterieurement";
+"Error_Send" = "Erreur d'envoi";
 
 

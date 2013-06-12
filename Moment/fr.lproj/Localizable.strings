@@ -6,6 +6,47 @@
   Copyright (c) 2013 Moment. All rights reserved.
 */
 
+/* ---------------- EventMissingViewController ------------------ */
+// LABEL
+"EventMissingViewController_mainTitle" = "IL VOUS MANQUE UN ÉVÈNEMENT ?";
+"EventMissingViewController_subTitle" = "IL SE PEUT QUE VOUS AYEZ ÉTÉ INVITÉ À UNE ÉVÈNEMENT ET QU'IL N'APPARAISSE PAS DANS VOTRE TIMELINE POUR PLUSIEURS RAISONS";
+"EventMissingViewController_facebookTitle" = "VOUS AVEZ REÇU UNE INVITATION SUR FACEBOOK MAIS VOUS N'AVEZ PAS LIÉ VOTRE COMPTE MOMENT AVEC VOTRE COMPTE FACEBOOK :";
+"EventMissingViewController_callTitle" = "VOUS AVEZ REÇU L'INVITATION PAR SMS MAIS VOUS N'AVEZ PAS AJOUTÉ DE NUMÉRO DE TÉLÉPHONE À VOTRE COMPTE MOMENT :";
+"EventMissingViewController_mailTitle" = "VOUS AVEZ REÇU L'INVITATION PAR EMAIL MAIS VOUS N'AVEZ PAS RENSEIGNÉ VOTRE ADRESSE MAIL SECONDAIRE :";
+"EventMissingViewController_contactTitle" = "TOUJOURS PAS ? EXPLIQUEZ-NOUS VOTRE PROBLÈME, NOUS TÂCHERONS DE LE RÉSOUDRE AU PLUS VITE !";
+
+// BUTTON
+"EventMissingViewController_facebookButton" = "LIER MON COMPTE FACEBOOK";
+"EventMissingViewController_callButton" = "AJOUTER UN TÉLÉPHONE";
+"EventMissingViewController_mailButton" = "AJOUTER UNE ADRESSE MAIL";
+"EventMissingViewController_contactButton" = "CONTACTEZ-NOUS";
+
+
+
+// ALL POPUP
+"EventMissingViewController_addObject_Message" = "Veuillez en ajouter un:";
+
+// Facebook Popup
+"EventMissingViewController_fbLoginPopup_Title" = "Lier mon compte Facebook";
+"EventMissingViewController_fbLoginPopup_Message" = "Vous avez reçu une invitation sur Facebook. Lier votre compte mOment avec votre compte Facebook:";
+
+// Phone Number Popup
+"EventMissingViewController_removePhoneNumber_Title" = "2 numéros enregistrés";
+"EventMissingViewController_removePhoneNumber_Message" = "Supprimer un numéro:";
+
+"EventMissingViewController_addSecondPhoneNumber_Title" = "Ajouter un second numéro";
+"EventMissingViewController_addSecondPhoneNumber_Message" = "Numéro déja enregistré: %@";
+
+"EventMissingViewController_addFirstPhoneNumber_Title" = "Aucun numéro existant";
+
+// Email Popup
+"EventMissingViewController_EmailAlreadySave_Message" = "Email déja enregistré: %@";
+
+"EventMissingViewController_removeEmailAddress_Title" = "Modifier l'email secondaire:";
+
+"EventMissingViewController_addSecondEmailAddress_Title" = "Ajouter un email secondaire";
+"EventMissingViewController_addFirstEmailAddress_Title" = "Aucune email existant";
+
 /* ---------------- InviteAddViewController ------------------ */
 // HeaderView
 "InviteAddViewController_validerLabel" = "INVITER LES";
@@ -262,6 +303,8 @@
 "AlertView_Button_NO" = "Non";
 "AlertView_Button_Continue" = "Continuer";
 "AlertView_Button_Valide" = "Valider";
+"AlertView_Button_Accept" = "Accepter";
+"AlertView_Button_Decline" = "Refuser";
 
 /* ------------- Peek Photo Action Sheet --------------- */
 "ActionSheet_PeekPhoto_Title" = "Source de la photo";
@@ -269,9 +312,20 @@
 "ActionSheet_PeekPhoto_Button_PhotoLibrary" = "Albums Photo";
 "ActionSheet_PeekPhoto_Button_Camera" = "Appareil Photo";
 
+/* ------------- MFMailComposeViewController Moment --------------- */
+"MFMailComposeViewController_Moment_Subject" = "Hello Moment, un petit mot";
+"MFMailComposeViewController_Moment_MessageBody" = "<i>C'était juste pour vous dire</i>";
+
+"MFMailComposeViewController_Moment_Popup_Title" = "Envoi impossible";
+"MFMailComposeViewController_Moment_Popup_Message" = "Votre appareil ne supporte pas l'envoi d'email";
+
+"MFMailComposeViewController_Moment_InvalideFormat_Title" = "Format invalide";
+"MFMailComposeViewController_Moment_InvalideFormat_Message" = "Le format de l'adresse email est invalide.";
+
 /* ------------- Error --------------- */
 "Error_Title" = "Erreur";
 "Error_Classic" = "Une erreur est surnevue";
 "Error_Server" = "Erreur Serveur, Merci de réessayer ulterieurement";
+"Error_Send" = "Erreur d'envoi";
 
 
