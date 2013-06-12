@@ -95,6 +95,17 @@
     [self.contactButton setContentHorizontalAlignment:UIControlContentHorizontalAlignmentLeft];
     [self.contactButton.titleLabel setAdjustsFontSizeToFitWidth:YES];
     
+    [self.mainTitle setText:NSLocalizedString(@"EventMissingViewController_mainTitle", nil)];
+    [self.subTitle setText:NSLocalizedString(@"EventMissingViewController_subTitle", nil)];
+    [self.facebookTitle setText:NSLocalizedString(@"EventMissingViewController_facebookTitle", nil)];
+    [self.facebookButton.titleLabel setText:NSLocalizedString(@"EventMissingViewController_facebookButton", nil)];
+    [self.callTitle setText:NSLocalizedString(@"EventMissingViewController_callTitle", nil)];
+    [self.callButton.titleLabel setText:NSLocalizedString(@"EventMissingViewController_callButton", nil)];
+    [self.mailTitle setText:NSLocalizedString(@"EventMissingViewController_mailTitle", nil)];
+    [self.mailButton.titleLabel setText:NSLocalizedString(@"EventMissingViewController_mailButton", nil)];
+    [self.contactTitle setText:NSLocalizedString(@"EventMissingViewController_contactTitle", nil)];
+    [self.contactButton.titleLabel setText:NSLocalizedString(@"EventMissingViewController_contactButton", nil)];
+    
     
     if([[VersionControl sharedInstance] supportIOS6]) {
         
@@ -258,11 +269,11 @@
 - (IBAction)clicAddFacebookAccount:(id)sender
 {
     // ------------ FACEBOOK LOGIN POPUP -------------
-    fbLoginPopup = [[UIAlertView alloc] initWithTitle:@"Lier mon compte Facebook"
-                                              message:@"Vous avez reçu une invitation sur Facebook mais vous n'avez pas lié votre compte moment avec votre compte facebook :"
+    fbLoginPopup = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"EventMissingViewController_fbLoginPopup_Title", nil)
+                                              message:NSLocalizedString(@"EventMissingViewController_fbLoginPopup_Message", nil)
                                              delegate:self
-                                    cancelButtonTitle:@"Refuser"
-                                    otherButtonTitles:@"Accepter", nil];
+                                    cancelButtonTitle:NSLocalizedString(@"AlertView_Button_Decline", nil)
+                                    otherButtonTitles:NSLocalizedString(@"AlertView_Button_Accept", nil), nil];
     [fbLoginPopup show];
 }
 
@@ -274,10 +285,10 @@
         
         if(currentUser.secondPhone.length != 0) {
             
-            removePhoneNumber = [[UIAlertView alloc] initWithTitle:@"2 numéros enregistrés"
-                                                                  message:@"Supprimer un numéro:"
+            removePhoneNumber = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"EventMissingViewController_removePhoneNumber_Title", nil)
+                                                                  message:NSLocalizedString(@"EventMissingViewController_removePhoneNumber_Message", nil)
                                                                  delegate:self
-                                                        cancelButtonTitle:@"Annuler"
+                                                        cancelButtonTitle:NSLocalizedString(@"AlertView_Button_Cancel", nil)
                                                    otherButtonTitles:nil, nil];
             
             [removePhoneNumber addButtonWithTitle:currentUser.numeroMobile];
@@ -286,11 +297,11 @@
             [removePhoneNumber show];
         } else {
             
-            addSecondPhoneNumber = [[UIAlertView alloc] initWithTitle:@"Ajouter un second numéro"
-                                                                  message:[NSString stringWithFormat:@"Numéro déja enregistré: %@", currentUser.numeroMobile]
+            addSecondPhoneNumber = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"EventMissingViewController_addSecondPhoneNumber_Title", nil)
+                                                                  message:[NSString stringWithFormat:NSLocalizedString(@"EventMissingViewController_addSecondPhoneNumber_Message", nil), currentUser.numeroMobile]
                                                                  delegate:self
-                                                        cancelButtonTitle:@"Annuler"
-                                                        otherButtonTitles:@"Valider", nil];
+                                                        cancelButtonTitle:NSLocalizedString(@"AlertView_Button_Cancel", nil)
+                                                        otherButtonTitles:NSLocalizedString(@"AlertView_Button_Valide", nil), nil];
             [addSecondPhoneNumber setAlertViewStyle:UIAlertViewStylePlainTextInput];
             UITextField* tf = [addSecondPhoneNumber textFieldAtIndex:0];
             [tf setKeyboardType:UIKeyboardTypePhonePad];
@@ -298,11 +309,11 @@
         }
     } else {
         
-        addFirstPhoneNumber = [[UIAlertView alloc] initWithTitle:@"Aucun numéro existant"
-                                                         message:@"Veuillez en ajouter un:"
+        addFirstPhoneNumber = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"EventMissingViewController_addFirstPhoneNumber_Title", nil)
+                                                         message:NSLocalizedString(@"EventMissingViewController_addObject_Message", nil)
                                                         delegate:self
-                                               cancelButtonTitle:@"Annuler"
-                                               otherButtonTitles:@"Valider", nil];
+                                               cancelButtonTitle:NSLocalizedString(@"AlertView_Button_Cancel", nil)
+                                               otherButtonTitles:NSLocalizedString(@"AlertView_Button_Valide", nil), nil];
         [addFirstPhoneNumber setAlertViewStyle:UIAlertViewStylePlainTextInput];
         UITextField* tf = [addFirstPhoneNumber textFieldAtIndex:0];
         [tf setKeyboardType:UIKeyboardTypePhonePad];
@@ -318,11 +329,11 @@
         
         if(currentUser.secondEmail.length != 0) {
             
-            removeEmailAddress = [[UIAlertView alloc] initWithTitle:@"Modifier l'email secondaire:"
-                                                            message:[NSString stringWithFormat:@"Email déja enregistré: %@", currentUser.secondEmail]
+            removeEmailAddress = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"EventMissingViewController_removeEmailAddress_Title", nil)
+                                                            message:[NSString stringWithFormat:NSLocalizedString(@"EventMissingViewController_removeEmailAddress_Message", nil), currentUser.secondEmail]
                                                            delegate:self
-                                                  cancelButtonTitle:@"Annuler"
-                                                  otherButtonTitles:@"Valider", nil];
+                                                  cancelButtonTitle:NSLocalizedString(@"AlertView_Button_Cancel", nil)
+                                                  otherButtonTitles:NSLocalizedString(@"AlertView_Button_Valide", nil), nil];
             [removeEmailAddress setAlertViewStyle:UIAlertViewStylePlainTextInput];
             UITextField* tf = [removeEmailAddress textFieldAtIndex:0];
             [tf setKeyboardType:UIKeyboardTypeEmailAddress];
@@ -344,11 +355,11 @@
              [removeEmailAddress show];*/
         } else {
             
-            addSecondEmailAddress = [[UIAlertView alloc] initWithTitle:@"Ajouter un email secondaire"
-                                                              message:[NSString stringWithFormat:@"Email déja enregistré: %@", currentUser.email]
+            addSecondEmailAddress = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"EventMissingViewController_addSecondEmailAddress_Title", nil)
+                                                              message:[NSString stringWithFormat:NSLocalizedString(@"EventMissingViewController_EmailAlreadySave_Message", nil), currentUser.email]
                                                              delegate:self
-                                                    cancelButtonTitle:@"Annuler"
-                                                    otherButtonTitles:@"Valider", nil];
+                                                    cancelButtonTitle:NSLocalizedString(@"AlertView_Button_Cancel", nil)
+                                                    otherButtonTitles:NSLocalizedString(@"AlertView_Button_Valide", nil), nil];
             [addSecondEmailAddress setAlertViewStyle:UIAlertViewStylePlainTextInput];
             UITextField* tf = [addSecondEmailAddress textFieldAtIndex:0];
             [tf setKeyboardType:UIKeyboardTypeDefault];
@@ -356,11 +367,11 @@
         }
     } else {
         
-        addFirstEmailAddress = [[UIAlertView alloc] initWithTitle:@"Aucune email existant"
-                                                         message:@"Veuillez en ajouter un:"
+        addFirstEmailAddress = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"EventMissingViewController_addFirstEmailAddress_Title", nil)
+                                                         message:NSLocalizedString(@"EventMissingViewController_addObject_Message", nil)
                                                         delegate:self
-                                               cancelButtonTitle:@"Annuler"
-                                               otherButtonTitles:@"Valider", nil];
+                                               cancelButtonTitle:NSLocalizedString(@"AlertView_Button_Cancel", nil)
+                                               otherButtonTitles:NSLocalizedString(@"AlertView_Button_Valide", nil), nil];
         [addFirstEmailAddress setAlertViewStyle:UIAlertViewStylePlainTextInput];
         UITextField* tf = [addFirstEmailAddress textFieldAtIndex:0];
         [tf setKeyboardType:UIKeyboardTypeDefault];
@@ -373,16 +384,10 @@
     
     if([MFMailComposeViewController canSendMail])
     {
-        
-        // Email Subject
-        NSString *emailTitle = @"Hello Moment, un petit mot";
-        // Email Content
-        NSString *messageBody = @"<i>C'était juste pour vous dire</i>";
-        
         MFMailComposeViewController *mc = [[MFMailComposeViewController alloc] init];
         mc.mailComposeDelegate = self;
-        [mc setSubject:emailTitle];
-        [mc setMessageBody:messageBody isHTML:YES];
+        [mc setSubject:NSLocalizedString(@"MFMailComposeViewController_Moment_Subject", nil)];
+        [mc setMessageBody:NSLocalizedString(@"MFMailComposeViewController_Moment_MessageBody", nil) isHTML:YES];
         [mc setToRecipients:@[kParameterContactMail]];
         
         // Present mail view controller on screen
@@ -392,10 +397,10 @@
     {
         NSLog(@"mail composer fail");
         
-        [[[UIAlertView alloc] initWithTitle:@"Envoi impossible"
-                                    message:@"Votre appareil ne supporte pas l'envoi d'email"
+        [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"MFMailComposeViewController_Moment_Popup_Title", nil)
+                                    message:NSLocalizedString(@"MFMailComposeViewController_Moment_Popup_Message", nil)
                                    delegate:nil
-                          cancelButtonTitle:@"OK"
+                          cancelButtonTitle:NSLocalizedString(@"AlertView_Button_OK", nil)
                           otherButtonTitles:nil]
          show];
     }
@@ -420,10 +425,10 @@
         case MFMailComposeResultFailed:
             NSLog(@"Mail sent failure: %@", [error localizedDescription]);
             
-            [[[UIAlertView alloc] initWithTitle:@"Erreur d'envoi"
+            [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error_Send", nil)
                                         message:[error localizedDescription]
                                        delegate:nil
-                              cancelButtonTitle:@"OK"
+                              cancelButtonTitle:NSLocalizedString(@"AlertView_Button_OK", nil)
                               otherButtonTitles:nil]
              show];
             
@@ -691,10 +696,10 @@
                 
             } else { // Si l'email a un format non valide
                 [[[UIAlertView alloc]
-                  initWithTitle:@"Format invalide"
-                  message:@"Le format de l'adresse email est invalide."
+                  initWithTitle:NSLocalizedString(@"MFMailComposeViewController_Moment_InvalideFormat_Title", nil)
+                  message:NSLocalizedString(@"MFMailComposeViewController_Moment_InvalideFormat_Message", nil)
                   delegate:self
-                  cancelButtonTitle:@"OK"
+                  cancelButtonTitle:NSLocalizedString(@"AlertView_Button_OK", nil)
                   otherButtonTitles:nil,nil]
                  show];
             }
@@ -739,10 +744,10 @@
                 }
             } else { // Si l'email a un format non valide
                 [[[UIAlertView alloc]
-                  initWithTitle:@"Format invalide"
-                  message:@"Le format de l'adresse email est invalide."
+                  initWithTitle:NSLocalizedString(@"MFMailComposeViewController_Moment_InvalideFormat_Title", nil)
+                  message:NSLocalizedString(@"MFMailComposeViewController_Moment_InvalideFormat_Message", nil)
                   delegate:self
-                  cancelButtonTitle:@"OK"
+                  cancelButtonTitle:NSLocalizedString(@"AlertView_Button_OK", nil)
                   otherButtonTitles:nil,nil]
                  show];
             }
@@ -787,10 +792,10 @@
                 }
             } else { // Si l'email a un format non valide
                 [[[UIAlertView alloc]
-                  initWithTitle:@"Format invalide"
-                  message:@"Le format de l'adresse email est invalide."
+                  initWithTitle:NSLocalizedString(@"MFMailComposeViewController_Moment_InvalideFormat_Title", nil)
+                  message:NSLocalizedString(@"MFMailComposeViewController_Moment_InvalideFormat_Message", nil)
                   delegate:self
-                  cancelButtonTitle:@"OK"
+                  cancelButtonTitle:NSLocalizedString(@"AlertView_Button_OK", nil)
                   otherButtonTitles:nil,nil]
                  show];
             }
