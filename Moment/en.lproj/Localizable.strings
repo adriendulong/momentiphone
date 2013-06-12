@@ -6,6 +6,47 @@
  Copyright (c) 2013 Moment. All rights reserved.
  */
 
+/* ---------------- TutorialViewController ------------------ */
+// PAGE 1
+"TutorialViewController_titlePage1" = "BIENVENUE !\nCECI EST VOTRE TIMELINE DE MOMENTS,\nCRÉEZ ET GÉREZ LES SIMPLEMENT";
+"TutorialViewController_basketPage1" = "Basket entre potes";
+"TutorialViewController_annivPage1" = "Anniversaire 23 ans de Paul";
+"TutorialViewController_vacNicePage1" = "Vacances à Nice";
+
+// PAGE 2
+"TutorialViewController_titlePage2" = "RÉCUPÉREZ ENFIN TOUTES VOS PHOTOS\nAPRÈS VOS MOMENTS ENTRE AMIS !";
+"TutorialViewController_parMarcPage2" = "PAR MARC N.";
+"TutorialViewController_photoDatePage2" = "12/10/12 21:04";
+"TutorialViewController_downloadPhotoPage2" = "Téléchargez toutes les photos\ndirectement sur votre téléphone !";
+
+// PAGE 3
+"TutorialViewController_titlePage3" = "PRÉPAREZ, ORGANISEZ, ECHANGEZ\nDURANT VOS MOMENTS ENTRE PROCHES.";
+"TutorialViewController_message1Page3" = "JE RAMÈNE DES CHIPS ?";
+"TutorialViewController_dateMessage1Page3" = "Nico F. 3 août 2013";
+"TutorialViewController_hourMessage1Page3" = "19:47";
+"TutorialViewController_message2Page3" = "JE SAIS PAS JE M'OCCUPE DU PLAT..";
+"TutorialViewController_dateMessage2Page3" = "Julien V. 3 août 2013";
+"TutorialViewController_hourMessage2Page3" = "19:49";
+"TutorialViewController_message3Page3" = "MOI J'ARRIVE À 21H ! ET POUR LES CHIPS\nPREND TOUJOURS ON SAIT JAMAIS.";
+"TutorialViewController_dateMessage3Page3" = "Adrien D. 3 août 2013";
+"TutorialViewController_hourMessage3Page3" = "19:55";
+"TutorialViewController_message4Page3" = "PREND DES CHIPS OUI ;) ON SE RETROUVE\nDANS 45 MIN !";
+"TutorialViewController_dateMessage4Page3" = "Rémi B. 3 août 2013";
+"TutorialViewController_hourMessage4Page3" = "20:03";
+"TutorialViewController_message5Page3" = "MERCI LES GARS :) J'ARRIVE !";
+"TutorialViewController_dateMessage5Page3" = "Nico F. 3 août 2013";
+"TutorialViewController_hourMessage5Page3" = "20:25";
+
+// PAGE 4
+"TutorialViewController_titlePage4" = "ET ENCORE PLUS ...";
+"TutorialViewController_facebookPage4" = "IMPORTER DEPUIS FACEBOOK";
+"TutorialViewController_lieuPage4" = "LIEU";
+"TutorialViewController_placePage4" = "AU BISTRO";
+"TutorialViewController_addressPage4" = "50 COURS LA REINE, 75006 PARIS";
+"TutorialViewController_cadeauxPage4" = "CADEAUX";
+"TutorialViewController_cagnottePage4" = "CAGNOTTE";
+"TutorialViewController_comptesPage4" = "COMPTES";
+
 /* ---------------- EventMissingViewController ------------------ */
 // LABEL
 "EventMissingViewController_mainTitle" = "IL VOUS MANQUE UN ÉVÈNEMENT ?";
