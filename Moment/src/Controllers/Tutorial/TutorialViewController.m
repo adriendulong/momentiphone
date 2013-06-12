@@ -90,11 +90,7 @@
                              nil];
         
         [self.images setArray:images4S];
-    }
-    
-    //NSLog(@"scrollView.frame.size.height = %f", self.scrollView.frame.size.height);
-    //NSLog(@"[[UIScreen mainScreen] bounds] = %@",  NSStringFromCGRect([[UIScreen mainScreen] bounds]));
-    
+    }    
     
     self.scrollView.frame = [[UIScreen mainScreen] bounds];
     
@@ -142,7 +138,7 @@
     
     
     UILabel *titlePage1 = [[UILabel alloc] initWithFrame:CGRectMake(5, 12, 300, 60)];
-    [titlePage1 setText:@"BIENVENUE !\nCECI EST VOTRE TIMELINE DE MOMENTS,\nCRÉEZ ET GÉREZ LES SIMPLEMENT"];
+    [titlePage1 setText:NSLocalizedString(@"TutorialViewController_titlePage1", nil)];
     
     if(supportIOS6) {
         
@@ -154,7 +150,6 @@
         [titlePage1 setTextColor:[UIColor colorWithRed:100.0f/255.0f green:100.0f/255.0f blue:100.0f/255.0f alpha:1.0f]];
         
         NSMutableAttributedString *text = [[NSMutableAttributedString alloc] initWithString:titlePage1.text];
-        //[text addAttribute:NSForegroundColorAttributeName value:(id) range:NSMakeRange(NSUInteger loc, NSUInteger len)];
         [text addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"Numans-Regular" size:17.0] range:NSMakeRange(0, 1)];
         [text addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"Numans-Regular" size:17.0] range:NSMakeRange(10, 1)];
         [text addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"Numans-Regular" size:17.0] range:NSMakeRange(12, 1)];
@@ -176,19 +171,11 @@
             
             Config *cf = [Config sharedInstance];
             
-            // 1 first Lettre Font
             [cf updateTTTAttributedString:mutableAttributedString withFontSize:17.0 onRange:NSMakeRange(0, 1)];
             [cf updateTTTAttributedString:mutableAttributedString withFontSize:17.0 onRange:NSMakeRange(10, 1)];
             [cf updateTTTAttributedString:mutableAttributedString withFontSize:17.0 onRange:NSMakeRange(12, 1)];
             
-            // Autres Lettres Font
-            //[cf updateTTTAttributedString:mutableAttributedString withFontSize:12.0 onRange:NSMakeRange(1, 38)];
-            
-            // 3 first Lettre Couleurs
             [cf updateTTTAttributedString:mutableAttributedString withColor:[UIColor orangeColor] onRange:NSMakeRange(39, 7)];
-            
-            // Autres Lettres Couleurs
-            //[cf updateTTTAttributedString:mutableAttributedString withColor:textColor onRange:NSMakeRange(1, taille-1)];
             
             return mutableAttributedString;
         }];
@@ -199,7 +186,7 @@
     
     // Page 2
     UILabel *titlePage2 = [[UILabel alloc] initWithFrame:CGRectMake(self.scrollView.frame.size.width + 5, 12, 300, 60)];
-    [titlePage2 setText:@"RÉCUPÉREZ ENFIN TOUTES VOS PHOTOS\nAPRÈS VOS MOMENTS ENTRE AMIS !"];
+    [titlePage2 setText:NSLocalizedString(@"TutorialViewController_titlePage2", nil)];
     
     if(supportIOS6) {
         
@@ -230,7 +217,6 @@
             
             Config *cf = [Config sharedInstance];
             
-            // 1 first Lettre Font
             [cf updateTTTAttributedString:mutableAttributedString withFontSize:17.0 onRange:NSMakeRange(0, 1)];
             [cf updateTTTAttributedString:mutableAttributedString withFontSize:17.0 onRange:NSMakeRange(63, 1)];
             
@@ -245,7 +231,7 @@
     
     //Page 3
     UILabel *titlePage3 = [[UILabel alloc] initWithFrame:CGRectMake(self.scrollView.frame.size.width*2 + 5, 12, 300, 60)];
-    [titlePage3 setText:@"PRÉPAREZ, ORGANISEZ, ECHANGEZ\nDURANT VOS MOMENTS ENTRE PROCHES."];
+    [titlePage3 setText:NSLocalizedString(@"TutorialViewController_titlePage3", nil)];
     
     if(supportIOS6) {
         
@@ -277,7 +263,6 @@
             
             Config *cf = [Config sharedInstance];
             
-            // 1 first Lettre Font
             [cf updateTTTAttributedString:mutableAttributedString withFontSize:17.0 onRange:NSMakeRange(0, 1)];
             [cf updateTTTAttributedString:mutableAttributedString withFontSize:17.0 onRange:NSMakeRange(10, 1)];
             [cf updateTTTAttributedString:mutableAttributedString withFontSize:17.0 onRange:NSMakeRange(21, 1)];
@@ -293,7 +278,7 @@
     
     //Page 4
     UILabel *titlePage4 = [[UILabel alloc] initWithFrame:CGRectMake(self.scrollView.frame.size.width*3 + 5, 12, 300, 60)];
-    [titlePage4 setText:@"ET ENCORE PLUS ..."];
+    [titlePage4 setText:NSLocalizedString(@"TutorialViewController_titlePage4", nil)];
     
     if(supportIOS6) {
         
@@ -320,7 +305,6 @@
             
             Config *cf = [Config sharedInstance];
             
-            // 1 first Lettre Font
             [cf updateTTTAttributedString:mutableAttributedString withFontSize:17.0 onRange:NSMakeRange(0, 1)];
             [cf updateTTTAttributedString:mutableAttributedString withFontSize:17.0 onRange:NSMakeRange(15, 3)];
             
@@ -337,7 +321,7 @@
     [cadeauxPage4 setBackgroundColor:[UIColor clearColor]];
     [cadeauxPage4 setTextAlignment:NSTextAlignmentCenter];
     [cadeauxPage4 setFont:[UIFont fontWithName:@"Numans-Regular" size:9]];
-    [cadeauxPage4 setText:@"CADEAUX"];
+    [cadeauxPage4 setText:NSLocalizedString(@"TutorialViewController_cadeauxPage4", nil)];
     [cadeauxPage4 setTextColor:[UIColor colorWithRed:100.0f/255.0f green:100.0f/255.0f blue:100.0f/255.0f alpha:1.0f]];
     [self.scrollView addSubview:cadeauxPage4];
     
@@ -345,7 +329,7 @@
     [cagnottePage4 setBackgroundColor:[UIColor clearColor]];
     [cagnottePage4 setTextAlignment:NSTextAlignmentCenter];
     [cagnottePage4 setFont:[UIFont fontWithName:@"Numans-Regular" size:9]];
-    [cagnottePage4 setText:@"CAGNOTTE"];
+    [cagnottePage4 setText:NSLocalizedString(@"TutorialViewController_cagnottePage4", nil)];
     [cagnottePage4 setTextColor:[UIColor colorWithRed:100.0f/255.0f green:100.0f/255.0f blue:100.0f/255.0f alpha:1.0f]];
     [self.scrollView addSubview:cagnottePage4];
     
@@ -353,7 +337,7 @@
     [comptesPage4 setBackgroundColor:[UIColor clearColor]];
     [comptesPage4 setTextAlignment:NSTextAlignmentCenter];
     [comptesPage4 setFont:[UIFont fontWithName:@"Numans-Regular" size:9]];
-    [comptesPage4 setText:@"COMPTES"];
+    [comptesPage4 setText:NSLocalizedString(@"TutorialViewController_comptesPage4", nil)];
     [comptesPage4 setTextColor:[UIColor colorWithRed:100.0f/255.0f green:100.0f/255.0f blue:100.0f/255.0f alpha:1.0f]];
     [self.scrollView addSubview:comptesPage4];
     
@@ -365,7 +349,7 @@
         [basketPage1 setBackgroundColor:[UIColor clearColor]];
         [basketPage1 setTextAlignment:NSTextAlignmentCenter];
         [basketPage1 setFont:[UIFont fontWithName:@"Numans-Regular" size:12.0]];
-        [basketPage1 setText:@"Basket entre potes"];
+        [basketPage1 setText:NSLocalizedString(@"TutorialViewController_basketPage1", nil)];
         [basketPage1 setTextColor:[UIColor colorWithRed:100.0f/255.0f green:100.0f/255.0f blue:100.0f/255.0f alpha:1.0f]];
         [self.scrollView addSubview:basketPage1];
         
@@ -373,7 +357,7 @@
         [annivPage1 setBackgroundColor:[UIColor clearColor]];
         [annivPage1 setTextAlignment:NSTextAlignmentCenter];
         [annivPage1 setFont:[UIFont fontWithName:@"Numans-Regular" size:12.0]];
-        [annivPage1 setText:@"Anniversaire 23 ans de Paul"];
+        [annivPage1 setText:NSLocalizedString(@"TutorialViewController_annivPage1", nil)];
         [annivPage1 setTextColor:[UIColor whiteColor]];
         [annivPage1 setShadowColor:[UIColor colorWithRed:0 green:0 blue:0 alpha:0.3]];
         [annivPage1 setShadowOffset:CGSizeMake(1.0, 1.0)];
@@ -383,7 +367,7 @@
         [vacNicePage1 setBackgroundColor:[UIColor clearColor]];
         [vacNicePage1 setTextAlignment:NSTextAlignmentCenter];
         [vacNicePage1 setFont:[UIFont fontWithName:@"Numans-Regular" size:12.0]];
-        [vacNicePage1 setText:@"Vacances à Nice"];
+        [vacNicePage1 setText:NSLocalizedString(@"TutorialViewController_vacNicePage1", nil)];
         [vacNicePage1 setTextColor:[UIColor colorWithRed:100.0f/255.0f green:100.0f/255.0f blue:100.0f/255.0f alpha:1.0f]];
         [self.scrollView addSubview:vacNicePage1];
         
@@ -392,7 +376,7 @@
         
         //Page 2
         UILabel *parMarcPage2 = [[UILabel alloc] initWithFrame:CGRectMake(self.scrollView.frame.size.width + 20, 123, 100, 20)];
-        [parMarcPage2 setText:@"PAR MARC N."];
+        [parMarcPage2 setText:NSLocalizedString(@"TutorialViewController_parMarcPage2", nil)];
             
         [parMarcPage2 setBackgroundColor:[UIColor clearColor]];
         [parMarcPage2 setTextAlignment:NSTextAlignmentCenter];
@@ -414,7 +398,7 @@
         [photoDatePage2 setBackgroundColor:[UIColor clearColor]];
         [photoDatePage2 setTextAlignment:NSTextAlignmentCenter];
         [photoDatePage2 setFont:[UIFont fontWithName:@"Numans-Regular" size:10.0]];
-        [photoDatePage2 setText:@"12/10/12 21:04"];
+        [photoDatePage2 setText:NSLocalizedString(@"TutorialViewController_photoDatePage2", nil)];
         [photoDatePage2 setTextColor:[UIColor colorWithRed:100.0f/255.0f green:100.0f/255.0f blue:100.0f/255.0f alpha:1.0f]];
         [photoDatePage2 setTransform:CGAffineTransformMakeRotation(DEGREES_TO_RADIANS(-8.25))];
         [self.scrollView addSubview:photoDatePage2];
@@ -425,7 +409,7 @@
         [downloadPhotoPage2 setLineBreakMode:NSLineBreakByWordWrapping];
         [downloadPhotoPage2 setTextAlignment:NSTextAlignmentCenter];
         [downloadPhotoPage2 setFont:[UIFont fontWithName:@"Hand Of Sean" size:17.0]];
-        [downloadPhotoPage2 setText:@"Téléchargez toutes les photos\ndirectement sur votre téléphone !"];
+        [downloadPhotoPage2 setText:NSLocalizedString(@"TutorialViewController_downloadPhotoPage2", nil)];
         [downloadPhotoPage2 setTextColor:[UIColor darkGrayColor]];
         [downloadPhotoPage2 setTransform:CGAffineTransformMakeRotation(DEGREES_TO_RADIANS(6))];
         [self.scrollView addSubview:downloadPhotoPage2];
@@ -439,7 +423,7 @@
         [message1Page3 setBackgroundColor:[UIColor clearColor]];
         [message1Page3 setTextAlignment:NSTextAlignmentLeft];
         [message1Page3 setFont:[UIFont fontWithName:@"Numans-Regular" size:7.0]];
-        [message1Page3 setText:@"JE RAMÈNE DES CHIPS ?"];
+        [message1Page3 setText:NSLocalizedString(@"TutorialViewController_message1Page3", nil)];
         [message1Page3 setTextColor:[UIColor colorWithRed:100.0f/255.0f green:100.0f/255.0f blue:100.0f/255.0f alpha:1.0f]];
         [self.scrollView addSubview:message1Page3];
         
@@ -447,7 +431,7 @@
         [dateMessage1Page3 setBackgroundColor:[UIColor clearColor]];
         [dateMessage1Page3 setTextAlignment:NSTextAlignmentLeft];
         [dateMessage1Page3 setFont:[UIFont italicSystemFontOfSize:9.0]];
-        [dateMessage1Page3 setText:@"Nico F. 3 août 2013"];
+        [dateMessage1Page3 setText:NSLocalizedString(@"TutorialViewController_dateMessage1Page3", nil)];
         [dateMessage1Page3 setTextColor:[UIColor lightGrayColor]];
         [self.scrollView addSubview:dateMessage1Page3];
         
@@ -455,7 +439,7 @@
         [hourMessage1Page3 setBackgroundColor:[UIColor clearColor]];
         [hourMessage1Page3 setTextAlignment:NSTextAlignmentRight];
         [hourMessage1Page3 setFont:[UIFont italicSystemFontOfSize:9.0]];
-        [hourMessage1Page3 setText:@"19:47"];
+        [hourMessage1Page3 setText:NSLocalizedString(@"TutorialViewController_hourMessage1Page3", nil)];
         [hourMessage1Page3 setTextColor:[UIColor lightGrayColor]];
         [self.scrollView addSubview:hourMessage1Page3];
         
@@ -464,7 +448,7 @@
         [message2Page3 setBackgroundColor:[UIColor clearColor]];
         [message2Page3 setTextAlignment:NSTextAlignmentLeft];
         [message2Page3 setFont:[UIFont fontWithName:@"Numans-Regular" size:7.0]];
-        [message2Page3 setText:@"JE SAIS PAS JE M'OCCUPE DU PLAT.."];
+        [message2Page3 setText:NSLocalizedString(@"TutorialViewController_message2Page3", nil)];
         [message2Page3 setTextColor:[UIColor colorWithRed:100.0f/255.0f green:100.0f/255.0f blue:100.0f/255.0f alpha:1.0f]];
         [self.scrollView addSubview:message2Page3];
         
@@ -472,7 +456,7 @@
         [dateMessage2Page3 setBackgroundColor:[UIColor clearColor]];
         [dateMessage2Page3 setTextAlignment:NSTextAlignmentLeft];
         [dateMessage2Page3 setFont:[UIFont italicSystemFontOfSize:9.0]];
-        [dateMessage2Page3 setText:@"Julien V. 3 août 2013"];
+        [dateMessage2Page3 setText:NSLocalizedString(@"TutorialViewController_dateMessage2Page3", nil)];
         [dateMessage2Page3 setTextColor:[UIColor whiteColor]];
         [self.scrollView addSubview:dateMessage2Page3];
         
@@ -480,7 +464,7 @@
         [hourMessage2Page3 setBackgroundColor:[UIColor clearColor]];
         [hourMessage2Page3 setTextAlignment:NSTextAlignmentRight];
         [hourMessage2Page3 setFont:[UIFont italicSystemFontOfSize:9.0]];
-        [hourMessage2Page3 setText:@"19:49"];
+        [hourMessage2Page3 setText:NSLocalizedString(@"TutorialViewController_hourMessage2Page3", nil)];
         [hourMessage2Page3 setTextColor:[UIColor whiteColor]];
         [self.scrollView addSubview:hourMessage2Page3];
         
@@ -491,7 +475,7 @@
         [message3Page3 setLineBreakMode:NSLineBreakByWordWrapping];
         [message3Page3 setTextAlignment:NSTextAlignmentLeft];
         [message3Page3 setFont:[UIFont fontWithName:@"Numans-Regular" size:7.0]];
-        [message3Page3 setText:@"MOI J'ARRIVE À 21H ! ET POUR LES CHIPS\nPREND TOUJOURS ON SAIT JAMAIS."];
+        [message3Page3 setText:NSLocalizedString(@"TutorialViewController_message3Page3", nil)];
         [message3Page3 setTextColor:[UIColor colorWithRed:100.0f/255.0f green:100.0f/255.0f blue:100.0f/255.0f alpha:1.0f]];
         [self.scrollView addSubview:message3Page3];
         
@@ -499,7 +483,7 @@
         [dateMessage3Page3 setBackgroundColor:[UIColor clearColor]];
         [dateMessage3Page3 setTextAlignment:NSTextAlignmentLeft];
         [dateMessage3Page3 setFont:[UIFont italicSystemFontOfSize:9.0]];
-        [dateMessage3Page3 setText:@"Adrien D. 3 août 2013"];
+        [dateMessage3Page3 setText:NSLocalizedString(@"TutorialViewController_dateMessage3Page3", nil)];
         [dateMessage3Page3 setTextColor:[UIColor whiteColor]];
         [self.scrollView addSubview:dateMessage3Page3];
         
@@ -507,7 +491,7 @@
         [hourMessage3Page3 setBackgroundColor:[UIColor clearColor]];
         [hourMessage3Page3 setTextAlignment:NSTextAlignmentRight];
         [hourMessage3Page3 setFont:[UIFont italicSystemFontOfSize:9.0]];
-        [hourMessage3Page3 setText:@"19:55"];
+        [hourMessage3Page3 setText:NSLocalizedString(@"TutorialViewController_hourMessage3Page3", nil)];
         [hourMessage3Page3 setTextColor:[UIColor whiteColor]];
         [self.scrollView addSubview:hourMessage3Page3];
         
@@ -518,7 +502,7 @@
         [message4Page3 setLineBreakMode:NSLineBreakByWordWrapping];
         [message4Page3 setTextAlignment:NSTextAlignmentLeft];
         [message4Page3 setFont:[UIFont fontWithName:@"Numans-Regular" size:7.0]];
-        [message4Page3 setText:@"PREND DES CHIPS OUI ;) ON SE RETROUVE\nDANS 45 MIN !"];
+        [message4Page3 setText:NSLocalizedString(@"TutorialViewController_message4Page3", nil)];
         [message4Page3 setTextColor:[UIColor colorWithRed:100.0f/255.0f green:100.0f/255.0f blue:100.0f/255.0f alpha:1.0f]];
         [self.scrollView addSubview:message4Page3];
         
@@ -526,7 +510,7 @@
         [dateMessage4Page3 setBackgroundColor:[UIColor clearColor]];
         [dateMessage4Page3 setTextAlignment:NSTextAlignmentLeft];
         [dateMessage4Page3 setFont:[UIFont italicSystemFontOfSize:9.0]];
-        [dateMessage4Page3 setText:@"Rémi B. 3 août 2013"];
+        [dateMessage4Page3 setText:NSLocalizedString(@"TutorialViewController_dateMessage4Page3", nil)];
         [dateMessage4Page3 setTextColor:[UIColor whiteColor]];
         [self.scrollView addSubview:dateMessage4Page3];
         
@@ -534,7 +518,7 @@
         [hourMessage4Page3 setBackgroundColor:[UIColor clearColor]];
         [hourMessage4Page3 setTextAlignment:NSTextAlignmentRight];
         [hourMessage4Page3 setFont:[UIFont italicSystemFontOfSize:9.0]];
-        [hourMessage4Page3 setText:@"20:03"];
+        [hourMessage4Page3 setText:NSLocalizedString(@"TutorialViewController_hourMessage4Page3", nil)];
         [hourMessage4Page3 setTextColor:[UIColor whiteColor]];
         [self.scrollView addSubview:hourMessage4Page3];
         
@@ -543,7 +527,7 @@
         [message5Page3 setBackgroundColor:[UIColor clearColor]];
         [message5Page3 setTextAlignment:NSTextAlignmentLeft];
         [message5Page3 setFont:[UIFont fontWithName:@"Numans-Regular" size:7.0]];
-        [message5Page3 setText:@"MERCI LES GARS :) J'ARRIVE !"];
+        [message5Page3 setText:NSLocalizedString(@"TutorialViewController_message5Page3", nil)];
         [message5Page3 setTextColor:[UIColor colorWithRed:100.0f/255.0f green:100.0f/255.0f blue:100.0f/255.0f alpha:1.0f]];
         [self.scrollView addSubview:message5Page3];
         
@@ -551,7 +535,7 @@
         [dateMessage5Page3 setBackgroundColor:[UIColor clearColor]];
         [dateMessage5Page3 setTextAlignment:NSTextAlignmentLeft];
         [dateMessage5Page3 setFont:[UIFont italicSystemFontOfSize:9.0]];
-        [dateMessage5Page3 setText:@"Nico F. 3 août 2013"];
+        [dateMessage5Page3 setText:NSLocalizedString(@"TutorialViewController_dateMessage5Page3", nil)];
         [dateMessage5Page3 setTextColor:[UIColor colorWithRed:100.0f/255.0f green:100.0f/255.0f blue:100.0f/255.0f alpha:1.0f]];
         [self.scrollView addSubview:dateMessage5Page3];
         
@@ -559,7 +543,7 @@
         [hourMessage5Page3 setBackgroundColor:[UIColor clearColor]];
         [hourMessage5Page3 setTextAlignment:NSTextAlignmentRight];
         [hourMessage5Page3 setFont:[UIFont italicSystemFontOfSize:9.0]];
-        [hourMessage5Page3 setText:@"20:25"];
+        [hourMessage5Page3 setText:NSLocalizedString(@"TutorialViewController_hourMessage5Page3", nil)];
         [hourMessage5Page3 setTextColor:[UIColor colorWithRed:100.0f/255.0f green:100.0f/255.0f blue:100.0f/255.0f alpha:1.0f]];
         [self.scrollView addSubview:hourMessage5Page3];
         
@@ -568,7 +552,7 @@
         
         //Page 4
         UILabel *facebookPage4 = [[UILabel alloc] initWithFrame:CGRectMake(self.scrollView.frame.size.width*3 + 60, 110, 300, 20)];
-        [facebookPage4 setText:@"IMPORTER DEPUIS FACEBOOK"];
+        [facebookPage4 setText:NSLocalizedString(@"TutorialViewController_facebookPage4", nil)];
             
         [facebookPage4 setBackgroundColor:[UIColor clearColor]];
         [facebookPage4 setTextAlignment:NSTextAlignmentLeft];
@@ -589,7 +573,7 @@
         
         
         UILabel *lieuPage4 = [[UILabel alloc] initWithFrame:CGRectMake(self.scrollView.frame.size.width*3 + 205, 196, 100, 24)];
-        [lieuPage4 setText:@"LIEU"];
+        [lieuPage4 setText:NSLocalizedString(@"TutorialViewController_lieuPage4", nil)];
             
         [lieuPage4 setBackgroundColor:[UIColor clearColor]];
         [lieuPage4 setTextAlignment:NSTextAlignmentLeft];
@@ -612,14 +596,14 @@
         [placePage4 setBackgroundColor:[UIColor clearColor]];
         [placePage4 setTextAlignment:NSTextAlignmentRight];
         [placePage4 setFont:[UIFont fontWithName:@"Numans-Regular" size:12]];
-        [placePage4 setText:@"AU BISTRO"];
+        [placePage4 setText:NSLocalizedString(@"TutorialViewController_placePage4", nil)];
         [placePage4 setTextColor:[UIColor whiteColor]];
         [placePage4 setTransform:CGAffineTransformMakeRotation(DEGREES_TO_RADIANS(5))];
         [self.scrollView addSubview:placePage4];
         
         
         UILabel *addressPage4 = [[UILabel alloc] initWithFrame:CGRectMake(self.scrollView.frame.size.width*3 + 70, 270, 245, 20)];
-        [addressPage4 setText:@"50 COURS LA REINE, 75006 PARIS"];
+        [addressPage4 setText:NSLocalizedString(@"TutorialViewController_addressPage4", nil)];
             
         [addressPage4 setBackgroundColor:[UIColor clearColor]];
         [addressPage4 setTextAlignment:NSTextAlignmentLeft];
@@ -640,7 +624,7 @@
         [basketPage1 setBackgroundColor:[UIColor clearColor]];
         [basketPage1 setTextAlignment:NSTextAlignmentCenter];
         [basketPage1 setFont:[UIFont fontWithName:@"Numans-Regular" size:12.0]];
-        [basketPage1 setText:@"Basket entre potes"];
+        [basketPage1 setText:NSLocalizedString(@"TutorialViewController_basketPage1", nil)];
         [basketPage1 setTextColor:[UIColor colorWithRed:100.0f/255.0f green:100.0f/255.0f blue:100.0f/255.0f alpha:1.0f]];
         [self.scrollView addSubview:basketPage1];
         
@@ -648,7 +632,7 @@
         [annivPage1 setBackgroundColor:[UIColor clearColor]];
         [annivPage1 setTextAlignment:NSTextAlignmentCenter];
         [annivPage1 setFont:[UIFont fontWithName:@"Numans-Regular" size:12.0]];
-        [annivPage1 setText:@"Anniversaire 23 ans de Paul"];
+        [annivPage1 setText:NSLocalizedString(@"TutorialViewController_annivPage1", nil)];
         [annivPage1 setTextColor:[UIColor whiteColor]];
         [annivPage1 setShadowColor:[UIColor colorWithRed:0 green:0 blue:0 alpha:0.3]];
         [annivPage1 setShadowOffset:CGSizeMake(1.0, 1.0)];
@@ -659,7 +643,7 @@
         
         //Page 2
         UILabel *parMarcPage2 = [[UILabel alloc] initWithFrame:CGRectMake(self.scrollView.frame.size.width + 28, 95, 100, 20)];
-        [parMarcPage2 setText:@"PAR MARC N."];
+        [parMarcPage2 setText:NSLocalizedString(@"TutorialViewController_parMarcPage2", nil)];
         
         if(supportIOS6) {
             
@@ -689,7 +673,6 @@
                 
                 Config *cf = [Config sharedInstance];
                 
-                // 1 first Lettre Font
                 [cf updateTTTAttributedString:mutableAttributedString withFontSize:13.0 onRange:NSMakeRange(0, 1)];
                 [cf updateTTTAttributedString:mutableAttributedString withFontSize:13.0 onRange:NSMakeRange(4, 1)];
                 [cf updateTTTAttributedString:mutableAttributedString withFontSize:13.0 onRange:NSMakeRange(9, 1)];
@@ -706,7 +689,7 @@
         [photoDatePage2 setBackgroundColor:[UIColor clearColor]];
         [photoDatePage2 setTextAlignment:NSTextAlignmentCenter];
         [photoDatePage2 setFont:[UIFont fontWithName:@"Numans-Regular" size:10.0]];
-        [photoDatePage2 setText:@"12/10/12 21:04"];
+        [photoDatePage2 setText:NSLocalizedString(@"TutorialViewController_photoDatePage2", nil)];
         [photoDatePage2 setTextColor:[UIColor colorWithRed:100.0f/255.0f green:100.0f/255.0f blue:100.0f/255.0f alpha:1.0f]];
         [photoDatePage2 setTransform:CGAffineTransformMakeRotation(DEGREES_TO_RADIANS(-8.25))];
         [self.scrollView addSubview:photoDatePage2];
@@ -717,7 +700,7 @@
         [downloadPhotoPage2 setLineBreakMode:NSLineBreakByWordWrapping];
         [downloadPhotoPage2 setTextAlignment:NSTextAlignmentCenter];
         [downloadPhotoPage2 setFont:[UIFont fontWithName:@"Hand Of Sean" size:12.0]];
-        [downloadPhotoPage2 setText:@"Téléchargez toutes les photos\ndirectement sur votre téléphone !"];
+        [downloadPhotoPage2 setText:NSLocalizedString(@"TutorialViewController_downloadPhotoPage2", nil)];
         [downloadPhotoPage2 setTextColor:[UIColor whiteColor]];
         [downloadPhotoPage2 setTransform:CGAffineTransformMakeRotation(DEGREES_TO_RADIANS(-5))];
         [self.scrollView addSubview:downloadPhotoPage2];
@@ -729,7 +712,7 @@
         [message1Page3 setBackgroundColor:[UIColor clearColor]];
         [message1Page3 setTextAlignment:NSTextAlignmentLeft];
         [message1Page3 setFont:[UIFont fontWithName:@"Numans-Regular" size:7.0]];
-        [message1Page3 setText:@"JE RAMÈNE DES CHIPS ?"];
+        [message1Page3 setText:NSLocalizedString(@"TutorialViewController_message1Page3", nil)];
         [message1Page3 setTextColor:[UIColor colorWithRed:100.0f/255.0f green:100.0f/255.0f blue:100.0f/255.0f alpha:1.0f]];
         [self.scrollView addSubview:message1Page3];
         
@@ -737,7 +720,7 @@
         [dateMessage1Page3 setBackgroundColor:[UIColor clearColor]];
         [dateMessage1Page3 setTextAlignment:NSTextAlignmentLeft];
         [dateMessage1Page3 setFont:[UIFont italicSystemFontOfSize:9.0]];
-        [dateMessage1Page3 setText:@"Nico F. 3 août 2013"];
+        [dateMessage1Page3 setText:NSLocalizedString(@"TutorialViewController_dateMessage1Page3", nil)];
         [dateMessage1Page3 setTextColor:[UIColor lightGrayColor]];
         [self.scrollView addSubview:dateMessage1Page3];
         
@@ -745,7 +728,7 @@
         [hourMessage1Page3 setBackgroundColor:[UIColor clearColor]];
         [hourMessage1Page3 setTextAlignment:NSTextAlignmentRight];
         [hourMessage1Page3 setFont:[UIFont italicSystemFontOfSize:9.0]];
-        [hourMessage1Page3 setText:@"19:47"];
+        [hourMessage1Page3 setText:NSLocalizedString(@"TutorialViewController_hourMessage1Page3", nil)];
         [hourMessage1Page3 setTextColor:[UIColor lightGrayColor]];
         [self.scrollView addSubview:hourMessage1Page3];
         
@@ -754,7 +737,7 @@
         [message2Page3 setBackgroundColor:[UIColor clearColor]];
         [message2Page3 setTextAlignment:NSTextAlignmentLeft];
         [message2Page3 setFont:[UIFont fontWithName:@"Numans-Regular" size:7.0]];
-        [message2Page3 setText:@"JE SAIS PAS JE M'OCCUPE DU PLAT.."];
+        [message2Page3 setText:NSLocalizedString(@"TutorialViewController_message2Page3", nil)];
         [message2Page3 setTextColor:[UIColor colorWithRed:100.0f/255.0f green:100.0f/255.0f blue:100.0f/255.0f alpha:1.0f]];
         [self.scrollView addSubview:message2Page3];
         
@@ -762,7 +745,7 @@
         [dateMessage2Page3 setBackgroundColor:[UIColor clearColor]];
         [dateMessage2Page3 setTextAlignment:NSTextAlignmentLeft];
         [dateMessage2Page3 setFont:[UIFont italicSystemFontOfSize:9.0]];
-        [dateMessage2Page3 setText:@"Julien V. 3 août 2013"];
+        [dateMessage2Page3 setText:NSLocalizedString(@"TutorialViewController_dateMessage2Page3", nil)];
         [dateMessage2Page3 setTextColor:[UIColor whiteColor]];
         [self.scrollView addSubview:dateMessage2Page3];
         
@@ -770,7 +753,7 @@
         [hourMessage2Page3 setBackgroundColor:[UIColor clearColor]];
         [hourMessage2Page3 setTextAlignment:NSTextAlignmentRight];
         [hourMessage2Page3 setFont:[UIFont italicSystemFontOfSize:9.0]];
-        [hourMessage2Page3 setText:@"19:49"];
+        [hourMessage2Page3 setText:NSLocalizedString(@"TutorialViewController_hourMessage2Page3", nil)];
         [hourMessage2Page3 setTextColor:[UIColor whiteColor]];
         [self.scrollView addSubview:hourMessage2Page3];
         
@@ -781,7 +764,7 @@
         [message3Page3 setLineBreakMode:NSLineBreakByWordWrapping];
         [message3Page3 setTextAlignment:NSTextAlignmentLeft];
         [message3Page3 setFont:[UIFont fontWithName:@"Numans-Regular" size:7.0]];
-        [message3Page3 setText:@"MOI J'ARRIVE À 21H ! ET POUR LES CHIPS\nPREND TOUJOURS ON SAIT JAMAIS."];
+        [message3Page3 setText:NSLocalizedString(@"TutorialViewController_message3Page3", nil)];
         [message3Page3 setTextColor:[UIColor colorWithRed:100.0f/255.0f green:100.0f/255.0f blue:100.0f/255.0f alpha:1.0f]];
         [self.scrollView addSubview:message3Page3];
         
@@ -789,7 +772,7 @@
         [dateMessage3Page3 setBackgroundColor:[UIColor clearColor]];
         [dateMessage3Page3 setTextAlignment:NSTextAlignmentLeft];
         [dateMessage3Page3 setFont:[UIFont italicSystemFontOfSize:9.0]];
-        [dateMessage3Page3 setText:@"Adrien D. 3 août 2013"];
+        [dateMessage3Page3 setText:NSLocalizedString(@"TutorialViewController_dateMessage3Page3", nil)];
         [dateMessage3Page3 setTextColor:[UIColor whiteColor]];
         [self.scrollView addSubview:dateMessage3Page3];
         
@@ -797,7 +780,7 @@
         [hourMessage3Page3 setBackgroundColor:[UIColor clearColor]];
         [hourMessage3Page3 setTextAlignment:NSTextAlignmentRight];
         [hourMessage3Page3 setFont:[UIFont italicSystemFontOfSize:9.0]];
-        [hourMessage3Page3 setText:@"19:55"];
+        [hourMessage3Page3 setText:NSLocalizedString(@"TutorialViewController_hourMessage3Page3", nil)];
         [hourMessage3Page3 setTextColor:[UIColor whiteColor]];
         [self.scrollView addSubview:hourMessage3Page3];
         
@@ -808,7 +791,7 @@
         [message4Page3 setLineBreakMode:NSLineBreakByWordWrapping];
         [message4Page3 setTextAlignment:NSTextAlignmentLeft];
         [message4Page3 setFont:[UIFont fontWithName:@"Numans-Regular" size:7.0]];
-        [message4Page3 setText:@"PREND DES CHIPS OUI ;) ON SE RETROUVE\nDANS 45 MIN !"];
+        [message4Page3 setText:NSLocalizedString(@"TutorialViewController_message4Page3", nil)];
         [message4Page3 setTextColor:[UIColor colorWithRed:100.0f/255.0f green:100.0f/255.0f blue:100.0f/255.0f alpha:1.0f]];
         [self.scrollView addSubview:message4Page3];
         
@@ -816,7 +799,7 @@
         [dateMessage4Page3 setBackgroundColor:[UIColor clearColor]];
         [dateMessage4Page3 setTextAlignment:NSTextAlignmentLeft];
         [dateMessage4Page3 setFont:[UIFont italicSystemFontOfSize:9.0]];
-        [dateMessage4Page3 setText:@"Rémi B. 3 août 2013"];
+        [dateMessage4Page3 setText:NSLocalizedString(@"TutorialViewController_dateMessage4Page3", nil)];
         [dateMessage4Page3 setTextColor:[UIColor whiteColor]];
         [self.scrollView addSubview:dateMessage4Page3];
         
@@ -824,7 +807,7 @@
         [hourMessage4Page3 setBackgroundColor:[UIColor clearColor]];
         [hourMessage4Page3 setTextAlignment:NSTextAlignmentRight];
         [hourMessage4Page3 setFont:[UIFont italicSystemFontOfSize:9.0]];
-        [hourMessage4Page3 setText:@"20:03"];
+        [hourMessage4Page3 setText:NSLocalizedString(@"TutorialViewController_hourMessage4Page3", nil)];
         [hourMessage4Page3 setTextColor:[UIColor whiteColor]];
         [self.scrollView addSubview:hourMessage4Page3];
         
@@ -833,7 +816,7 @@
         
         //Page 4
         UILabel *facebookPage4 = [[UILabel alloc] initWithFrame:CGRectMake(self.scrollView.frame.size.width*3 + 60, 100, 300, 20)];
-        [facebookPage4 setText:@"IMPORTER DEPUIS FACEBOOK"];
+        [facebookPage4 setText:NSLocalizedString(@"TutorialViewController_facebookPage4", nil)];
         
         if(supportIOS6) {
             
@@ -863,7 +846,6 @@
                 
                 Config *cf = [Config sharedInstance];
                 
-                // 1 first Lettre Font
                 [cf updateTTTAttributedString:mutableAttributedString withFontSize:16.0 onRange:NSMakeRange(0, 1)];
                 [cf updateTTTAttributedString:mutableAttributedString withColor:[UIColor orangeColor] onRange:NSMakeRange(0, 1)];
                 [cf updateTTTAttributedString:mutableAttributedString withFontSize:14.0 onRange:NSMakeRange(16, 1)];
@@ -877,7 +859,7 @@
         
         
         UILabel *lieuPage4 = [[UILabel alloc] initWithFrame:CGRectMake(self.scrollView.frame.size.width*3 + 205, 192, 100, 24)];
-        [lieuPage4 setText:@"LIEU"];
+        [lieuPage4 setText:NSLocalizedString(@"TutorialViewController_lieuPage4", nil)];
         
         if(supportIOS6) {
             
@@ -907,7 +889,6 @@
                 
                 Config *cf = [Config sharedInstance];
                 
-                // 1 first Lettre Font
                 [cf updateTTTAttributedString:mutableAttributedString withFontSize:19.0 onRange:NSMakeRange(0, 1)];
                 
                 return mutableAttributedString;
@@ -922,14 +903,14 @@
         [placePage4 setBackgroundColor:[UIColor clearColor]];
         [placePage4 setTextAlignment:NSTextAlignmentRight];
         [placePage4 setFont:[UIFont fontWithName:@"Numans-Regular" size:12]];
-        [placePage4 setText:@"AU BISTRO"];
+        [placePage4 setText:NSLocalizedString(@"TutorialViewController_placePage4", nil)];
         [placePage4 setTextColor:[UIColor whiteColor]];
         [placePage4 setTransform:CGAffineTransformMakeRotation(DEGREES_TO_RADIANS(5))];
         [self.scrollView addSubview:placePage4];
         
         
         UILabel *addressPage4 = [[UILabel alloc] initWithFrame:CGRectMake(self.scrollView.frame.size.width*3 + 70, 265, 245, 20)];
-        [addressPage4 setText:@"50 COURS LA REINE, 75006 PARIS"];
+        [addressPage4 setText:NSLocalizedString(@"TutorialViewController_addressPage4", nil)];
         
         if(supportIOS6) {
             
@@ -958,7 +939,6 @@
                 
                 Config *cf = [Config sharedInstance];
                 
-                // 1 first Lettre Font
                 [cf updateTTTAttributedString:mutableAttributedString withFontSize:12.0 onRange:NSMakeRange(0, 2)];
                 [cf updateTTTAttributedString:mutableAttributedString withFontSize:12.0 onRange:NSMakeRange(19, 7)];
                 
