@@ -61,13 +61,13 @@ static NSDateFormatter *dateFormatter = nil;
         }
         
         // Heure
-        dateFormatter.dateFormat = @"hh:mm";
-        self.heureLabel.text = [dateFormatter stringFromDate:notification.date];
+        dateFormatter.dateFormat = @"HH:mm";
+        self.heureLabel.text = [dateFormatter stringFromDate:notification.moment.dateDebut];
         self.heureLabel.font = font;
         
         // Jour
-        dateFormatter.dateFormat = @"dd MMMM";
-        self.dateLabel.text = [dateFormatter stringFromDate:notification.date];
+        dateFormatter.dateFormat = @"d MMMM";
+        self.dateLabel.text = [dateFormatter stringFromDate:notification.moment.dateDebut];
         self.dateLabel.font = font;
         frame = self.dateLabel.frame;
         NSInteger end = frame.origin.x + frame.size.width - 5;
