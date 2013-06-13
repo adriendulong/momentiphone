@@ -51,7 +51,7 @@
 // SendBoxView
 "ChatViewController_SendBoxView_placeHolder" = "Tapez votre message ici !";
 // Infinite Scroll
-"ChatViewController_InfiniteScroll_LoadMore" = "Charger les messages plus ancien";
+"ChatViewController_InfiniteScroll_LoadMore" = "Charger les messages plus anciens";
 
 /* ---------------- MBProgressHUD ------------------ */
 "MBProgressHUD_Loading" = "Chargement...";
