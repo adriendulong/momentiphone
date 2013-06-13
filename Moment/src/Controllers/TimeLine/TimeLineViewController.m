@@ -1365,8 +1365,8 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
     [overlay_label1_2 setTextAlignment:NSTextAlignmentLeft];
     [overlay_label1_1 setFont:[UIFont fontWithName:@"Hand Of Sean" size:16.0]];
     [overlay_label1_2 setFont:[UIFont fontWithName:@"Hand Of Sean" size:16.0]];
-    [overlay_label1_1 setText:@"Recherche,"];
-    [overlay_label1_2 setText:@"notifications, profil,..."];
+    [overlay_label1_1 setText:NSLocalizedString(@"TimeLineViewController_Overlay_Label1", nil)];
+    [overlay_label1_2 setText:NSLocalizedString(@"TimeLineViewController_Overlay_Label2", nil)];
     [overlay_label1_1 setTextColor:[UIColor whiteColor]];
     [overlay_label1_2 setTextColor:[UIColor whiteColor]];
     
@@ -1382,8 +1382,8 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
     [overlay_label2_2 setTextAlignment:NSTextAlignmentRight];
     [overlay_label2_1 setFont:[UIFont fontWithName:@"Hand Of Sean" size:16.0]];
     [overlay_label2_2 setFont:[UIFont fontWithName:@"Hand Of Sean" size:16.0]];
-    [overlay_label2_1 setText:@"Crée un moment ou"];
-    [overlay_label2_2 setText:@"importe tes events Facebook !"];
+    [overlay_label2_1 setText:NSLocalizedString(@"TimeLineViewController_Overlay_Label3", nil)];
+    [overlay_label2_2 setText:NSLocalizedString(@"TimeLineViewController_Overlay_Label4", nil)];
     [overlay_label2_1 setTextColor:[UIColor whiteColor]];
     [overlay_label2_2 setTextColor:[UIColor whiteColor]];
     [overlay_label2_1 setTransform:CGAffineTransformMakeRotation(DEGREES_TO_RADIANS(-2))];
@@ -1403,8 +1403,8 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
         [overlay_label3_2 setTextAlignment:NSTextAlignmentCenter];
         [overlay_label3_1 setFont:[UIFont fontWithName:@"Hand Of Sean" size:16.0]];
         [overlay_label3_2 setFont:[UIFont fontWithName:@"Hand Of Sean" size:16.0]];
-        [overlay_label3_1 setText:@"Consulte l'activité évènementielle"];
-        [overlay_label3_2 setText:@"de tes proches !"];
+        [overlay_label3_1 setText:NSLocalizedString(@"TimeLineViewController_Overlay_Label5", nil)];
+        [overlay_label3_2 setText:NSLocalizedString(@"TimeLineViewController_Overlay_Label6", nil)];
         [overlay_label3_1 setTextColor:[UIColor whiteColor]];
         [overlay_label3_2 setTextColor:[UIColor whiteColor]];
         [overlay_label3_1 setTransform:CGAffineTransformMakeRotation(DEGREES_TO_RADIANS(-9))];
@@ -1421,8 +1421,8 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
         [overlay_label3_2 setTextAlignment:NSTextAlignmentCenter];
         [overlay_label3_1 setFont:[UIFont fontWithName:@"Hand Of Sean" size:16.0]];
         [overlay_label3_2 setFont:[UIFont fontWithName:@"Hand Of Sean" size:16.0]];
-        [overlay_label3_1 setText:@"Consulte l'activité évènementielle"];
-        [overlay_label3_2 setText:@"de tes proches !"];
+        [overlay_label3_1 setText:NSLocalizedString(@"TimeLineViewController_Overlay_Label5", nil)];
+        [overlay_label3_2 setText:NSLocalizedString(@"TimeLineViewController_Overlay_Label6", nil)];
         [overlay_label3_1 setTextColor:[UIColor whiteColor]];
         [overlay_label3_2 setTextColor:[UIColor whiteColor]];
         [overlay_label3_1 setTransform:CGAffineTransformMakeRotation(DEGREES_TO_RADIANS(-9))];
