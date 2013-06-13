@@ -417,6 +417,10 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
                 [MBProgressHUD hideHUDForView:self.view animated:YES];
             }];
         }
+        else {
+            // Update timeScroller
+            [self.timeScroller scrollViewDidScroll];
+        }
     }
     
     firstLoad = NO;
@@ -663,6 +667,8 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
     
     [self.tableView reloadData];
     [self placerEchelleLabels];
+    // Update timeScroller
+    [self.timeScroller scrollViewDidScroll];
 }
 
 - (void)selectActualMiddleCell {
