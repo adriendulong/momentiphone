@@ -35,9 +35,11 @@
 #define kParameterContactMail @"hello@appmoment.fr"
 
 // Clé UserDefaults
-// -> Vérification que la suppression des moments c'est bien passé
+// -> Vérification que la suppression du coredata c'est bien passée
 #define kMomentsDeleteTry @"MomentsDeleteTry"
 #define kMomentsDeleteFail @"MomentsDeleteFail"
+#define kUsersDeleteTry @"MomentsDeleteTry"
+#define kUsersDeleteFail @"MomentsDeleteFail"
 
 @interface Config : NSObject
 

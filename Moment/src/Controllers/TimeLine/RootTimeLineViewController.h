@@ -28,7 +28,8 @@
 
 - (id)initWithUser:(UserClass*)user
           withSize:(CGSize)size withStyle:(enum TimeLineStyle)style
-withNavigationController:(UINavigationController*)navController;
+withNavigationController:(UINavigationController*)navController
+    shouldReloadMoments:(BOOL)reloadMoments;
 
 - (IBAction)clicChangeTimeLine;
 - (void)showAddEvent;

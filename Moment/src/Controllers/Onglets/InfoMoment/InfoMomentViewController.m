@@ -502,7 +502,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
 - (void)initRsvpView
 {
     self.user = [UserCoreData getCurrentUser];
-    
+
     // User State
     enum UserState state = self.moment.state.intValue;
     if(state == 0) {
@@ -1191,6 +1191,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
 {
     [super viewDidLoad];
     
+    NSLog(@"Début");
     self.user = [UserCoreData getCurrentUser];
     
     // View
@@ -1209,7 +1210,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
      ***********************************************/
     enum UserState state = self.moment.state.intValue;
     if(state == 0) {
-        state = ([self.moment.owner.userId isEqualToNumber:self.user.userId]) ? UserStateOwner : UserStateNoInvited;
+        state = ([self.moment.owner.userId isEqualToNumber:[UserCoreData getCurrentUser].userId]) ? UserStateOwner : UserStateNoInvited;
     }
     
     /***********************************************

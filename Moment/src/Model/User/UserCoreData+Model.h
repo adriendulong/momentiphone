@@ -34,7 +34,7 @@ enum UserPrivacy {
 - (void)setupWithUser:(UserClass*)user;
 
 // Persist
-+ (UserCoreData*)insertWithMemoryReleaseNewUser:(UserClass*)user;
+//+ (UserCoreData*)insertWithMemoryReleaseNewUser:(UserClass*)user;
 + (UserClass*)newUserWithAttributes:(NSDictionary*)attributes;
 //+ (void)updateUser:(UserClass*)user;
 
@@ -59,14 +59,15 @@ enum UserPrivacy {
 
 // Current User
 + (void)currentUserNeedsUpdate;
-+ (UserCoreData*)getCurrentUserAsCoreData:(BOOL)localOnly;
-+ (UserClass*)getCurrentUser:(BOOL)localOnly;
++ (UserCoreData*)getCurrentUserAsCoreDataWithLocalOnly:(BOOL)localOnly;
++ (UserClass*)getCurrentUserWithLocalOnly:(BOOL)localOnly;
 + (UserClass*)getCurrentUser;
 + (void)updateCurrentUserWithAttributes:(NSDictionary*)attributes;
 
 // Release
 + (void)releaseUsersAfterIndex:(NSInteger)max;
 + (void)resetUsersLocal;
++ (void)deleteUsersWhileEnteringBackground;
 
 // Util
 - (NSString*)formatedUsername;

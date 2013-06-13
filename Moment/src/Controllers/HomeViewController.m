@@ -114,7 +114,7 @@ static UIImageView *splashScreen = nil;
     [AppDelegate updateActualViewController:self];
     
     //on check si autologin actif et utilisateur fourni
-    UserClass *currentUser = [UserCoreData getCurrentUser:YES];
+    UserClass *currentUser = [UserCoreData getCurrentUserWithLocalOnly:YES];
     if( currentUser ){
         
         // Si un cookie de connexion existe, on le charge et on logue le user
@@ -297,7 +297,8 @@ static UIImageView *splashScreen = nil;
                                                     initWithUser:[UserCoreData getCurrentUser]
                                                     withSize:CGSizeMake(320, [VersionControl sharedInstance].screenHeight - TOPBAR_HEIGHT)
                                                     withStyle:TimeLineStyleComplete
-                                                    withNavigationController:nil];
+                                                    withNavigationController:nil
+                                                    shouldReloadMoments:(!animated)];
         
         
         // Navigation controller

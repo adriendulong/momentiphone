@@ -21,6 +21,41 @@
 
 #define DEGREES_TO_RADIANS(x) (M_PI * x / 180.0)
 
+#pragma mark - Reverse Array
+
+@implementation NSArray (Reverse)
+
+- (NSArray *)reversedArray {
+    NSMutableArray *array = [NSMutableArray arrayWithCapacity:[self count]];
+    NSEnumerator *enumerator = [self reverseObjectEnumerator];
+    for (id element in enumerator) {
+        [array addObject:element];
+    }
+    return array;
+}
+
+@end
+
+@implementation NSMutableArray (Reverse)
+
+- (void)reverse {
+    if ([self count] == 0)
+        return;
+    NSUInteger i = 0;
+    NSUInteger j = [self count] - 1;
+    while (i < j) {
+        [self exchangeObjectAtIndex:i
+                  withObjectAtIndex:j];
+        
+        i++;
+        j--;
+    }
+}
+
+@end
+
+#pragma mark - TimeLineViewController
+
 enum ClockState {
     ClockStateUp = 0,
     ClockStateDown = 1
@@ -36,6 +71,8 @@ enum ClockState {
     
     CGFloat borderCellSize;
     BOOL isLoading;
+    BOOL firstLoad;
+    BOOL shouldReloadMoments;
     
     MomentClass *momentToDelete;
     
@@ -112,10 +149,11 @@ enum ClockState {
             withStyle:(enum TimeLineStyle)style
              withSize:(CGSize)size
 withRootViewController:(RootTimeLineViewController*)rootViewController
+  shouldReloadMoments:(BOOL)reloadMoments
 {    
     self = [super initWithNibName:@"TimeLineViewController" bundle:nil];
     if(self) {
-        
+
         // Init
         self.moments = [self arrayWithEmptyObjectsAddedToArray:momentsParam];
         self.user = [UserCoreData getCurrentUser];
@@ -127,6 +165,8 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
         //shouldUpdateClock= YES;
         bandeauAnimating = NO;
         isLoading = NO;
+        firstLoad = YES;
+        shouldReloadMoments = reloadMoments;
         self.shoulShowInviteView = NO;
         self.rootViewController = rootViewController;
         momentToDelete = nil;
@@ -146,7 +186,6 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
                                                        object:nil];
         }
         
-    
     }
     return self;
 }
@@ -352,15 +391,36 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
     // Placer labels
     [self placerEchelleLabels];
     
-    
     //Premier lancement de l'application
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     BOOL hasRunOnce = [defaults boolForKey:@"hasRunOnce"];
     NSLog(hasRunOnce ? @"Yes" : @"No");
     if (!hasRunOnce)
     {
-        [self showTutorialOverlayWithFrame:CGRectMake(0, -20, screenSize.width, screenSize.height)];
+        // Start Reload Moment
+        if(shouldReloadMoments && !isLoading) {
+            [self reloadDataWithWaitUntilFinished:NO withEnded:^(BOOL success) {
+                [self showTutorialOverlayWithFrame:CGRectMake(0, -20, screenSize.width, screenSize.height)];
+            }];
+        }
+        else {
+            [self showTutorialOverlayWithFrame:CGRectMake(0, -20, screenSize.width, screenSize.height)];
+        }
+        
     }
+    else {
+        
+        // Start Reload Moment
+        if(shouldReloadMoments && !isLoading) {
+            MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+            hud.labelText = NSLocalizedString(@"MBProgressHUD_Loading_Moments", nil);
+            [self reloadDataWithWaitUntilFinished:NO withEnded:^(BOOL success) {
+                [MBProgressHUD hideHUDForView:self.view animated:YES];
+            }];
+        }
+    }
+    
+    firstLoad = NO;
 }
 
 - (void)viewDidUnload
@@ -552,7 +612,7 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
 
 #pragma mark Update TimeLine
 
-- (void)reloadDataWithWaitUntilFinished:(BOOL)waitUntilFinished
+- (void)reloadDataWithWaitUntilFinished:(BOOL)waitUntilFinished withEnded:(void (^) (BOOL success))block
 {
     if(!isLoading)
     {
@@ -564,14 +624,24 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
                     NSArray *array = [MomentCoreData getMoments];
                     [self reloadDataWithMoments:array];
                 }
+                
                 isLoading = NO;
+                
+                if(block) {
+                    block(success);
+                }
             } waitUntilFinished:NO];
         }
         else {
             [MomentClass getMomentsForUser:self.user withEnded:^(NSArray *moments) {
                 if(moments) {
                     [self reloadDataWithMoments:moments];
-                    isLoading = NO;
+                }
+                
+                isLoading = NO;
+                
+                if(block) {
+                    block(moments != nil);
                 }
             }];
         }
@@ -579,8 +649,11 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
     }
 }
 
-- (void)reloadData
-{
+- (void)reloadDataWithWaitUntilFinished:(BOOL)waitUntilFinished {
+    [self reloadDataWithWaitUntilFinished:waitUntilFinished withEnded:nil];
+}
+
+- (void)reloadData {
     [self reloadDataWithWaitUntilFinished:NO];
 }
 
@@ -941,7 +1014,7 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
     }
 }
 
-- (void)updateBandeauWithMoment:(MomentCoreData*)moment
+- (void)updateBandeauWithMoment:(MomentClass*)moment
 {
     if(self.timeLineStyle == TimeLineStyleComplete)
     {
@@ -950,7 +1023,11 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
         if(moment.owner) {
             [self setNomOwnerLabelText:moment.owner.formatedUsername];
         }
-        
+        else {
+            //[self setNomOwnerLabelText:@""];
+            self.nomOwnerLabel.text = @"";
+            self.nomOwnerTTLabel.text = @"";
+        }
         
         [self setDateLabelTextFromDate:moment.dateDebut];
         
@@ -996,9 +1073,40 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
 
 #pragma mark - Scroll Infinite Load
 
+- (void)updateCellsRowWithDecalage:(NSInteger)decalage {
+    
+    NSInteger taille = [self.moments count];
+    if(taille <= 2)
+        return;
+    if(taille == 3) {
+        // Cell ID
+        MomentClass *moment = self.moments[1];
+        NSString *cellId = [NSString stringWithFormat:@"TimeLineCell_Classique_%@", moment.momentId];
+        // Load
+        TimeLineCell *cell = [self.tableView dequeueReusableCellWithIdentifier:cellId];
+        if(cell) {
+            [cell decallerRow:decalage];
+        }
+    }
+    else {
+        taille = taille - 1;
+        NSInteger i;
+        for(i = 1; i < taille; i++) {
+            MomentClass *moment = self.moments[i];
+            NSString *cellId = [NSString stringWithFormat:@"TimeLineCell_Classique_%@", moment.momentId];
+            // Load
+            TimeLineCell *cell = [self.tableView dequeueReusableCellWithIdentifier:cellId];
+            if(cell) {
+                [cell decallerRow:decalage];
+            }
+        }
+        
+    }
+}
+
 - (void)loadMomentsInFuture
 {
-    if(!isLoading)
+    if(!isLoading && !firstLoad)
     {
         // Si il y a des moments dans la timeLine
         int taille = [self.moments count];
@@ -1006,7 +1114,7 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
             
             // Load les moments dans le futur (fin du tableau)
             isLoading = YES;
-            
+            //NSLog(@"Moments After : début = %@ || fin = %@", [self.moments[taille - 2] dateDebut], [self.moments[taille - 2] dateFin]);
             [MomentClass getMomentsServerAfterDateOfMoment:self.moments[taille - 2] withEnded:^(NSArray *moments) {
                 
                 // Si il y a des moments à charger
@@ -1015,24 +1123,18 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
                     // Merge des tableau
                     NSMutableArray *array = self.moments.mutableCopy;
                     
-                    // ---Debug
-#warning DEBUG
-                    if([[moments[0] dateDebut] isLaterThan:[self.moments[taille - 2] dateDebut]])
-                    {
-                        // Supprime cellules vides
-                        [array removeObjectAtIndex:0];
-                        [array removeLastObject];
-                        
-                        // Ajout à la fin du tableau
-                        NSIndexSet *indexSet = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange([array count], [moments count])];
-                        [array insertObjects:moments atIndexes:indexSet];
-                        
-                        // Reload data
-                        [self reloadDataWithMoments:array];
-                        NSLog(@"Chargement dans le futur fini");
-                    }
+                    // Supprime cellules vides
+                    [array removeObjectAtIndex:0];
+                    [array removeLastObject];
                     
+                    // Ajout à la fin du tableau
+                    NSIndexSet *indexSet = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange([array count], [moments count])];
+                    [array insertObjects:moments atIndexes:indexSet];
                     
+                    // Reload data
+                    [self reloadDataWithMoments:array];
+                    [self updateCellsRowWithDecalage:-[moments count]];
+                    NSLog(@"Chargement dans le futur fini");
                 }
                 
                 isLoading = NO;
@@ -1044,7 +1146,7 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
 
 - (void)loadMomentsInPast
 {
-    if(!isLoading)
+    if(!isLoading && !firstLoad)
     {
         // Si il y a des moments dans la timeLine
         int taille = [self.moments count];
@@ -1060,34 +1162,30 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
                     // Merge des tableau
                     NSMutableArray *array = self.moments.mutableCopy;
                     
+                    // Supprime cellules vides
+                    [array removeObjectAtIndex:0];
+                    [array removeLastObject];
                     
-                    // --Debug
-#warning DEBUG
-                    if([[moments[[moments count]-1] dateDebut] isEarlierThan:[self.moments[1] dateDebut]])
-                    {
-                        // Supprime cellules vides
-                        [array removeObjectAtIndex:0];
-                        [array removeLastObject];
-                        
-                        // Ajout au début du tableau
-                        NSIndexSet *indexSet = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [moments count])];
-                        [array insertObjects:moments atIndexes:indexSet];
-                        
-                        // Moment précédement sélectionné
-                        MomentClass *actualMoment = (self.selectedIndex > 0) ? self.moments[self.selectedIndex] : nil;
-                        
-                        // Reload data
-                        [self reloadDataWithMoments:array];
-                        
-                        if(actualMoment) {
-                            // Sélectionner le moment précedement selectionné
-                            [self updateSelectedMoment:actualMoment atRow:([moments count]+1+self.selectedIndex)];
-                        }
-                        // Scroll à la position précédente
-                        [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:([moments count]+1) inSection:0] atScrollPosition:UITableViewScrollPositionMiddle animated:NO];
-                        
-                        NSLog(@"Chargement dans le passé fini");
+                    // Ajout au début du tableau
+                    moments = [moments reversedArray]; // Inverser le tableau
+                    NSIndexSet *indexSet = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [moments count])];
+                    [array insertObjects:moments atIndexes:indexSet];
+                    
+                    // Moment précédement sélectionné
+                    MomentClass *actualMoment = (self.selectedIndex > 0) ? self.moments[self.selectedIndex] : nil;
+                    
+                    // Reload data
+                    [self reloadDataWithMoments:array];
+                    [self updateCellsRowWithDecalage:[moments count]];
+                    
+                    if(actualMoment) {
+                        // Sélectionner le moment précedement selectionné
+                        [self updateSelectedMoment:actualMoment atRow:([moments count]+1+self.selectedIndex)];
                     }
+                    // Scroll à la position précédente
+                    [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:([moments count]+1) inSection:0] atScrollPosition:UITableViewScrollPositionMiddle animated:NO];
+                    
+                    NSLog(@"Chargement dans le passé fini");
                     
                 }
                 
@@ -1183,7 +1281,7 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
     
     NSIndexPath *indexPath = [self.tableView indexPathForCell:cell];
     if( (indexPath.row>0) && (indexPath.row<[self.moments count]-2) ) {
-        MomentCoreData *m = (self.moments)[indexPath.row];
+        MomentClass *m = (self.moments)[indexPath.row];
         return m.dateDebut;
     }
     return nil;

@@ -104,7 +104,6 @@
         NSDictionary *dico = [UserClass mappingToLocalAttributes:attributes[@"owner"]];
         owner = [UserCoreData requestUserAsCoreDataWithAttributes:dico];
         
-        //NSLog(@"owner = %@", owner);
         self.owner = owner;
     }
     
@@ -312,9 +311,7 @@
     [MomentClass getInfosMomentWithId:moment.momentId.intValue withEnded:^(NSDictionary *attributes) {
         [moment setupWithAttributes:attributes];
         [[Config sharedInstance] saveContext];
-        NSLog(@"3");
     } waitUntilFinished:YES];
-    NSLog(@"4");
     
     return moment;
 }
@@ -380,7 +377,8 @@
 
 + (NSArray*)getMoments
 {
-    return [self localCopyOfArray:[self getMomentsAsCoreData]];
+    NSArray *moments = [self getMomentsAsCoreData];
+    return [self localCopyOfArray:moments];
 }
 
 #pragma mark - Update
@@ -405,7 +403,7 @@
     
     // On traite tous les moments passés en paramètres
     for(NSDictionary *attributes in array)
-    {
+    {        
         request.predicate = [NSPredicate predicateWithFormat:@"momentId = %@", attributes[@"id"] ];
         match = [[Config sharedInstance].managedObjectContext executeFetchRequest:request error:&error];
         
@@ -507,6 +505,9 @@
             [[Config sharedInstance].managedObjectContext deleteObject:m];
         }
         [[Config sharedInstance] saveContext];
+        
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:kMomentsDeleteTry];
+        [[NSUserDefaults standardUserDefaults] synchronize];
     }
     @catch (NSException *exception) {
         // Enregistrer l'erreur
@@ -514,10 +515,10 @@
         [[NSUserDefaults standardUserDefaults] synchronize];
         
         // TestFlight
-        [TestFlight passCheckpoint:kMomentsDeleteFail];
+        //[TestFlight passCheckpoint:kMomentsDeleteFail];
         
         // Google Analytics
-        [[[GAI sharedInstance] defaultTracker] sendException:NO withNSException:exception];
+        //[[[GAI sharedInstance] defaultTracker] sendException:NO withNSException:exception];
         
         [[[UIAlertView alloc]
           initWithTitle:@"CoreData Error"
@@ -526,10 +527,10 @@
           cancelButtonTitle:@"OK"
           otherButtonTitles:nil]
          show];
+        NSLog(@"Core Data Moment Fail : %@", exception.description);
     }
     @finally {
-        [[NSUserDefaults standardUserDefaults] removeObjectForKey:kMomentsDeleteTry];
-        [[NSUserDefaults standardUserDefaults] synchronize];
+        
     }
     
 }
