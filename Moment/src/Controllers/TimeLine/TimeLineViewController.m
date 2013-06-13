@@ -152,7 +152,7 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
 {    
     self = [super initWithNibName:@"TimeLineViewController" bundle:nil];
     if(self) {
-        
+
         // Init
         self.moments = [self arrayWithEmptyObjectsAddedToArray:momentsParam];
         self.user = [UserCoreData getCurrentUser];
@@ -1013,7 +1013,7 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
     }
 }
 
-- (void)updateBandeauWithMoment:(MomentCoreData*)moment
+- (void)updateBandeauWithMoment:(MomentClass*)moment
 {
     if(self.timeLineStyle == TimeLineStyleComplete)
     {
@@ -1023,7 +1023,9 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
             [self setNomOwnerLabelText:moment.owner.formatedUsername];
         }
         else {
-            [self setNomOwnerLabelText:@""];
+            //[self setNomOwnerLabelText:@""];
+            self.nomOwnerLabel.text = @"";
+            self.nomOwnerTTLabel.text = @"";
         }
         
         [self setDateLabelTextFromDate:moment.dateDebut];
@@ -1111,7 +1113,7 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
             
             // Load les moments dans le futur (fin du tableau)
             isLoading = YES;
-            
+            //NSLog(@"Moments After : début = %@ || fin = %@", [self.moments[taille - 2] dateDebut], [self.moments[taille - 2] dateFin]);
             [MomentClass getMomentsServerAfterDateOfMoment:self.moments[taille - 2] withEnded:^(NSArray *moments) {
                 
                 // Si il y a des moments à charger
@@ -1278,7 +1280,7 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
     
     NSIndexPath *indexPath = [self.tableView indexPathForCell:cell];
     if( (indexPath.row>0) && (indexPath.row<[self.moments count]-2) ) {
-        MomentCoreData *m = (self.moments)[indexPath.row];
+        MomentClass *m = (self.moments)[indexPath.row];
         return m.dateDebut;
     }
     return nil;

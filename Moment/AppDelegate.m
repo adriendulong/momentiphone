@@ -220,6 +220,11 @@
     
     // Supprimer Moments inutiles
     [MomentCoreData deleteMomentsWhileEnteringBackground];
+    // Supprimer Users inutiles
+    NSLog(@"Start");
+    NSDate *date = [NSDate date];
+    [UserCoreData deleteUsersWhileEnteringBackground];
+    NSLog(@"End : %.5f", [date timeIntervalSinceNow]);
     //[[Config sharedInstance] saveContext];
 }
 
@@ -272,6 +277,8 @@
     
     // Supprimer Moments inutiles
     [MomentCoreData deleteMomentsWhileEnteringBackground];
+    // Supprimer Users inutiles
+    [UserCoreData deleteUsersWhileEnteringBackground];
     //[[Config sharedInstance] saveContext];
     
     // if the app is going away, we close the session object

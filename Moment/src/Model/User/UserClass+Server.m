@@ -333,7 +333,7 @@
 {
     NSLog(@"LOGOUT");
     
-    UserCoreData *user = [UserCoreData getCurrentUserAsCoreData:NO];
+    UserCoreData *user = [UserCoreData getCurrentUserAsCoreDataWithLocalOnly:NO];
     if(user)
     {
         // Prévenir Server d'arreter Push Notifications
