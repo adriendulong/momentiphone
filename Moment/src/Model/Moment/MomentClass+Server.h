@@ -11,6 +11,11 @@
 #import "Photos.h"
 #import "AFJSONRequestOperation.h"
 
+enum TimeDirectiion {
+    TimeDirectionPast = 0,
+    TimeDirectionFutur = 1
+};
+
 @interface MomentClass (Server)
 
 // Create
@@ -31,7 +36,10 @@
 + (void)getInfosMomentWithId:(NSInteger)momentId withEnded:(void (^) (NSDictionary* attributes) )block;
 + (void)getMomentsServerWithEnded:(void (^)(BOOL success))block waitUntilFinished:(BOOL)waitUntilFinished;
 + (void)getMomentsServerWithEnded:(void (^)(BOOL success))block;
-+ (void)getMomentsServerAfterDateOfMoment:(MomentClass*)moment withEnded:(void (^) (NSArray* moments))block;
++ (void) getMomentsServerAfterDateOfMoment:(MomentClass*)moment
+                             timeDirection:(enum TimeDirectiion)timeDirection
+                                      user:(UserClass*)user
+                                 withEnded:(void (^) (NSArray* moments))block;
 
 // Facebook Events
 + (void)identifyFacebookEventsOnMoment:(NSArray*)events withEnded:(void (^) (NSDictionary* results))block;

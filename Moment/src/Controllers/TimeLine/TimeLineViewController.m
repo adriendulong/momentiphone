@@ -146,6 +146,7 @@ enum ClockState {
 
 - (id)initWithMoments:(NSArray*)momentsParam
             withStyle:(enum TimeLineStyle)style
+             withUser:(UserClass*)user
              withSize:(CGSize)size
 withRootViewController:(RootTimeLineViewController*)rootViewController
   shouldReloadMoments:(BOOL)reloadMoments
@@ -155,7 +156,10 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
 
         // Init
         self.moments = [self arrayWithEmptyObjectsAddedToArray:momentsParam];
-        self.user = [UserCoreData getCurrentUser];
+        if(style == TimeLineStyleProfil)
+            self.user = user;
+        else
+            self.user = [UserCoreData getCurrentUser];
         self.selectedMoment = nil;
         self.selectedIndex = -1;
         self.bandeauIndex = -1;
@@ -1120,7 +1124,12 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
             // Load les moments dans le futur (fin du tableau)
             isLoading = YES;
             //NSLog(@"Moments After : début = %@ || fin = %@", [self.moments[taille - 2] dateDebut], [self.moments[taille - 2] dateFin]);
-            [MomentClass getMomentsServerAfterDateOfMoment:self.moments[taille - 2] withEnded:^(NSArray *moments) {
+            UserClass *user = (self.timeLineStyle == TimeLineStyleProfil) ? self.user : nil;
+            
+            [MomentClass getMomentsServerAfterDateOfMoment:self.moments[taille - 2]
+                                             timeDirection:TimeDirectionFutur
+                                                      user:user
+                                                 withEnded:^(NSArray *moments) {
                 
                 // Si il y a des moments à charger
                 if([moments count] > 0)
@@ -1159,7 +1168,12 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
             
             // Load les moments dans le passé (début du tableau)
             isLoading = YES;
-            [MomentClass getMomentsServerAfterDateOfMoment:self.moments[1] withEnded:^(NSArray *moments) {
+            
+            UserClass *user = (self.timeLineStyle == TimeLineStyleProfil) ? self.user : nil;
+            [MomentClass getMomentsServerAfterDateOfMoment:self.moments[1]
+                                             timeDirection:TimeDirectionPast
+                                                      user:user
+                                                 withEnded:^(NSArray *moments) {
                 
                 // Si il y a des moments à charger
                 if([moments count] > 0)
