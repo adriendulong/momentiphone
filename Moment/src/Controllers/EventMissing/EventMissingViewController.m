@@ -284,40 +284,12 @@
     if(currentUser.numeroMobile.length != 0) {
         
         if(currentUser.secondPhone.length != 0) {
-            
-            removePhoneNumber = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"EventMissingViewController_removePhoneNumber_Title", nil)
-                                                                  message:NSLocalizedString(@"EventMissingViewController_removePhoneNumber_Message", nil)
-                                                                 delegate:self
-                                                        cancelButtonTitle:NSLocalizedString(@"AlertView_Button_Cancel", nil)
-                                                   otherButtonTitles:nil, nil];
-            
-            [removePhoneNumber addButtonWithTitle:currentUser.numeroMobile];
-            [removePhoneNumber addButtonWithTitle:currentUser.secondPhone];
-            
-            [removePhoneNumber show];
+            [self showPhoneNumbersAlertViewType:@"removePhoneNumber"];
         } else {
-            
-            addSecondPhoneNumber = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"EventMissingViewController_addSecondPhoneNumber_Title", nil)
-                                                                  message:[NSString stringWithFormat:NSLocalizedString(@"EventMissingViewController_addSecondPhoneNumber_Message", nil), currentUser.numeroMobile]
-                                                                 delegate:self
-                                                        cancelButtonTitle:NSLocalizedString(@"AlertView_Button_Cancel", nil)
-                                                        otherButtonTitles:NSLocalizedString(@"AlertView_Button_Valide", nil), nil];
-            [addSecondPhoneNumber setAlertViewStyle:UIAlertViewStylePlainTextInput];
-            UITextField* tf = [addSecondPhoneNumber textFieldAtIndex:0];
-            [tf setKeyboardType:UIKeyboardTypePhonePad];
-            [addSecondPhoneNumber show];
+            [self showPhoneNumbersAlertViewType:@"addSecondPhoneNumber"];
         }
     } else {
-        
-        addFirstPhoneNumber = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"EventMissingViewController_addFirstPhoneNumber_Title", nil)
-                                                         message:NSLocalizedString(@"EventMissingViewController_addObject_Message", nil)
-                                                        delegate:self
-                                               cancelButtonTitle:NSLocalizedString(@"AlertView_Button_Cancel", nil)
-                                               otherButtonTitles:NSLocalizedString(@"AlertView_Button_Valide", nil), nil];
-        [addFirstPhoneNumber setAlertViewStyle:UIAlertViewStylePlainTextInput];
-        UITextField* tf = [addFirstPhoneNumber textFieldAtIndex:0];
-        [tf setKeyboardType:UIKeyboardTypePhonePad];
-        [addFirstPhoneNumber show];
+        [self showPhoneNumbersAlertViewType:@"addFirstPhoneNumber"];
     }
 }
 
@@ -328,54 +300,12 @@
     if(currentUser.email.length != 0) {
         
         if(currentUser.secondEmail.length != 0) {
-            
-            removeEmailAddress = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"EventMissingViewController_removeEmailAddress_Title", nil)
-                                                            message:[NSString stringWithFormat:NSLocalizedString(@"EventMissingViewController_EmailAlreadySave_Message", nil), currentUser.secondEmail]
-                                                           delegate:self
-                                                  cancelButtonTitle:NSLocalizedString(@"AlertView_Button_Cancel", nil)
-                                                  otherButtonTitles:NSLocalizedString(@"AlertView_Button_Valide", nil), nil];
-            [removeEmailAddress setAlertViewStyle:UIAlertViewStylePlainTextInput];
-            UITextField* tf = [removeEmailAddress textFieldAtIndex:0];
-            [tf setKeyboardType:UIKeyboardTypeEmailAddress];
-            
-            [removeEmailAddress show];
-            
-            
-            
-            // Décommenter lorsqu'on pourra changer l'adresse principale
-            /*removeEmailAddress = [[UIAlertView alloc] initWithTitle:@"2 email enregistrés"
-             message:@"Supprimer en un:"
-             delegate:self
-             cancelButtonTitle:@"Annuler"
-             otherButtonTitles:nil, nil];
-             
-             [removeEmailAddress addButtonWithTitle:currentUser.email];
-             [removeEmailAddress addButtonWithTitle:currentUser.secondEmail];
-             
-             [removeEmailAddress show];*/
+            [self showEmailsAlertViewType:@"removeEmailAddress"];
         } else {
-            
-            addSecondEmailAddress = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"EventMissingViewController_addSecondEmailAddress_Title", nil)
-                                                              message:[NSString stringWithFormat:NSLocalizedString(@"EventMissingViewController_EmailAlreadySave_Message", nil), currentUser.email]
-                                                             delegate:self
-                                                    cancelButtonTitle:NSLocalizedString(@"AlertView_Button_Cancel", nil)
-                                                    otherButtonTitles:NSLocalizedString(@"AlertView_Button_Valide", nil), nil];
-            [addSecondEmailAddress setAlertViewStyle:UIAlertViewStylePlainTextInput];
-            UITextField* tf = [addSecondEmailAddress textFieldAtIndex:0];
-            [tf setKeyboardType:UIKeyboardTypeDefault];
-            [addSecondEmailAddress show];
+            [self showEmailsAlertViewType:@"addSecondEmailAddress"];
         }
     } else {
-        
-        addFirstEmailAddress = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"EventMissingViewController_addFirstEmailAddress_Title", nil)
-                                                         message:NSLocalizedString(@"EventMissingViewController_addObject_Message", nil)
-                                                        delegate:self
-                                               cancelButtonTitle:NSLocalizedString(@"AlertView_Button_Cancel", nil)
-                                               otherButtonTitles:NSLocalizedString(@"AlertView_Button_Valide", nil), nil];
-        [addFirstEmailAddress setAlertViewStyle:UIAlertViewStylePlainTextInput];
-        UITextField* tf = [addFirstEmailAddress textFieldAtIndex:0];
-        [tf setKeyboardType:UIKeyboardTypeDefault];
-        [addFirstEmailAddress show];
+        [self showEmailsAlertViewType:@"addFirstEmailAddress"];
     }
 }
 
@@ -441,7 +371,189 @@
     [[VersionControl sharedInstance] dismissModalViewControllerFromRoot:self animated:YES];
 }
 
+- (void)showPhoneNumbersAlertViewType:(NSString *)phone_type {
+    UserClass *currentUser = [UserCoreData getCurrentUser];
+    
+    if ([phone_type isEqualToString:@"addFirstPhoneNumber"]) {
+        addFirstPhoneNumber = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"EventMissingViewController_addFirstPhoneNumber_Title", nil)
+                                                         message:NSLocalizedString(@"EventMissingViewController_addObject_Message", nil)
+                                                        delegate:self
+                                               cancelButtonTitle:NSLocalizedString(@"AlertView_Button_Cancel", nil)
+                                               otherButtonTitles:NSLocalizedString(@"AlertView_Button_Valide", nil), nil];
+        [addFirstPhoneNumber setAlertViewStyle:UIAlertViewStylePlainTextInput];
+        UITextField* tf = [addFirstPhoneNumber textFieldAtIndex:0];
+        [tf setKeyboardType:UIKeyboardTypePhonePad];
+        [addFirstPhoneNumber show];
+    } else if ([phone_type isEqualToString:@"addSecondPhoneNumber"]) {
+        addSecondPhoneNumber = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"EventMissingViewController_addSecondPhoneNumber_Title", nil)
+                                                          message:[NSString stringWithFormat:NSLocalizedString(@"EventMissingViewController_addSecondPhoneNumber_Message", nil), currentUser.numeroMobile]
+                                                         delegate:self
+                                                cancelButtonTitle:NSLocalizedString(@"AlertView_Button_Cancel", nil)
+                                                otherButtonTitles:NSLocalizedString(@"AlertView_Button_Valide", nil), nil];
+        [addSecondPhoneNumber setAlertViewStyle:UIAlertViewStylePlainTextInput];
+        UITextField* tf = [addSecondPhoneNumber textFieldAtIndex:0];
+        [tf setKeyboardType:UIKeyboardTypePhonePad];
+        [addSecondPhoneNumber show];
+    } else if ([phone_type isEqualToString:@"removePhoneNumber"]) {
+        removePhoneNumber = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"EventMissingViewController_removePhoneNumber_Title", nil)
+                                                       message:NSLocalizedString(@"EventMissingViewController_removePhoneNumber_Message", nil)
+                                                      delegate:self
+                                             cancelButtonTitle:NSLocalizedString(@"AlertView_Button_Cancel", nil)
+                                             otherButtonTitles:nil, nil];
+        
+        [removePhoneNumber addButtonWithTitle:currentUser.numeroMobile];
+        [removePhoneNumber addButtonWithTitle:currentUser.secondPhone];
+        
+        [removePhoneNumber show];
+    }
+}
 
+- (void)getPhoneNumber:(NSString *)phoneNumber withAttribute:(NSString *)attribute {
+       
+    // Si le champ est vide, alertview
+    if(phoneNumber.length == 0)
+    {
+        
+        [[[UIAlertView alloc]
+          initWithTitle:NSLocalizedString(@"CreationPage2ViewController_ConfirmEmptyAlertView_Title", nil)
+          message:NSLocalizedString(@"CreationPage2ViewController_ConfirmEmptyAlertView_Message", nil)
+          delegate:self
+          cancelButtonTitle:NSLocalizedString(@"AlertView_Button_Cancel", nil)
+          otherButtonTitles:NSLocalizedString(@"AlertView_Button_Continue", nil),nil]
+         show];
+        
+    }
+    else
+    {
+        if ([[Config sharedInstance] isMobilePhoneNumber:phoneNumber forceValidation:YES]) {
+            // Envoi
+            [self sendPhoneNumber:phoneNumber withAttribute:attribute];
+        } else { // Si l'email a un format non valide
+            [[[UIAlertView alloc]
+              initWithTitle:NSLocalizedString(@"CreationPage2ViewController_Invalide_Title", nil)
+              message:NSLocalizedString(@"CreationPage2ViewController_Invalide_Message", nil)
+              delegate:self
+              cancelButtonTitle:NSLocalizedString(@"AlertView_Button_OK", nil)
+              otherButtonTitles:nil,nil]
+             show];
+        }
+    }
+}
+- (void)sendPhoneNumber:(NSString *)phoneNumber withAttribute:(NSString *)attribute {
+    [UserClass updateCurrentUserInformationsOnServerWithAttributes:@{attribute:[[Config sharedInstance] formatedPhoneNumber:phoneNumber]} withEnded:^(BOOL success) {
+        
+        // Informe user of success
+        [MBProgressHUD hideHUDForView:self.view animated:YES];
+        
+        if(!success)
+        {
+            [[MTStatusBarOverlay sharedInstance]
+             postImmediateErrorMessage:NSLocalizedString(@"Error", nil)
+             duration:1
+             animated:YES];
+        }
+    }];
+}
+
+- (void)showEmailsAlertViewType:(NSString *)email_type {
+    UserClass *currentUser = [UserCoreData getCurrentUser];
+    
+    if ([email_type isEqualToString:@"addFirstEmailAddress"]) {
+        addFirstEmailAddress = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"EventMissingViewController_addFirstEmailAddress_Title", nil)
+                                                          message:NSLocalizedString(@"EventMissingViewController_addObject_Message", nil)
+                                                         delegate:self
+                                                cancelButtonTitle:NSLocalizedString(@"AlertView_Button_Cancel", nil)
+                                                otherButtonTitles:NSLocalizedString(@"AlertView_Button_Valide", nil), nil];
+        [addFirstEmailAddress setAlertViewStyle:UIAlertViewStylePlainTextInput];
+        UITextField* tf = [addFirstEmailAddress textFieldAtIndex:0];
+        [tf setKeyboardType:UIKeyboardTypeDefault];
+        [addFirstEmailAddress show];
+    } else if ([email_type isEqualToString:@"addSecondEmailAddress"]) {
+        addSecondEmailAddress = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"EventMissingViewController_addSecondEmailAddress_Title", nil)
+                                                           message:[NSString stringWithFormat:NSLocalizedString(@"EventMissingViewController_EmailAlreadySave_Message", nil), currentUser.email]
+                                                          delegate:self
+                                                 cancelButtonTitle:NSLocalizedString(@"AlertView_Button_Cancel", nil)
+                                                 otherButtonTitles:NSLocalizedString(@"AlertView_Button_Valide", nil), nil];
+        [addSecondEmailAddress setAlertViewStyle:UIAlertViewStylePlainTextInput];
+        UITextField* tf = [addSecondEmailAddress textFieldAtIndex:0];
+        [tf setKeyboardType:UIKeyboardTypeDefault];
+        [addSecondEmailAddress show];
+    } else if ([email_type isEqualToString:@"removeEmailAddress"]) {
+        removeEmailAddress = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"EventMissingViewController_removeEmailAddress_Title", nil)
+                                                        message:[NSString stringWithFormat:NSLocalizedString(@"EventMissingViewController_EmailAlreadySave_Message", nil), currentUser.secondEmail]
+                                                       delegate:self
+                                              cancelButtonTitle:NSLocalizedString(@"AlertView_Button_Cancel", nil)
+                                              otherButtonTitles:NSLocalizedString(@"AlertView_Button_Valide", nil), nil];
+        [removeEmailAddress setAlertViewStyle:UIAlertViewStylePlainTextInput];
+        UITextField* tf = [removeEmailAddress textFieldAtIndex:0];
+        [tf setKeyboardType:UIKeyboardTypeEmailAddress];
+        
+        [removeEmailAddress show];
+        
+        
+        
+        // Décommenter lorsqu'on pourra changer l'adresse principale
+        /*removeEmailAddress = [[UIAlertView alloc] initWithTitle:@"2 email enregistrés"
+         message:@"Supprimer en un:"
+         delegate:self
+         cancelButtonTitle:@"Annuler"
+         otherButtonTitles:nil, nil];
+         
+         [removeEmailAddress addButtonWithTitle:currentUser.email];
+         [removeEmailAddress addButtonWithTitle:currentUser.secondEmail];
+         
+         [removeEmailAddress show];*/
+    }
+}
+
+- (void)getEmail:(NSString *)email withAttribute:(NSString *)attribute {
+    
+    if ([[Config sharedInstance] isValidEmail:email]) {
+        // Si le champ est vide, alertview
+        if(email.length == 0)
+        {
+            
+            [[[UIAlertView alloc]
+              initWithTitle:NSLocalizedString(@"CreationPage2ViewController_ConfirmEmptyAlertView_Title", nil)
+              message:NSLocalizedString(@"CreationPage2ViewController_ConfirmEmptyAlertView_Message", nil)
+              delegate:self
+              cancelButtonTitle:NSLocalizedString(@"AlertView_Button_Cancel", nil)
+              otherButtonTitles:NSLocalizedString(@"AlertView_Button_Continue", nil),nil]
+             show];
+            
+        }
+        else
+        {
+            // Envoi
+            [self sendEmail:email withAttribute:attribute];
+        }
+        
+    } else { // Si l'email a un format non valide
+        [[[UIAlertView alloc]
+          initWithTitle:NSLocalizedString(@"MFMailComposeViewController_Moment_InvalideFormat_Title", nil)
+          message:NSLocalizedString(@"MFMailComposeViewController_Moment_InvalideFormat_Message", nil)
+          delegate:self
+          cancelButtonTitle:NSLocalizedString(@"AlertView_Button_OK", nil)
+          otherButtonTitles:nil,nil]
+         show];
+    }
+}
+
+- (void)sendEmail:(NSString *)email withAttribute:(NSString *)attribute {
+    [UserClass updateCurrentUserInformationsOnServerWithAttributes:@{attribute:email} withEnded:^(BOOL success) {
+        
+        // Informe user of success
+        [MBProgressHUD hideHUDForView:self.view animated:YES];
+        
+        if(!success)
+        {
+            [[MTStatusBarOverlay sharedInstance]
+             postImmediateErrorMessage:NSLocalizedString(@"Error", nil)
+             duration:1
+             animated:YES];
+        }
+    }];
+}
 
 #pragma mark - UIAlertView Delegate -> Login FB
 
@@ -456,43 +568,20 @@
             [[FacebookManager sharedInstance] updateCurrentUserFacebookIdOnServer:nil];
         }
         
-    } else if (alertView == addFirstPhoneNumber) {
+    }
+    
+    
+    
+    
+    // PHONE NUMBERS
+    else if (alertView == addFirstPhoneNumber) {
         UITextField *phoneTextField = [alertView textFieldAtIndex:0];
         
         if(buttonIndex == 1)
         {
             [phoneTextField resignFirstResponder];
+            [self getPhoneNumber:phoneTextField.text withAttribute:@"numeroMobile"];
             
-            // Si le champ est vide, alertview
-            if(phoneTextField.text.length == 0)
-            {
-                
-                [[[UIAlertView alloc]
-                  initWithTitle:NSLocalizedString(@"CreationPage2ViewController_ConfirmEmptyAlertView_Title", nil)
-                  message:NSLocalizedString(@"CreationPage2ViewController_ConfirmEmptyAlertView_Message", nil)
-                  delegate:self
-                  cancelButtonTitle:NSLocalizedString(@"AlertView_Button_Cancel", nil)
-                  otherButtonTitles:NSLocalizedString(@"AlertView_Button_Continue", nil),nil]
-                 show];
-                
-            }
-            else
-            {                    
-                // Envoi
-                [UserClass updateCurrentUserInformationsOnServerWithAttributes:@{@"numeroMobile":[[Config sharedInstance] formatedPhoneNumber:phoneTextField.text]} withEnded:^(BOOL success) {
-                        
-                    // Informe user of success
-                    [MBProgressHUD hideHUDForView:self.view animated:YES];
-                        
-                    if(!success)
-                    {
-                        [[MTStatusBarOverlay sharedInstance]
-                         postImmediateErrorMessage:NSLocalizedString(@"Error", nil)
-                         duration:1
-                         animated:YES];
-                    }
-                }];
-            }
         }
     } else if (alertView == addSecondPhoneNumber) {
         UITextField *phoneTextField = [alertView textFieldAtIndex:0];
@@ -500,167 +589,41 @@
         if(buttonIndex == 1)
         {
             [phoneTextField resignFirstResponder];
-            
-            // Si le champ est vide, alertview
-            if(phoneTextField.text.length == 0)
-            {
-                
-                [[[UIAlertView alloc]
-                  initWithTitle:NSLocalizedString(@"CreationPage2ViewController_ConfirmEmptyAlertView_Title", nil)
-                  message:NSLocalizedString(@"CreationPage2ViewController_ConfirmEmptyAlertView_Message", nil)
-                  delegate:self
-                  cancelButtonTitle:NSLocalizedString(@"AlertView_Button_Cancel", nil)
-                  otherButtonTitles:NSLocalizedString(@"AlertView_Button_Continue", nil),nil]
-                 show];
-                
-            }
-            else
-            {
-                // Envoi
-                [UserClass updateCurrentUserInformationsOnServerWithAttributes:@{@"secondPhone":[[Config sharedInstance] formatedPhoneNumber:phoneTextField.text]} withEnded:^(BOOL success) {
-                    
-                    // Informe user of success
-                    [MBProgressHUD hideHUDForView:self.view animated:YES];
-                    
-                    if(!success)
-                    {
-                        [[MTStatusBarOverlay sharedInstance]
-                         postImmediateErrorMessage:NSLocalizedString(@"Error", nil)
-                         duration:1
-                         animated:YES];
-                    }
-                }];
-            }
+            [self getPhoneNumber:phoneTextField.text withAttribute:@"secondPhone"];
         }
     } else if (alertView == removePhoneNumber) {
         UserClass *currentUser = [UserCoreData getCurrentUser];
         
         if(buttonIndex == 1)
-        {
-            /*// Envoi - Suppression 1er numéro
-            [UserClass updateCurrentUserInformationsOnServerWithAttributes:@{@"numeroMobile":[[Config sharedInstance] formatedPhoneNumber:@""]} withEnded:^(BOOL success) {
-                
-                // Informe user of success
-                [MBProgressHUD hideHUDForView:self.view animated:YES];
-                
-                if(!success)
-                {
-                    [[MTStatusBarOverlay sharedInstance]
-                     postImmediateErrorMessage:NSLocalizedString(@"Error", nil)
-                     duration:1
-                     animated:YES];
-                }
-            }];*/
-            
+        {            
             // Envoi - Remplacement 1er numéro par 2nd numéro
-            [UserClass updateCurrentUserInformationsOnServerWithAttributes:@{@"numeroMobile":[[Config sharedInstance] formatedPhoneNumber:currentUser.secondPhone]} withEnded:^(BOOL success) {
-                
-                // Informe user of success
-                [MBProgressHUD hideHUDForView:self.view animated:YES];
-                
-                if(!success)
-                {
-                    [[MTStatusBarOverlay sharedInstance]
-                     postImmediateErrorMessage:NSLocalizedString(@"Error", nil)
-                     duration:1
-                     animated:YES];
-                }
-            }];
+            [self sendPhoneNumber:currentUser.secondPhone withAttribute:@"numeroMobile"];
             
             // Envoi - Suppression 2nd numéro
-            [UserClass updateCurrentUserInformationsOnServerWithAttributes:@{@"secondPhone":[[Config sharedInstance] formatedPhoneNumber:@""]} withEnded:^(BOOL success) {
-                
-                // Informe user of success
-                [MBProgressHUD hideHUDForView:self.view animated:YES];
-                
-                if(!success)
-                {
-                    [[MTStatusBarOverlay sharedInstance]
-                     postImmediateErrorMessage:NSLocalizedString(@"Error", nil)
-                     duration:1
-                     animated:YES];
-                }
-            }];
+            [self sendPhoneNumber:@"" withAttribute:@"secondPhone"];
+            
+            
+            [self showPhoneNumbersAlertViewType:@"addSecondPhoneNumber"];
         } else if (buttonIndex == 2) {
             // Envoi - Suppression 2nd numéro
-            [UserClass updateCurrentUserInformationsOnServerWithAttributes:@{@"secondPhone":[[Config sharedInstance] formatedPhoneNumber:@""]} withEnded:^(BOOL success) {
-                
-                // Informe user of success
-                [MBProgressHUD hideHUDForView:self.view animated:YES];
-                
-                if(!success)
-                {
-                    [[MTStatusBarOverlay sharedInstance]
-                     postImmediateErrorMessage:NSLocalizedString(@"Error", nil)
-                     duration:1
-                     animated:YES];
-                }
-            }];
+            [self sendPhoneNumber:@"" withAttribute:@"secondPhone"];
+            
+            
+            [self showPhoneNumbersAlertViewType:@"addSecondPhoneNumber"];
         }
     }
     
     
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    // EMAILS
     else if (alertView == addFirstEmailAddress) {
         UITextField *emailAddressTextField = [alertView textFieldAtIndex:0];
         
         if(buttonIndex == 1)
         {
             [emailAddressTextField resignFirstResponder];
-            
-            if ([[Config sharedInstance] isValidEmail:emailAddressTextField.text]) {
-                // Si le champ est vide, alertview
-                if(emailAddressTextField.text.length == 0)
-                {
-                    
-                    [[[UIAlertView alloc]
-                      initWithTitle:NSLocalizedString(@"CreationPage2ViewController_ConfirmEmptyAlertView_Title", nil)
-                      message:NSLocalizedString(@"CreationPage2ViewController_ConfirmEmptyAlertView_Message", nil)
-                      delegate:self
-                      cancelButtonTitle:NSLocalizedString(@"AlertView_Button_Cancel", nil)
-                      otherButtonTitles:NSLocalizedString(@"AlertView_Button_Continue", nil),nil]
-                     show];
-                    
-                }
-                else
-                {
-                    // Envoi
-                    //[UserClass updateCurrentUserInformationsOnServerWithAttributes:@{@"numeroMobile":[[Config sharedInstance] formatedPhoneNumber:emailAddressTextField.text]} withEnded:^(BOOL success) {
-                    [UserClass updateCurrentUserInformationsOnServerWithAttributes:@{@"email":emailAddressTextField.text} withEnded:^(BOOL success) {
-                    
-                        // Informe user of success
-                        [MBProgressHUD hideHUDForView:self.view animated:YES];
-                    
-                        if(!success)
-                        {
-                            [[MTStatusBarOverlay sharedInstance]
-                             postImmediateErrorMessage:NSLocalizedString(@"Error", nil)
-                             duration:1
-                             animated:YES];
-                        }
-                    }];
-                }
-                
-            } else { // Si l'email a un format non valide
-                [[[UIAlertView alloc]
-                  initWithTitle:NSLocalizedString(@"MFMailComposeViewController_Moment_InvalideFormat_Title", nil)
-                  message:NSLocalizedString(@"MFMailComposeViewController_Moment_InvalideFormat_Message", nil)
-                  delegate:self
-                  cancelButtonTitle:NSLocalizedString(@"AlertView_Button_OK", nil)
-                  otherButtonTitles:nil,nil]
-                 show];
-            }
+            [self getEmail:emailAddressTextField.text withAttribute:@"email"];
         }
     } else if (alertView == addSecondEmailAddress) {
         UITextField *emailAddressTextField = [alertView textFieldAtIndex:0];
@@ -668,47 +631,7 @@
         if(buttonIndex == 1)
         {
             [emailAddressTextField resignFirstResponder];
-            
-            if ([[Config sharedInstance] isValidEmail:emailAddressTextField.text]) {
-                // Si le champ est vide, alertview
-                if(emailAddressTextField.text.length == 0)
-                {
-                    
-                    [[[UIAlertView alloc]
-                      initWithTitle:NSLocalizedString(@"CreationPage2ViewController_ConfirmEmptyAlertView_Title", nil)
-                      message:NSLocalizedString(@"CreationPage2ViewController_ConfirmEmptyAlertView_Message", nil)
-                      delegate:self
-                      cancelButtonTitle:NSLocalizedString(@"AlertView_Button_Cancel", nil)
-                      otherButtonTitles:NSLocalizedString(@"AlertView_Button_Continue", nil),nil]
-                     show];
-                    
-                }
-                else
-                {
-                    // Envoi
-                    [UserClass updateCurrentUserInformationsOnServerWithAttributes:@{@"secondEmail":emailAddressTextField.text} withEnded:^(BOOL success) {
-                        
-                        // Informe user of success
-                        [MBProgressHUD hideHUDForView:self.view animated:YES];
-                        
-                        if(!success)
-                        {
-                            [[MTStatusBarOverlay sharedInstance]
-                             postImmediateErrorMessage:NSLocalizedString(@"Error", nil)
-                             duration:1
-                             animated:YES];
-                        }
-                    }];
-                }
-            } else { // Si l'email a un format non valide
-                [[[UIAlertView alloc]
-                  initWithTitle:NSLocalizedString(@"MFMailComposeViewController_Moment_InvalideFormat_Title", nil)
-                  message:NSLocalizedString(@"MFMailComposeViewController_Moment_InvalideFormat_Message", nil)
-                  delegate:self
-                  cancelButtonTitle:NSLocalizedString(@"AlertView_Button_OK", nil)
-                  otherButtonTitles:nil,nil]
-                 show];
-            }
+            [self getEmail:emailAddressTextField.text withAttribute:@"secondEmail"];
         }
     } else if (alertView == removeEmailAddress) {
         UITextField *emailAddressTextField = [alertView textFieldAtIndex:0];
@@ -716,100 +639,21 @@
         if(buttonIndex == 1)
         {
             [emailAddressTextField resignFirstResponder];
-            
-            if ([[Config sharedInstance] isValidEmail:emailAddressTextField.text]) {
-                // Si le champ est vide, alertview
-                if(emailAddressTextField.text.length == 0)
-                {
-                    
-                    [[[UIAlertView alloc]
-                      initWithTitle:NSLocalizedString(@"CreationPage2ViewController_ConfirmEmptyAlertView_Title", nil)
-                      message:NSLocalizedString(@"CreationPage2ViewController_ConfirmEmptyAlertView_Message", nil)
-                      delegate:self
-                      cancelButtonTitle:NSLocalizedString(@"AlertView_Button_Cancel", nil)
-                      otherButtonTitles:NSLocalizedString(@"AlertView_Button_Continue", nil),nil]
-                     show];
-                    
-                }
-                else
-                {
-                    // Envoi
-                    [UserClass updateCurrentUserInformationsOnServerWithAttributes:@{@"secondEmail":emailAddressTextField.text} withEnded:^(BOOL success) {
-                        
-                        // Informe user of success
-                        [MBProgressHUD hideHUDForView:self.view animated:YES];
-                        
-                        if(!success)
-                        {
-                            [[MTStatusBarOverlay sharedInstance]
-                             postImmediateErrorMessage:NSLocalizedString(@"Error", nil)
-                             duration:1
-                             animated:YES];
-                        }
-                    }];
-                }
-            } else { // Si l'email a un format non valide
-                [[[UIAlertView alloc]
-                  initWithTitle:NSLocalizedString(@"MFMailComposeViewController_Moment_InvalideFormat_Title", nil)
-                  message:NSLocalizedString(@"MFMailComposeViewController_Moment_InvalideFormat_Message", nil)
-                  delegate:self
-                  cancelButtonTitle:NSLocalizedString(@"AlertView_Button_OK", nil)
-                  otherButtonTitles:nil,nil]
-                 show];
-            }
+            [self getEmail:emailAddressTextField.text withAttribute:@"secondEmail"];
         }
-    
-        
-        
         
         
         // Décommenter lorsqu'on pourra changer l'adresse principale
         /*if(buttonIndex == 1)
         {            
             // Envoi - Remplacement 1er numéro par 2nd numéro
-            [UserClass updateCurrentUserInformationsOnServerWithAttributes:@{@"email":currentUser.secondEmail} withEnded:^(BOOL success) {
-                
-                // Informe user of success
-                [MBProgressHUD hideHUDForView:self.view animated:YES];
-                
-                if(!success)
-                {
-                    [[MTStatusBarOverlay sharedInstance]
-                     postImmediateErrorMessage:NSLocalizedString(@"Error", nil)
-                     duration:1
-                     animated:YES];
-                }
-            }];
+            [self sendEmail:currentUser.secondEmail withAttribute:@"email"]
             
             // Envoi - Suppression 2nd numéro
-            [UserClass updateCurrentUserInformationsOnServerWithAttributes:@{@"secondEmail":@""} withEnded:^(BOOL success) {
-                
-                // Informe user of success
-                [MBProgressHUD hideHUDForView:self.view animated:YES];
-                
-                if(!success)
-                {
-                    [[MTStatusBarOverlay sharedInstance]
-                     postImmediateErrorMessage:NSLocalizedString(@"Error", nil)
-                     duration:1
-                     animated:YES];
-                }
-            }];
+            [self sendEmail:@"" withAttribute:@"secondEmail"]
         } else if (buttonIndex == 2) {
             // Envoi - Suppression 2nd numéro
-            [UserClass updateCurrentUserInformationsOnServerWithAttributes:@{@"secondEmail":@""} withEnded:^(BOOL success) {
-                
-                // Informe user of success
-                [MBProgressHUD hideHUDForView:self.view animated:YES];
-                
-                if(!success)
-                {
-                    [[MTStatusBarOverlay sharedInstance]
-                     postImmediateErrorMessage:NSLocalizedString(@"Error", nil)
-                     duration:1
-                     animated:YES];
-                }
-            }];
+            [self sendEmail:@"" withAttribute:@"secondEmail"]
         }*/
     }
 }
