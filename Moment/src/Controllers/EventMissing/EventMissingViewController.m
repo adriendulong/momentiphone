@@ -453,49 +453,7 @@
         // Accepter
         if(buttonIndex == 1)
         {
-            [[FacebookManager sharedInstance] getCurrentUserInformationsWithEnded:^(UserClass *user) {
-                
-                if(user)
-                {
-                    /*UIAlertView *fbPopup = [[UIAlertView alloc] initWithTitle:@"Lier mon compte Facebook"
-                                                                      message:[NSString stringWithFormat:@"nom: %@ | prenom: %@ | email: %@ | fb_ID: %@", user.nom, user.prenom, user.email, user.facebookId]
-                                                                     delegate:self
-                                                            cancelButtonTitle:@"Refuser"
-                                                            otherButtonTitles:@"Accepter", nil];
-                    [fbPopup show];*/
-                    
-                    [[FacebookManager sharedInstance] updateCurrentUserFacebookIdOnServer:nil];
-                    
-                    
-                    // Update Facebook ID
-                    /*NSLog(@"facebookId = %@", user.facebookId);
-                    [UserClass updateCurrentUserInformationsOnServerWithAttributes:@{@"facebookId":user.facebookId} withEnded:^(BOOL success) {
-                        
-                        // Informe user of success
-                        [MBProgressHUD hideHUDForView:self.view animated:YES];
-                        
-                        if(!success)
-                        {
-                            [[MTStatusBarOverlay sharedInstance]
-                             postImmediateErrorMessage:NSLocalizedString(@"Error", nil)
-                             duration:1
-                             animated:YES];
-                        }
-                    }];*/
-                    
-                    /*self.nomLabel.text = user.nom;
-                     self.prenomLabel.text = user.prenom;
-                     self.emailLabel.text = user.email;
-                     if(user.imageString)
-                     {
-                     [self.photoProfil setImage:nil imageString:user.imageString withSaveBlock:^(UIImage *image) {
-                     self.imageProfile = image;
-                     }];
-                     }
-                     facebookId = user.facebookId;*/
-                }
-                
-            }];
+            [[FacebookManager sharedInstance] updateCurrentUserFacebookIdOnServer:nil];
         }
         
     } else if (alertView == addFirstPhoneNumber) {
