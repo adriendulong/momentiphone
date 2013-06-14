@@ -529,6 +529,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
             self.rsvpYesButton.selected = NO;
             break;
             
+        case UserStateUnknown:
         case UserStateWaiting:
             message = @"Je sais pas si je serais présent au moment ...";
             self.rsvpMaybeButton.selected = YES;
@@ -1184,10 +1185,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
-    NSLog(@"Début");
-    //self.user = [UserCoreData getCurrentUser];
-    
+        
     // View
     CGRect frame = self.view.frame;
     frame.size.height = [[VersionControl sharedInstance] screenHeight] - TOPBAR_HEIGHT;
