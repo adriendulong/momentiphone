@@ -97,6 +97,7 @@ enum TimeLineStyle {
 
 - (id)initWithMoments:(NSArray*)momentsParam
             withStyle:(enum TimeLineStyle)style
+             withUser:(UserClass*)user
              withSize:(CGSize)size
 withRootViewController:(RootTimeLineViewController*)rootViewController
   shouldReloadMoments:(BOOL)reloadMoments;

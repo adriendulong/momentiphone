@@ -151,7 +151,7 @@
         self.descriptionString = event.descriptionString;
         self.facebookId = event.eventId;
         // self.isOpen = @(!event.isPrivate);
-        self.privacy = event.isPrivate ? @(MomentPrivacyPublic) : @(MomentPrivacyOpen);
+        self.privacy = event.isPrivate ? @(MomentPrivacyPrivate) : @(MomentPrivacyPublic);
     }
     return self;
 }

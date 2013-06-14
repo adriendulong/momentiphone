@@ -362,7 +362,7 @@
     NSString *path = [NSString stringWithFormat:@"momentsofuser/%d", user.userId.intValue];
         
     [[AFMomentAPIClient sharedClient] getPath:path parameters:nil encoding:AFFormURLParameterEncoding success:^(AFHTTPRequestOperation *operation, id JSON) {
-                
+        
         if(block)
             block([MomentClass arrayOfMomentsWithArrayOfAttributesFromWeb:JSON[@"moments"]]);
         
@@ -407,7 +407,10 @@
     [self getMomentsServerWithEnded:block waitUntilFinished:NO];
 }
 
-+ (void) getMomentsServerAfterDate:(NSDate*)date withEnded:(void (^) (NSArray* moments))block
++ (void) getMomentsServerAfterDate:(NSDate*)date
+                     timeDirection:(enum TimeDirectiion)timeDirection
+                              user:(UserClass*)user
+                         withEnded:(void (^) (NSArray* moments))block
 {
     static NSDateFormatter *df = nil;
     
@@ -419,7 +422,13 @@
         df.dateFormat = @"yyyy-MM-dd";
     }
     
-    NSString *path = [NSString stringWithFormat:@"momentsafter/%@", [df stringFromDate:date]];
+    NSString *path = nil;
+    if(user) {
+        path = [NSString stringWithFormat:@"momentsafter/%@/%d/%@", [df stringFromDate:date], timeDirection, user.userId];
+    }
+    else {
+        path = [NSString stringWithFormat:@"momentsafter/%@/%d", [df stringFromDate:date], timeDirection];
+    }
         
     [[AFMomentAPIClient sharedClient] getPath:path parameters:nil encoding:AFFormURLParameterEncoding success:^(AFHTTPRequestOperation *operation, id JSON) {
         
@@ -444,11 +453,17 @@
 }
 
 // Blindage --> Supprime moment déjà présent en local
-+ (void) getMomentsServerAfterDateOfMoment:(MomentClass*)moment withEnded:(void (^) (NSArray* moments))block
++ (void) getMomentsServerAfterDateOfMoment:(MomentClass*)moment
+                             timeDirection:(enum TimeDirectiion)timeDirection
+                                      user:(UserClass*)user
+                                 withEnded:(void (^) (NSArray* moments))block
 {
     if(block)
     {
-        [self getMomentsServerAfterDate:moment.dateDebut withEnded:^(NSArray *moments) {
+        [self getMomentsServerAfterDate:moment.dateDebut
+                          timeDirection:timeDirection
+                                   user:user
+                              withEnded:^(NSArray *moments) {
             
             NSMutableArray *array = moments.mutableCopy;
             if([array containsObject:moment]) {

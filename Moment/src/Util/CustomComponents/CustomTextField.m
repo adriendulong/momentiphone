@@ -17,6 +17,7 @@
     self = [super initWithFrame:frame];
     if(self) {
         self.autocompleteDisabled = YES;
+        self.font = [[Config sharedInstance] defaultFontWithSize:14];
     }
     return self;
 }
@@ -24,6 +25,7 @@
 - (void)awakeFromNib {
     [super awakeFromNib];
     self.autocompleteDisabled = YES;
+    self.font = [[Config sharedInstance] defaultFontWithSize:14];
 }
 
 - (CGRect)textRectForBounds:(CGRect)bounds {
@@ -50,8 +52,6 @@
 }
 
 - (void) drawRect:(CGRect)rect{
-    
-    self.font = [[Config sharedInstance] defaultFontWithSize:14];
     
     UIImage *image = [UIImage imageNamed:@"bg-textfield.png"];
     

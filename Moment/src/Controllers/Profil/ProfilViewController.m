@@ -741,6 +741,7 @@ enum ProfilOnglet {
 
         _timeLineViewController = [[TimeLineViewController alloc] initWithMoments:@[]
                                                                         withStyle:TimeLineStyleProfil
+                                                                         withUser:self.user
                                                                          withSize:self.contentView.frame.size
                                                            withRootViewController:(RootTimeLineViewController*)self
                                                               shouldReloadMoments:YES];

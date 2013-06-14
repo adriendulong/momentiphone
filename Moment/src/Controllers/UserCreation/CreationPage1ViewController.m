@@ -328,6 +328,14 @@
     self.photoProfil.image = [UIImage imageNamed:@"picto_tete_avec_fond.png"];
     [self.photoProfil addTarget:self action:@selector(clicPhoto) forControlEvents:UIControlEventTouchUpInside];
     
+    // TextFields Font
+    font = [[Config sharedInstance] defaultFontWithSize:13];
+    self.nomLabel.font = font;
+    self.prenomLabel.font = font;
+    self.emailLabel.font = font;
+    self.mdpLabel.font = font;
+    self.birthdayTextField.font = [[Config sharedInstance] defaultFontWithSize:11];
+    
     // ------------ FACEBOOK LOGIN POPUP -------------
     fbLoginPopup = [[UIAlertView alloc] initWithTitle:@"Inscription via Facebook"
                                               message:@"Inscrivez-vous à partir de informations Facebook"

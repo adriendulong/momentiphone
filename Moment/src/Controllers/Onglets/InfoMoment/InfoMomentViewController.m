@@ -365,8 +365,6 @@ static CGFloat DescriptionBoxHeightMax = 100;
 
 - (void) initTopImageView
 {
-    self.user = [UserCoreData getCurrentUser];
-    
     // Background image
     [self.momentImageView setImage:self.moment.uimage imageString:self.moment.imageString placeHolder:[UIImage imageNamed:@"cover_defaut"] withSaveBlock:^(UIImage *image) {
         [self.moment setUimage:image];
@@ -501,8 +499,6 @@ static CGFloat DescriptionBoxHeightMax = 100;
 
 - (void)initRsvpView
 {
-    self.user = [UserCoreData getCurrentUser];
-
     // User State
     enum UserState state = self.moment.state.intValue;
     if(state == 0) {
@@ -533,6 +529,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
             self.rsvpYesButton.selected = NO;
             break;
             
+        case UserStateUnknown:
         case UserStateWaiting:
             message = @"Je sais pas si je serais présent au moment ...";
             self.rsvpMaybeButton.selected = YES;
@@ -830,8 +827,6 @@ static CGFloat DescriptionBoxHeightMax = 100;
 - (void) initInvitesView
 {
     // Attributed string
-    self.user = [UserCoreData getCurrentUser];
-    
     int nb = self.moment.guests_number.intValue;
     
     UIColor *color = [[Config sharedInstance] textColor];
@@ -1190,10 +1185,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
-    NSLog(@"Début");
-    self.user = [UserCoreData getCurrentUser];
-    
+        
     // View
     CGRect frame = self.view.frame;
     frame.size.height = [[VersionControl sharedInstance] screenHeight] - TOPBAR_HEIGHT;
@@ -1210,7 +1202,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
      ***********************************************/
     enum UserState state = self.moment.state.intValue;
     if(state == 0) {
-        state = ([self.moment.owner.userId isEqualToNumber:[UserCoreData getCurrentUser].userId]) ? UserStateOwner : UserStateNoInvited;
+        state = ([self.moment.owner.userId isEqualToNumber:self.user.userId]) ? UserStateOwner : UserStateNoInvited;
     }
     
     /***********************************************
@@ -1489,7 +1481,8 @@ static CGFloat DescriptionBoxHeightMax = 100;
 {
     if(self.moment.state.intValue != state) {
         
-        self.user = [UserCoreData getCurrentUser];
+        MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+        hud.labelText = NSLocalizedString(@"MBProgressHUD_Loading_updateRSVP", nil);
         
         // User State
         enum UserState userState = self.moment.state.intValue;
@@ -1509,6 +1502,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
                         [self.expandButton hideButtonsAnimated:YES];
                         //[self selectRSVPButtonForState:state];
                         [self reloadData];
+                        [MBProgressHUD hideHUDForView:self.view animated:YES];
                     }];
                 }
             }];
@@ -1522,6 +1516,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
                 [self.expandButton hideButtonsAnimated:YES];
                 //[self selectRSVPButtonForState:state];
                 [self reloadData];
+                [MBProgressHUD hideHUDForView:self.view animated:YES];
             }];
         }
         
@@ -1573,7 +1568,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
 }
 
 - (void)clicEdit {
-    CreationFicheViewController *editViewController = [[CreationFicheViewController alloc] initWithUser:[UserCoreData getCurrentUser] withMoment:self.moment withTimeLine:self.rootViewController.timeLine];
+    CreationFicheViewController *editViewController = [[CreationFicheViewController alloc] initWithUser:self.user withMoment:self.moment withTimeLine:self.rootViewController.timeLine];
     [self.rootViewController.navigationController pushViewController:editViewController animated:YES];
 }
 
@@ -1582,7 +1577,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
     // Google Analytics
     [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Ajout Invité depuis Info" value:nil];
     
-    InviteAddViewController *inviteViewController = [[InviteAddViewController alloc] initWithOwner:[UserCoreData getCurrentUser] withMoment:self.moment];
+    InviteAddViewController *inviteViewController = [[InviteAddViewController alloc] initWithOwner:self.user withMoment:self.moment];
     [self.rootViewController.navigationController pushViewController:inviteViewController animated:YES];
 }
 
@@ -1591,7 +1586,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
     // Google Analytics
     [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Invités" value:nil];
     
-    InvitePresentsViewController *inviteViewController = [[InvitePresentsViewController alloc] initWithOwner:[UserCoreData getCurrentUser] withMoment:self.moment];
+    InvitePresentsViewController *inviteViewController = [[InvitePresentsViewController alloc] initWithOwner:self.user withMoment:self.moment];
     [self.rootViewController.navigationController pushViewController:inviteViewController animated:YES];
 }
 

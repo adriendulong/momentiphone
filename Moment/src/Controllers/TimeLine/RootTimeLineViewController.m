@@ -248,6 +248,7 @@ shouldReloadMoments:(BOOL)reloadMoments
         
         _privateTimeLine = [[TimeLineViewController alloc] initWithMoments:moments
                                                                  withStyle:self.timeLineStyle
+                                                                  withUser:nil
                                                                   withSize:self.size
                                                     withRootViewController:self
                                                        shouldReloadMoments:shouldReloadMoments];

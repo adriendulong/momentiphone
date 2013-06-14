@@ -37,7 +37,7 @@
 }
 
 @property (nonatomic, strong) MomentClass *moment;
-@property (nonatomic, weak) UserClass *user;
+@property (nonatomic, strong) UserClass *user;
 
 @property (nonatomic, weak) RootOngletsViewController *rootViewController;
 @property (nonatomic, strong) IgnoreTouchView *foregroundView;

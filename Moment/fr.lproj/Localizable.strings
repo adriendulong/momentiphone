@@ -133,7 +133,7 @@
 // SendBoxView
 "ChatViewController_SendBoxView_placeHolder" = "Tapez votre message ici !";
 // Infinite Scroll
-"ChatViewController_InfiniteScroll_LoadMore" = "Charger les messages plus ancien";
+"ChatViewController_InfiniteScroll_LoadMore" = "Charger les messages plus anciens";
 
 /* ---------------- MBProgressHUD ------------------ */
 "MBProgressHUD_Loading" = "Chargement...";
@@ -182,7 +182,7 @@
 "TimeLineViewController_Overlay_Label7" = "Recherche";
 
 /* --------------- InfoMomentViewController --------------- */
-"MBProgressHUD_Loading_updateRSVP" = "Mise à jour";
+"MBProgressHUD_Loading_updateRSVP" = "Mise à jour ...";
 
 /* ---------------- PushNotifications ------------------ */
 // Chat
@@ -239,6 +239,8 @@
 "BigPhotoViewController_DeleteFailAlertView_Message" = "La suppression de la photo a échouée, merci de réessayer ultérieurement";
 // Partage
 "BigPhotoViewController_ShareActionSheet_Title" = "Partager";
+// Like Count
+"MBProgressHUD_Loading_updateLikeCount" = "Mise à jour ...";
 
 /* ------------ FullScreenPhotoViewController ------------- */
 "FullScreenPhotoViewController_Titre_PhotosOf" = "Photos de";
