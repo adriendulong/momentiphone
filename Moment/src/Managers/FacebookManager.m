@@ -300,6 +300,8 @@ static FacebookManager *sharedInstance = nil;
 
 - (void)getCurrentUserInformationsWithEnded:(void (^) (UserClass* user))block
 {
+    NSLog(@"getCurrentUserInformationsWithEnded");
+    
     if(block)
     {
         // Ask Permissions for Events
@@ -323,6 +325,8 @@ static FacebookManager *sharedInstance = nil;
                          user.facebookId = result[@"id"];
                          user.email = result[@"email"];
                          user.imageString = result[@"picture"][@"data"][@"url"];
+                         
+                         NSLog(@"result[@\"id\"] on Facebook => %@",result[@"id"]);
                          
                          block(user);
                      }
@@ -377,40 +381,64 @@ static FacebookManager *sharedInstance = nil;
 }
 
 - (void)updateCurrentUserFacebookIdOnServer:(void (^) (BOOL success))block {
+    UserClass *user = [UserCoreData getCurrentUser];
     
     // Block Update
     typedef void (^UpdateBlock) (void);
     UpdateBlock localBlock = [^ {
         [self getCurrentUserFacebookIdWithEnded:^(NSString *fbId) {
             if(fbId) {
-                // Update Server & CoreData
-                [UserClass updateCurrentUserInformationsOnServerWithAttributes:@{@"facebookId":fbId} withEnded:nil];
-                
-                if(block)
-                    block(YES);
+                NSLog(@"fbId = %@ | user.facebookId = %@",fbId,user.facebookId);
+                if (![fbId isEqualToString:user.facebookId]) {
+                    // Update Server & CoreData
+                    NSLog(@"Update fbId on server...");
+                    [UserClass updateCurrentUserInformationsOnServerWithAttributes:@{@"facebookId":fbId} withEnded:nil];
+                    
+                    if(block)
+                        block(YES);
+                } else {
+                    NSLog(@"fbId et user.facebookId sont égaux !! Pas besoin de màj");
+                    
+                    if(block)
+                        block(YES);
+                }
             }
-            else if(block)
+            else if(block) {
+                NSLog(@"getCurrentUserFacebookIdWithEnded - fbId = %@",fbId);
+                NSLog(@"block(NO)");
                 block(NO);
+            }
         }];
     } copy];
     
     // Save FB id
-    UserClass *user = [UserCoreData getCurrentUser];
     if(user)
     {
+        NSLog(@"getCurrentUser - nom = %@ | prenom = %@ | facebookId = %@",user.nom, user.prenom, user.facebookId);
         if(!user.facebookId || [user.facebookId intValue] == 0) {
+            NSLog(@"(!user.facebookId || [user.facebookId intValue] == 0) => localBlock()");
             localBlock();
         }
-        else if(block)
+        else if(user.facebookId) {
+            NSLog(@"I have a user.facebookId => localBlock()");
+            localBlock();
+        }
+        else if(block) {
+            NSLog(@"block(YES)");
             block(YES);
+        }
     }
     else {
         // Load User Informations
         [UserClass getLoggedUserFromServerWithEnded:^(UserClass *user) {
-            if(user)
+            if(user) {
+                NSLog(@"getLoggedUserFromServerWithEnded - nom = %@ | prenom = %@ | facebookId = %@",user.nom, user.prenom, user.facebookId);
+                NSLog(@"localBlock()");
                 localBlock();
-            else if(block)
+            } else if(block) {
+                NSLog(@"block(NO)");
                 block(NO);
+            }
         }];
     }
 }
@@ -634,6 +662,7 @@ static FacebookManager *sharedInstance = nil;
 
 - (void)loadEvents:( void (^) (NSArray *events) )block
 {
+    NSLog(@"Passage in loadEvents");
     if(block)
     {
         // Ask Permissions for Events
@@ -643,6 +672,7 @@ static FacebookManager *sharedInstance = nil;
                               // Permissions Obtenue
                               if(success)
                               {
+                                  NSLog(@"I've got permissions");
                                   // Get list events
                                   [FBRequestConnection
                                    startWithGraphPath:@"me/events?fields=id,cover,description,is_date_only,name,owner,location,privacy,rsvp_status,start_time,end_time,admins,picture.type(large)"
@@ -753,14 +783,22 @@ static FacebookManager *sharedInstance = nil;
 
 - (void)getEventsWithEnded:(void (^) (NSArray* events) )block
 {
+    NSLog(@"Passage in gerEventsWithEnded");
     if (FBSession.activeSession.state != FBSessionStateCreatedTokenLoaded) {
+        NSLog(@"Passage 1-2");
         [self loginReadPermissionsWithEnded:^(BOOL success) {
-            if(success)
+            NSLog(@"Passage 2-2");
+            if(success) {
+                NSLog(@"Passage 3-2");
                 [self loadEvents:block];
+                NSLog(@"Passage 4-2");
+            }
         }];
     }
     else {
+        NSLog(@"Passage 5-2");
         [self loadEvents:block];
+        NSLog(@"Passage 6-2");
     }
     
 }
