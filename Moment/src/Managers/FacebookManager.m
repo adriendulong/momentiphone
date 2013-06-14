@@ -300,7 +300,6 @@ static FacebookManager *sharedInstance = nil;
 
 - (void)getCurrentUserInformationsWithEnded:(void (^) (UserClass* user))block
 {
-    NSLog(@"getCurrentUserInformationsWithEnded");
     
     if(block)
     {
@@ -325,8 +324,6 @@ static FacebookManager *sharedInstance = nil;
                          user.facebookId = result[@"id"];
                          user.email = result[@"email"];
                          user.imageString = result[@"picture"][@"data"][@"url"];
-                         
-                         NSLog(@"result[@\"id\"] on Facebook => %@",result[@"id"]);
                          
                          block(user);
                      }
@@ -388,24 +385,18 @@ static FacebookManager *sharedInstance = nil;
     UpdateBlock localBlock = [^ {
         [self getCurrentUserFacebookIdWithEnded:^(NSString *fbId) {
             if(fbId) {
-                NSLog(@"fbId = %@ | user.facebookId = %@",fbId,user.facebookId);
                 if (![fbId isEqualToString:user.facebookId]) {
                     // Update Server & CoreData
-                    NSLog(@"Update fbId on server...");
                     [UserClass updateCurrentUserInformationsOnServerWithAttributes:@{@"facebookId":fbId} withEnded:nil];
                     
                     if(block)
                         block(YES);
                 } else {
-                    NSLog(@"fbId et user.facebookId sont égaux !! Pas besoin de màj");
-                    
                     if(block)
                         block(YES);
                 }
             }
             else if(block) {
-                NSLog(@"getCurrentUserFacebookIdWithEnded - fbId = %@",fbId);
-                NSLog(@"block(NO)");
                 block(NO);
             }
         }];
@@ -414,31 +405,20 @@ static FacebookManager *sharedInstance = nil;
     // Save FB id
     if(user)
     {
-        NSLog(@"getCurrentUser - nom = %@ | prenom = %@ | facebookId = %@",user.nom, user.prenom, user.facebookId);
-        if(!user.facebookId || [user.facebookId intValue] == 0) {
-            NSLog(@"(!user.facebookId || [user.facebookId intValue] == 0) => localBlock()");
+        if(!user.facebookId || [user.facebookId intValue] == 0)
             localBlock();
-        }
-        else if(user.facebookId) {
-            NSLog(@"I have a user.facebookId => localBlock()");
+        else if(user.facebookId)
             localBlock();
-        }
-        else if(block) {
-            NSLog(@"block(YES)");
+        else if(block)
             block(YES);
-        }
     }
     else {
         // Load User Informations
         [UserClass getLoggedUserFromServerWithEnded:^(UserClass *user) {
-            if(user) {
-                NSLog(@"getLoggedUserFromServerWithEnded - nom = %@ | prenom = %@ | facebookId = %@",user.nom, user.prenom, user.facebookId);
-                NSLog(@"localBlock()");
+            if(user)
                 localBlock();
-            } else if(block) {
-                NSLog(@"block(NO)");
+            else if(block)
                 block(NO);
-            }
         }];
     }
 }
@@ -662,7 +642,6 @@ static FacebookManager *sharedInstance = nil;
 
 - (void)loadEvents:( void (^) (NSArray *events) )block
 {
-    NSLog(@"Passage in loadEvents");
     if(block)
     {
         // Ask Permissions for Events
@@ -672,7 +651,6 @@ static FacebookManager *sharedInstance = nil;
                               // Permissions Obtenue
                               if(success)
                               {
-                                  NSLog(@"I've got permissions");
                                   // Get list events
                                   [FBRequestConnection
                                    startWithGraphPath:@"me/events?fields=id,cover,description,is_date_only,name,owner,location,privacy,rsvp_status,start_time,end_time,admins,picture.type(large)"
@@ -685,61 +663,65 @@ static FacebookManager *sharedInstance = nil;
                                            NSArray *webList = [result[@"data"] mutableCopy];
                                            
                                            int taille = [webList count];
-                                           NSMutableArray *mutableArray = [NSMutableArray arrayWithCapacity:taille];
-                                           NSMutableArray *ownerIdsArray = [NSMutableArray arrayWithCapacity:taille];
-                                           
-                                           
-                                           __block int i = 0;
-                                           for (NSDictionary *attr in webList)
-                                           {
-                                               // Owner attributes
-                                               NSDictionary *owner = @{@"facebookId":attr[@"owner"][@"id"]};
+                                           if (taille == 0) {
+                                               if (block)
+                                                   block(nil);
+                                           } else {
+                                               NSMutableArray *mutableArray = [NSMutableArray arrayWithCapacity:taille];
+                                               NSMutableArray *ownerIdsArray = [NSMutableArray arrayWithCapacity:taille];
                                                
-                                               [UserClass getUsersWhoAreOnMoment:@[owner] withEnded:^(NSArray *usersOnMoment) {
+                                               
+                                               __block int i = 0;
+                                               for (NSDictionary *attr in webList)
+                                               {
+                                                   // Owner attributes
+                                                   NSDictionary *owner = @{@"facebookId":attr[@"owner"][@"id"]};
                                                    
-                                                   //  ------> Create Event
-                                                   FacebookEvent *event = [[FacebookEvent alloc] initWithAttributes:attr];
-                                                   // Save Event
-                                                   [mutableArray addObject:event];
-                                                   // Save Owner ID
-                                                   [ownerIdsArray addObject:[NSString stringWithFormat:@"%@", attr[@"owner"][@"id"]]];
-                                                   
-                                                   
-                                                   //  ------> User is on Moment
-                                                   if([usersOnMoment count] == 1) {
-                                                       event.ownerAttributes = usersOnMoment[0];
-                                                   }
-                                                   
-                                                   // ************** >Last event < *************
-                                                   if(i == taille-1) {
+                                                   [UserClass getUsersWhoAreOnMoment:@[owner] withEnded:^(NSArray *usersOnMoment) {
+                                                       
+                                                       //  ------> Create Event
+                                                       FacebookEvent *event = [[FacebookEvent alloc] initWithAttributes:attr];
+                                                       // Save Event
+                                                       [mutableArray addObject:event];
+                                                       // Save Owner ID
+                                                       [ownerIdsArray addObject:[NSString stringWithFormat:@"%@", attr[@"owner"][@"id"]]];
                                                        
                                                        
-                                                       ///////////////////////////////////////////////////////////////////////
-                                                       // --------- Récupérer Owners informations depuis Server Facebook -----
-                                                       ///////////////////////////////////////////////////////////////////////
-                                                       [FacebookEvent arrayWithArrayOfEvents:mutableArray withArrayOfOwnerId:ownerIdsArray withEnded:^(NSArray *events) {
+                                                       //  ------> User is on Moment
+                                                       if([usersOnMoment count] == 1) {
+                                                           event.ownerAttributes = usersOnMoment[0];
+                                                       }
+                                                       
+                                                       // ************** >Last event < *************
+                                                       if(i == taille-1) {
                                                            
                                                            
-                                                           //NSLog(@"events = %@", events);
-                                                           
-                                                           NSMutableArray *finalArray = events.mutableCopy;
-                                                           
-                                                           // Sort By Date
-                                                           [finalArray sortUsingComparator:^NSComparisonResult(FacebookEvent *obj1, FacebookEvent *obj2) {
-                                                               return [obj1.startTime compare:obj2.startTime];
+                                                           ///////////////////////////////////////////////////////////////////////
+                                                           // --------- Récupérer Owners informations depuis Server Facebook -----
+                                                           ///////////////////////////////////////////////////////////////////////
+                                                           [FacebookEvent arrayWithArrayOfEvents:mutableArray withArrayOfOwnerId:ownerIdsArray withEnded:^(NSArray *events) {
+                                                               
+                                                               
+                                                               //NSLog(@"events = %@", events);
+                                                               
+                                                               NSMutableArray *finalArray = events.mutableCopy;
+                                                               
+                                                               // Sort By Date
+                                                               [finalArray sortUsingComparator:^NSComparisonResult(FacebookEvent *obj1, FacebookEvent *obj2) {
+                                                                   return [obj1.startTime compare:obj2.startTime];
+                                                               }];
+                                                               
+                                                               // Final block
+                                                               block(finalArray);
+                                                               
                                                            }];
                                                            
-                                                           // Final block
-                                                           block(finalArray);
-                                                           
-                                                       }];
+                                                       }
                                                        
-                                                   }
-                                                   
-                                                   i++;
-                                               }];
+                                                       i++;
+                                                   }];
+                                               }
                                            }
-                                           
                                        }
                                        else{
                                            NSLog(@"Facebook Load Events Error : %@", error.localizedDescription);
@@ -783,22 +765,15 @@ static FacebookManager *sharedInstance = nil;
 
 - (void)getEventsWithEnded:(void (^) (NSArray* events) )block
 {
-    NSLog(@"Passage in gerEventsWithEnded");
     if (FBSession.activeSession.state != FBSessionStateCreatedTokenLoaded) {
-        NSLog(@"Passage 1-2");
         [self loginReadPermissionsWithEnded:^(BOOL success) {
-            NSLog(@"Passage 2-2");
             if(success) {
-                NSLog(@"Passage 3-2");
                 [self loadEvents:block];
-                NSLog(@"Passage 4-2");
             }
         }];
     }
     else {
-        NSLog(@"Passage 5-2");
         [self loadEvents:block];
-        NSLog(@"Passage 6-2");
     }
     
 }

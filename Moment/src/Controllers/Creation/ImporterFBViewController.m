@@ -44,12 +44,15 @@
     
     [MomentClass importFacebookEventsWithEnded:^(NSArray *events, NSArray *moments) {
         
-        // Save
-        self.events = events;
-        self.moments = moments;
+        if (events && moments) {
+            // Save
+            self.events = events;
+            self.moments = moments;
+            
+            [self.tableView reloadData];
+            [self.timeLine reloadData];
+        }
         
-        [self.tableView reloadData];
-        [self.timeLine reloadData];
         [MBProgressHUD hideHUDForView:self.view animated:YES];
     }];
 }
