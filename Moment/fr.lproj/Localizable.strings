@@ -1,10 +1,10 @@
-/* 
-  Localizable.strings
-  Moment
-
-  Created by Mathieu PIERAGGI on 27/01/13.
-  Copyright (c) 2013 Moment. All rights reserved.
-*/
+/*
+ Localizable.strings
+ Moment
+ 
+ Created by Mathieu PIERAGGI on 27/01/13.
+ Copyright (c) 2013 Moment. All rights reserved.
+ */
 
 /* ---------------- TutorialViewController ------------------ */
 // PAGE 1
@@ -81,7 +81,7 @@
 "EventMissingViewController_addFirstPhoneNumber_Title" = "Aucun numéro existant";
 
 // Email Popup
-"EventMissingViewController_EmailAlreadySave_Message" = "Email déja enregistré: %@";
+"EventMissingViewController_EmailAlreadySave_Message" = "Email enregistré: %@";
 
 "EventMissingViewController_removeEmailAddress_Title" = "Modifier l'email secondaire:";
 
