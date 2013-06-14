@@ -330,7 +330,7 @@
         if(currentUser.secondEmail.length != 0) {
             
             removeEmailAddress = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"EventMissingViewController_removeEmailAddress_Title", nil)
-                                                            message:[NSString stringWithFormat:NSLocalizedString(@"EventMissingViewController_removeEmailAddress_Message", nil), currentUser.secondEmail]
+                                                            message:[NSString stringWithFormat:NSLocalizedString(@"EventMissingViewController_EmailAlreadySave_Message", nil), currentUser.secondEmail]
                                                            delegate:self
                                                   cancelButtonTitle:NSLocalizedString(@"AlertView_Button_Cancel", nil)
                                                   otherButtonTitles:NSLocalizedString(@"AlertView_Button_Valide", nil), nil];
