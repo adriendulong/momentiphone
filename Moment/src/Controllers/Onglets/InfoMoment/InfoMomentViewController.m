@@ -1483,6 +1483,9 @@ static CGFloat DescriptionBoxHeightMax = 100;
 {
     if(self.moment.state.intValue != state) {
         
+        MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+        hud.labelText = NSLocalizedString(@"MBProgressHUD_Loading_updateRSVP", nil);
+        
         // User State
         enum UserState userState = self.moment.state.intValue;
         if(userState == 0) {
@@ -1501,6 +1504,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
                         [self.expandButton hideButtonsAnimated:YES];
                         //[self selectRSVPButtonForState:state];
                         [self reloadData];
+                        [MBProgressHUD hideHUDForView:self.view animated:YES];
                     }];
                 }
             }];
@@ -1514,6 +1518,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
                 [self.expandButton hideButtonsAnimated:YES];
                 //[self selectRSVPButtonForState:state];
                 [self reloadData];
+                [MBProgressHUD hideHUDForView:self.view animated:YES];
             }];
         }
         

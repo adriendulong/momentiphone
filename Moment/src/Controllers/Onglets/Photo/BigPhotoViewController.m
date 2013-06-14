@@ -711,6 +711,9 @@ withDelegate:(PhotoViewController*)photoViewController
 
 - (IBAction)clicLike {
     
+    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    hud.labelText = NSLocalizedString(@"MBProgressHUD_Loading_updateLikeCount", nil);
+    
     // Google Analytics
     [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Like" value:nil];
     
@@ -718,6 +721,7 @@ withDelegate:(PhotoViewController*)photoViewController
     
     [photo likeRequestWithEnded:^(NSInteger nbLikes) {
         [self updateLikeNumber:nbLikes];
+        [MBProgressHUD hideHUDForView:self.view animated:YES];
     }];
 }
 

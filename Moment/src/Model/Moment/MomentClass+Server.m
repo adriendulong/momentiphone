@@ -354,12 +354,10 @@
 
 + (void) getMomentsForUser:(UserClass*)user withEnded:(void (^) (NSArray* moments))block
 {
-    NSLog(@"User passed = %@", user);
     NSString *path = [NSString stringWithFormat:@"momentsofuser/%d", user.userId.intValue];
         
     [[AFMomentAPIClient sharedClient] getPath:path parameters:nil encoding:AFFormURLParameterEncoding success:^(AFHTTPRequestOperation *operation, id JSON) {
         
-        NSLog(@"JSON Received = %@", JSON);
         if(block)
             block([MomentClass arrayOfMomentsWithArrayOfAttributesFromWeb:JSON[@"moments"]]);
         
