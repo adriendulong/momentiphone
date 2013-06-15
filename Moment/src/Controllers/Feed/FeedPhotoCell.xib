@@ -40,7 +40,7 @@
 					<object class="IBUIImageView" id="627592772">
 						<reference key="NSNextResponder" ref="191373211"/>
 						<int key="NSvFlags">274</int>
-						<string key="NSFrame">{{13, 313}, {297, 46}}</string>
+						<string key="NSFrame">{{13, 313}, {297, 53}}</string>
 						<reference key="NSSuperview" ref="191373211"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="960509064"/>
@@ -57,7 +57,7 @@
 					<object class="IBUILabel" id="487462735">
 						<reference key="NSNextResponder" ref="191373211"/>
 						<int key="NSvFlags">292</int>
-						<string key="NSFrame">{{189, 339}, {89, 13}}</string>
+						<string key="NSFrame">{{189, 348}, {89, 13}}</string>
 						<reference key="NSSuperview" ref="191373211"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="1056980979"/>
@@ -131,7 +131,7 @@
 					<object class="IBUIImageView" id="1056980979">
 						<reference key="NSNextResponder" ref="191373211"/>
 						<int key="NSvFlags">274</int>
-						<string key="NSFrame">{{288, 341}, {14, 10}}</string>
+						<string key="NSFrame">{{288, 350}, {14, 10}}</string>
 						<reference key="NSSuperview" ref="191373211"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="444463196"/>
@@ -147,7 +147,7 @@
 					<object class="IBUIImageView" id="444463196">
 						<reference key="NSNextResponder" ref="191373211"/>
 						<int key="NSvFlags">292</int>
-						<string key="NSFrame">{{0, 365}, {320, 2}}</string>
+						<string key="NSFrame">{{0, 374}, {320, 2}}</string>
 						<reference key="NSSuperview" ref="191373211"/>
 						<reference key="NSWindow"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
@@ -269,7 +269,7 @@
 						<bool key="IBUIAdjustsFontSizeToFit">NO</bool>
 					</object>
 				</array>
-				<string key="NSFrameSize">{320, 366}</string>
+				<string key="NSFrameSize">{320, 380}</string>
 				<reference key="NSSuperview"/>
 				<reference key="NSWindow"/>
 				<reference key="NSNextKeyView" ref="798281816"/>

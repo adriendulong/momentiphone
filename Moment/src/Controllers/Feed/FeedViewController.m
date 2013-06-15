@@ -189,7 +189,7 @@
     
     switch (feed.type) {
         case FeedTypePhoto:
-            return 366.0f;
+            return 380.0f;
             break;
         
         case FeedTypeFollow:

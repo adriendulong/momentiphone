@@ -141,7 +141,6 @@
         self.dateLabel.text = [self.delegate timePastSinceDate:self.feed.date];
         [self.dateLabel sizeToFit];
         frame = self.dateLabel.frame;
-        frame.size.width = self.momentLabel.frame.origin.x + self.momentLabel.frame.size.width - self.iconeView.frame.origin.x;
         frame.origin.y = self.iconeView.frame.origin.y + self.iconeView.frame.size.height - frame.size.height;
         frame.origin.x = self.iconeView.frame.origin.x - frame.size.width - 5;
         self.dateLabel.frame = frame;
