@@ -388,7 +388,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
     self.ownerNameLabel.font = font;
     
     // Photo
-    UIImage *picture = self.moment.owner.uimage?self.moment.owner.uimage : [UIImage imageNamed:@"profil_defaut"];
+    UIImage *picture = self.moment.owner.uimage ?: [UIImage imageNamed:@"profil_defaut"];
     UIImage *cropped = [CropImageUtility cropImage:picture intoCircle:CircleSizeProfil];
     if(!self.user.uimage) {
         [self.avatarImage setImage:nil imageString:self.moment.owner.imageString placeHolder:cropped withSaveBlock:^(UIImage *image) {

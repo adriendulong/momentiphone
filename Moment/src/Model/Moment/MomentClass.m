@@ -97,9 +97,6 @@
     if(attributes[@"unique_url"])
         self.uniqueURL = attributes[@"unique_url"];
     
-    if(attributes[@"cover_photo_url"])
-        self.coverPhotoURL = attributes[@"cover_photo_url"];
-    
     if(attributes[@"owner"]) {
         UserClass *owner = nil;
         NSDictionary *dico = [UserClass mappingToLocalAttributes:attributes[@"owner"]];
@@ -184,7 +181,7 @@
 }
 
 - (NSString*)description {
-    return [NSString stringWithFormat:@"MOMENT %@ :\n{\ntitre = %@\ndebut = %@\nfin = %@\nimage = %@\nadresse = %@\nfbID = %@\ndescription = \n-----\n%@\n-----\nowner : \n-----\n%@\n-----\n}\n", self.momentId, self.titre, self.dateDebut, self.dateFin, self.imageString, self.adresse, self.facebookId, self.descriptionString, self.owner];
+    return [NSString stringWithFormat:@"MOMENT %@ :\n{\ntitre = %@\ndebut = %@\nfin = %@\nimageString = %@\nadresse = %@\nfbID = %@\ndescription = \n-----\n%@\n-----\nowner : \n-----\n%@\n-----\n}\n", self.momentId, self.titre, self.dateDebut, self.dateFin, self.imageString, self.adresse, self.facebookId, self.descriptionString, self.owner];
 }
 
 @end

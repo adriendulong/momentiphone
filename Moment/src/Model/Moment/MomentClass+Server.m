@@ -633,7 +633,8 @@
         [[AFMomentAPIClient sharedClient] saveHeaderResponse:operation.response];
         
         // Save URL
-        self.imageString = JSON[@"photo"];
+        if(file)
+            self.imageString = JSON[@"photo"];
         
         // Mettre à jour CoreData
         [MomentCoreData updateMoment:self];

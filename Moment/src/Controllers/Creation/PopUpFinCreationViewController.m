@@ -151,7 +151,7 @@
                     
                     // Show Navigation Bar
                     self.navigationController.navigationBar.hidden = NO;
-                    
+
                     // Update Timeline
                     [self.timeLine updateSelectedMoment:self.moment atRow:-1];
                     [self.timeLine showInviteViewControllerWithMoment:self.moment];

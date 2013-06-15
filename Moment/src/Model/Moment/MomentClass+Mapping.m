@@ -269,7 +269,7 @@ static NSDateFormatter *smallDateFormatter = nil;
     }
     
     if(self.imageString)
-        dico[@"photo_url"] = self.imageString;
+        dico[@"cover_photo_url"] = self.imageString;
     else if(self.dataImage)
         dico[@"photo"] = self.dataImage;
     
