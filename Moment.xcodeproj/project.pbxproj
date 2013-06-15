@@ -32,6 +32,7 @@
 		5B0055F516E97A0500C45A3D /* CustomTimeScroller.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B0055F416E97A0500C45A3D /* CustomTimeScroller.m */; };
 		5B03ECCA16D6D7360022C4A8 /* CustomSearchVolletTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B03ECC916D6D7360022C4A8 /* CustomSearchVolletTextField.m */; };
 		5B04BF1B176CA93D003379FE /* Moment.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 5B04BF18176CA93C003379FE /* Moment.xcdatamodeld */; };
+		5B04BF24176CB766003379FE /* handsean.otf in Resources */ = {isa = PBXBuildFile; fileRef = 5B04BF23176CB766003379FE /* handsean.otf */; };
 		5B0DFEDA16C64A0D00033C86 /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B0DFED916C64A0D00033C86 /* Social.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		5B0DFEE016C64B8100033C86 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B0DFEDF16C64B8100033C86 /* AdSupport.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		5B0DFEE216C64B8E00033C86 /* Accounts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B0DFEE116C64B8E00033C86 /* Accounts.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
@@ -1089,6 +1090,7 @@
 		5B03ECC916D6D7360022C4A8 /* CustomSearchVolletTextField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomSearchVolletTextField.m; sourceTree = "<group>"; };
 		5B04BF19176CA93D003379FE /* Moment 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "Moment 2.xcdatamodel"; sourceTree = "<group>"; };
 		5B04BF1A176CA93D003379FE /* Moment.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Moment.xcdatamodel; sourceTree = "<group>"; };
+		5B04BF23176CB766003379FE /* handsean.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = handsean.otf; sourceTree = "<group>"; };
 		5B0DFED916C64A0D00033C86 /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
 		5B0DFEDF16C64B8100033C86 /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
 		5B0DFEE116C64B8E00033C86 /* Accounts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accounts.framework; path = System/Library/Frameworks/Accounts.framework; sourceTree = SDKROOT; };
@@ -3682,6 +3684,7 @@
 		5BF02E99169C944700232E75 /* font */ = {
 			isa = PBXGroup;
 			children = (
+				5B04BF23176CB766003379FE /* handsean.otf */,
 				5BF02E9A169C944700232E75 /* Numans-Regular.otf */,
 			);
 			path = font;
@@ -5324,6 +5327,7 @@
 				5B8062F3176566F0009A89E0 /* Default-568h.png in Resources */,
 				6E80BEC31765CCF400E6041F /* MesReglagesViewController.xib in Resources */,
 				6E80BEC51765CCF400E6041F /* ModifierUserViewController.xib in Resources */,
+				5B04BF24176CB766003379FE /* handsean.otf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
