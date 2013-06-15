@@ -28,7 +28,7 @@ static NSDateFormatter *dateFormatter = nil;
 @synthesize startTime = _startTime;
 @synthesize endTime = _endTime;
 @synthesize location = _location;
-@synthesize isPrivate = _isPrivate;
+@synthesize privacy = _privacy;
 @synthesize venue = _venue;
 @synthesize picture = _picture;
 @synthesize pictureString = _pictureString;
@@ -50,11 +50,14 @@ static NSDateFormatter *dateFormatter = nil;
     return nil;
 }
 
-+ (BOOL)mappPrivacy:(NSString*)privacy
++ (enum MomentPrivacy)mappPrivacy:(NSString*)privacy
 {
     if([privacy isEqualToString:@"OPEN"])
-        return NO;
-    return YES;
+        return MomentPrivacyOpen;
+    if([privacy isEqualToString:@"SECRET"])
+        return MomentPrivacyPrivate;
+    // FRIENDS
+    return MomentPrivacyPublic;
 }
 
 - (void)setupOwner:(NSString*)ownerId withEnded:(void (^) (FacebookEvent *event))block
@@ -93,7 +96,7 @@ static NSDateFormatter *dateFormatter = nil;
         self.startTime = [dateFormatter dateFromString:[attributes objectForKey:@"start_time"]];
         self.endTime = [dateFormatter dateFromString:[attributes objectForKey:@"end_time"]];
         self.location = attributes[@"location"];
-        self.isPrivate = [FacebookEvent mappPrivacy:attributes[@"privacy"]];
+        self.privacy = [FacebookEvent mappPrivacy:attributes[@"privacy"]];
         self.venue = attributes[@"venue"];
         self.rsvp_status = [FacebookEvent mappRSVP:attributes[@"rsvp_status"]];
         self.isAlreadyOnMoment = NO;
