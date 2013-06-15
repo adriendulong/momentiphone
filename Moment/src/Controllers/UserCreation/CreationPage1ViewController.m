@@ -87,6 +87,9 @@
     self.dateFormatter.calendar = [NSCalendar currentCalendar];
     self.dateFormatter.dateFormat = @"dd'/'MM'/'yyyy";
     
+    // Data par défaut
+    self.pickerView.datePicker.date = [self.dateFormatter dateFromString:@"01/01/1990"];
+    
     // Set InputViews
     self.birthdayTextField.inputView = self.pickerView;
 }
@@ -403,7 +406,7 @@
     }
     
     [[[UIAlertView alloc] initWithTitle:@"Formulaire invalide"
-                                message:@"Veuillez remplir tous les champs du formulaire"
+                                message:@"Veuillez remplir tous les champs obligatoires du formulaire"
                                delegate:nil
                       cancelButtonTitle:@"OK"
                       otherButtonTitles:nil] 
@@ -490,6 +493,9 @@
         // Accepter
         if(buttonIndex == 1)
         {
+            MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+            hud.labelText = NSLocalizedString(@"MBProgressHUD_Loading", nil);
+            
             [[FacebookManager sharedInstance] getCurrentUserInformationsWithEnded:^(UserClass *user) {
                 
                 if(user)
@@ -514,6 +520,7 @@
                     facebookId = user.facebookId;
                 }
                 
+                [MBProgressHUD hideHUDForView:self.view animated:YES];
             }];
         }
         
@@ -547,6 +554,9 @@
         else
             self.maleButton.selected = sender.selected;
         
+        sender.selected = !sender.selected;
+    }
+    else {
         sender.selected = !sender.selected;
     }
 }
