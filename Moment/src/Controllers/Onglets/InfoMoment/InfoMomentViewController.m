@@ -589,7 +589,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
             // Background TextField
             frame = self.backgroundDescripionView.frame;
             frame.origin.y = self.descriptionLabel.frame.origin.y - 10;
-            frame.size.height = self.descriptionLabel.frame.size.height + 20;
+            frame.size.height = self.descriptionLabel.frame.size.height + 30;
             self.backgroundDescripionView.frame = frame;
             
             // Bouton Voir Plus
@@ -613,7 +613,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
             
             // Frame
             CGPoint origin = (CGPoint){(320 - seeMoreButton.frame.size.width)/2.0,
-                                        self.rsvpView.frame.origin.y + self.rsvpView.frame.size.height + DescriptionBoxHeightMax + 25};
+                                        self.rsvpView.frame.origin.y + self.rsvpView.frame.size.height + DescriptionBoxHeightMax + 35};
             seeMoreButton.frame = CGRectMake(origin.x, origin.y, seeMoreButton.frame.size.width, seeMoreButton.frame.size.height);
         }
         else
