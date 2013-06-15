@@ -221,11 +221,7 @@
     // Supprimer Moments inutiles
     [MomentCoreData deleteMomentsWhileEnteringBackground];
     // Supprimer Users inutiles
-    NSLog(@"Start");
-    NSDate *date = [NSDate date];
     [UserCoreData deleteUsersWhileEnteringBackground];
-    NSLog(@"End : %.5f", [date timeIntervalSinceNow]);
-    //[[Config sharedInstance] saveContext];
 }
 
 - (void)applicationWillEnterForeground:(UIApplication *)application

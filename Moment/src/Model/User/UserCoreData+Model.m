@@ -435,44 +435,9 @@ static NSTimeInterval lastUpdateTime = 0;
 + (void)deleteUsersWhileEnteringBackground
 {
     // On récupère tous les moments
-    // -> Ils sont triés par date de début ascendant
+    // -> Cette méthode étant appellée après deleteMomentsWhileEnteringBackground,
+    // Tous les moments dans la BDD sont forcément les plus récents
     NSMutableArray *moments = [[MomentCoreData getMomentsAsCoreData] mutableCopy];
-        
-    // Identifier le moment le plus proche d'aujourd'hui
-    NSInteger row = 0, tempRow = -1;
-    NSDate *today = [NSDate date];
-    NSTimeInterval timeInterval = [((MomentCoreData*)moments[0]).dateDebut timeIntervalSinceDate:today], temp = 0;
-    for(MomentCoreData *m in moments)
-    {
-        tempRow++;
-        temp = [m.dateDebut timeIntervalSinceDate:today];
-        if ( abs(temp) < abs(timeInterval) ) {
-            row = tempRow;
-            timeInterval = temp;
-        }
-    }
-    // Le moment le plus proche d'aujourd'hui est à l'index "row"
-    
-    // On garde les plus récents
-    /*
-    NSMutableArray *recentsMoments = [[NSMutableArray alloc] initWithCapacity:20];
-    NSInteger nb = 0;
-    NSInteger length;
-    while( (nb <= 20) && ((length = [moments count]) > 0) )
-    {
-        if((row < length) && (row >= 0) ) {
-            [recentsMoments addObject:moments[row]];
-            [moments removeObjectAtIndex:row];
-            nb++;
-        }
-        else if(row == 0) {
-            row++;
-        }
-        else if(row == length) {
-            row--;
-        }
-    }
-     */
     
     // ------------- On récupère tous les users ----------------
     NSArray *users = [UserCoreData getUsersAsCoreData];
@@ -550,7 +515,7 @@ static NSTimeInterval lastUpdateTime = 0;
     @finally {
         
     }
-
+    
 }
 
 + (void)resetUsersLocal
