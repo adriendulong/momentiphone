@@ -686,12 +686,12 @@ withRootViewController:(UIViewController *)rootViewController
     } withProgression:^(CGFloat progress) {
                 
         // Status Bar Progression d'une unique photo
-        if(totalImages == 1)
+        //if(totalImages == 1)
             overlayStatusBar.progress = progress;
         // Status bar envoi partiel
-        else {
-            overlayStatusBar.progress = (actualIndex + (progress/totalImages))/totalImages;
-        }
+        //else {
+            //overlayStatusBar.progress = (actualIndex + (progress/totalImages))/totalImages;
+        //}
         
     } withTransition:^(Photos *photo) {
         
@@ -710,6 +710,7 @@ withRootViewController:(UIViewController *)rootViewController
                 NSString *string = nil;
                 string = [NSString stringWithFormat:@"%@ %d/%d", NSLocalizedString(@"StatusBarOverlay_Photo_Uploading", nil), actualIndex+1, totalImages];
                 
+                overlayStatusBar.progress = 0;
                 [overlayStatusBar postMessage:string];
                 //overlayStatusBar.progress = (float)index/totalImages;
             }
