@@ -31,6 +31,7 @@
 		5B0055F216E95D8100C45A3D /* fleche_minute@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5B0055EE16E95D7C00C45A3D /* fleche_minute@2x.png */; };
 		5B0055F516E97A0500C45A3D /* CustomTimeScroller.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B0055F416E97A0500C45A3D /* CustomTimeScroller.m */; };
 		5B03ECCA16D6D7360022C4A8 /* CustomSearchVolletTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B03ECC916D6D7360022C4A8 /* CustomSearchVolletTextField.m */; };
+		5B04BF1B176CA93D003379FE /* Moment.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 5B04BF18176CA93C003379FE /* Moment.xcdatamodeld */; };
 		5B0DFEDA16C64A0D00033C86 /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B0DFED916C64A0D00033C86 /* Social.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		5B0DFEE016C64B8100033C86 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B0DFEDF16C64B8100033C86 /* AdSupport.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		5B0DFEE216C64B8E00033C86 /* Accounts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B0DFEE116C64B8E00033C86 /* Accounts.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
@@ -584,7 +585,6 @@
 		5BB7E429170A851B002E6C6E /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 5BB7E425170A851A002E6C6E /* README.md */; };
 		5BB7E42A170A851B002E6C6E /* release_notes.md in Resources */ = {isa = PBXBuildFile; fileRef = 5BB7E426170A851A002E6C6E /* release_notes.md */; };
 		5BB7E42C170A8555002E6C6E /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BB7E42B170A8555002E6C6E /* libz.dylib */; };
-		5BBA69A716D9439A009213AA /* Moment.xcdatamodel in Sources */ = {isa = PBXBuildFile; fileRef = 5BBA69A616D9439A009213AA /* Moment.xcdatamodel */; };
 		5BBBA2C1169E1BEE00867B31 /* TTTAttributedLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BBBA2C0169E1BEE00867B31 /* TTTAttributedLabel.m */; };
 		5BBBA2C3169E1C0000867B31 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BBBA2C2169E1C0000867B31 /* CoreText.framework */; };
 		5BC6B2C6169CD6D8001649A7 /* VersionControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BC6B2C5169CD6D8001649A7 /* VersionControl.m */; };
@@ -1087,6 +1087,8 @@
 		5B0055F416E97A0500C45A3D /* CustomTimeScroller.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomTimeScroller.m; sourceTree = "<group>"; };
 		5B03ECC816D6D7360022C4A8 /* CustomSearchVolletTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomSearchVolletTextField.h; sourceTree = "<group>"; };
 		5B03ECC916D6D7360022C4A8 /* CustomSearchVolletTextField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomSearchVolletTextField.m; sourceTree = "<group>"; };
+		5B04BF19176CA93D003379FE /* Moment 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "Moment 2.xcdatamodel"; sourceTree = "<group>"; };
+		5B04BF1A176CA93D003379FE /* Moment.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Moment.xcdatamodel; sourceTree = "<group>"; };
 		5B0DFED916C64A0D00033C86 /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
 		5B0DFEDF16C64B8100033C86 /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
 		5B0DFEE116C64B8E00033C86 /* Accounts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accounts.framework; path = System/Library/Frameworks/Accounts.framework; sourceTree = SDKROOT; };
@@ -1752,7 +1754,6 @@
 		5BB7E426170A851A002E6C6E /* release_notes.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = release_notes.md; sourceTree = "<group>"; };
 		5BB7E427170A851A002E6C6E /* TestFlight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestFlight.h; sourceTree = "<group>"; };
 		5BB7E42B170A8555002E6C6E /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
-		5BBA69A616D9439A009213AA /* Moment.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Moment.xcdatamodel; sourceTree = "<group>"; };
 		5BBBA2BF169E1BEE00867B31 /* TTTAttributedLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TTTAttributedLabel.h; sourceTree = "<group>"; };
 		5BBBA2C0169E1BEE00867B31 /* TTTAttributedLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TTTAttributedLabel.m; sourceTree = "<group>"; };
 		5BBBA2C2169E1C0000867B31 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
@@ -4055,7 +4056,7 @@
 				5B71DA3516C7E9E30050DC94 /* DeviceModel.m */,
 				5BF0312B169C957A00232E75 /* FacebookEvent.h */,
 				5BF0312C169C957A00232E75 /* FacebookEvent.m */,
-				5BBA69A616D9439A009213AA /* Moment.xcdatamodel */,
+				5B04BF18176CA93C003379FE /* Moment.xcdatamodeld */,
 				5B37421617110F2F00202ED1 /* Photo */,
 				5B51154816F25D9700B96DFD /* Feed */,
 				5B28DBBC16D508F40004BCF2 /* LocalNotification */,
@@ -5441,7 +5442,6 @@
 				5B95C1F616D1B28B00EE556D /* QBImagePickerGroupCell.m in Sources */,
 				5B95C1F716D1B28B00EE556D /* QBImagePickerVideoInfoView.m in Sources */,
 				5B03ECCA16D6D7360022C4A8 /* CustomSearchVolletTextField.m in Sources */,
-				5BBA69A716D9439A009213AA /* Moment.xcdatamodel in Sources */,
 				5B6C7B4216D9611F00FED9E9 /* MTStatusBarOverlay.m in Sources */,
 				5BB3762716DA877A006729DD /* UIImage+Resize.m in Sources */,
 				5BB3762A16DA8800006729DD /* UIImage+RoundedCorner.m in Sources */,
@@ -5515,6 +5515,7 @@
 				5BB59E6517625F0F0023191E /* FacebookTokenCachingStrategy.m in Sources */,
 				6E80BEC21765CCF400E6041F /* MesReglagesViewController.m in Sources */,
 				6E80BEC41765CCF400E6041F /* ModifierUserViewController.m in Sources */,
+				5B04BF1B176CA93D003379FE /* Moment.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5737,6 +5738,20 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		5B04BF18176CA93C003379FE /* Moment.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				5B04BF19176CA93D003379FE /* Moment 2.xcdatamodel */,
+				5B04BF1A176CA93D003379FE /* Moment.xcdatamodel */,
+			);
+			currentVersion = 5B04BF19176CA93D003379FE /* Moment 2.xcdatamodel */;
+			path = Moment.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 5BF02E6A169C8F7400232E75 /* Project object */;
 }
