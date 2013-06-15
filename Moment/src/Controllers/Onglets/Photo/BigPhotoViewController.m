@@ -916,14 +916,16 @@ withDelegate:(PhotoViewController*)photoViewController
                         }
                         // Scroll Right
                         else {
-                            [self scrollToIndex:(self.selectedIndex+1) animated:YES];
-                            self.selectedIndex--;
+                            //[self clicNext];
+                            //self.delegate.sele
+                            [self showViewAtIndex:self.selectedIndex fromParent:NO];
                             if(self.selectedIndex == [self.photos count]-1)
                                 self.nextButton.enabled = NO;
                             if( (!self.previousButton.enabled) && (self.selectedIndex > 0) )
                                 self.previousButton.enabled = YES;
                             else if(self.selectedIndex == 0)
                                 self.previousButton.enabled = NO;
+                            [self.delegate updateIndexesAfterDeletetion];
 
                         }
                     

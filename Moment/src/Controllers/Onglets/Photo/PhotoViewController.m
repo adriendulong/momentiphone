@@ -168,6 +168,32 @@ withRootViewController:(UIViewController *)rootViewController
 
 }
 
+- (void)updateIndexesAfterDeletetion
+{
+   /* NSInteger size = [self.photos count];
+    // Adapter taille
+    if(self.style == PhotoViewControllerStyleComplete)
+    {
+        size++;
+#ifdef ACTIVE_PRINT_MODE
+        if( (index >= PHOTOVIEW_PRINT_BUTTON_INDEX) {
+            size++;
+        }
+#endif
+     }
+    */
+
+    // Update des index
+    NSArray *cells = self.imageShowCase.itemsInShowCase;
+    NSInteger i = 0;
+    for(NLImageShowCaseCell *c in cells) {
+        c.index = i;
+        i++;
+    }
+    
+    
+}
+
 #pragma mark - View Life Cycle
 
 - (void)viewDidLoad

@@ -69,6 +69,7 @@ withRootViewController:(UIViewController *)rootViewController
 #endif
 
 - (void)loadPhotos;
+- (void)updateIndexesAfterDeletetion;
 
 // Google Analytics
 - (void)sendGoogleAnalyticsView;
