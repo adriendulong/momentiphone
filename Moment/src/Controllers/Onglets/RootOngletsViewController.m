@@ -305,6 +305,7 @@
         InviteAddViewController *inviteViewController = [[InviteAddViewController alloc] initWithOwner:self.user withMoment:self.moment];
         [self.navigationController pushViewController:inviteViewController animated:NO];
     }
+    [self.infoMomentViewController reloadData];
 }
 
 - (void)viewWillDisappear:(BOOL)animated

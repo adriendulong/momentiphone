@@ -592,7 +592,7 @@
     
     NSMutableDictionary *params = [self mappingToWeb].mutableCopy;
     
-    NSLog(@"Params = %@", params);
+    //NSLog(@"Params = %@", params);
     
     NSData *file = nil;
     // Si il y a une image
