@@ -54,7 +54,7 @@ static Config *sharedInstance = nil;
     if (_managedObjectModel != nil) {
         return _managedObjectModel;
     }
-    NSURL *modelURL = [[NSBundle mainBundle] URLForResource:@"Moment" withExtension:@"mom"]; // ou @"momd"
+    NSURL *modelURL = [[NSBundle mainBundle] URLForResource:@"Moment" withExtension:@"momd"]; // ou @"momd"
     _managedObjectModel = [[NSManagedObjectModel alloc] initWithContentsOfURL:modelURL];
     return _managedObjectModel;
 }
