@@ -576,6 +576,9 @@
     [super viewDidAppear:animated];
     [AppDelegate updateActualViewController:self];
     
+    // Cacher clavier
+    [self.view endEditing:YES];
+    
     // Google Analytics
     [[[GAI sharedInstance] defaultTracker] sendView:@"Création Event 1"];
 }
