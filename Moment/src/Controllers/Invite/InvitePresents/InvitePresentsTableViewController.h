@@ -25,5 +25,6 @@ withAdminAuthoristion:(BOOL)adminAuthorisation
 navigationController:(UINavigationController*)navController;
 
 - (void)updateUserAtRow:(NSInteger)row asAdmin:(BOOL)admin withEnded:( void (^) (BOOL success) )block;
+- (void)reloadDataWithInvites:(NSArray*)invites;
 
 @end

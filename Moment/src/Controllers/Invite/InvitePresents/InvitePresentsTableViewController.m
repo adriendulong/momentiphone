@@ -130,6 +130,12 @@ navigationController:(UINavigationController*)navController
     return cellHeight;
 }
 
+- (void)reloadDataWithInvites:(NSArray*)invites
+{
+    self.invites = invites;
+    [self.tableView reloadData];
+}
+
 #pragma mark - InvitePresentsTableViewController Delegate
 
 - (void)updateUserAtRow:(NSInteger)row asAdmin:(BOOL)admin withEnded:( void (^) (BOOL success) )block
