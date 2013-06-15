@@ -164,7 +164,8 @@
 /* ---------------- TimeLineViewController ------------------ */
 // Echelle de temps
 "TimeLineViewController_Echelle_FuturLabel" = "Futur -";
-"TimeLineViewController_Echelle_TodayLabel" = "Aujourd'hui -";
+//"TimeLineViewController_Echelle_TodayLabel" = "Aujourd'hui -";
+"TimeLineViewController_Echelle_TodayLabel" = " -";
 "TimeLineViewController_Echelle_PasseLabel" = "Passé -";
 // Delete Moment AlertView
 "TimeLineViewController_DeleteMomentAlertView_Title" = "Supprimer ce Moment";

@@ -215,19 +215,21 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
 
 - (void)sendEchelleLabelsToBack
 {
+    /*
     // Placer en fond
     [self.tableView sendSubviewToBack:self.echelleFuturLabel];
     [self.tableView sendSubviewToBack:self.echellePasseLabel];
     [self.tableView sendSubviewToBack:self.echelleTodayLabel];
+     */
 }
 
 - (void)placerEchelleLabels
 {
     // -- Echelle Labels
-    UIFont *echelleFont = [[Config sharedInstance] defaultFontWithSize:10];
     CGFloat contentWidth = self.view.frame.size.width;
     CGFloat contentHeight = self.view.frame.size.height;
     CGFloat division = 5.0f;
+    /*
     CGRect todayRect = [self.tableView rectForRowAtIndexPath:[NSIndexPath indexPathForRow:rowForToday inSection:0]];
     CGFloat originToday = todayRect.origin.y - todayRect.size.height/2.0f;
     
@@ -245,10 +247,12 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
         [self .tableView addSubview:self.echelleTodayLabel];
         [self.tableView sendSubviewToBack:self.tableView.backgroundView];
     }
+     */
     
-    [self sendEchelleLabelsToBack];
+    //[self sendEchelleLabelsToBack];
     
     // Futur
+    UIFont *echelleFont = [[Config sharedInstance] defaultFontWithSize:10];
     self.echelleFuturLabel.textColor = [UIColor whiteColor];
     [self addShadowToView:self.echelleFuturLabel];
     self.echelleFuturLabel.font = echelleFont;
@@ -256,7 +260,8 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
     [self.echelleFuturLabel sizeToFit];
     CGRect frame = self.echelleFuturLabel.frame;
     frame.origin.x = contentWidth - frame.size.width - 5;
-    frame.origin.y = (division-1)*(contentHeight - frame.size.height)/division + originToday;
+    //frame.origin.y = (division-1)*(contentHeight - frame.size.height)/division + originToday;
+    frame.origin.y = 5*(contentHeight - frame.size.height)/6.0;
     self.echelleFuturLabel.frame = frame;
     
     // Today
@@ -267,7 +272,8 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
     [self.echelleTodayLabel sizeToFit];
     frame = self.echelleTodayLabel.frame;
     frame.origin.x = contentWidth - frame.size.width - 5;
-    frame.origin.y = (contentHeight - frame.size.height)/2.0f + originToday;
+    //frame.origin.y = (contentHeight - frame.size.height)/2.0f + originToday;
+    frame.origin.y = (contentHeight - frame.size.height)/2.0;
     self.echelleTodayLabel.frame = frame;
     
     // Passé
@@ -278,7 +284,8 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
     [self.echellePasseLabel sizeToFit];
     frame = self.echellePasseLabel.frame;
     frame.origin.x = contentWidth - frame.size.width - 5;
-    frame.origin.y =  (contentHeight - frame.size.height)/division + originToday;
+    //frame.origin.y =  (contentHeight - frame.size.height)/division + originToday;
+    frame.origin.y = (contentHeight - frame.size.height)/6.0;
     self.echellePasseLabel.frame = frame;
 }
 
@@ -744,7 +751,7 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
     [self performSelector:@selector(afficherBandeau) withObject:nil afterDelay:0.4];
     
     // Placer au fond
-    [self sendEchelleLabelsToBack];
+    //[self sendEchelleLabelsToBack];
     
 }
 
