@@ -311,7 +311,7 @@ static FacebookManager *sharedInstance = nil;
             {
                 // Get list events
                 [FBRequestConnection
-                 startWithGraphPath:@"me?fields=first_name,email,id,last_name,picture.height(600).width(600)"
+                 startWithGraphPath:@"me?fields=first_name,email,id,last_name,picture.height(600).width(600),gender"
                  completionHandler:^(FBRequestConnection *connection,
                                      id result,
                                      NSError *error) {
@@ -324,6 +324,7 @@ static FacebookManager *sharedInstance = nil;
                          user.facebookId = result[@"id"];
                          user.email = result[@"email"];
                          user.imageString = result[@"picture"][@"data"][@"url"];
+                         user.sex = ([result[@"gender"] isEqualToString:@"male"])? UserSexMale : UserSexFemale;
                          
                          block(user);
                      }

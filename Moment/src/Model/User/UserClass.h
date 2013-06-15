@@ -14,6 +14,11 @@ enum UsernameStyle {
     UsernameStyleUnchanged = 2
     };
 
+enum UserSex {
+    UserSexMale = 0,
+    UserSexFemale = 1
+    };
+
 @interface UserClass : NSObject
 
 @property (nonatomic, strong) UIImage * uimage;
@@ -36,6 +41,7 @@ enum UsernameStyle {
 @property (nonatomic, strong) NSNumber *privacy;
 @property (nonatomic, strong) NSNumber *request_follower;
 @property (nonatomic, strong) NSNumber *request_follow_me;
+@property (nonatomic) enum UserSex sex;
 
 // Setup
 - (void)setupWithAttributesFromLocal:(NSDictionary*)attributes;

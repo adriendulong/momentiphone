@@ -453,7 +453,6 @@
 								<string key="NSFrame">{{68, 518}, {185, 1}}</string>
 								<reference key="NSSuperview" ref="110170127"/>
 								<reference key="NSWindow"/>
-								<reference key="NSNextKeyView"/>
 								<string key="NSReuseIdentifierKey">_NS:9</string>
 								<reference key="IBUIBackgroundColor" ref="510007241"/>
 								<float key="IBUIAlpha">0.69999998807907104</float>

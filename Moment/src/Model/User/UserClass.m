@@ -31,6 +31,7 @@
 @synthesize privacy = _privacy;
 @synthesize request_follow_me = _request_follow_me;
 @synthesize request_follower = _request_follower;
+@synthesize sex = _sex;
 
 #pragma mark - Setup
 

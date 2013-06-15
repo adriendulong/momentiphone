@@ -497,6 +497,14 @@
                     self.nomLabel.text = user.nom;
                     self.prenomLabel.text = user.prenom;
                     self.emailLabel.text = user.email;
+                    
+                    if(user.sex == UserSexMale) {
+                        self.maleButton.selected = YES;
+                    }
+                    else {
+                        self.femaleButton.selected = YES;
+                    }
+                    
                     if(user.imageString)
                     {
                         [self.photoProfil setImage:nil imageString:user.imageString withSaveBlock:^(UIImage *image) {
