@@ -9,14 +9,14 @@
 /* ---------------- TutorialViewController ------------------ */
 // PAGE 1
 "TutorialViewController_titlePage1" = "BIENVENUE !\nCECI EST VOTRE TIMELINE DE MOMENTS,\nCRÉEZ ET GÉREZ LES SIMPLEMENT";
-"TutorialViewController_basketPage1" = "Basket entre potes";
+"TutorialViewController_basketPage1" = "Basket entre amis";
 "TutorialViewController_annivPage1" = "Anniversaire 23 ans de Paul";
 "TutorialViewController_vacNicePage1" = "Vacances à Nice";
 
 // PAGE 2
 "TutorialViewController_titlePage2" = "RÉCUPÉREZ ENFIN TOUTES VOS PHOTOS\nAPRÈS VOS MOMENTS ENTRE AMIS !";
 "TutorialViewController_parMarcPage2" = "PAR MARC N.";
-"TutorialViewController_photoDatePage2" = "12/10/12 21:04";
+"TutorialViewController_photoDatePage2" = "12/02/13 21:04";
 "TutorialViewController_downloadPhotoPage2" = "Téléchargez toutes les photos\ndirectement sur votre téléphone !";
 
 // PAGE 3
@@ -33,7 +33,7 @@
 "TutorialViewController_message4Page3" = "PREND DES CHIPS OUI ;) ON SE RETROUVE\nDANS 45 MIN !";
 "TutorialViewController_dateMessage4Page3" = "Rémi B. 3 août 2013";
 "TutorialViewController_hourMessage4Page3" = "20:03";
-"TutorialViewController_message5Page3" = "MERCI LES GARS :) J'ARRIVE !";
+"TutorialViewController_message5Page3" = "OK CA MARCHE :) J'ARRIVE !";
 "TutorialViewController_dateMessage5Page3" = "Nico F. 3 août 2013";
 "TutorialViewController_hourMessage5Page3" = "20:25";
 
@@ -125,7 +125,7 @@
 "CustomSegmentedControl_Unknown" = "Invités";
 "CustomSegmentedControl_Maybe" = "Peut-être";
 // Cell
-"InvitePresentsTableViewCell_AdminLabel" = "Chef !";
+"InvitePresentsTableViewCell_AdminLabel" = "Admin";
 
 /* ---------------- ChatViewController ------------------ */
 // Empty Cell
@@ -202,7 +202,7 @@
 "StatusBarOverlay_PushNotification_NewModification" = "Nouvelle modification !";
 // Push Notifications Désactivées AlertView
 "PushNotification_Disabled_AlertView_Title" = "Notifications Désactivées";
-"PushNotification_Disabled_AlertView_Message" = "Les notifications sont désactivées. Veuillez changer vos paramètres de notifications";
+"PushNotification_Disabled_AlertView_Message" = "Les notifications sont désactivées. Veuillez changer vos paramètres de notifications dans Réglages > Notifications ";
 
 /* ---------------- VoletViewController ------------------ */
 // Empty Cell
@@ -214,8 +214,8 @@
 
 /* ---------------- VoletSearchViewController ------------------ */
 // Empty Cell
-"VoletSearchViewController_EmptyCell_Moments" = "Aucun moment correspondant à votre recherche. Essayez en enlevant les majuscules et les accents ! ";
-"VoletSearchViewController_EmptyCell_Utilisateurs" = "Aucun utlisateur correspondant à votre recherche. Essayez en enlevant les majuscules et les accents ! ";
+"VoletSearchViewController_EmptyCell_Moments" = "Aucun moment correspondant à votre recherche. Essayez en respectant bien l’accentuation !";
+"VoletSearchViewController_EmptyCell_Utilisateurs" = "Aucun utlisateur correspondant à votre recherche. Essayez en respectant bien l’accentuation !";
 
 /* ----------- MTStatusBarOverlay ---------- */
 // Loading Failure
@@ -223,8 +223,8 @@
 
 /* ------------ PhotoViewController ------------- */
 // Upload Photo
-"StatusBarOverlay_Photo_Uploading" = "Envoi en cours ...";
-"StatusBarOverlay_Photo_UploadEnded" = "Envoi Terminé";
+"StatusBarOverlay_Photo_Uploading" = "Envoie en cours ...";
+"StatusBarOverlay_Photo_UploadEnded" = "Envoie Terminé";
 // Download Photo
 "PhotoViewController_DownloadPhoto_success" = "Téléchargement terminé";
 // Bandeau
@@ -259,11 +259,11 @@
 "CalendarManager_EventStoreAccessFail_Title" = "Erreur";
 "CalendarManager_EventStoreAccessFail_Message" = "Une erreur est survenue lors de l'accès au calendrier";
 "CalendarManager_EventStoreAccessRefused_Title" = "Autorisation";
-"CalendarManager_EventStoreAccessRefused_Message" = "L'accès au calendrier est restreint. Veuillez changer les paramètres de confidentialités de l'application.";
+"CalendarManager_EventStoreAccessRefused_Message" = "L'accès au calendrier est restreint. Veuillez changer les paramètres de confidentialités de l'application dans Réglages > Confidentialité > Calendriers" ;
 // Event Création
 "CalendarManager_EventCreationFail_Title" = "Erreur";
 "CalendarManager_EventCreationFail_Message" = "Une erreur est survenue lors de la création de l'évènement";
-"CalendarManager_EventCreationSuccees" = "Evènement ajouté";
+"CalendarManager_EventCreationSuccees" = "Moment ajouté";
 // Event Création - Ask User
 "CalendarManager_EventCreation_AskUserAlertView_Title" = "Ajout au calendrier";
 "CalendarManager_EventCreation_AskUserAlertView_Message" = "Ajouter le Moment au calendrier du téléphone ?";
@@ -282,12 +282,12 @@
 "ModifierUserViewController_AlertUnvalide_Title" = "Oops !";
 "ModifierUserViewController_AlertUnvalide_Message" = "Les informations renseignées sont incorrectes";
 "ModifierUserViewController_WrongPassword_Title" = "Oops !";
-"ModifierUserViewController_WrongPassword_Message" = "Ancien mot de passe incorrect !";
+"ModifierUserViewController_WrongPassword_Message" = "Ancien mot de passe incorrects !";
 
 /* ------------ CreationPage2ViewController ------------- */
 // Confirm Empty Phone Number
 "CreationPage2ViewController_ConfirmEmptyAlertView_Title" = "! ATTENTION !";
-"CreationPage2ViewController_ConfirmEmptyAlertView_Message" = "Vous ne recevrez aucune invitation de toutes les personnes qui vous inviteront depuis leurs carnets d'adresse. Êtes vous certains de ne pas vouloir le renseigner ? Aucune publicité ne vous sera envoyé !";
+"CreationPage2ViewController_ConfirmEmptyAlertView_Message" = "Vous ne recevrez aucune invitation de toutes les personnes qui vous inviteront depuis leurs carnets d'adresse. Êtes vous certains de ne pas vouloir le renseigner ? Aucune publicité ne vous sera envoyée !";
 // Invalide
 "CreationPage2ViewController_Invalide_Title" = "Numéro invalide";
 "CreationPage2ViewController_Invalide_Message" = "Veuillez rentrez un numéro de téléphone valide";
@@ -298,7 +298,7 @@
 "ProfilViewController_FollowersLabel" = "Abonnés";
 "ProfilViewController_PhotosLabel" = "Photos";
 "ProfilViewController_MomentsLabel" = "Moments";
-"ProfilViewController_AcceptFollowBar_InfoLabel" = "Souhaite s'abonné à votre activité";//"SOUHAITE VOUS SUIVRE.";
+"ProfilViewController_AcceptFollowBar_InfoLabel" = "Souhaite s'abonner à votre activité";//"SOUHAITE VOUS SUIVRE.";
 "ProfilViewController_HeadFollowButtonLabel_Waiting" = "En attente";
 "ProfilViewController_HeadFollowButtonLabel_Follow" = "S'abonner";
 "ProfilViewController_HeadFollowButtonLabel_isFollowed" = "Abonné";
@@ -328,10 +328,10 @@
 
 /* ------------ FollowTableViewController ------------- */
 // Add Follow (Toggle) Error
-"FollowTableViewController_AddFollow_ErrorMessage" = "L'abonnement a échoué, Pouvez vous réessayez ?";
+"FollowTableViewController_AddFollow_ErrorMessage" = "L'abonnement a échoué, Pouvez vous réessayer ?";
 // EmptyCell
 "FollowTableViewController_Follows_EmptyCellLabel" = "Aucun abonnement pour le moment, montrez lui comment faire ;)";
-"FollowTableViewController_Followers_EmptyCellLabel" = "Aucun abonnés pour le moment, soyez sympa abonnez vous à lui pour qu'il en est au moins un !";
+"FollowTableViewController_Followers_EmptyCellLabel" = "Aucun abonnés pour le moment, soyez sympa abonnez vous à lui pour qu'il en ait au moins un !";
 
 /* ------------ PopUpFunCreationViewController ---------- */
 // Privacy Open
@@ -339,7 +339,7 @@
 "PopUpFunCreationViewController_Privacy_Open_Details" = "Tout le monde peut voir ce moment !";
 // Privacy Public
 "PopUpFunCreationViewController_Privacy_Public_Title" = "Privé :";
-"PopUpFunCreationViewController_Privacy_Public_Details" = "Seuls les invités et les amis des invités peuvent voir ce moment";
+"PopUpFunCreationViewController_Privacy_Public_Details" = "Seuls les invités et les abonnées des invités peuvent voir ce moment";
 // Privacy Private
 "PopUpFunCreationViewController_Privacy_Private_Title" = "Secret :";
 "PopUpFunCreationViewController_Privacy_Private_Details" = "Seuls les invités peuvent voir ce moment";

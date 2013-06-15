@@ -25,6 +25,7 @@
     self.titre = moment.titre;
     self.state = moment.state;
     self.imageString = moment.imageString;
+    self.dataImage = moment.dataImage;
     self.adresse = moment.adresse;
     self.dateDebut = moment.dateDebut;
     self.dateFin = moment.dateFin;

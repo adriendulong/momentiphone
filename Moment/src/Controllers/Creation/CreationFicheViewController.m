@@ -704,9 +704,12 @@
             [self.moment updateMomentFromLocalToServerWithEnded:^(BOOL success) {
                 
                 if(success) {
+                                        
                     [self.timeLineViewContoller reloadData];
                     [self.timeLineViewContoller.rootOngletsViewController.infoMomentViewController reloadData];
+                    [MBProgressHUD hideHUDForView:self.view animated:YES];
                     [self.navigationController popViewControllerAnimated:YES];
+                    
                 }
                 else{
                     [[[UIAlertView alloc] initWithTitle:@"Erreur"
@@ -715,10 +718,10 @@
                                cancelButtonTitle:@"OK"
                                otherButtonTitles:nil]
                     show];
+                    
+                    [MBProgressHUD hideHUDForView:self.view animated:YES];
                 }
-             
-                [MBProgressHUD hideHUDForView:self.view animated:YES];
-             
+
             }];
         }
         // Création d'un moment
