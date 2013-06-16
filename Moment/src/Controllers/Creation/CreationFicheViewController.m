@@ -125,7 +125,6 @@
             [previousButton setEnabled:YES];
             
             // Second Button enable
-            NSLog(@"adresseLabel = %@ | adresse = %@ | description = %@", self.adresseLabel.text, self.adresseText, self.descriptionTextView.text);
             if( ((self.adresseLabel.text.length > 0)||(self.adresseText.length > 0)) && (self.descriptionTextView.text.length > 0) ){
                 secondButtonEnable = YES;
             }
@@ -990,9 +989,8 @@
         else  {
             
             NSString *newText = [textView.text stringByReplacingCharactersInRange:range withString:text];
-            NSLog(@"TextView = %@ | AdresseLabel = %@ | AdresseText = %@", newText, self.adresseLabel.text, self.adresseText);
             
-            if(textView.text.length > 0 && ((self.adresseLabel.text.length > 0)||(self.adresseText.length > 0)) ) {
+            if(newText.length > 0 && ((self.adresseLabel.text.length > 0)||(self.adresseText.length > 0)) ) {
                 [self setNavBarSecondButtonEnable:YES];
             }
 
