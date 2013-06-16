@@ -10,7 +10,7 @@
 #import <MessageUI/MessageUI.h>
 #import "GAITrackedViewController.h"
 
-@interface MesReglagesViewController : GAITrackedViewController <MFMailComposeViewControllerDelegate>
+@interface MesReglagesViewController : GAITrackedViewController <MFMailComposeViewControllerDelegate, UIAlertViewDelegate>
 
 // --- Properties ---
 

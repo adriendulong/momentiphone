@@ -191,11 +191,37 @@
 
 - (IBAction)clicLogout
 {
+    
+    [[[UIAlertView alloc]
+      initWithTitle:NSLocalizedString(@"Logout_AlertView_Title", nil)
+      message:NSLocalizedString(@"Logout_AlertView_Message", nil)
+      delegate:self
+      cancelButtonTitle:NSLocalizedString(@"AlertView_Button_Cancel", nil)
+      otherButtonTitles:NSLocalizedString(@"Logout_AlertView_LogoutButton", nil),nil]
+     show];
+    
+    /*
     [UserClass logoutCurrentUserWithEnded:^ {
         // Show Home
         [self.delegate showRootController:YES];
         [self.delegate.navigationController popToRootViewControllerAnimated:YES];
     }];
+    */
+}
+
+#pragma mark - UIAlertView Delegate
+
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+    // Déconnexion
+    if(buttonIndex == 1)
+    {
+        [UserClass logoutCurrentUserWithEnded:^ {
+            // Show Home
+            [self.delegate showRootController:YES];
+            [self.delegate.navigationController popToRootViewControllerAnimated:YES];
+        }];
+    }
 }
 
 #pragma mark - MFMailComposeViewControllerDelegate

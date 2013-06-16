@@ -47,6 +47,11 @@
 "TutorialViewController_cagnottePage4" = "CAGNOTTE";
 "TutorialViewController_comptesPage4" = "COMPTES";
 
+/* ------------------------ Logout ------------------------ */
+"Logout_AlertView_Title" = "Déconnexion";
+"Logout_AlertView_Message" = "Êtes-vous sûr de vouloir vous déconnecter ?";
+"Logout_AlertView_LogoutButton" = "Se déconnecter";
+
 /* ---------------- EventMissingViewController ------------------ */
 // LABEL
 "EventMissingViewController_mainTitle" = "IL VOUS MANQUE UN ÉVÈNEMENT ?";
