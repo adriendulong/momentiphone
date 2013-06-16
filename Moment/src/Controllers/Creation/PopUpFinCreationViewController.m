@@ -135,9 +135,14 @@
 
 - (IBAction)clicInviter {
     
+    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    hud.labelText = NSLocalizedString(@"MBProgressHUD_Loading", nil);
+    
     // Update Privacy and isOpenInvit
     self.moment.isOpen = @(self.switchControlState);
     [self.moment updateMomentFromLocalToServerWithEnded:^(BOOL success) {
+        
+        [MBProgressHUD hideHUDForView:self.view animated:YES];
         
         // Success
         if(success) {
