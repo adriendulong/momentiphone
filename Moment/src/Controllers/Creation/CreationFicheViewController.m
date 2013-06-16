@@ -125,7 +125,8 @@
             [previousButton setEnabled:YES];
             
             // Second Button enable
-            if( (self.adresseLabel.text.length > 0) && (self.descriptionTextView.text.length > 0) ){
+            NSLog(@"adresseLabel = %@ | adresse = %@ | description = %@", self.adresseLabel.text, self.adresseText, self.descriptionTextView.text);
+            if( ((self.adresseLabel.text.length > 0)||(self.adresseText.length > 0)) && (self.descriptionTextView.text.length > 0) ){
                 secondButtonEnable = YES;
             }
 
@@ -588,7 +589,7 @@
 - (BOOL)formIsValid
 {
     if( self.dateDebut && self.dateFin &&
-        (self.adresseLabel.text.length > 0) && (self.descriptionTextView.text.length > 0) )
+        (self.adresseText.length > 0) && (self.descriptionTextView.text.length > 0) )
     {
         return YES;
     }
@@ -946,7 +947,7 @@
 {
     if(_currentStep == 2) {
         
-        if( (self.adresseLabel.text.length > 0) && (self.descriptionTextView.text.length > 0) ) {
+        if( ((self.adresseLabel.text.length > 0)||(self.adresseText.length > 0)) && (self.descriptionTextView.text.length > 0) ) {
             [self setNavBarSecondButtonEnable:YES];
         }
         else {
@@ -980,13 +981,24 @@
     // Check if textField empty
     if( textView == self.descriptionTextView ) {
         
+        
+        
         NSRange textFieldRange = NSMakeRange(0, [textView.text length]);
         if (NSEqualRanges(range, textFieldRange) && [text length] == 0) {
             [self setNavBarSecondButtonEnable:NO];
         }
-        else if(textView.text.length > 0 && self.adresseLabel.text.length > 0) {
+        else  {
+            
+            NSString *newText = [textView.text stringByReplacingCharactersInRange:range withString:text];
+            NSLog(@"TextView = %@ | AdresseLabel = %@ | AdresseText = %@", newText, self.adresseLabel.text, self.adresseText);
+            
+            if(textView.text.length > 0 && ((self.adresseLabel.text.length > 0)||(self.adresseText.length > 0)) ) {
                 [self setNavBarSecondButtonEnable:YES];
+            }
+
+            
         }
+    
     }
     
     return YES;
