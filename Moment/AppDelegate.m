@@ -179,9 +179,6 @@
      By default, the Singleton is initialized to HarpyAlertTypeOption */
     //[[Harpy sharedInstance] setAlertType:HarpyAlertTypeOption];
     
-    // Perform check for new version of your app
-    //[[Harpy sharedInstance] checkVersion];
-    
     // --------------- Google Analytics ------------------
     //         ----> Initialisation du Tracker <----
     // ---------------------------------------------------
