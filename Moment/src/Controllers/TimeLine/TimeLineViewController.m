@@ -920,6 +920,7 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
             self.nomOwnerTTLabel = nil;
         }
         
+        /*
         TTTAttributedLabel *tttLabel = [[TTTAttributedLabel alloc] initWithFrame:self.nomOwnerLabel.frame];
         tttLabel.backgroundColor = [UIColor clearColor];
         [tttLabel setText:texteLabel afterInheritingLabelAttributesAndConfiguringWithBlock:^NSMutableAttributedString *(NSMutableAttributedString *mutableAttributedString) {
@@ -940,7 +941,17 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
         [self.nomOwnerLabel.superview addSubview:tttLabel];
         self.nomOwnerLabel.hidden = YES;
         self.nomOwnerTTLabel = tttLabel;
+        */
         
+        UILabel *label = [[UILabel alloc] initWithFrame:self.nomOwnerLabel.frame];
+        label.text = texteLabel;
+        label.font = [[Config sharedInstance] defaultFontWithSize:12];
+        label.textColor = [Config sharedInstance].orangeColor;
+        label.textAlignment = NSTextAlignmentLeft;
+        self.nomOwnerTTLabel = label;
+        [self.nomOwnerLabel.superview addSubview:label];
+        self.nomOwnerLabel.hidden = YES;
+         
         //[self.titreLabel setAttributedTextFromString:texteLabel withFontSize:InfoMomentFontSizeMedium];
         //self.titreLabel.textAlignment = NSTextAlignmentLeft;
     }
@@ -971,7 +982,7 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
     }
     
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:texteLabel];
-    NSInteger taille = [texteLabel length];
+    //NSInteger taille = [texteLabel length];
     NSInteger rank = (jourVal >= 10)? 2 : 1;
     
 #pragma CustomLabel
@@ -992,7 +1003,7 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
         [attributedString setTextColor:[[Config sharedInstance] textColor]];
         
         [self.fullDateLabel setAttributedText:attributedString];
-        self.fullDateLabel.textAlignment = kCTRightTextAlignment;
+        self.fullDateLabel.textAlignment = NSTextAlignmentRight;
     }
     else
     {
@@ -1001,6 +1012,7 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
             self.fullDateTTLabel = nil;
         }
         
+        /*
         TTTAttributedLabel *tttLabel = [[TTTAttributedLabel alloc] initWithFrame:self.fullDateLabel.frame];
         tttLabel.backgroundColor = [UIColor clearColor];
         [tttLabel setText:texteLabel afterInheritingLabelAttributesAndConfiguringWithBlock:^NSMutableAttributedString *(NSMutableAttributedString *mutableAttributedString) {
@@ -1025,6 +1037,16 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
         [self.fullDateLabel.superview addSubview:tttLabel];
         self.fullDateLabel.hidden = YES;
         self.fullDateTTLabel = tttLabel;
+        */
+        
+        UILabel *label = [[UILabel alloc] initWithFrame:self.fullDateLabel.frame];
+        label.text = texteLabel;
+        label.font = [[Config sharedInstance] defaultFontWithSize:12];
+        label.textColor = [Config sharedInstance].textColor;
+        label.textAlignment = NSTextAlignmentRight;
+        self.fullDateTTLabel = label;
+        [self.fullDateLabel.superview addSubview:label];
+        self.fullDateLabel.hidden = YES;
         
         //[self.titreLabel setAttributedTextFromString:texteLabel withFontSize:InfoMomentFontSizeMedium];
         //self.titreLabel.textAlignment = NSTextAlignmentLeft;

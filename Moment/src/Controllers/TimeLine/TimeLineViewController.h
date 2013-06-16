@@ -80,8 +80,13 @@ enum TimeLineStyle {
 @property (nonatomic, weak) IBOutlet CustomLabel *nomOwnerLabel;
 @property (nonatomic, weak) IBOutlet CustomLabel *fullDateLabel;
 @property (nonatomic, strong) TTTAttributedLabel *nomMomentTTLabel;
+/*
 @property (nonatomic, strong) TTTAttributedLabel *nomOwnerTTLabel;
 @property (nonatomic, strong) TTTAttributedLabel *fullDateTTLabel;
+ */
+@property (nonatomic, strong) UILabel *nomOwnerTTLabel;
+@property (nonatomic, strong) UILabel *fullDateTTLabel;
+//
 @property (nonatomic, strong) CustomTimeScroller *timeScroller;
 @property (nonatomic, weak) IBOutlet UIButton *B2PButton;
 
