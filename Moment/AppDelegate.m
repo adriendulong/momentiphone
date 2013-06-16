@@ -70,11 +70,15 @@
     /*          ---> Noter l'application <--        */
     /* -------------------------------------------- */
     //configure iRate
-    /*
     iRate *config = [iRate sharedInstance];
-    config.daysUntilPrompt = 5;
-    config.usesUntilPrompt = 15;
-     */
+    //config.daysUntilPrompt = 5; //5
+    //config.usesUntilPrompt = 15; //15
+#ifdef DEBUG
+    config.verboseLogging = YES;
+    //config.previewMode = YES;
+#else
+    config.verboseLogging = NO;
+#endif
     [iRate load];
     
 }
@@ -169,7 +173,7 @@
     // ---------------------------------------------------
     
     // Set the App ID for your app
-    //[[Harpy sharedInstance] setAppID:@""];
+    [[Harpy sharedInstance] setAppID:@"662761817"];
     
     /* (Optional) Set the Alert Type for your app
      By default, the Singleton is initialized to HarpyAlertTypeOption */
