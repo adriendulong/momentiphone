@@ -250,7 +250,7 @@
 				<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
 				<int key="IBUIContentVerticalAlignment">0</int>
 				<string key="IBUIText"/>
-				<string key="IBUIPlaceholder">Password</string>
+				<string key="IBUIPlaceholder">Mot de passe</string>
 				<object class="NSColor" key="IBUITextColor">
 					<int key="NSColorSpace">1</int>
 					<bytes key="NSRGB">MC40NzA1ODgyMzUzIDAuNDYyNzQ1MDk4IDAuNDYyNzQ1MDk4AA</bytes>
