@@ -82,7 +82,7 @@
             NSMutableDictionary *dico = [[NSMutableDictionary alloc] init];
             if(nom) dico[@"nom"] = nom;
             if(prenom) dico[@"prenom"] = prenom;
-            if(image) dico[@"image"] = image;
+            if(image) dico[@"photo"] = image;
             if(adresse) dico[@"adresse"] = adresse;
             if(firstEmail) dico[@"email"] = firstEmail;
             if(secondEmail) dico[@"secondEmail"] = secondEmail;
