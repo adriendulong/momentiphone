@@ -89,7 +89,7 @@
     // !!!: Use the next line only during beta
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    [TestFlight setDeviceIdentifier:[[UIDevice currentDevice] uniqueIdentifier]];
+    //[TestFlight setDeviceIdentifier:[[UIDevice currentDevice] uniqueIdentifier]];
 #pragma clang diagnostic pop
     [TestFlight takeOff:@"85ba03e5-22dc-45c5-9810-be2274ed75d1"];
     // ------------------------------------------
