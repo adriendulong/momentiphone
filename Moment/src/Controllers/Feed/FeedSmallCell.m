@@ -83,7 +83,7 @@
             self.feed.moment.uimage = image;
         }];
         
-        // Location
+        // Moment
         if(self.feed.moment.adresse) {
             self.locationLabel.text = self.feed.moment.adresse;
             self.locationLabel.font = [[Config sharedInstance] defaultFontWithSize:12];

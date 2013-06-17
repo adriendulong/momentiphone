@@ -53,7 +53,7 @@
         
         // Titre
         if(self.feed.moment.titre) {
-            self.titleLabel.text = self.feed.moment.adresse;
+            self.titleLabel.text = self.feed.moment.titre;
             self.titleLabel.font = [[Config sharedInstance] defaultFontWithSize:12];
         }
         else {
