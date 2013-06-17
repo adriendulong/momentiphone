@@ -98,10 +98,13 @@ static UIImageView *splashScreen = nil;
 {
     [super viewWillAppear:animated];
     if(!firstViewDidAppear) {
-        if([VersionControl sharedInstance].screenHeight == 568)
-            self.view.bounds = CGRectMake(0, 0, 320, [VersionControl sharedInstance].screenHeight);
+        if([VersionControl sharedInstance].screenHeight == 568) {
+            [UIApplication sharedApplication].keyWindow.frame=CGRectMake(0, 0, 320, [VersionControl sharedInstance].screenHeight);
+            //self.view.bounds = CGRectMake(0, 0, 320, [VersionControl sharedInstance].screenHeight);
+        }
         else {
-            self.view.bounds = CGRectMake(0, STATUS_BAR_HEIGHT, 320, [VersionControl sharedInstance].screenHeight);
+            [UIApplication sharedApplication].keyWindow.frame=CGRectMake(0, STATUS_BAR_HEIGHT, 320, [VersionControl sharedInstance].screenHeight - STATUS_BAR_HEIGHT );
+            //self.view.bounds = CGRectMake(0, STATUS_BAR_HEIGHT, 320, [VersionControl sharedInstance].screenHeight);
         }
     }
 }
@@ -140,7 +143,8 @@ static UIImageView *splashScreen = nil;
         }];
         if(firstViewDidAppear) {
             [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationNone];
-            self.view.bounds = CGRectMake(0, -STATUS_BAR_HEIGHT, 320, [VersionControl sharedInstance].screenHeight);
+            [UIApplication sharedApplication].keyWindow.frame=CGRectMake(0, STATUS_BAR_HEIGHT, 320, [VersionControl sharedInstance].screenHeight - STATUS_BAR_HEIGHT);
+            //self.view.bounds = CGRectMake(0, -STATUS_BAR_HEIGHT, 320, [VersionControl sharedInstance].screenHeight);
             firstViewDidAppear = NO;
         }
     }
