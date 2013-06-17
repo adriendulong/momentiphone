@@ -133,7 +133,19 @@
     if(state == 0) {
         state = ([self.moment.owner.userId isEqualToNumber:[UserCoreData getCurrentUser].userId]) ? UserStateOwner : UserStateNoInvited;
     }
-    if( (self.moment.privacy.intValue != MomentPrivacyOpen) && (state == UserStateNoInvited) ) {
+     
+    if(
+       (
+        (
+         (self.moment.privacy.intValue == MomentPrivacyFriends)||(self.moment.privacy.intValue == MomentPrivacySecret))
+        && (state != UserStateNoInvited)
+        ) ||
+       (self.moment.privacy.intValue == MomentPrivacyOpen)
+       )
+    {
+        self.sendboxView.hidden = NO;
+    }
+    else {
         self.sendboxView.hidden = YES;
     }
     

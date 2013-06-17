@@ -1249,9 +1249,19 @@ static CGFloat DescriptionBoxHeightMax = 100;
     self.expandButton = [[CustomExpandingButton alloc] initWithDelegate:self withState:state];
     [self.parallaxView.scrollView addSubview:self.expandButton];
     
-    // Cacher RSVP
-    if((self.moment.privacy.intValue != MomentPrivacyOpen) && (state == UserStateNoInvited) )
+    // Cacher RSVP    
+    if(
+       (
+        (
+         (self.moment.privacy.intValue == MomentPrivacyFriends)||(self.moment.privacy.intValue == MomentPrivacySecret))
+        && (state != UserStateNoInvited)
+        ) ||
+       (self.moment.privacy.intValue == MomentPrivacyOpen)
+       )
     {
+        self.expandButton.hidden = NO;
+    }
+    else {
         self.expandButton.hidden = YES;
     }
     
