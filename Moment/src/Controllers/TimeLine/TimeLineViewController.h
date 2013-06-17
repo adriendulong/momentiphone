@@ -23,6 +23,7 @@
 - (void)updateSelectedMoment:(MomentClass*)moment atRow:(NSInteger)row;
 - (void)reloadDataWithWaitUntilFinished:(BOOL)waitUntilFinished withEnded:(void (^) (BOOL success))block;
 - (void)reloadData;
+- (void)reloadMomentPicture:(MomentClass*)momentParam;
 
 // Redirection Onglets
 - (void)showInfoMomentView:(MomentClass*)moment;
@@ -110,6 +111,7 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
 - (void)updateSelectedMoment:(MomentClass*)moment atRow:(NSInteger)row;
 - (void)reloadData;
 - (void)reloadDataWithMoments:(NSArray*)moments;
+- (void)reloadMomentPicture:(MomentClass*)momentParam;
 
 - (void)showInfoMomentView:(MomentClass*)moment;
 - (void)showPhotoView:(MomentClass*)moment;

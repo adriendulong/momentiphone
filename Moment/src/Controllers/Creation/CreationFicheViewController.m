@@ -704,9 +704,11 @@
             [self.moment updateMomentFromLocalToServerWithEnded:^(BOOL success) {
                 
                 if(success) {
-                                        
-                    [self.timeLineViewContoller reloadData];
+                    
                     [self.timeLineViewContoller.rootOngletsViewController.infoMomentViewController reloadData];
+                    [self.timeLineViewContoller reloadData];
+                    [self.timeLineViewContoller updateSelectedMoment:self.moment atRow:-1];
+                    [self.timeLineViewContoller reloadMomentPicture:self.moment];
                     [MBProgressHUD hideHUDForView:self.view animated:YES];
                     [self.navigationController popViewControllerAnimated:YES];
                     

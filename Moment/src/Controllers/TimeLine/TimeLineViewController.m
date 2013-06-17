@@ -672,6 +672,31 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
     [self reloadDataWithWaitUntilFinished:NO];
 }
 
+- (void)reloadMomentPicture:(MomentClass*)momentParam
+{
+    NSInteger index;
+    if( (index = [self.moments indexOfObject:momentParam]) != NSNotFound ) {
+        MomentClass* moment = self.moments[index];
+        moment.imageString = momentParam.imageString;
+        
+        NSString *identifier = [NSString stringWithFormat:@"TimeLineCell_Classique_%@", moment.momentId];
+        TimeLineCell *cSmall = [self.tableView dequeueReusableCellWithIdentifier:identifier];
+        if(cSmall) {
+            [cSmall.medallion setImage:nil imageString:momentParam.imageString withSaveBlock:^(UIImage *image) {
+                moment.uimage = image;
+            }];
+        }
+        
+        identifier = [NSString stringWithFormat:@"TimeLineCell_Developped_%@", moment.momentId];
+        TimeLineDeveloppedCell *cBig = [self.tableView dequeueReusableCellWithIdentifier:identifier];
+        if(cBig) {
+            [cBig.medallion setImage:nil imageString:momentParam.imageString withSaveBlock:^(UIImage *image) {
+                moment.uimage = image;
+            }];
+        }
+    }
+}
+
 - (void)reloadDataWithMoments:(NSArray*)moments
 {
     self.moments = [self arrayWithEmptyObjectsAddedToArray:moments];
