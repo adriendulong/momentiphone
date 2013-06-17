@@ -477,7 +477,7 @@ enum InviteAddFontSize {
                         
                         // Paramètres
                         NSString *titre = self.moment.titre;
-                        NSString *url = @"http://www.appmoment.fr";
+                        NSString *url = self.moment.uniqueURL;
                         NSString *currentUserName = [self currentUserName];
                         
                         // SMS body
