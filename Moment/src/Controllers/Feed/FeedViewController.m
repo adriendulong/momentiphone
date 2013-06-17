@@ -230,12 +230,15 @@
             cell.frame = frame;
             
             UILabel *label = [[UILabel alloc] init];
-            label.text = @"Aucun feed actuellement ...";
+            label.text = NSLocalizedString(@"FeedViewController_EmptyLabel", nil);
             label.backgroundColor = [UIColor clearColor];
             label.font = [[Config sharedInstance] defaultFontWithSize:14];
             label.textColor = [Config sharedInstance].textColor;
-            [label sizeToFit];
+            label.numberOfLines = 0;
+            label.textAlignment = NSTextAlignmentCenter;
             frame = label.frame;
+            frame.size.width = self.view.frame.size.width - 20;
+            frame.size.height = 2.0*(self.view.frame.size.height)/3.0;
             frame.origin.x = (cell.frame.size.width - frame.size.width)/2.0;
             frame.origin.y = (cell.frame.size.height - frame.size.height)/4.0;
             label.frame = frame;
