@@ -40,6 +40,7 @@
 		5B0DFEE516C64EED00033C86 /* FacebookManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B0DFEE416C64EED00033C86 /* FacebookManager.m */; };
 		5B0DFEE816C6A86A00033C86 /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B0DFEE616C6A86A00033C86 /* FacebookSDK.framework */; };
 		5B0DFEEC16C6AA6100033C86 /* PushNotificationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B0DFEEB16C6AA6100033C86 /* PushNotificationManager.m */; };
+		5B0E9405176EB1F400986313 /* SMSComposeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B0E9404176EB1F400986313 /* SMSComposeViewController.m */; };
 		5B10F40916BD4DB800C8498E /* BigPhotoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B10F40716BD4DB800C8498E /* BigPhotoViewController.m */; };
 		5B10F40A16BD4DB800C8498E /* BigPhotoViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5B10F40816BD4DB800C8498E /* BigPhotoViewController.xib */; };
 		5B10F42616BD4F2700C8498E /* bottom_photo.png in Resources */ = {isa = PBXBuildFile; fileRef = 5B10F40C16BD4F2700C8498E /* bottom_photo.png */; };
@@ -1101,6 +1102,8 @@
 		5B0DFEE616C6A86A00033C86 /* FacebookSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FacebookSDK.framework; path = Moment/FacebookSDK.framework; sourceTree = "<group>"; };
 		5B0DFEEA16C6AA6100033C86 /* PushNotificationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PushNotificationManager.h; sourceTree = "<group>"; };
 		5B0DFEEB16C6AA6100033C86 /* PushNotificationManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = PushNotificationManager.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		5B0E9403176EB1F400986313 /* SMSComposeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMSComposeViewController.h; sourceTree = "<group>"; };
+		5B0E9404176EB1F400986313 /* SMSComposeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMSComposeViewController.m; sourceTree = "<group>"; };
 		5B10F40616BD4DB800C8498E /* BigPhotoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = BigPhotoViewController.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		5B10F40716BD4DB800C8498E /* BigPhotoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = BigPhotoViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5B10F40816BD4DB800C8498E /* BigPhotoViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = BigPhotoViewController.xib; sourceTree = "<group>"; };
@@ -4117,6 +4120,8 @@
 				5BF03137169C9CC800232E75 /* NSMutableAttributedString+FontAndTextColor.m */,
 				5B7266D116A26832000DF37B /* IgnoreTouchView.h */,
 				5B7266D216A26832000DF37B /* IgnoreTouchView.m */,
+				5B0E9403176EB1F400986313 /* SMSComposeViewController.h */,
+				5B0E9404176EB1F400986313 /* SMSComposeViewController.m */,
 			);
 			path = Util;
 			sourceTree = "<group>";
@@ -5524,6 +5529,7 @@
 				6E80BEC21765CCF400E6041F /* MesReglagesViewController.m in Sources */,
 				6E80BEC41765CCF400E6041F /* ModifierUserViewController.m in Sources */,
 				5B04BF1B176CA93D003379FE /* Moment.xcdatamodeld in Sources */,
+				5B0E9405176EB1F400986313 /* SMSComposeViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

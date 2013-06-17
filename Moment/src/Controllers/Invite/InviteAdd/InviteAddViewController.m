@@ -13,8 +13,9 @@
 #import "UserClass+Server.h"
 #import <FacebookSDK/FacebookSDK.h>
 #import "MomentClass+Server.h"
+#import "SMSComposeViewController.h"
 
-#define headerSize 100 
+#define headerSize 100
 
 enum InviteAddFontSize {
     InviteAddFontSizeSmall = 10,
@@ -479,7 +480,7 @@ enum InviteAddFontSize {
                     if([smsList count] > 0)
                     {
                         // SMS Composer
-                        MFMessageComposeViewController *controller = [[MFMessageComposeViewController alloc] init];
+                        SMSComposeViewController *controller = [[SMSComposeViewController alloc] init];
                         
                         // Paramètres
                         NSString *titre = self.moment.titre;
