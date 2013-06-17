@@ -78,9 +78,11 @@
 - (UIImage*)coverImage;
 - (void)deleteCoverImage;
 
+/*
 #pragma mark - Texte Formatage
 - (NSString*)twitterShareTextForMoment:(MomentClass*)moment nbMaxCaracters:(NSInteger)nbMaxCarac;
-
+*/
+ 
 #pragma mark - FeedBack
 - (void)feedBackMailComposerWithDelegate:(id<MFMailComposeViewControllerDelegate>)delegate
                                     root:(UIViewController*)rootViewController;

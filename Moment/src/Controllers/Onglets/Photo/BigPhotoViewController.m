@@ -955,24 +955,7 @@ withDelegate:(PhotoViewController*)photoViewController
 - (FullScreenPhotoViewController*)fullScreenViewController {
     if(!_fullScreenViewController) {
         
-        NSString *titre = nil;
-        if(self.moment && self.moment.titre) {
-            titre = [NSString stringWithFormat:@"%@ %@", NSLocalizedString(@"FullScreenPhotoViewController_Titre_PhotosOf" , nil), self.moment.titre];
-        }
-        else if(self.user) {
-            if(self.user.prenom && self.user.nom) {
-                titre = [NSString stringWithFormat:@"%@ %@ %@", NSLocalizedString(@"FullScreenPhotoViewController_Titre_PhotosOf" , nil) ,self.user.prenom, self.user.nom];
-            }
-            else if(self.user.prenom || self.user.nom) {
-                if(self.user.prenom)
-                    titre = [NSString stringWithFormat:@"%@ %@", NSLocalizedString(@"FullScreenPhotoViewController_Titre_PhotosOf" , nil), self.user.prenom];
-                else
-                    titre = [NSString stringWithFormat:@"%@ %@", NSLocalizedString(@"FullScreenPhotoViewController_Titre_PhotosOf" , nil), self.user.nom];
-            }
-        }
-        else {
-            titre = NSLocalizedString(@"FullScreenPhotoViewController_TitreDefaut", nil);
-        }
+        NSString *titre = NSLocalizedString(@"FullScreenPhotoViewController_TitreDefaut", nil);
         
         _fullScreenViewController = [[FullScreenPhotoViewController alloc] initWithTitle:titre withPhotos:self.photos delegate:self];
     }

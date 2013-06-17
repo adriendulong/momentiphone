@@ -351,6 +351,7 @@ static Config *sharedInstance = nil;
     [self deleteFileAtPath:fullPath];
 }
 
+/*
 #pragma mark - Texte Formatage
 
 - (NSString*)twitterShareTextForMoment:(MomentClass*)moment nbMaxCaracters:(NSInteger)nbMaxCarac
@@ -389,6 +390,7 @@ static Config *sharedInstance = nil;
     
     return initialText;
 }
+ */
 
 #pragma mark - FeedBack
 - (void)feedBackMailComposerWithDelegate:(id<MFMailComposeViewControllerDelegate>)delegate
