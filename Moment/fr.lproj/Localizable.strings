@@ -249,7 +249,6 @@
 "MBProgressHUD_Loading_updateLikeCount" = "Mise à jour ...";
 
 /* ------------ FullScreenPhotoViewController ------------- */
-"FullScreenPhotoViewController_Titre_PhotosOf" = "Photos de";
 "FullScreenPhotoViewController_TitreDefaut" = "Photos";
 
 /* ----------- Multiple ImagePickerViewController ---------- */
