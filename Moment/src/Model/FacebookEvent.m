@@ -55,9 +55,9 @@ static NSDateFormatter *dateFormatter = nil;
     if([privacy isEqualToString:@"OPEN"])
         return MomentPrivacyOpen;
     if([privacy isEqualToString:@"SECRET"])
-        return MomentPrivacyPrivate;
+        return MomentPrivacySecret;
     // FRIENDS
-    return MomentPrivacyPublic;
+    return MomentPrivacyFriends;
 }
 
 - (void)setupOwner:(NSString*)ownerId withEnded:(void (^) (FacebookEvent *event))block

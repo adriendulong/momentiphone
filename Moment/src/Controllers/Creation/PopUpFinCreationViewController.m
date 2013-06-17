@@ -35,8 +35,8 @@
         self.switchControlState = NO;
         self.backgroundImage = background;
         
-        // Default Privacy = Public
-        self.moment.privacy = @(MomentPrivacyPublic);
+        // Default Privacy = Friends
+        self.moment.privacy = @(MomentPrivacyFriends);
     }
     return self;
 }
@@ -205,7 +205,7 @@
         // Privacy Public
         else if(sender == self.friendsButton)
         {
-            self.moment.privacy = @(MomentPrivacyPublic);
+            self.moment.privacy = @(MomentPrivacyFriends);
             self.friendsButton.selected = YES;
             self.publicButton.selected = self.privateButton.selected = NO;
             self.privacyTitleLabel.text = NSLocalizedString(@"PopUpFunCreationViewController_Privacy_Public_Title", nil);
@@ -214,7 +214,7 @@
         // Privacy Private
         else
         {
-            self.moment.privacy = @(MomentPrivacyPrivate);
+            self.moment.privacy = @(MomentPrivacySecret);
             self.privateButton.selected = YES;
             self.publicButton.selected = self.friendsButton.selected = NO;
             self.privacyTitleLabel.text = NSLocalizedString(@"PopUpFunCreationViewController_Privacy_Private_Title", nil);

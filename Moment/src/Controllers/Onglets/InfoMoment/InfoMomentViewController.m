@@ -504,65 +504,67 @@ static CGFloat DescriptionBoxHeightMax = 100;
     if(state == 0) {
         state = ([self.moment.owner.userId isEqualToNumber:self.user.userId]) ? UserStateOwner : UserStateNoInvited;
     }
-    
-    // Police
-    self.rsvpLabel.font = [[Config sharedInstance] defaultFontWithSize:12];
-    
-    // Wordings
-    NSString *message = nil;
-    
-    switch (state) {
-            
-        case UserStateAdmin:
-        case UserStateOwner:
-        case UserStateValid:
-            message = @"Je serais présent au moment ...";
-            self.rsvpYesButton.selected = YES;
-            self.rsvpNoButton.selected = NO;
-            self.rsvpMaybeButton.selected = NO;
-            break;
-            
-        case UserStateRefused:
-            message = @"Je ne serais pas présent au moment ...";
-            self.rsvpNoButton.selected = YES;
-            self.rsvpMaybeButton.selected = NO;
-            self.rsvpYesButton.selected = NO;
-            break;
-            
-        case UserStateUnknown:
-        case UserStateWaiting:
-            message = @"Je sais pas si je serais présent au moment ...";
-            self.rsvpMaybeButton.selected = YES;
-            self.rsvpYesButton.selected = NO;
-            self.rsvpNoButton.selected = NO;
-            break;
-            
-        // Unknown
-        default:
-            message = @"Serez-vous présent au moment ?";
-            self.rsvpMaybeButton.selected = NO;
-            self.rsvpYesButton.selected = NO;
-            self.rsvpNoButton.selected = NO;
-            break;
+    // Cacher `rsvp si non invité
+    if( !((self.moment.privacy.intValue != MomentPrivacyOpen) && (state == UserStateNoInvited)) ) {
+        // Police
+        self.rsvpLabel.font = [[Config sharedInstance] defaultFontWithSize:12];
+        
+        // Wordings
+        NSString *message = nil;
+        
+        switch (state) {
+                
+            case UserStateAdmin:
+            case UserStateOwner:
+            case UserStateValid:
+                message = @"Je serais présent au moment ...";
+                self.rsvpYesButton.selected = YES;
+                self.rsvpNoButton.selected = NO;
+                self.rsvpMaybeButton.selected = NO;
+                break;
+                
+            case UserStateRefused:
+                message = @"Je ne serais pas présent au moment ...";
+                self.rsvpNoButton.selected = YES;
+                self.rsvpMaybeButton.selected = NO;
+                self.rsvpYesButton.selected = NO;
+                break;
+                
+            case UserStateUnknown:
+            case UserStateWaiting:
+                message = @"Je sais pas si je serais présent au moment ...";
+                self.rsvpMaybeButton.selected = YES;
+                self.rsvpYesButton.selected = NO;
+                self.rsvpNoButton.selected = NO;
+                break;
+                
+                // Unknown
+            default:
+                message = @"Serez-vous présent au moment ?";
+                self.rsvpMaybeButton.selected = NO;
+                self.rsvpYesButton.selected = NO;
+                self.rsvpNoButton.selected = NO;
+                break;
+        }
+        
+        // Text
+        self.rsvpLabel.text = message;
+        
+        static InfoMomentSeparateurView *separator = nil;
+        if(separator) {
+            [separator removeFromSuperview];
+        }
+        // Sparateur
+        separator = [[InfoMomentSeparateurView alloc] initAtPosition:(70 + 5)];
+        [self.rsvpView addSubview:separator];
+        
+        CGRect frame = self.rsvpView.frame;
+        frame.size.height = separator.frame.origin.y + separator.frame.size.height + 5;
+        self.rsvpView.frame = frame;
+        
+        if(firstLoad)
+            [self addSubviewAtAutomaticPosition:self.rsvpView];
     }
-    
-    // Text
-    self.rsvpLabel.text = message;
-    
-    static InfoMomentSeparateurView *separator = nil;
-    if(separator) {
-        [separator removeFromSuperview];
-    }
-    // Sparateur
-    separator = [[InfoMomentSeparateurView alloc] initAtPosition:(70 + 5)];
-    [self.rsvpView addSubview:separator];
-    
-    CGRect frame = self.rsvpView.frame;
-    frame.size.height = separator.frame.origin.y + separator.frame.size.height + 5;
-    self.rsvpView.frame = frame;
-    
-    if(firstLoad)
-        [self addSubviewAtAutomaticPosition:self.rsvpView];
     
 }
 
@@ -1246,6 +1248,12 @@ static CGFloat DescriptionBoxHeightMax = 100;
     // RSVP Expand Button
     self.expandButton = [[CustomExpandingButton alloc] initWithDelegate:self withState:state];
     [self.parallaxView.scrollView addSubview:self.expandButton];
+    
+    // Cacher RSVP
+    if((self.moment.privacy.intValue != MomentPrivacyOpen) && (state == UserStateNoInvited) )
+    {
+        self.expandButton.hidden = YES;
+    }
     
     // First Load Complete
     firstLoad = NO;

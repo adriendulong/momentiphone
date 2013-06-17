@@ -43,7 +43,7 @@
         self.backgroundView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg_volet"]];
         
         // Follow Button
-        if(self.moment.privacy.intValue != MomentPrivacyPublic) {
+        if(self.moment.privacy.intValue != MomentPrivacyOpen) {
             self.followButton.hidden = YES;
         }
     }

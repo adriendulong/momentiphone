@@ -127,6 +127,16 @@
     [self.tableView addSubview:activityIndicatorView];
     [self.tableView addSubview:label];
     
+    // Privacy
+    // User State
+    enum UserState state = self.moment.state.intValue;
+    if(state == 0) {
+        state = ([self.moment.owner.userId isEqualToNumber:[UserCoreData getCurrentUser].userId]) ? UserStateOwner : UserStateNoInvited;
+    }
+    if( (self.moment.privacy.intValue != MomentPrivacyOpen) && (state == UserStateNoInvited) ) {
+        self.sendboxView.hidden = YES;
+    }
+    
     // Load Messages
     [self loadMessagesAtPosition:ChatViewControllerMessagePositionBottom];
 }

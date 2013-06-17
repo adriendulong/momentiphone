@@ -330,21 +330,49 @@ withRootViewController:(UIViewController *)rootViewController
     // Plus Button
     if( (self.style == PhotoViewControllerStyleComplete) && (imageShowCaseCell.index == 0) && imageShowCaseCell.isSpecial )
     {
-        // Google Analytics
-        [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Ajout" value:nil];
+        // Si on est invité, on peux ajouter une photo
+        // User State
+        enum UserState state = self.moment.state.intValue;
+        if(state == 0) {
+            state = ([self.moment.owner.userId isEqualToNumber:[UserCoreData getCurrentUser].userId]) ? UserStateOwner : UserStateNoInvited;
+        }
+        if(
+           (
+            (
+              (self.moment.privacy.intValue == MomentPrivacyFriends)||(self.moment.privacy.intValue == MomentPrivacySecret))
+                && (state != UserStateNoInvited)
+            ) ||
+                (self.moment.privacy.intValue == MomentPrivacyOpen)
+           )
+        {
+            // Google Analytics
+            [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Ajout" value:nil];
+            
+            // Add Picture
+            UIActionSheet *actionSheet = [[UIActionSheet alloc]
+                                          initWithTitle:NSLocalizedString(@"ActionSheet_PeekPhoto_Title", nil)
+                                          delegate:self
+                                          cancelButtonTitle:NSLocalizedString(@"ActionSheet_PeekPhoto_Button_Cancel", nil)
+                                          destructiveButtonTitle:nil
+                                          otherButtonTitles:
+                                          NSLocalizedString(@"ActionSheet_PeekPhoto_Button_PhotoLibrary", nil),
+                                          NSLocalizedString(@"ActionSheet_PeekPhoto_Button_Camera", nil),
+                                          nil];
+            actionSheet.actionSheetStyle = UIActionSheetStyleBlackTranslucent;
+            [actionSheet showInView:self.view];
+        }
+        // Pas le droit d'ajouter une photo
+        else
+        {
+            [[[UIAlertView alloc]
+              initWithTitle:@"Oops !"
+              message:@"Seuls les invités ont le droit d'ajouter des photos."
+              delegate:nil
+              cancelButtonTitle:@"OK"
+              otherButtonTitles:nil]
+             show];
+        }
         
-        // Add Picture
-        UIActionSheet *actionSheet = [[UIActionSheet alloc]
-                                      initWithTitle:NSLocalizedString(@"ActionSheet_PeekPhoto_Title", nil)
-                                      delegate:self
-                                      cancelButtonTitle:NSLocalizedString(@"ActionSheet_PeekPhoto_Button_Cancel", nil)
-                                      destructiveButtonTitle:nil
-                                      otherButtonTitles:
-                                      NSLocalizedString(@"ActionSheet_PeekPhoto_Button_PhotoLibrary", nil),
-                                      NSLocalizedString(@"ActionSheet_PeekPhoto_Button_Camera", nil),
-                                      nil];
-        actionSheet.actionSheetStyle = UIActionSheetStyleBlackTranslucent;
-        [actionSheet showInView:self.view];
     }
     //  Print Button
     else if( (self.style == PhotoViewControllerStyleComplete) && (imageShowCaseCell.index == PHOTOVIEW_PRINT_BUTTON_INDEX) && imageShowCaseCell.isSpecial )
