@@ -733,7 +733,7 @@ withDelegate:(PhotoViewController*)photoViewController
     // Paramètres
     Photos *photo = self.photos[self.selectedIndex];
     UIImage *image = photo.imageOriginal;
-    NSString *initialText = [NSString stringWithFormat:@"Bon Moment @%@ !\n", self.moment.titre];
+    NSString *initialText = [NSString stringWithFormat:@"Retrouvez toutes les photos de l'évènement %@ sur l'application Moment ! %@", self.moment.titre, photo.uniqueURL];
     NSURL *url = [NSURL URLWithString:photo.uniqueURL];
     
     // iOS 6 -> Social Framework
@@ -787,11 +787,7 @@ withDelegate:(PhotoViewController*)photoViewController
     Photos *photo = self.photos[self.selectedIndex];
     UIImage *image = photo.imageOriginal;
     
-    // Limitation à 140 caractères max
-    NSInteger defaultNBMaxCarac = 140;
-    NSInteger nbMaxCarac = photo.uniqueURL ? (defaultNBMaxCarac - photo.uniqueURL.length) : defaultNBMaxCarac;
-    NSMutableString *initialText = [[[Config sharedInstance] twitterShareTextForMoment:self.moment nbMaxCaracters:nbMaxCarac]
-                                    mutableCopy];
+    NSMutableString *initialText = [NSMutableString stringWithFormat:@"Photo prise lors de l'évènement %@ ! %@", self.moment.titre, photo.uniqueURL];
     
 #ifdef HASHTAG_ENABLE
     // Hashtag
@@ -809,7 +805,7 @@ withDelegate:(PhotoViewController*)photoViewController
                                                composeViewControllerForServiceType:SLServiceTypeTwitter];
         [tweetSheet setInitialText:initialText];
         [tweetSheet addImage:image];
-        [tweetSheet addURL:url];
+        //[tweetSheet addURL:url];
         
         //[self presentViewController:tweetSheet animated:YES completion:nil];
         [[VersionControl sharedInstance] presentModalViewController:tweetSheet fromRoot:self animated:YES];
@@ -821,7 +817,7 @@ withDelegate:(PhotoViewController*)photoViewController
         self.modalPresentationStyle = UIModalPresentationCurrentContext;
         [twitterViewComposer setInitialText:initialText];
         [twitterViewComposer addImage:image];
-        [twitterViewComposer addURL:url];
+        //[twitterViewComposer addURL:url];
         
         //[self presentViewController:twitterViewComposer animated:YES completion:nil];
         [[VersionControl sharedInstance] presentModalViewController:twitterViewComposer fromRoot:self animated:YES];

@@ -1695,7 +1695,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
     [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Partager Facebook" value:nil];
     
     // Paramètres
-    NSString *initialText = [NSString stringWithFormat:@"Bon Moment @%@ !\n", self.moment.titre];
+    NSString *initialText = [NSString stringWithFormat:@"Retrouvez toutes les photos de l'évènement %@ sur l'application Moment !", self.moment.titre];
     
     // iOS 6 -> Social Framework
     if ( (NSClassFromString(@"SLComposeViewController") != nil) && [SLComposeViewController isAvailableForServiceType:SLServiceTypeFacebook])
@@ -1745,11 +1745,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
     // Google Analytics
     [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Partager Twitter" value:nil];
     
-    // Limitation à 140 caractères max
-    NSInteger defaultNBMaxCarac = 140;
-    NSInteger nbMaxCarac = self.moment.uniqueURL ? (defaultNBMaxCarac - self.moment.uniqueURL.length) : defaultNBMaxCarac;
-    NSMutableString *initialText = [[[Config sharedInstance] twitterShareTextForMoment:self.moment nbMaxCaracters:nbMaxCarac]
-                                    mutableCopy];
+    NSMutableString *initialText = [NSMutableString stringWithFormat:@"Retrouvez toutes les photos de l'évènement %@ ici : %@", self.moment.titre, self.moment.uniqueURL];
     
 #ifdef HASHTAG_ENABLE
     if(self.moment.hashtag && (self.moment.hashtag.length <= (nbMaxCarac - initialText.length)))
@@ -1762,8 +1758,8 @@ static CGFloat DescriptionBoxHeightMax = 100;
         SLComposeViewController *tweetSheet = [SLComposeViewController
                                                composeViewControllerForServiceType:SLServiceTypeTwitter];
         [tweetSheet setInitialText:initialText];
-        if(self.moment.uniqueURL)
-            [tweetSheet addURL:[NSURL URLWithString:self.moment.uniqueURL]];
+        //if(self.moment.uniqueURL)
+            //[tweetSheet addURL:[NSURL URLWithString:self.moment.uniqueURL]];
         
         //[self presentViewController:tweetSheet animated:YES completion:nil];
         [[VersionControl sharedInstance] presentModalViewController:tweetSheet fromRoot:self animated:YES];
@@ -1774,8 +1770,8 @@ static CGFloat DescriptionBoxHeightMax = 100;
         TWTweetComposeViewController *twitterViewComposer = [[TWTweetComposeViewController alloc] init];
         self.modalPresentationStyle = UIModalPresentationCurrentContext;
         [twitterViewComposer setInitialText:initialText];
-        if(self.moment.uniqueURL)
-            [twitterViewComposer addURL:[NSURL URLWithString:self.moment.uniqueURL]];
+        //if(self.moment.uniqueURL)
+            //[twitterViewComposer addURL:[NSURL URLWithString:self.moment.uniqueURL]];
         
         //[self presentViewController:twitterViewComposer animated:YES completion:nil];
         [[VersionControl sharedInstance] presentModalViewController:twitterViewComposer fromRoot:self animated:YES];
