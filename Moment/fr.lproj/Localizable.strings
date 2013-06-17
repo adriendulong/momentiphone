@@ -67,8 +67,6 @@
 "EventMissingViewController_mailButton" = "AJOUTER UNE ADRESSE MAIL";
 "EventMissingViewController_contactButton" = "CONTACTEZ-NOUS";
 
-
-
 // ALL POPUP
 "EventMissingViewController_addObject_Message" = "Veuillez en ajouter un:";
 
@@ -95,8 +93,8 @@
 
 /* ---------------- InviteAddViewController ------------------ */
 // HeaderView
-"InviteAddViewController_validerLabel" = "INVITER LES";
-"InviteAddViewController_phraseLabel" = "AMIS SELECTIONNÉS";
+"InviteAddViewController_validerLabel" = "ENVOYER LES ";
+"InviteAddViewController_phraseLabel" = " INVITATIONS";
 // Empty Cell Label
 "InviteAddTableViewController_EmptyCell_noResultsLabel" = "Aucun contact correspondant";
 "InviteAddTableViewController_EmptyCell_noResultsLabel_favoris" = "Aucun contact dans favoris pour le moment. Au bout de quelques évènements, vous verrez automatiquement apparaitre les personnes qui vous sont proches !";
@@ -104,7 +102,7 @@
 "InviteAddTableViewController_AlertView_InviteWithNoGuest_Title" = "Oops !";
 "InviteAddTableViewController_AlertView_InviteWithNoGuest_Message" = "Veuillez sélectionner au moins un contact ! ";
 // AlertView Invite Success
-"InviteAddTableViewController_AlertView_InviteSuccess_Title" = "Inivtations envoyées";
+"InviteAddTableViewController_AlertView_InviteSuccess_Title" = "Invitations envoyées";
 "InviteAddTableViewController_AlertView_InviteSuccess_Message" = "Les invitations ont bien été envoyées à vos contacts";
 // NewUser AlertView
 "InviteAddViewController_NewUser_Invalide_Title" = "Erreur !";
@@ -114,7 +112,7 @@
 
 // Envoi SMS
 "InviteAddViewController_SendSMS_Message" = "Je viens de t'inviter à : %@ sur l'application Moment : %@.\n. Rejoins nous pour partager toutes les photos, et organisez l'évènement. A bientôt, %@";
-"InviteAddViewController_SendSMS_Fail" = "L'envoi de(s) sms à échoué";
+"InviteAddViewController_SendSMS_Fail" = "L'envoi de(s) sms a échoué";
 // Notifs Facebook
 "InviteAddViewController_NotifsFB_Message" = "%@ vient de t'inviter à son évènement : %@ sur l'application Moment.";
 "InviteAddViewController_NotifsFB_Fail" = "L'envoi d'invitations Facebook a échoué";
@@ -124,7 +122,7 @@
 "InvitePresentsViewController_AlertView_LoadingFail_Title" = "Echec lors de la connexion";
 "InvitePresentsViewController_AlertView_LoadingFail_Message" = "Une erreur est survenue durant le chargement, merci de réesseyer ultérieurement";
 // Empty Cell
-"InvitePresentsTableView_EmptyCell_emptyLabel" = "Aucun invités";
+"InvitePresentsTableView_EmptyCell_emptyLabel" = "Aucun invité";
 // Custom Segmented Control
 "CustomSegmentedControl_Coming" = "Participants";
 "CustomSegmentedControl_Unknown" = "Invités";
@@ -134,7 +132,7 @@
 
 /* ---------------- ChatViewController ------------------ */
 // Empty Cell
-"ChatViewController_EmptyCell_label" = "Aucun message pour le moment, alors allez y, lachez vous ! Une blague, une info, un scoop, ce chat est fait pour ça.";
+"ChatViewController_EmptyCell_label" = "Aucun message pour le moment, alors allez y, lancez vous ! Une blague, une info, un scoop, ce chat est fait pour ça.";
 // SendBoxView
 "ChatViewController_SendBoxView_placeHolder" = "Tapez votre message ici !";
 // Infinite Scroll
@@ -153,13 +151,13 @@
 "HomeViewController_LoginButtonLabel" = "Se Connecter";
 // AlertView Load Moments Fail
 "HomeViewController_AlertView_LoadMomentsFail_Title" = "Erreur";
-"HomeViewController_AlertView_LoadMomentsFail_Message" = "Une erreur est survenue. Merci de réessayer";
+"HomeViewController_AlertView_LoadMomentsFail_Message" = "Une erreur est survenue. Merci de ré-essayer";
 // AlertView Incomplete Form
 "HomeViewController_AlertView_IncompleteForm_Title" = "Bien essayé !";
 "HomeViewController_AlertView_IncompleteForm_Message" = "Merci de remplir votre login et mot de passe ;)";
 // AlertView Authentification Fail
 "HomeViewController_AlertView_AuthentificationFail_Title" = "Echec Authentification";
-"HomeViewController_AlertView_AuthentificationFail_Message" = "Login et/ou mot de passe invalide";
+"HomeViewController_AlertView_AuthentificationFail_Message" = "Login et/ou mot de passe invalides";
 // AlertView Forgot Password
 "HomeViewController_AlertView_ForgotPassword_Title" = "Mot de passe oublié";
 "HomeViewController_AlertView_ForgotPassword_Message" = "Saisissez votre Email : ";
@@ -174,9 +172,9 @@
 "TimeLineViewController_Echelle_PasseLabel" = "Passé -";
 // Delete Moment AlertView
 "TimeLineViewController_DeleteMomentAlertView_Title" = "Supprimer ce Moment";
-"TimeLineViewController_DeleteMomentAlertView_Message" = "Êtes vous sûr de vouloir supprimer ce moment ? Cette action est irréverssible !";
+"TimeLineViewController_DeleteMomentAlertView_Message" = "Êtes vous sûr de vouloir supprimer ce moment ? Cette action est irréversible !";
 // Erreur suppression
-"TimeLineViewController_DeleteMoment_Fail_Message" = "Erreur lors de la suppression, merci de réessayer ultérieurement";
+"TimeLineViewController_DeleteMoment_Fail_Message" = "Erreur lors de la suppression, merci de ré-essayer ultérieurement";
 
 //Overlay
 "TimeLineViewController_Overlay_Label1" = "Recherche,";
@@ -211,7 +209,7 @@
 
 /* ---------------- VoletViewController ------------------ */
 // Empty Cell
-"VoletViewController_EmptyCell_invitationView" = "Aucune invitation pour l'instant. Appuyez sur Moment Manquant dans le volet si vous ne retrouvez pas toutes vos invitations";
+"VoletViewController_EmptyCell_invitationView" = "Aucune invitation pour l'instant. Appuyez sur l’onglet Moment Manquant dans le volet si vous ne retrouvez pas toutes vos invitations";
 "VoletViewController_EmptyCell_notificationView" = "Aucune notification pour le moment :(";
 // Section
 "VoletViewController_Section_Invitations" = "INVITATIONS";
@@ -242,7 +240,7 @@
 "BigPhotoViewController_DeleteActionSheet_Delete" = "Supprimer !";
 // Suppression Fail
 "BigPhotoViewController_DeleteFailAlertView_Title" = "Echec Suppression";
-"BigPhotoViewController_DeleteFailAlertView_Message" = "La suppression de la photo a échouée, merci de réessayer ultérieurement";
+"BigPhotoViewController_DeleteFailAlertView_Message" = "La suppression de la photo a échouée, merci de ré-essayer ultérieurement";
 // Partage
 "BigPhotoViewController_ShareActionSheet_Title" = "Partager";
 // Like Count
@@ -270,7 +268,7 @@
 "CalendarManager_EventCreationSuccees" = "Moment ajouté";
 // Event Création - Ask User
 "CalendarManager_EventCreation_AskUserAlertView_Title" = "Ajout au calendrier";
-"CalendarManager_EventCreation_AskUserAlertView_Message" = "Ajouter le Moment au calendrier du téléphone ?";
+"CalendarManager_EventCreation_AskUserAlertView_Message" = "Ajouter le Moment sur le calendrier du téléphone ?";
 
 /* -------------- ImporterFBViewController ------------- */
 "MBProgressHUD_Loading_FBEvents" = "Importation en cours ...";
@@ -286,7 +284,7 @@
 "ModifierUserViewController_AlertUnvalide_Title" = "Oops !";
 "ModifierUserViewController_AlertUnvalide_Message" = "Les informations renseignées sont incorrectes";
 "ModifierUserViewController_WrongPassword_Title" = "Oops !";
-"ModifierUserViewController_WrongPassword_Message" = "Ancien mot de passe incorrects !";
+"ModifierUserViewController_WrongPassword_Message" = "Ancien mot de passe incorrect !";
 
 /* ------------ CreationPage2ViewController ------------- */
 // Confirm Empty Phone Number
@@ -332,10 +330,10 @@
 
 /* ------------ FollowTableViewController ------------- */
 // Add Follow (Toggle) Error
-"FollowTableViewController_AddFollow_ErrorMessage" = "L'abonnement a échoué, Pouvez vous réessayer ?";
+"FollowTableViewController_AddFollow_ErrorMessage" = "L'abonnement a échoué, Pouvez vous ré-essayer ?";
 // EmptyCell
 "FollowTableViewController_Follows_EmptyCellLabel" = "Aucun abonnement pour le moment, montrez lui comment faire ;)";
-"FollowTableViewController_Followers_EmptyCellLabel" = "Aucun abonnés pour le moment, soyez sympa abonnez vous à lui pour qu'il en ait au moins un !";
+"FollowTableViewController_Followers_EmptyCellLabel" = "Aucun abonné pour le moment, soyez sympa abonnez vous à lui pour qu'il en ait au moins un !";
 
 /* ------------ PopUpFunCreationViewController ---------- */
 // Privacy Open
@@ -383,7 +381,7 @@
 /* ------------- Error --------------- */
 "Error_Title" = "Erreur";
 "Error_Classic" = "Une erreur est surnevue";
-"Error_Server" = "Erreur Serveur, Merci de réessayer ulterieurement";
+"Error_Server" = "Erreur Serveur, Merci de ré-essayer ulterieurement";
 "Error_Send" = "Erreur d'envoi";
 
 
