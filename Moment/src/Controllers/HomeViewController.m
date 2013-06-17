@@ -97,16 +97,20 @@ static UIImageView *splashScreen = nil;
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    /*
     if(!firstViewDidAppear) {
         if([VersionControl sharedInstance].screenHeight == 568) {
-            [UIApplication sharedApplication].keyWindow.frame=CGRectMake(0, 0, 320, [VersionControl sharedInstance].screenHeight);
+            
+            [UIApplication sharedApplication].keyWindow.frame=CGRectMake(0, STATUS_BAR_HEIGHT, 320, [VersionControl sharedInstance].screenHeight - STATUS_BAR_HEIGHT );
             //self.view.bounds = CGRectMake(0, 0, 320, [VersionControl sharedInstance].screenHeight);
         }
         else {
-            [UIApplication sharedApplication].keyWindow.frame=CGRectMake(0, STATUS_BAR_HEIGHT, 320, [VersionControl sharedInstance].screenHeight - STATUS_BAR_HEIGHT );
+
+            [UIApplication sharedApplication].keyWindow.frame=CGRectMake(0, 0, 320, [VersionControl sharedInstance].screenHeight);
             //self.view.bounds = CGRectMake(0, STATUS_BAR_HEIGHT, 320, [VersionControl sharedInstance].screenHeight);
         }
     }
+     */
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -141,7 +145,7 @@ static UIImageView *splashScreen = nil;
         } completion:^(BOOL finished) {
             [HomeViewController hideSplashScreen];
         }];
-        if(firstViewDidAppear) {
+        if(firstViewDidAppear && [[NSUserDefaults standardUserDefaults] boolForKey:@"hasRunOnce"]) {
             [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationNone];
             [UIApplication sharedApplication].keyWindow.frame=CGRectMake(0, STATUS_BAR_HEIGHT, 320, [VersionControl sharedInstance].screenHeight - STATUS_BAR_HEIGHT);
             //self.view.bounds = CGRectMake(0, -STATUS_BAR_HEIGHT, 320, [VersionControl sharedInstance].screenHeight);
@@ -225,6 +229,7 @@ static UIImageView *splashScreen = nil;
     frame.origin = CGPointZero;
     splashScreen.frame = frame;
     [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationNone];
+    [UIApplication sharedApplication].keyWindow.frame=CGRectMake(0, 0, 320, [VersionControl sharedInstance].screenHeight);
     [self.view addSubview:splashScreen];
 }
 
@@ -327,6 +332,7 @@ static UIImageView *splashScreen = nil;
         // Afficher Status bar
         if([[UIApplication sharedApplication] isStatusBarHidden]) {
             [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationNone];
+            [UIApplication sharedApplication].keyWindow.frame=CGRectMake(0, STATUS_BAR_HEIGHT, 320, [VersionControl sharedInstance].screenHeight - STATUS_BAR_HEIGHT);
         }
         // Push
         [self.navigationController pushViewController:menuController animated:animated];
