@@ -2,9 +2,9 @@
 <archive type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="8.00">
 	<data>
 		<int key="IBDocument.SystemTarget">1552</int>
-		<string key="IBDocument.SystemVersion">12D78</string>
+		<string key="IBDocument.SystemVersion">12E55</string>
 		<string key="IBDocument.InterfaceBuilderVersion">3084</string>
-		<string key="IBDocument.AppKitVersion">1187.37</string>
+		<string key="IBDocument.AppKitVersion">1187.39</string>
 		<string key="IBDocument.HIToolboxVersion">626.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
@@ -46,7 +46,6 @@
 						<string key="NSFrame">{{0, 100}, {320, 404}}</string>
 						<reference key="NSSuperview" ref="195632736"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<object class="NSColor" key="IBUIBackgroundColor" id="983437112">
 							<int key="NSColorSpace">3</int>
@@ -264,6 +263,7 @@
 						<reference key="NSNextKeyView" ref="784432788"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<bool key="IBUIOpaque">NO</bool>
+						<float key="IBUIAlpha">0.10000000149011612</float>
 						<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
 						<int key="IBUIContentHorizontalAlignment">0</int>
 						<int key="IBUIContentVerticalAlignment">0</int>
@@ -325,7 +325,6 @@
 						<string key="NSFrame">{{90, 0}, {46, 44}}</string>
 						<reference key="NSSuperview" ref="459704972"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<bool key="IBUIOpaque">NO</bool>
 						<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
@@ -501,6 +500,14 @@
 						<reference key="destination" ref="784432788"/>
 					</object>
 					<int key="connectionID">101</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBCocoaTouchOutletConnection" key="connection">
+						<string key="label">bandeauButton</string>
+						<reference key="source" ref="372490531"/>
+						<reference key="destination" ref="703920080"/>
+					</object>
+					<int key="connectionID">105</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBCocoaTouchOutletConnection" key="connection">
@@ -726,7 +733,7 @@
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">104</int>
+			<int key="maxID">105</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -762,6 +769,7 @@
 						<string key="clicNavigationBarButtonFacebook">id</string>
 						<string key="clicNavigationBarButtonFavoris">id</string>
 						<string key="clicValider">id</string>
+						<string key="searchBarChangeValue:">UITextField</string>
 					</dictionary>
 					<dictionary class="NSMutableDictionary" key="actionInfosByName">
 						<object class="IBActionInfo" key="clicNavigationBarButtonContact">
@@ -780,8 +788,13 @@
 							<string key="name">clicValider</string>
 							<string key="candidateClassName">id</string>
 						</object>
+						<object class="IBActionInfo" key="searchBarChangeValue:">
+							<string key="name">searchBarChangeValue:</string>
+							<string key="candidateClassName">UITextField</string>
+						</object>
 					</dictionary>
 					<dictionary class="NSMutableDictionary" key="outlets">
+						<string key="bandeauButton">UIButton</string>
 						<string key="contactButton">UIButton</string>
 						<string key="facebookButton">UIButton</string>
 						<string key="favorisButton">UIButton</string>
@@ -793,6 +806,10 @@
 						<string key="validerLabel">CustomLabel</string>
 					</dictionary>
 					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
+						<object class="IBToOneOutletInfo" key="bandeauButton">
+							<string key="name">bandeauButton</string>
+							<string key="candidateClassName">UIButton</string>
+						</object>
 						<object class="IBToOneOutletInfo" key="contactButton">
 							<string key="name">contactButton</string>
 							<string key="candidateClassName">UIButton</string>

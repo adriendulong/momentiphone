@@ -256,6 +256,9 @@ enum InviteAddFontSize {
 
 - (void)addNewSelectedFriend:(UserClass*)friend notif:(BOOL)notif
 {
+    if([self.selectedFriends count] == 0)
+        self.bandeauButton.backgroundColor = [UIColor grayColor];
+    
     [self.selectedFriends addObject:friend];
     [self updateSelectedFriendsLabel];
     if(notif)
@@ -271,6 +274,9 @@ enum InviteAddFontSize {
     if([self.notifSelectedFriends containsObject:friend]) {
         [self.notifSelectedFriends removeObject:friend];
     }
+    
+    if([self.selectedFriends count] == 0)
+        self.bandeauButton.backgroundColor = [UIColor clearColor];
 }
 
 - (void)updateSelectedFriendsLabel {

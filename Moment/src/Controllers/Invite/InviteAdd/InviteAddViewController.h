@@ -41,6 +41,8 @@
 @property (nonatomic, weak) IBOutlet UIButton *facebookButton;
 @property (nonatomic, weak) IBOutlet UIButton *favorisButton;
 
+@property (nonatomic, weak) IBOutlet UIButton *bandeauButton;
+
 @property (nonatomic, weak) InviteAddTableViewController *actualTableViewController;
 @property (nonatomic, strong) InviteAddTableViewController *contactTableViewController;
 @property (nonatomic, strong) InviteAddTableViewController *facebookTableViewController;
