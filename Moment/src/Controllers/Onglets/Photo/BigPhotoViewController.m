@@ -49,6 +49,10 @@
     // Animations
     BOOL shouldAnimate;
     
+    NSMutableArray *onScreenPhotos;
+    NSMutableArray *loadedPhotos;
+    BOOL automaticScroll;
+    
 }
 
 @end
@@ -100,6 +104,10 @@ withDelegate:(PhotoViewController*)photoViewController
         self.selectedIndex = -1;
         suppressionModeActif = YES;
         shouldAnimate = YES;
+        int count = [self.photos count];
+        onScreenPhotos = [[NSMutableArray alloc] initWithCapacity:count];
+        loadedPhotos = [[NSMutableArray alloc] initWithCapacity:count];
+        automaticScroll = NO;
         
         dateFormatter = [[NSDateFormatter alloc] init];
         dateFormatter.locale = [NSLocale currentLocale];
@@ -298,12 +306,51 @@ withDelegate:(PhotoViewController*)photoViewController
     // Clic FullScreen
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(showFullScreen)];
     [self.photoScrollView addGestureRecognizer:tap];
+    
+    int i, count = [self.photos count];
+    for(i=0; i<count; i++) {
+        CustomUIImageView *imageView = nil;
+        onScreenPhotos[i] = imageView = [[CustomUIImageView alloc] init];
+        imageView.frame = CGRectMake( i*self.photoScrollView.frame.size.width,0, self.photoScrollView.frame.size.width, self.photoScrollView.frame.size.height);
+        imageView.contentMode = UIViewContentModeScaleAspectFill;
+        imageView.clipsToBounds = YES;
+        [imageView setImage:nil imageString:nil withSaveBlock:nil];
+        [self.photoScrollView addSubview:imageView];
+        
+        loadedPhotos[i] = @(NO);
+    }
+    
+    automaticScroll = NO;
 }
 
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (void)clearScrollView {
+    for(UIView *v in self.photoScrollView.subviews) {
+        [v removeFromSuperview];
+    }
+    
+    int count = [self.photos count];
+    onScreenPhotos = [[NSMutableArray alloc] initWithCapacity:count];
+    loadedPhotos = [[NSMutableArray alloc] initWithCapacity:count];
+    int i;
+    for(i=0; i<count; i++) {
+        CustomUIImageView *imageView = nil;
+        onScreenPhotos[i] = imageView = [[CustomUIImageView alloc] init];
+        imageView.frame = CGRectMake( i*self.photoScrollView.frame.size.width,0, self.photoScrollView.frame.size.width, self.photoScrollView.frame.size.height);
+        imageView.contentMode = UIViewContentModeScaleAspectFill;
+        imageView.clipsToBounds = YES;
+        [imageView setImage:nil imageString:nil withSaveBlock:nil];
+        [self.photoScrollView addSubview:imageView];
+        loadedPhotos[i] = @(NO);
+    }
+    
+    self.photoScrollView.contentSize = CGSizeMake(count*self.photoScrollView.frame.size.width, self.photoScrollView.frame.size.height);
+    
 }
 
 - (void)viewDidUnload {
@@ -375,7 +422,7 @@ withDelegate:(PhotoViewController*)photoViewController
     return indexFromParentView;
 }
 
--(void)showViewAtIndex:(NSInteger)index fromParent:(BOOL)fromParent
+-(void)showViewAtIndex:(NSInteger)index fromParent:(BOOL)fromParent scroll:(BOOL)scroll
 {
     if(backgroundNeedsUpdate)
        [self updateBackground];
@@ -386,10 +433,10 @@ withDelegate:(PhotoViewController*)photoViewController
     if( (index < [self.photos count]) && (index >= 0) ) {
         
         Photos *photo = (Photos*)self.photos[index];
-        if(!photo.imageOriginal) {
+        if( (!photo.imageOriginal) || (![loadedPhotos[index] boolValue]) ) {
             [self addIndexToScrollView:index];
         }
-        [self scrollToIndex:index animated:YES];
+        [self scrollToIndex:index animated:YES scroll:scroll];
         
         self.nextButton.enabled = (self.selectedIndex < [self.photos count]-1);
         self.previousButton.enabled = (self.selectedIndex > 0);
@@ -408,6 +455,13 @@ withDelegate:(PhotoViewController*)photoViewController
         
     }
     
+    if(fromParent)
+        automaticScroll = NO;
+    
+}
+
+-(void)showViewAtIndex:(NSInteger)index fromParent:(BOOL)fromParent {
+    [self showViewAtIndex:index fromParent:fromParent scroll:YES];
 }
 
 - (void)hideSuppressionMode
@@ -556,20 +610,29 @@ withDelegate:(PhotoViewController*)photoViewController
 {
     Photos *photo = (Photos*)self.photos[index];
     
-    CustomUIImageView *imageView = [[CustomUIImageView alloc] init];
-    imageView.frame = CGRectMake( index*self.photoScrollView.frame.size.width,0, self.photoScrollView.frame.size.width, self.photoScrollView.frame.size.height);
-    imageView.contentMode = UIViewContentModeScaleAspectFill;
-    imageView.clipsToBounds = YES;
-    [self.photoScrollView addSubview:imageView];
+    CustomUIImageView *imageView = onScreenPhotos[index];
+    if(!imageView) {
+        imageView = [[CustomUIImageView alloc] init];
+        imageView.frame = CGRectMake( index*self.photoScrollView.frame.size.width,0, self.photoScrollView.frame.size.width, self.photoScrollView.frame.size.height);
+        imageView.contentMode = UIViewContentModeScaleAspectFill;
+        imageView.clipsToBounds = YES;
+        [self.photoScrollView addSubview:imageView];
+        onScreenPhotos[index] = imageView;
+    }
+    
+    loadedPhotos[index] = @(YES);
     
     [imageView setImage:photo.imageOriginal imageString:photo.urlOriginal withSaveBlock:^(UIImage *image) {
         photo.imageOriginal = image;
     }];
 }
 
-- (void)scrollToIndex:(NSInteger)index animated:(BOOL)animated
+- (void)scrollToIndex:(NSInteger)index animated:(BOOL)animated scroll:(BOOL)scroll
 {
-    [self.photoScrollView scrollRectToVisible:CGRectMake(index*self.photoScrollView.frame.size.width, 0, self.photoScrollView.frame.size.width, self.photoScrollView.frame.size.height) animated:animated];
+    if(scroll) {
+        automaticScroll = YES;
+        [self.photoScrollView scrollRectToVisible:CGRectMake(index*self.photoScrollView.frame.size.width, 0, self.photoScrollView.frame.size.width, self.photoScrollView.frame.size.height) animated:animated];
+    }
     self.selectedIndex = index;
     
     Photos *photo = (Photos*)self.photos[index];
@@ -578,6 +641,10 @@ withDelegate:(PhotoViewController*)photoViewController
     // Date    
     self.dateLabel.text = [dateFormatter stringFromDate:photo.date];
     [self updateLikeNumber:photo.nbLike];
+}
+
+- (void)scrollToIndex:(NSInteger)index animated:(BOOL)animated {
+    [self scrollToIndex:index animated:animated scroll:YES];
 }
 
 - (void)updateLikeNumber:(NSInteger)nbLike
@@ -621,32 +688,48 @@ withDelegate:(PhotoViewController*)photoViewController
     }];
 }
 
+- (void)clicNext:(BOOL)scroll {
+    
+    if(self.selectedIndex < [self.photos count])
+    {
+        // Google Analytics
+        [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Suivant" value:nil];
+        
+        [self showViewAtIndex:self.selectedIndex+1 fromParent:NO scroll:scroll];
+        if(self.selectedIndex == [self.photos count]-1)
+            self.nextButton.enabled = NO;
+        if( (!self.previousButton.enabled) && (self.selectedIndex > 0) )
+            self.previousButton.enabled = YES;
+        else if(self.selectedIndex == 0)
+            self.previousButton.enabled = NO;
+    }
+    
+}
+
 - (IBAction)clicNext {
+    [self clicNext:YES];
+}
+
+- (void)clicPrevious:(BOOL)scroll {
     
-    // Google Analytics
-    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Suivant" value:nil];
+    if(self.selectedIndex >= 0)
+    {
+        // Google Analytics
+        [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Précédent" value:nil];
+        
+        [self showViewAtIndex:self.selectedIndex-1 fromParent:NO scroll:scroll];
+        if(self.selectedIndex == 0)
+            self.previousButton.enabled = NO;
+        if( (!self.nextButton.enabled) && (self.selectedIndex < [self.photos count]-1) )
+            self.nextButton.enabled = YES;
+        else if(self.selectedIndex == [self.photos count]-1)
+            self.nextButton.enabled = NO;
+    }
     
-    [self showViewAtIndex:self.selectedIndex+1 fromParent:NO];
-    if(self.selectedIndex == [self.photos count]-1)
-        self.nextButton.enabled = NO;
-    if( (!self.previousButton.enabled) && (self.selectedIndex > 0) )
-        self.previousButton.enabled = YES;
-    else if(self.selectedIndex == 0)
-        self.previousButton.enabled = NO;
 }
 
 - (IBAction)clicPrevious {
-    
-    // Google Analytics
-    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Précédent" value:nil];
-    
-    [self showViewAtIndex:self.selectedIndex-1 fromParent:NO];
-    if(self.selectedIndex == 0)
-        self.previousButton.enabled = NO;
-    if( (!self.nextButton.enabled) && (self.selectedIndex < [self.photos count]-1) )
-        self.nextButton.enabled = YES;
-    else if(self.selectedIndex == [self.photos count]-1)
-        self.nextButton.enabled = NO;
+    [self clicPrevious:YES];
 }
 
 - (IBAction)clicTrash {
@@ -894,6 +977,8 @@ withDelegate:(PhotoViewController*)photoViewController
                     int index = [self convertIndexForDataForCurrentStyle:self.selectedIndex];
                     [self.delegate.imageShowCase deleteImage:self.delegate.imageShowCase.itemsInShowCase[index] imageIndex:index];
                     
+                    [self clearScrollView];
+                    
                     NSInteger count = [self.photos count];
                     NSInteger deleteIndex;
 
@@ -1012,5 +1097,26 @@ withDelegate:(PhotoViewController*)photoViewController
     [[VersionControl sharedInstance] dismissModalViewControllerFromRoot:self animated:YES];
 }
 
+#pragma mark - UIScrollView Delegate
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView
+{        
+    if( !((int)scrollView.contentOffset.x%((int)self.photoScrollView.frame.size.width)) ) {
+        
+        if(automaticScroll) {
+            automaticScroll = NO;
+        }
+        else {
+            // Scroll Right
+            NSInteger nextIndex = (int)ceilf(scrollView.contentOffset.x/self.photoScrollView.frame.size.width);
+            if( self.selectedIndex < nextIndex )
+                [self clicNext:NO];
+            // Scroll Left
+            else if( self.selectedIndex > nextIndex )
+                [self clicPrevious:NO];
+        }
+        
+    }
+}
 
 @end

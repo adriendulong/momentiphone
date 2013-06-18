@@ -416,20 +416,31 @@ withRootViewController:(UIViewController *)rootViewController
         else
         {
 #endif
-            // Google Analytics
-            [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Photo" value:nil];
+            // Blindage
+            NSInteger i;
+            if(self.style == PhotoViewControllerStyleComplete)
+                i = imageShowCaseCell.index-1;
+            else
+                i = imageShowCaseCell.index;
             
-            // Afficher Big Photo
-            [self.bigPhotoViewController showViewAtIndex:imageShowCaseCell.index fromParent:YES];
-            //[[VersionControl sharedInstance] presentModalViewController:self.bigPhotoViewController fromRoot:self.rootViewController animated:NO];
-            self.navigationController.navigationBar.hidden = YES;
+            if([self.photos count] > i)
+            {
+                // Google Analytics
+                [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Photo" value:nil];
+                
+                // Afficher Big Photo
+                [self.bigPhotoViewController showViewAtIndex:imageShowCaseCell.index fromParent:YES];
+                //[[VersionControl sharedInstance] presentModalViewController:self.bigPhotoViewController fromRoot:self.rootViewController animated:NO];
+                self.navigationController.navigationBar.hidden = YES;
+                
+                if(!bigPhotoNavigationController)
+                    bigPhotoNavigationController = [[RotationNavigationControllerViewController alloc] initWithRootViewController:self.bigPhotoViewController];
+                
+                bigPhotoNavigationController.activeRotation = NO;
+                bigPhotoNavigationController.navigationBar.hidden = YES;
+                [[VersionControl sharedInstance] presentModalViewController:bigPhotoNavigationController fromRoot:self.rootViewController animated:NO];
+            }
             
-            if(!bigPhotoNavigationController)
-                bigPhotoNavigationController = [[RotationNavigationControllerViewController alloc] initWithRootViewController:self.bigPhotoViewController];
-            
-            bigPhotoNavigationController.activeRotation = NO;
-            bigPhotoNavigationController.navigationBar.hidden = YES;
-            [[VersionControl sharedInstance] presentModalViewController:bigPhotoNavigationController fromRoot:self.rootViewController animated:NO];
             
             //[self.rootViewController.timeLine.navController pushViewController:self.bigPhotoViewController animated:NO];
 #ifdef ACTIVE_PRINT_MODE
@@ -751,7 +762,6 @@ withRootViewController:(UIViewController *)rootViewController
                 [scrollView scrollRectToVisible:CGRectMake(0, scrollView.contentSize.height - scrollView.frame.size.height, 320, scrollView.frame.size.height) animated:YES];
                 
             }
-            
             
             // Save photo and update view
             [self.photos addObject:photo];

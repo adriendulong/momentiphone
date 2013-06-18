@@ -228,7 +228,7 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
     // -- Echelle Labels
     CGFloat contentWidth = self.view.frame.size.width;
     CGFloat contentHeight = self.view.frame.size.height;
-    CGFloat division = 5.0f;
+    //CGFloat division = 5.0f;
     /*
     CGRect todayRect = [self.tableView rectForRowAtIndexPath:[NSIndexPath indexPathForRow:rowForToday inSection:0]];
     CGFloat originToday = todayRect.origin.y - todayRect.size.height/2.0f;
