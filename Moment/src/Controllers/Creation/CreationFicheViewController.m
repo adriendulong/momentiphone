@@ -653,135 +653,147 @@
 
 - (void)clicCreate
 {
-    // Cacher clavier
-    [self.view endEditing:YES];
+    static BOOL alreadyClicked = NO;
     
-    // Update dates
-    if ( self.startDateTextField.text.length > 0 )
-        self.dateDebut = [self.dateFormatter dateFromString:self.startDateTextField.text];
-    if ( self.endDateTextField.text.length > 0 )
-        self.dateFin = [self.dateFormatter dateFromString:self.endDateTextField.text];
-    
-    if([self formIsValid])
+    // Empecher le clic successif sur le bouton
+    if(!alreadyClicked)
     {
-        //NSLog(@"Form valide");
+        alreadyClicked = YES;
         
-        //NSLog(@"date envoyée :\ndate début = %@\ndate fin = %@", _dateDebut, _dateFin);
+        // Cacher clavier
+        [self.view endEditing:YES];
         
-        NSMutableDictionary *attributes = @{
-        @"adresse":_adresseLabel.text,
-        @"titre":_nomEvent,
-        @"dateDebut":_dateDebut,
-        @"dateFin":_dateFin,
-        }.mutableCopy;
+        // Update dates
+        if ( self.startDateTextField.text.length > 0 )
+            self.dateDebut = [self.dateFormatter dateFromString:self.startDateTextField.text];
+        if ( self.endDateTextField.text.length > 0 )
+            self.dateFin = [self.dateFormatter dateFromString:self.endDateTextField.text];
         
-        if([_infoLieuTextField.text length] > 0)
-            attributes[@"infoLieu"] = _infoLieuTextField.text;
-        if([_descriptionTextView.text length] > 0)
-            attributes[@"descriptionString"] = _descriptionTextView.text;
+        if([self formIsValid])
+        {
+            
+            NSMutableDictionary *attributes = @{
+                                                @"adresse":_adresseLabel.text,
+                                                @"titre":_nomEvent,
+                                                @"dateDebut":_dateDebut,
+                                                @"dateFin":_dateFin,
+                                                }.mutableCopy;
+            
+            if([_infoLieuTextField.text length] > 0)
+                attributes[@"infoLieu"] = _infoLieuTextField.text;
+            if([_descriptionTextView.text length] > 0)
+                attributes[@"descriptionString"] = _descriptionTextView.text;
 #ifdef HASHTAG_ENABLE
-        if([_hashtagTextField.text length] > 0)
-            attributes[@"hashtag"] = _hashtagTextField.text;
+            if([_hashtagTextField.text length] > 0)
+                attributes[@"hashtag"] = _hashtagTextField.text;
 #endif
-        if(self.moment && self.moment.facebookId)
-            attributes[@"facebbokId"] = self.moment.facebookId;
-        if(modifiedCover)
-            attributes[@"dataImage"] = modifiedCover;
-        
-        // Mettre à jour Moment Local
-        [self.moment setupWithAttributes:attributes];
-        // Si nouvelle image, supprimer url pour mettre à jour
-        if(modifiedCover) {
-            self.moment.imageString = nil;
-        }
-        
-        MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-        hud.labelText = NSLocalizedString(@"MBProgressHUD_Loading", nil);
-        
-        // Edition d'un moment
-        if(isEdition)
-        {
-            [self.moment updateMomentFromLocalToServerWithEnded:^(BOOL success) {
-                
-                if(success) {
+            if(self.moment && self.moment.facebookId)
+                attributes[@"facebbokId"] = self.moment.facebookId;
+            if(modifiedCover)
+                attributes[@"dataImage"] = modifiedCover;
+            
+            // Mettre à jour Moment Local
+            [self.moment setupWithAttributes:attributes];
+            // Si nouvelle image, supprimer url pour mettre à jour
+            if(modifiedCover) {
+                self.moment.imageString = nil;
+            }
+            
+            MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+            hud.labelText = NSLocalizedString(@"MBProgressHUD_Loading", nil);
+            
+            // Edition d'un moment
+            if(isEdition)
+            {
+                [self.moment updateMomentFromLocalToServerWithEnded:^(BOOL success) {
                     
-                    [self.timeLineViewContoller.rootOngletsViewController.infoMomentViewController reloadData];
-                    [self.timeLineViewContoller reloadData];
-                    [self.timeLineViewContoller updateSelectedMoment:self.moment atRow:-1];
-                    [self.timeLineViewContoller reloadMomentPicture:self.moment];
-                    [MBProgressHUD hideHUDForView:self.view animated:YES];
-                    [self.navigationController popViewControllerAnimated:YES];
-                    
-                }
-                else{
-                    [[[UIAlertView alloc] initWithTitle:@"Erreur"
-                                         message:@"Une erreur est survenue. Veuillez réessayer ultérieurement"
-                                        delegate:nil
-                               cancelButtonTitle:@"OK"
-                               otherButtonTitles:nil]
-                    show];
-                    
-                    [MBProgressHUD hideHUDForView:self.view animated:YES];
-                }
-
-            }];
-        }
-        // Création d'un moment
-        else
-        {
-            [MomentClass createMomentWithAttributes:attributes withEnded:^(MomentClass* moment) {
-                
-                if(moment) {
-                    
-                    [self.timeLineViewContoller reloadData];
-                                        
-                    // ---- Capture d'écran ----
-                    UIWindow *keyWindow = [[UIApplication sharedApplication] keyWindow];
-                    CGRect rect = [keyWindow bounds];
-                    
-                    UIGraphicsBeginImageContextWithOptions( rect.size ,YES,0.0f);
-                    CGContextRef context = UIGraphicsGetCurrentContext();
-                    [keyWindow.layer renderInContext:context];
-                    UIImage *capturedScreen = UIGraphicsGetImageFromCurrentImageContext();
-                    UIGraphicsEndImageContext();
-                    
-                    CGRect contentRect;
-                    if ([[VersionControl sharedInstance] isRetina]) {
-                        // Retina
-                        contentRect = CGRectMake(0, 2*STATUS_BAR_HEIGHT, 2*rect.size.width, 2*(rect.size.height-STATUS_BAR_HEIGHT));
-                    } else {
-                        // Not Retina
-                        contentRect = CGRectMake(0, STATUS_BAR_HEIGHT, rect.size.width, (rect.size.height-STATUS_BAR_HEIGHT));
+                    if(success) {
+                        
+                        [self.timeLineViewContoller.rootOngletsViewController.infoMomentViewController reloadData];
+                        [self.timeLineViewContoller reloadData];
+                        [self.timeLineViewContoller updateSelectedMoment:self.moment atRow:-1];
+                        [self.timeLineViewContoller reloadMomentPicture:self.moment];
+                        [MBProgressHUD hideHUDForView:self.view animated:YES];
+                        [self.navigationController popViewControllerAnimated:YES];
+                        
                     }
-                    CGImageRef imageRef = CGImageCreateWithImageInRect([capturedScreen CGImage], contentRect );
+                    else{
+                        alreadyClicked = NO;
+                        
+                        [[[UIAlertView alloc] initWithTitle:@"Erreur"
+                                                    message:@"Une erreur est survenue. Veuillez réessayer ultérieurement"
+                                                   delegate:nil
+                                          cancelButtonTitle:@"OK"
+                                          otherButtonTitles:nil]
+                         show];
+                        
+                        [MBProgressHUD hideHUDForView:self.view animated:YES];
+                    }
                     
-                    UIImage *croppedImage = [UIImage imageWithCGImage:imageRef];
-                    CGImageRelease(imageRef);
+                }];
+            }
+            // Création d'un moment
+            else
+            {
+                [MomentClass createMomentWithAttributes:attributes withEnded:^(MomentClass* moment) {
                     
-                    //  ---- Popup ----
-                    PopUpFinCreationViewController *popup = [[PopUpFinCreationViewController alloc]
-                                                             initWithRootViewController:self withMoment:moment
-                                                             withTimeLine:self.timeLineViewContoller
-                                                             withBackground:croppedImage];
-                    [self.navigationController pushViewController:popup animated:NO];
-                     
+                    if(moment) {
+                        
+                        [self.timeLineViewContoller reloadData];
+                        
+                        // ---- Capture d'écran ----
+                        UIWindow *keyWindow = [[UIApplication sharedApplication] keyWindow];
+                        CGRect rect = [keyWindow bounds];
+                        
+                        UIGraphicsBeginImageContextWithOptions( rect.size ,YES,0.0f);
+                        CGContextRef context = UIGraphicsGetCurrentContext();
+                        [keyWindow.layer renderInContext:context];
+                        UIImage *capturedScreen = UIGraphicsGetImageFromCurrentImageContext();
+                        UIGraphicsEndImageContext();
+                        
+                        CGRect contentRect;
+                        if ([[VersionControl sharedInstance] isRetina]) {
+                            // Retina
+                            contentRect = CGRectMake(0, 2*STATUS_BAR_HEIGHT, 2*rect.size.width, 2*(rect.size.height-STATUS_BAR_HEIGHT));
+                        } else {
+                            // Not Retina
+                            contentRect = CGRectMake(0, STATUS_BAR_HEIGHT, rect.size.width, (rect.size.height-STATUS_BAR_HEIGHT));
+                        }
+                        CGImageRef imageRef = CGImageCreateWithImageInRect([capturedScreen CGImage], contentRect );
+                        
+                        UIImage *croppedImage = [UIImage imageWithCGImage:imageRef];
+                        CGImageRelease(imageRef);
+                        
+                        //  ---- Popup ----
+                        PopUpFinCreationViewController *popup = [[PopUpFinCreationViewController alloc]
+                                                                 initWithRootViewController:self withMoment:moment
+                                                                 withTimeLine:self.timeLineViewContoller
+                                                                 withBackground:croppedImage];
+                        [self.navigationController pushViewController:popup animated:NO];
+                        
+                        
+                    }else{
+                        alreadyClicked = NO;
+                        
+                        [[[UIAlertView alloc] initWithTitle:@"Erreur"
+                                                    message:@"Une erreur est survenue. Veuillez réessayer ultérieurement"
+                                                   delegate:nil
+                                          cancelButtonTitle:@"OK"
+                                          otherButtonTitles:nil]
+                         show];
+                    }
                     
-                }else{
-                    [[[UIAlertView alloc] initWithTitle:@"Erreur"
-                                                message:@"Une erreur est survenue. Veuillez réessayer ultérieurement"
-                                               delegate:nil
-                                      cancelButtonTitle:@"OK"
-                                      otherButtonTitles:nil]
-                     show];
-                }
-                
-                [MBProgressHUD hideHUDForView:self.view animated:YES];
-                
-            }];
+                    [MBProgressHUD hideHUDForView:self.view animated:YES];
+                    
+                }];
+            }
+            
+        }
+        else {
+            alreadyClicked = NO;
         }
         
-    }
-    
+    }// Fin Already CLicked
 }
 
 - (IBAction)clicChangeCover
