@@ -1082,7 +1082,7 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
 {
     if(self.timeLineStyle == TimeLineStyleComplete)
     {
-        [self setNomMomentLabelText:moment.titre];
+        [self setNomMomentLabelText:(moment.titre ?: @"")];
         
         if(moment.owner) {
             [self setNomOwnerLabelText:moment.owner.formatedUsername];

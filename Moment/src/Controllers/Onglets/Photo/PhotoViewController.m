@@ -776,7 +776,7 @@ withRootViewController:(UIViewController *)rootViewController
                 
                 // Augmenter taille de la scroll view de la big photo
                 CGSize size = self.bigPhotoViewController.photoScrollView.contentSize;
-                size.width += self.bigPhotoViewController.photoScrollView.frame.size.width;
+                size.width = [self.photos count]*self.bigPhotoViewController.photoScrollView.frame.size.width;
                 self.bigPhotoViewController.photoScrollView.contentSize = size;
                 
                 // Update Vue InfoMoment

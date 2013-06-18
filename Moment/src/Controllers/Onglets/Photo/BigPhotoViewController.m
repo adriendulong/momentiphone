@@ -429,11 +429,10 @@ withDelegate:(PhotoViewController*)photoViewController
     
     if(fromParent)
         index = [self convertIndexFromParentView:index];
-    
     if( (index < [self.photos count]) && (index >= 0) ) {
         
         Photos *photo = (Photos*)self.photos[index];
-        if( (!photo.imageOriginal) || (![loadedPhotos[index] boolValue]) ) {
+        if( (!photo.imageOriginal) || ( ([loadedPhotos count]-1 < index) || ![loadedPhotos[index] boolValue]) ) {
             [self addIndexToScrollView:index];
         }
         [self scrollToIndex:index animated:YES scroll:scroll];
@@ -460,7 +459,7 @@ withDelegate:(PhotoViewController*)photoViewController
     
 }
 
--(void)showViewAtIndex:(NSInteger)index fromParent:(BOOL)fromParent {
+- (void)showViewAtIndex:(NSInteger)index fromParent:(BOOL)fromParent {
     [self showViewAtIndex:index fromParent:fromParent scroll:YES];
 }
 
@@ -609,18 +608,27 @@ withDelegate:(PhotoViewController*)photoViewController
 - (void)addIndexToScrollView:(NSInteger)index
 {
     Photos *photo = (Photos*)self.photos[index];
+    CustomUIImageView *imageView = nil;
     
-    CustomUIImageView *imageView = onScreenPhotos[index];
-    if(!imageView) {
+    if([onScreenPhotos count]-1 > index)
+        imageView = onScreenPhotos[index];
+        
+    if(!imageView || [imageView isEqual:[NSNull null]]) {
         imageView = [[CustomUIImageView alloc] init];
         imageView.frame = CGRectMake( index*self.photoScrollView.frame.size.width,0, self.photoScrollView.frame.size.width, self.photoScrollView.frame.size.height);
         imageView.contentMode = UIViewContentModeScaleAspectFill;
         imageView.clipsToBounds = YES;
         [self.photoScrollView addSubview:imageView];
-        onScreenPhotos[index] = imageView;
+        if([onScreenPhotos count]-1 > index)
+            onScreenPhotos[index] = imageView;
+        else
+            [onScreenPhotos addObject:imageView];
     }
     
-    loadedPhotos[index] = @(YES);
+    if([loadedPhotos count]-1 > index)
+        loadedPhotos[index] = @(YES);
+    else
+        [loadedPhotos addObject:@(YES)];
     
     [imageView setImage:photo.imageOriginal imageString:photo.urlOriginal withSaveBlock:^(UIImage *image) {
         photo.imageOriginal = image;
