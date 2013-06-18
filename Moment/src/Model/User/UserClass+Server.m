@@ -107,7 +107,7 @@
     NSString *path = [NSString stringWithFormat:@"user/%d", userId];
     [[AFMomentAPIClient sharedClient] getPath:path parameters:nil encoding:AFFormURLParameterEncoding success:^(AFHTTPRequestOperation *operation, id JSON) {
         if(block && JSON) {
-            NSLog(@"JSON = %@", JSON);
+            //NSLog(@"JSON = %@", JSON);
             block([[UserClass alloc] initWithAttributesFromWeb:JSON]);
             //NSDictionary *mapped = [UserClass mappingToLocalAttributes:JSON];
             //UserClass *requested = [UserCoreData requestUserWithAttributes:mapped];
@@ -170,7 +170,7 @@
         
         [[AFMomentAPIClient sharedClient] saveHeaderResponse:operation.response];
         
-        NSLog(@"Response = %@", JSON);
+        //NSLog(@"Response = %@", JSON);
         
         if (block) {
             block(YES);
@@ -222,18 +222,18 @@
         if(block) {
             
             NSDictionary *localAttr = [UserClass mappingToLocalAttributes:attributes];
-            NSLog(@"Local Attributes : %@", localAttr);
+            //NSLog(@"Local Attributes : %@", localAttr);
             [UserCoreData updateCurrentUserWithAttributes:localAttr];
             
             UserClass *user = [UserCoreData getCurrentUser];
-            NSLog(@"user = %@", user);
+            //NSLog(@"user = %@", user);
             
             block(user);
         }
         
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-         NSLog(@"MIDDLE");
+         //NSLog(@"MIDDLE");
         HTTP_ERROR(operation, error);
         
         if(block)
@@ -291,7 +291,7 @@
                     }
                     else {
                         
-                        NSLog(@"Fail to laod user informations");
+                        //NSLog(@"Fail to laod user informations");
                         if(block) {
                             block(500);
                         }
@@ -307,7 +307,7 @@
             
         }
         else {
-            NSLog(@"STATUS AUTRE : %d", operation.response.statusCode);
+            //NSLog(@"STATUS AUTRE : %d", operation.response.statusCode);
             if (block) {
                 block(operation.response.statusCode);
             }
@@ -316,7 +316,7 @@
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         
-        NSLog(@"%@", operation.request);
+        //NSLog(@"%@", operation.request);
         
         HTTP_ERROR(operation, error);
         if (block) {
@@ -331,7 +331,7 @@
 
 + (void)logoutCurrentUserWithEnded:(void (^) (void))block
 {
-    NSLog(@"LOGOUT");
+    //NSLog(@"LOGOUT");
     
     UserCoreData *user = [UserCoreData getCurrentUserAsCoreDataWithLocalOnly:NO];
     if(user)
@@ -560,7 +560,7 @@
         
         [[AFMomentAPIClient sharedClient] getPath:path parameters:nil encoding:AFFormURLParameterEncoding success:^(AFHTTPRequestOperation *operation, id JSON) {
             
-            NSLog(@"JSON = %@", JSON);
+            //NSLog(@"JSON = %@", JSON);
             
             [UserCoreData currentUserNeedsUpdate];
             
@@ -624,7 +624,7 @@
             // Ajout des moments publics
             [moments addObjectsFromArray:publicMoments];
             
-            NSLog(@"users = \n%@\n\nmoments = \n%@\n\nnbPrivate = %d", users, moments, nbPrivateMoments);
+            //NSLog(@"users = \n%@\n\nmoments = \n%@\n\nnbPrivate = %d", users, moments, nbPrivateMoments);
             
             block(users, moments, nbPrivateMoments);
 

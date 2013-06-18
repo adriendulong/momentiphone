@@ -325,7 +325,7 @@
     }
     else
     {
-        NSLog(@"mail composer fail");
+        //NSLog(@"mail composer fail");
         
         [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"MFMailComposeViewController_Moment_Popup_Title", nil)
                                     message:NSLocalizedString(@"MFMailComposeViewController_Moment_Popup_Message", nil)
@@ -344,16 +344,16 @@
     switch (result)
     {
         case MFMailComposeResultCancelled:
-            NSLog(@"Mail cancelled");
+            //NSLog(@"Mail cancelled");
             break;
         case MFMailComposeResultSaved:
-            NSLog(@"Mail saved");
+            //NSLog(@"Mail saved");
             break;
         case MFMailComposeResultSent:
-            NSLog(@"Mail sent");
+            //NSLog(@"Mail sent");
             break;
         case MFMailComposeResultFailed:
-            NSLog(@"Mail sent failure: %@", [error localizedDescription]);
+            //NSLog(@"Mail sent failure: %@", [error localizedDescription]);
             
             [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error_Send", nil)
                                         message:[error localizedDescription]

@@ -76,9 +76,11 @@ static FacebookManager *sharedInstance = nil;
     // then open the session.
     if (allowLoginUI || session.state == FBSessionStateCreatedTokenLoaded) {
         // For debugging purposes log if cached token was found
+        /*
         if (session.state == FBSessionStateCreatedTokenLoaded) {
             NSLog(@"Cached token found.");
         }
+         */
         
         // Set the active session
         [FBSession setActiveSession:session];
@@ -124,7 +126,7 @@ static FacebookManager *sharedInstance = nil;
                 [self sessionStateChanged:session state:status error:error];
                 
                 if(error) {
-                    NSLog(@"Facebook Login Error : %@", error.localizedDescription);
+                    //NSLog(@"Facebook Login Error : %@", error.localizedDescription);
                     if(block)
                         block(NO);
                 }
@@ -198,7 +200,7 @@ static FacebookManager *sharedInstance = nil;
         // users will simply close the app or switch away, without logging out; this will
         // cause the implicit cached-token login to occur on next launch of the application
         [FBSession.activeSession closeAndClearTokenInformation];
-        NSLog(@"Logout FB");
+        //NSLog(@"Logout FB");
     }
 }
 
@@ -330,11 +332,13 @@ static FacebookManager *sharedInstance = nil;
                      }
                      else{
                          
+                         /*
                          NSLog(@"Facebook Get User Informations Error : %@", error.localizedDescription);
                          NSLog(@"Response = %@", connection.urlResponse);
                          NSLog(@"Headers = %@", connection.urlResponse.allHeaderFields);
                          NSLog(@"Request = %@", connection.urlRequest);
                          NSLog(@"Connection = %@", connection);
+                          */
                          
                          [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error_Title", nil)
                                                      message:[error localizedDescription]
@@ -457,11 +461,13 @@ static FacebookManager *sharedInstance = nil;
                      }
                      else{
                          
+                         /*
                          NSLog(@"Facebook Get User Informations Error : %@", error.localizedDescription);
                          NSLog(@"Response = %@", connection.urlResponse);
                          NSLog(@"Headers = %@", connection.urlResponse.allHeaderFields);
                          NSLog(@"Request = %@", connection.urlRequest);
                          NSLog(@"Connection = %@", connection);
+                          */
                          
                          [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error_Title", nil)
                                                      message:[error localizedDescription]
@@ -574,11 +580,13 @@ static FacebookManager *sharedInstance = nil;
                                   }
                               }
                               else {
+                                  /*
                                   NSLog(@"Facebook Get Friends Error : %@", error.localizedDescription);
                                   NSLog(@"Response = %@", connection.urlResponse);
                                   NSLog(@"Headers = %@", connection.urlResponse.allHeaderFields);
                                   NSLog(@"Request = %@", connection.urlRequest);
                                   NSLog(@"Connection = %@", connection);
+                                   */
                                   if(block) block(nil);
                               }
                               
@@ -630,8 +638,8 @@ static FacebookManager *sharedInstance = nil;
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         
         //[MessageServeur showMessage:operation withError:error];
-        NSLog(@"url = %@", operation.request.URL);
-        NSLog(@"Operation %s fail : %@", __PRETTY_FUNCTION__, [error localizedDescription] );
+        //NSLog(@"url = %@", operation.request.URL);
+        //NSLog(@"Operation %s fail : %@", __PRETTY_FUNCTION__, [error localizedDescription] );
 
         
     }];
@@ -725,11 +733,13 @@ static FacebookManager *sharedInstance = nil;
                                            }
                                        }
                                        else{
+                                           /*
                                            NSLog(@"Facebook Load Events Error : %@", error.localizedDescription);
                                            NSLog(@"Response = %@", connection.urlResponse);
                                            NSLog(@"Headers = %@", connection.urlResponse.allHeaderFields);
                                            NSLog(@"Request = %@", connection.urlRequest);
                                            NSLog(@"Connection = %@", connection);
+                                            */
                                            
                                            /*
                                             [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error", nil)
@@ -804,7 +814,7 @@ static FacebookManager *sharedInstance = nil;
         [connection addRequest:request completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
             if(block) {
                 if(error) {
-                    NSLog(@"GET RSVP FB ERROR : %@", error.localizedDescription);
+                    //NSLog(@"GET RSVP FB ERROR : %@", error.localizedDescription);
                     block(-1);
                 }
                 else {
@@ -893,7 +903,7 @@ static FacebookManager *sharedInstance = nil;
                         if(block) {
                             
                             if(error) {
-                                NSLog(@"RSVP FB ERROR : %@", error.localizedDescription);
+                                //NSLog(@"RSVP FB ERROR : %@", error.localizedDescription);
                                 [TestFlight passCheckpoint:[NSString stringWithFormat:@"FAIL TO CHANGE FB RSVP : Moment %@ - RSVP : %@", moment.facebookId, path]];
                             }
                             

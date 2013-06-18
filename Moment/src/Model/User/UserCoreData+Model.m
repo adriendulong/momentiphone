@@ -124,7 +124,7 @@ static NSTimeInterval lastUpdateTime = 0;
     UserCoreData *userCoreData = [UserCoreData requestUserAsCoreDataWithUser:user];
     [userCoreData setupWithUser:user];
     [[Config sharedInstance] saveContext];
-    NSLog(@"USERCOREDATA : %@ - %@ - %@ - %@ - %@ - %@", userCoreData.userId, userCoreData.prenom, userCoreData.nom, userCoreData.facebookId, userCoreData.nb_follows, userCoreData.privacy);
+    //NSLog(@"USERCOREDATA : %@ - %@ - %@ - %@ - %@ - %@", userCoreData.userId, userCoreData.prenom, userCoreData.nom, userCoreData.facebookId, userCoreData.nb_follows, userCoreData.privacy);
 }
 
 #pragma mark - Current User

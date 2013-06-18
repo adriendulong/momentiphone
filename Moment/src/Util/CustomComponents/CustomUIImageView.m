@@ -86,9 +86,9 @@
             }
                                  failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error) {
                                      [varInstance.activityIndicatorView stopAnimating];
-                                     NSLog(@"CustomUIimage Fail to load image : %@", imageString);
-                                     NSLog(@"error : %@", error.localizedDescription);
-                                     NSLog(@"Response : %d", response.statusCode);
+                                     //NSLog(@"CustomUIimage Fail to load image : %@", imageString);
+                                     //NSLog(@"error : %@", error.localizedDescription);
+                                     //NSLog(@"Response : %d", response.statusCode);
             }];
             
             /*

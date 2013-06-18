@@ -128,7 +128,7 @@
                                 block([self getAddressBookList:addressBook]);
                         }
                         else {
-                            NSLog(@"Error acces addressBook : %@", error);
+                            //NSLog(@"Error acces addressBook : %@", error);
                             if(block)
                                 block(nil);
                         }
@@ -147,7 +147,7 @@
             default:
                 // The user has previously denied access
                 // Send an alert telling user to change privacy setting in settings app
-                NSLog(@"Acces to addressBook not authorized");
+                //NSLog(@"Acces to addressBook not authorized");
                 
                 [[[UIAlertView alloc] initWithTitle:@"Authorisation manquante"
                                             message:@"Veuillez changer les paramètres de confidentialité de l'iPhone afin d'accéder aux contacts"

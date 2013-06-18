@@ -81,8 +81,8 @@
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         
-        NSLog(@"Error : %@", error.localizedDescription);
-        NSLog(@"Message : %@", operation.responseString);
+        //NSLog(@"Error : %@", error.localizedDescription);
+        //NSLog(@"Message : %@", operation.responseString);
         
         if(block)
             block(nil);
@@ -215,8 +215,8 @@
             
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             
-            NSLog(@"Error = %@", error.localizedDescription);
-            NSLog(@"Message = %@", operation.responseString);
+            //NSLog(@"Error = %@", error.localizedDescription);
+            //NSLog(@"Message = %@", operation.responseString);
             
             block(nil);
         }];
@@ -375,8 +375,8 @@
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         
-        NSLog(@"Error = %@", error.localizedDescription);
-        NSLog(@"Message = %@", operation.responseString);
+        //NSLog(@"Error = %@", error.localizedDescription);
+        //NSLog(@"Message = %@", operation.responseString);
         
         if(block)
             block(nil);
@@ -399,8 +399,8 @@
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         
-        NSLog(@"Error = %@", error.localizedDescription);
-        NSLog(@"Message = %@", operation.responseString);
+        //NSLog(@"Error = %@", error.localizedDescription);
+        //NSLog(@"Message = %@", operation.responseString);
         
         if(block)
             block(NO);
@@ -450,8 +450,8 @@
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         
-        NSLog(@"Error = %@", error.localizedDescription);
-        NSLog(@"Message = %@", operation.responseString);
+        //NSLog(@"Error = %@", error.localizedDescription);
+        //NSLog(@"Message = %@", operation.responseString);
         
         if(block)
             block(nil);
@@ -537,19 +537,21 @@
     
     [[AFMomentAPIClient sharedClient] getPath:path parameters:nil encoding:AFFormURLParameterEncoding success:^(AFHTTPRequestOperation *operation, id JSON) {
                 
-        NSLog(@"Change state : %@", JSON);
+        //NSLog(@"Change state : %@", JSON);
         
         // Update RSVP on facebook
         if(self.facebookId)
         {
             [[FacebookManager sharedInstance] updateRSVP:state moment:self withEnded:^(BOOL success) {
                 
+                /*
                 if(success) {
                     NSLog(@"Change Facebook RSVP Success");
                 }
                 else {
                     NSLog(@"Change Facebook RSVP Fail");
                 }
+                 */
                 
             }];
         }
@@ -576,7 +578,7 @@
     
     [[AFMomentAPIClient sharedClient] getPath:path parameters:nil encoding:AFFormURLParameterEncoding success:^(AFHTTPRequestOperation *operation, id JSON) {
                 
-        NSLog(@"Admin : %@", JSON);
+        //NSLog(@"Admin : %@", JSON);
         
         if(block) {
             block(YES);
@@ -634,7 +636,7 @@
     
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id JSON) {
         
-        NSLog(@"Moment Modified = %@", JSON);
+        //NSLog(@"Moment Modified = %@", JSON);
         //NSLog(@"Local Moment = %@", self);
         // Save Headers
         [[AFMomentAPIClient sharedClient] saveHeaderResponse:operation.response];
@@ -654,8 +656,8 @@
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                 
-        NSLog(@"Error : %@", error.localizedDescription);
-        NSLog(@"Message : %@", operation.responseString);
+        //NSLog(@"Error : %@", error.localizedDescription);
+        //NSLog(@"Message : %@", operation.responseString);
                 
         if(block)
             block(NO);
@@ -763,8 +765,8 @@
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         
-        NSLog(@"Error : %@", error.localizedDescription);
-        NSLog(@"Message : %@", operation.responseString);
+        //NSLog(@"Error : %@", error.localizedDescription);
+        //NSLog(@"Message : %@", operation.responseString);
         
         if(endBlock)
             endBlock(nil);
@@ -857,7 +859,7 @@
 {
     NSString *path = [NSString stringWithFormat:@"delmoment/%@", self.momentId];
     
-    NSLog(@"delete moment path = %@", path);
+    //NSLog(@"delete moment path = %@", path);
     
     [[AFMomentAPIClient sharedClient] getPath:path parameters:nil encoding:AFFormURLParameterEncoding success:^(AFHTTPRequestOperation *operation, id JSON) {
         

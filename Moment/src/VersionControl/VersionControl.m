@@ -71,7 +71,7 @@ static VersionControl *sharedInstance = nil;
             break;
             
         default:
-            NSLog(@"INVALID ALIGNMENT MODE - VERSION CONTROL");
+            //NSLog(@"INVALID ALIGNMENT MODE - VERSION CONTROL");
             return -1;
             break;
     }

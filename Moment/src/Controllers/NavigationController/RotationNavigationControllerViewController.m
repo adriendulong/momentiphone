@@ -51,7 +51,7 @@
     UIDeviceOrientation orientation = [[UIDevice currentDevice] orientation];
     
     if(  (orientation != UIDeviceOrientationPortrait) && ([viewController shouldAutorotateToInterfaceOrientation:orientation]) ) {
-        NSLog(@"Change orientation");
+        //NSLog(@"Change orientation");
         [[UIApplication sharedApplication] setStatusBarOrientation:orientation animated:NO];
         
         // Correctly autoOrient the given view controller
@@ -101,12 +101,12 @@
 
 - (NSUInteger)supportedInterfaceOrientations
 {
-    TFLog((@"%s [Line %d] supported interface orientation" ), __PRETTY_FUNCTION__, __LINE__);
+    //TFLog((@"%s [Line %d] supported interface orientation" ), __PRETTY_FUNCTION__, __LINE__);
     if(self.activeRotation && 0) {
-        NSLog(@"Rotation ON - 1");
+        //NSLog(@"Rotation ON - 1");
         return UIInterfaceOrientationMaskAllButUpsideDown;
     }
-    NSLog(@"Rotation OFF - 1");
+    //NSLog(@"Rotation OFF - 1");
     return UIInterfaceOrientationMaskPortrait;
 }
 

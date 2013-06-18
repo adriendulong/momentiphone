@@ -136,7 +136,7 @@
 		NSDictionary* dictionary = [launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
 		if (dictionary != nil)
 		{
-			NSLog(@"Launched from push notification: %@", dictionary);
+			//NSLog(@"Launched from push notification: %@", dictionary);
             [[PushNotificationManager sharedInstance] receivePushNotification:dictionary updateUI:NO];
         }
 	}
@@ -190,7 +190,7 @@
     // Optional: set Google Analytics dispatch interval to e.g. 20 seconds.
     //[GAI sharedInstance].dispatchInterval = 20; // Default = 2 min
     // Optional: set debug to YES for extra debugging information.
-    //[GAI sharedInstance].debug = YES;
+    [GAI sharedInstance].debug = NO;
     // Create tracker instance.
     self.tracker = [[GAI sharedInstance] trackerWithTrackingId:@"UA-36147731-1"];
     // Si on reste plus d'1 min inactif, les évenements sont envoyés sur une nouvelle session
@@ -303,7 +303,7 @@
 
 - (void)application:(UIApplication*)application didReceiveRemoteNotification:(NSDictionary*)userInfo
 {
-	NSLog(@"Received notification: %@", userInfo);
+	//NSLog(@"Received notification: %@", userInfo);
     [[PushNotificationManager sharedInstance] receivePushNotification:userInfo updateUI:YES];
 }
 

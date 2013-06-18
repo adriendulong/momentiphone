@@ -178,7 +178,7 @@
     }
     else
     {
-        NSLog(@"mail composer fail");
+        //NSLog(@"mail composer fail");
 
         [[[UIAlertView alloc] initWithTitle:@"Envoi impossible"
                                     message:@"Votre appareil ne supporte pas l'envoi d'email"
@@ -232,16 +232,16 @@
     switch (result)
     {
         case MFMailComposeResultCancelled:
-            NSLog(@"Mail cancelled");
+            //NSLog(@"Mail cancelled");
             break;
         case MFMailComposeResultSaved:
-            NSLog(@"Mail saved");
+            //NSLog(@"Mail saved");
             break;
         case MFMailComposeResultSent:
-            NSLog(@"Mail sent");
+            //NSLog(@"Mail sent");
             break;
         case MFMailComposeResultFailed:
-            NSLog(@"Mail sent failure: %@", [error localizedDescription]);
+            //NSLog(@"Mail sent failure: %@", [error localizedDescription]);
             
             [[[UIAlertView alloc] initWithTitle:@"Erreur d'envoi"
                                         message:[error localizedDescription]

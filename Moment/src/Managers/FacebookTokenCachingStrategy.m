@@ -33,16 +33,20 @@ static NSString* kFBTokenInfoStorageFile = @"FBTokenInfo.plist";
 }
 
 - (void) writeData:(NSDictionary *) data {
-    NSLog(@"File = %@ and Data = %@", self.tokenFilePath, data);
+    //NSLog(@"File = %@ and Data = %@", self.tokenFilePath, data);
+    /*
     BOOL success = [data writeToFile:self.tokenFilePath atomically:YES];
     if (!success) {
         NSLog(@"Error writing to file");
     }
+    */
+     
+    [data writeToFile:self.tokenFilePath atomically:YES];
 }
 
 - (NSDictionary *) readData {
     NSDictionary *data = [[NSDictionary alloc] initWithContentsOfFile:self.tokenFilePath];
-    NSLog(@"File = %@ and data = %@", self.tokenFilePath, data);
+    //NSLog(@"File = %@ and data = %@", self.tokenFilePath, data);
     return data;
 }
 
