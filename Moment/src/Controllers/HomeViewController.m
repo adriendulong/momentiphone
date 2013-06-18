@@ -32,10 +32,7 @@
 #import "GAI.h"
 #import "FacebookManager.h"
 
-@interface HomeViewController () {
-    @private
-    BOOL firstViewDidAppear;
-}
+@interface HomeViewController ()
 @end
 
 static UIImageView *splashScreen = nil;
@@ -67,7 +64,6 @@ static UIImageView *splashScreen = nil;
     self = [super initWithNibName:@"HomeViewController" bundle:nil];
     if(self) {
         _isShowFormLogin = NO;
-        firstViewDidAppear = YES;
     }
     return self;
 }
@@ -93,25 +89,6 @@ static UIImageView *splashScreen = nil;
 }
 
 #pragma mark - View cycle life
-
-- (void)viewWillAppear:(BOOL)animated
-{
-    [super viewWillAppear:animated];
-    /*
-    if(!firstViewDidAppear) {
-        if([VersionControl sharedInstance].screenHeight == 568) {
-            
-            [UIApplication sharedApplication].keyWindow.frame=CGRectMake(0, STATUS_BAR_HEIGHT, 320, [VersionControl sharedInstance].screenHeight - STATUS_BAR_HEIGHT );
-            //self.view.bounds = CGRectMake(0, 0, 320, [VersionControl sharedInstance].screenHeight);
-        }
-        else {
-
-            [UIApplication sharedApplication].keyWindow.frame=CGRectMake(0, 0, 320, [VersionControl sharedInstance].screenHeight);
-            //self.view.bounds = CGRectMake(0, STATUS_BAR_HEIGHT, 320, [VersionControl sharedInstance].screenHeight);
-        }
-    }
-     */
-}
 
 - (void)viewDidAppear:(BOOL)animated
 {
@@ -145,12 +122,6 @@ static UIImageView *splashScreen = nil;
         } completion:^(BOOL finished) {
             [HomeViewController hideSplashScreen];
         }];
-        if(firstViewDidAppear && [[NSUserDefaults standardUserDefaults] boolForKey:@"hasRunOnce"]) {
-            [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationNone];
-            [UIApplication sharedApplication].keyWindow.frame=CGRectMake(0, STATUS_BAR_HEIGHT, 320, [VersionControl sharedInstance].screenHeight - STATUS_BAR_HEIGHT);
-            //self.view.bounds = CGRectMake(0, -STATUS_BAR_HEIGHT, 320, [VersionControl sharedInstance].screenHeight);
-            firstViewDidAppear = NO;
-        }
     }
    
 }
@@ -226,10 +197,8 @@ static UIImageView *splashScreen = nil;
     }
     splashScreen = [[UIImageView alloc] initWithImage:[UIImage imageNamed:imageName]];
     CGRect frame = splashScreen.frame;
-    frame.origin = CGPointZero;
+    frame.origin = CGPointMake(0, -STATUS_BAR_HEIGHT);
     splashScreen.frame = frame;
-    [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationNone];
-    [UIApplication sharedApplication].keyWindow.frame=CGRectMake(0, 0, 320, [VersionControl sharedInstance].screenHeight);
     [self.view addSubview:splashScreen];
 }
 
@@ -330,10 +299,12 @@ static UIImageView *splashScreen = nil;
         /* ------------------- PUSH ------------------- */
         [MBProgressHUD hideHUDForView:self.view animated:YES];
         // Afficher Status bar
+        /*
         if([[UIApplication sharedApplication] isStatusBarHidden]) {
             [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationNone];
             [UIApplication sharedApplication].keyWindow.frame=CGRectMake(0, STATUS_BAR_HEIGHT, 320, [VersionControl sharedInstance].screenHeight - STATUS_BAR_HEIGHT);
         }
+         */
         // Push
         [self.navigationController pushViewController:menuController animated:animated];
         

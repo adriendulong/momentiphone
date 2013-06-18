@@ -52,6 +52,11 @@
             [self.tableView reloadData];
             [self.timeLine reloadData];
         }
+        else {
+            [[MTStatusBarOverlay sharedInstance]
+             postImmediateErrorMessage:NSLocalizedString(@"StatusBarOverlay_LoadingFailure", nil)
+             duration:1 animated:YES];
+        }
         
         [MBProgressHUD hideHUDForView:self.view animated:YES];
     }];

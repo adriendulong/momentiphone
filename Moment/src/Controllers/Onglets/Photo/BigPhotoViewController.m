@@ -336,10 +336,7 @@ withDelegate:(PhotoViewController*)photoViewController
 #pragma mark - ScrollView Delegate
 
 - (void)updateBackground
-{
-    // Redimentionner vue
-    [UIApplication sharedApplication].keyWindow.frame=CGRectMake(0, 0, 320, [VersionControl sharedInstance].screenHeight);
-    
+{    
     // Capture d'écran
     UIWindow *keyWindow = [[UIApplication sharedApplication] keyWindow];
     CGRect rect = [keyWindow frame];

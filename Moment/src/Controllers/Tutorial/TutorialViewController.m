@@ -1059,7 +1059,6 @@
             
             //[self showHomeViewAnimated:YES];
             [[UIApplication sharedApplication] setStatusBarHidden:NO];
-            [UIApplication sharedApplication].keyWindow.frame=CGRectMake(0, STATUS_BAR_HEIGHT, 320, [VersionControl sharedInstance].screenHeight - STATUS_BAR_HEIGHT);
             [self dismissModalViewControllerAnimated:YES];
         }
     }
