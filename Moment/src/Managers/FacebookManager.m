@@ -993,7 +993,8 @@ static FacebookManager *sharedInstance = nil;
                                  @"picture":picture,
                                  @"name":moment.titre,
                                  @"type":@"photo",
-                                 @"caption":@"L'application Moment vous permet d'organisez, vivre et revivre tout vos évènements entre proche."};
+                                 @"caption":@"L'application Moment vous permet d'organisez, vivre et revivre tout vos évènements entre proche.",
+                                 @"link":photo.uniqueURL};
         
         [self postMessageOnEventWall:moment parameters:params withEnded:block];
     }

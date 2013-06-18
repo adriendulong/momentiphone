@@ -8,6 +8,9 @@
 
 #import "FacebookTokenCachingStrategy.h"
 
+// Local cache - unique file info
+static NSString* kFBTokenInfoStorageFile = @"FBTokenInfo.plist";
+
 @implementation FacebookTokenCachingStrategy
 
 - (id)init
