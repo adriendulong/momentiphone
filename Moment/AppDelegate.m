@@ -71,11 +71,15 @@
     /* -------------------------------------------- */
     //configure iRate
     iRate *config = [iRate sharedInstance];
+    [config setAppStoreCountry:@"FR"];
+#warning A enlever pour la prod !!
+    [config setAppStoreID:361186462];
+    [config setApplicationBundleID:@"com.c4mprod.beezik"];
     //config.daysUntilPrompt = 5; //5
     //config.usesUntilPrompt = 15; //15
 #ifdef DEBUG
     config.verboseLogging = YES;
-    //config.previewMode = YES;
+    config.previewMode = YES;
 #else
     config.verboseLogging = NO;
 #endif
