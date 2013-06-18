@@ -735,52 +735,69 @@ static CGFloat DescriptionBoxHeightMax = 100;
 #pragma CustomLabel
         // ---- Attributed string for CustomLabel ----
         int taille = [self.moment.adresse length];
-        if( [[VersionControl sharedInstance] supportIOS6] )
+        if(taille > 0)
         {
-            NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:self.moment.adresse];
-            
-            // Couleur
-            [attributedString setTextColor:[[Config sharedInstance] textColor]];
-            
-            // 1er Lettre
-            [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:InfoMomentFontSizeMedium] range:NSMakeRange(0, 1)];
-            
-            // Autres lettres
-            [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:InfoMomentFontSizeLittle] range:NSMakeRange(1, taille-1) ];
-            
-            [self.adresseLabel setAttributedText:attributedString];
+            if( [[VersionControl sharedInstance] supportIOS6] )
+            {
+                self.adresseLabel.hidden = NO;
+                
+                NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:self.moment.adresse];
+                
+                // Couleur
+                [attributedString setTextColor:[[Config sharedInstance] textColor]];
+                
+                // 1er Lettre
+                [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:InfoMomentFontSizeMedium] range:NSMakeRange(0, 1)];
+                
+                if(taille > 1) {
+                    // Autres lettres
+                    [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:InfoMomentFontSizeLittle] range:NSMakeRange(1, taille-1) ];
+                }
+                
+                [self.adresseLabel setAttributedText:attributedString];
+            }
+            else
+            {                
+                if(!self.ttAdresseLabel)
+                    self.ttAdresseLabel = [[TTTAttributedLabel alloc] initWithFrame:self.adresseLabel.frame];
+                
+                self.ttAdresseLabel.hidden = NO;
+                
+                self.ttAdresseLabel.backgroundColor = [UIColor clearColor];
+                [self.ttAdresseLabel setText:self.moment.adresse afterInheritingLabelAttributesAndConfiguringWithBlock:^NSMutableAttributedString *(NSMutableAttributedString *mutableAttributedString) {
+                    
+                    Config *cf = [Config sharedInstance];
+                    
+                    // Couleur
+                    [cf updateTTTAttributedString:mutableAttributedString withColor:cf.textColor onRange:NSMakeRange(0, taille)];
+                    
+                    // 1er Lettre
+                    [cf updateTTTAttributedString:mutableAttributedString withFontSize:InfoMomentFontSizeMedium onRange:NSMakeRange(0, 1) ];
+                    
+                    if(taille > 1) {
+                        // Autres lettres
+                        [cf updateTTTAttributedString:mutableAttributedString withFontSize:InfoMomentFontSizeLittle onRange:NSMakeRange(1, taille-1) ];
+                    }
+                    
+                    return mutableAttributedString;
+                }];
+                
+                [self.ttAdresseLabel removeFromSuperview];
+                [self.adresseLabel.superview addSubview:self.ttAdresseLabel];
+                self.adresseLabel.hidden = YES;
+                
+                /*
+                 self.adresseLabel.text = adresse;
+                 self.adresseLabel.textAlignment = NSTextAlignmentCenter;
+                 self.adresseLabel.textColor = [[Config sharedInstance] textColor];
+                 self.adresseLabel.font = [[Config sharedInstance] defaultFontWithSize:InfoMomentFontSizeMedium];
+                 */
+            }
         }
         else
         {
-            if(!self.ttAdresseLabel)
-                self.ttAdresseLabel = [[TTTAttributedLabel alloc] initWithFrame:self.adresseLabel.frame];
-            self.ttAdresseLabel.backgroundColor = [UIColor clearColor];
-            [self.ttAdresseLabel setText:self.moment.adresse afterInheritingLabelAttributesAndConfiguringWithBlock:^NSMutableAttributedString *(NSMutableAttributedString *mutableAttributedString) {
-                
-                Config *cf = [Config sharedInstance];
-                
-                // Couleur
-                [cf updateTTTAttributedString:mutableAttributedString withColor:cf.textColor onRange:NSMakeRange(0, taille)];
-                
-                // 1er Lettre
-                [cf updateTTTAttributedString:mutableAttributedString withFontSize:InfoMomentFontSizeMedium onRange:NSMakeRange(0, 1) ];
-                
-                // Autres lettres
-                [cf updateTTTAttributedString:mutableAttributedString withFontSize:InfoMomentFontSizeLittle onRange:NSMakeRange(1, taille-1) ];
-                
-                return mutableAttributedString;
-            }];
-            
-            [self.ttAdresseLabel removeFromSuperview];
-            [self.adresseLabel.superview addSubview:self.ttAdresseLabel];
             self.adresseLabel.hidden = YES;
-            
-            /*
-             self.adresseLabel.text = adresse;
-             self.adresseLabel.textAlignment = NSTextAlignmentCenter;
-             self.adresseLabel.textColor = [[Config sharedInstance] textColor];
-             self.adresseLabel.font = [[Config sharedInstance] defaultFontWithSize:InfoMomentFontSizeMedium];
-             */
+            self.ttAdresseLabel.hidden = YES;
         }
         
         
