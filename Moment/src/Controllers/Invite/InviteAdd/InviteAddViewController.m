@@ -712,7 +712,7 @@ enum InviteAddFontSize {
                                                    parameters:params
                                                       handler:^(FBWebDialogResult result, NSURL *resultURL, NSError *error) {
                                                           
-                                                          NSLog(@"HANDLER CALLED");
+                                                          //NSLog(@"HANDLER CALLED");
                                                           if (error) {
                                                               
                                                               [[[UIAlertView alloc]

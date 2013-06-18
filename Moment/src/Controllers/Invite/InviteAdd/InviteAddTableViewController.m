@@ -259,7 +259,7 @@
         }
         // Sinon, si on selectionne le user si il n'est pas déjà selectionné
         else if(![person[@"isSelected"] boolValue]) {
-            NSLog(@"Select Cell %d", indexPath.row);
+            //NSLog(@"Select Cell %d", indexPath.row);
             person[@"isSelected"] = @(YES);
             [self.delegate addNewSelectedFriend:person[@"user"] notif:notifSelectedFriends];
         }
@@ -273,7 +273,7 @@
         NSMutableDictionary *person = self.visibleFriends[indexPath.row];
         
         if([person[@"isSelected"] boolValue]) {
-            NSLog(@"deselect Cell %d", indexPath.row);
+            //NSLog(@"deselect Cell %d", indexPath.row);
             person[@"isSelected"] = @(NO);
             [self.delegate removeSelectedFriend:person[@"user"]];
         }
