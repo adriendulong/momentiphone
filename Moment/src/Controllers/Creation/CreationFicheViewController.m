@@ -735,6 +735,9 @@
                     
                     [self.timeLineViewContoller reloadData];
                     
+                    // Redimentionner vue
+                    [UIApplication sharedApplication].keyWindow.frame=CGRectMake(0, 0, 320, [VersionControl sharedInstance].screenHeight);
+                    
                     // ---- Capture d'écran ----
                     UIWindow *keyWindow = [[UIApplication sharedApplication] keyWindow];
                     CGRect rect = [keyWindow bounds];
@@ -757,7 +760,6 @@
                     
                     UIImage *croppedImage = [UIImage imageWithCGImage:imageRef];
                     CGImageRelease(imageRef);
-                    
                     
                     //  ---- Popup ----
                     PopUpFinCreationViewController *popup = [[PopUpFinCreationViewController alloc]

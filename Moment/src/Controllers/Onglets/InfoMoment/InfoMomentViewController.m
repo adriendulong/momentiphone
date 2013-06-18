@@ -1732,6 +1732,9 @@ static CGFloat DescriptionBoxHeightMax = 100;
     // Paramètres
     NSString *initialText = [NSString stringWithFormat:NSLocalizedString(@"Retrive_Photos_Event_Moment_Mail_Facebook", nil), self.moment.titre];
     
+    // Redimentionner vue
+    [UIApplication sharedApplication].keyWindow.frame=CGRectMake(0, 0, 320, [VersionControl sharedInstance].screenHeight);
+    
     // iOS 6 -> Social Framework
     if ( (NSClassFromString(@"SLComposeViewController") != nil) && [SLComposeViewController isAvailableForServiceType:SLServiceTypeFacebook])
     {
@@ -1786,6 +1789,9 @@ static CGFloat DescriptionBoxHeightMax = 100;
     if(self.moment.hashtag && (self.moment.hashtag.length <= (nbMaxCarac - initialText.length)))
         [initialText appendFormat:@" #%@", self.moment.hashtag];
 #endif
+    
+    // Redimentionner vue
+    [UIApplication sharedApplication].keyWindow.frame=CGRectMake(0, 0, 320, [VersionControl sharedInstance].screenHeight);
     
     // iOS 6 -> Social Framework
     if( (NSClassFromString(@"SLComposeViewController") != nil) && [SLComposeViewController isAvailableForServiceType:SLServiceTypeTwitter])
