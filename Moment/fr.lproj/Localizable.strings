@@ -347,6 +347,11 @@
 "PopUpFunCreationViewController_Privacy_Private_Title" = "Secret :";
 "PopUpFunCreationViewController_Privacy_Private_Details" = "Seuls les invités peuvent voir ce moment";
 
+/* -------------------- Sharing Manager ------------------ */
+"Retrive_Photos_Event_Moment_Mail_Facebook" = "Retrouvez toutes les photos de l'évènement %@ sur l'application Moment !";
+"Retrive_Photos_Event_Moment_Twitter" = "Retrouvez toutes les photos de l'évènement %@ sur @appmoment !";
+"Sharing_Photo" = "Photo prise lors de l'évènement %@ !";
+
 /* -------------------- Facebook Manager ------------------ */
 // Erreur AlertView
 "FacebookManager_ErrorLoginFailed_Title" = "Facebook";

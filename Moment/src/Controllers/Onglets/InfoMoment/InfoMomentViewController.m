@@ -1654,7 +1654,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
         // Email Subject
         NSString *emailTitle = @"Moment";
         // Email Content
-        NSMutableString *messageBody = [NSMutableString stringWithFormat:@"Bon Moment @%@ !", self.moment.titre];
+        NSMutableString *messageBody = [NSMutableString stringWithFormat:NSLocalizedString(@"Retrive_Photos_Event_Moment_Mail_Facebook", nil), self.moment.titre];
         
 #ifdef HASHTAG_ENABLE
         if(self.moment.hashtag)
@@ -1713,7 +1713,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
     [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Partager Facebook" value:nil];
     
     // Paramètres
-    NSString *initialText = [NSString stringWithFormat:@"Retrouvez toutes les photos de l'évènement %@ sur l'application Moment !", self.moment.titre];
+    NSString *initialText = [NSString stringWithFormat:NSLocalizedString(@"Retrive_Photos_Event_Moment_Mail_Facebook", nil), self.moment.titre];
     
     // iOS 6 -> Social Framework
     if ( (NSClassFromString(@"SLComposeViewController") != nil) && [SLComposeViewController isAvailableForServiceType:SLServiceTypeFacebook])
@@ -1763,7 +1763,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
     // Google Analytics
     [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Partager Twitter" value:nil];
     
-    NSMutableString *initialText = [NSMutableString stringWithFormat:@"Retrouvez toutes les photos de l'évènement %@ ici : %@", self.moment.titre, self.moment.uniqueURL];
+    NSMutableString *initialText = [NSMutableString stringWithFormat:NSLocalizedString(@"Retrive_Photos_Event_Moment_Twitter", nil), self.moment.titre];
     
 #ifdef HASHTAG_ENABLE
     if(self.moment.hashtag && (self.moment.hashtag.length <= (nbMaxCarac - initialText.length)))
@@ -1777,7 +1777,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
                                                composeViewControllerForServiceType:SLServiceTypeTwitter];
         [tweetSheet setInitialText:initialText];
         //if(self.moment.uniqueURL)
-            //[tweetSheet addURL:[NSURL URLWithString:self.moment.uniqueURL]];
+            [tweetSheet addURL:[NSURL URLWithString:self.moment.uniqueURL]];
         
         //[self presentViewController:tweetSheet animated:YES completion:nil];
         [[VersionControl sharedInstance] presentModalViewController:tweetSheet fromRoot:self animated:YES];
@@ -1789,7 +1789,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
         self.modalPresentationStyle = UIModalPresentationCurrentContext;
         [twitterViewComposer setInitialText:initialText];
         //if(self.moment.uniqueURL)
-            //[twitterViewComposer addURL:[NSURL URLWithString:self.moment.uniqueURL]];
+            [twitterViewComposer addURL:[NSURL URLWithString:self.moment.uniqueURL]];
         
         //[self presentViewController:twitterViewComposer animated:YES completion:nil];
         [[VersionControl sharedInstance] presentModalViewController:twitterViewComposer fromRoot:self animated:YES];
