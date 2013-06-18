@@ -553,6 +553,8 @@
 		5BB3762A16DA8800006729DD /* UIImage+RoundedCorner.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BB3762916DA8800006729DD /* UIImage+RoundedCorner.m */; };
 		5BB3762D16DA8879006729DD /* UIImage+Alpha.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BB3762C16DA8879006729DD /* UIImage+Alpha.m */; };
 		5BB59E6517625F0F0023191E /* FacebookTokenCachingStrategy.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BB59E6417625F0F0023191E /* FacebookTokenCachingStrategy.m */; };
+		5BB77CA4177120B200ED859B /* icon-57.png in Resources */ = {isa = PBXBuildFile; fileRef = 5BB77CA2177120B100ED859B /* icon-57.png */; };
+		5BB77CA5177120B200ED859B /* icon-114.png in Resources */ = {isa = PBXBuildFile; fileRef = 5BB77CA3177120B100ED859B /* icon-114.png */; };
 		5BB7DE3017204D5000C46E10 /* btn_volet_enfoncé.png in Resources */ = {isa = PBXBuildFile; fileRef = 5BB7DE2E17204D5000C46E10 /* btn_volet_enfoncé.png */; };
 		5BB7DE3117204D5000C46E10 /* btn_volet_enfoncé@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5BB7DE2F17204D5000C46E10 /* btn_volet_enfoncé@2x.png */; };
 		5BB7E417170A7A9A002E6C6E /* CustomTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BB7E416170A7A9A002E6C6E /* CustomTextView.m */; };
@@ -1666,6 +1668,8 @@
 		5BB3762C16DA8879006729DD /* UIImage+Alpha.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Alpha.m"; sourceTree = "<group>"; };
 		5BB59E6317625F0F0023191E /* FacebookTokenCachingStrategy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FacebookTokenCachingStrategy.h; sourceTree = "<group>"; };
 		5BB59E6417625F0F0023191E /* FacebookTokenCachingStrategy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FacebookTokenCachingStrategy.m; sourceTree = "<group>"; };
+		5BB77CA2177120B100ED859B /* icon-57.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon-57.png"; sourceTree = "<group>"; };
+		5BB77CA3177120B100ED859B /* icon-114.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon-114.png"; sourceTree = "<group>"; };
 		5BB7DE2E17204D5000C46E10 /* btn_volet_enfoncé.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "btn_volet_enfoncé.png"; sourceTree = "<group>"; };
 		5BB7DE2F17204D5000C46E10 /* btn_volet_enfoncé@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "btn_volet_enfoncé@2x.png"; sourceTree = "<group>"; };
 		5BB7E415170A7A9A002E6C6E /* CustomTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomTextView.h; sourceTree = "<group>"; };
@@ -3519,6 +3523,8 @@
 			isa = PBXGroup;
 			children = (
 				320B6C86F11D9990244A9730 /* Three20.bundle */,
+				5BB77CA2177120B100ED859B /* icon-57.png */,
+				5BB77CA3177120B100ED859B /* icon-114.png */,
 				5B239D7B170A5A980052036E /* 114_homescreenv2.png */,
 				5B239D79170A5A950052036E /* 57_homescreenv2.png */,
 				5B51156616F2D03800B96DFD /* Default-568h@2x.png */,
@@ -5113,6 +5119,8 @@
 				6E80BEC51765CCF400E6041F /* ModifierUserViewController.xib in Resources */,
 				5B04BF24176CB766003379FE /* handsean.otf in Resources */,
 				5B04BF3E176CC359003379FE /* Settings.bundle in Resources */,
+				5BB77CA4177120B200ED859B /* icon-57.png in Resources */,
+				5BB77CA5177120B200ED859B /* icon-114.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

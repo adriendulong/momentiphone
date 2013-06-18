@@ -111,7 +111,7 @@
 "InviteAddViewController_NewUser_Invalide_Phone_Mobile" = "Veuillez rentrer un numéro de téléphone portable";
 
 // Envoi SMS
-"InviteAddViewController_SendSMS_Message" = "Je viens de t'inviter à : %@ sur l'application Moment : %@.\n. Rejoins nous pour partager toutes les photos, et organisez l'évènement. A bientôt, %@";
+"InviteAddViewController_SendSMS_Message" = "Je viens de t'inviter à : %@ sur l'application Moment : %@.\n. Rejoins nous pour partager toutes les photos, et organiser l'évènement. A bientôt, %@";
 "InviteAddViewController_SendSMS_Fail" = "L'envoi de(s) sms a échoué";
 // Notifs Facebook
 "InviteAddViewController_NotifsFB_Message" = "%@ vient de t'inviter à son évènement : %@ sur l'application Moment.";
@@ -342,7 +342,7 @@
 "PopUpFunCreationViewController_Privacy_Open_Details" = "Tout le monde peut voir ce moment !";
 // Privacy Public
 "PopUpFunCreationViewController_Privacy_Public_Title" = "Privé :";
-"PopUpFunCreationViewController_Privacy_Public_Details" = "Seuls les invités et les abonnées des invités peuvent voir ce moment";
+"PopUpFunCreationViewController_Privacy_Public_Details" = "Seuls les invités et les abonnés des invités peuvent voir ce moment";
 // Privacy Private
 "PopUpFunCreationViewController_Privacy_Private_Title" = "Secret :";
 "PopUpFunCreationViewController_Privacy_Private_Details" = "Seuls les invités peuvent voir ce moment";
