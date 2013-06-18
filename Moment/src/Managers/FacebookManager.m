@@ -192,7 +192,7 @@ static FacebookManager *sharedInstance = nil;
 
 - (void)logout
 {    
-    if (FBSession.activeSession.isOpen) {
+    if ( [self facebookIsConnected] || FBSession.activeSession.isOpen) {
         // if a user logs out explicitly, we delete any cached token information, and next
         // time they run the applicaiton they will be presented with log in UX again; most
         // users will simply close the app or switch away, without logging out; this will
