@@ -74,12 +74,13 @@
     [config setAppStoreCountry:@"FR"];
 #warning A enlever pour la prod !!
     [config setAppStoreID:361186462];
+    [config setApplicationVersion:@"3.1.3"];
     [config setApplicationBundleID:@"com.c4mprod.beezik"];
-    //config.daysUntilPrompt = 5; //5
-    //config.usesUntilPrompt = 15; //15
+    config.daysUntilPrompt = 0; //5
+    config.usesUntilPrompt = 3; //15
 #ifdef DEBUG
     config.verboseLogging = YES;
-    config.previewMode = YES;
+    //config.previewMode = YES;
 #else
     config.verboseLogging = NO;
 #endif
