@@ -8,9 +8,6 @@
 
 #import <FacebookSDK/FacebookSDK.h>
 
-// Local cache - unique file info
-static NSString* kFBTokenInfoStorageFile = @"FBTokenInfo.plist";
-
 @interface FacebookTokenCachingStrategy : FBSessionTokenCachingStrategy
 @property (nonatomic, strong) NSString *tokenFilePath;
 - (NSString *) filePath;

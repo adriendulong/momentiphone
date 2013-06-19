@@ -72,8 +72,10 @@
     /* -------------------------------------------- */
     //configure iRate
     iRate *config = [iRate sharedInstance];
-    //config.daysUntilPrompt = 5; //5
-    //config.usesUntilPrompt = 15; //15
+    [config setAppStoreCountry:@"FR"];
+    [config setAppStoreID:662761817];
+    config.daysUntilPrompt = 2;
+    config.usesUntilPrompt = 10;
 #ifdef DEBUG
     config.verboseLogging = YES;
     //config.previewMode = YES;
