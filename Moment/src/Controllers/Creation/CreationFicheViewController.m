@@ -910,7 +910,7 @@
             [self.pickerView setButtonStyle:CustomDatePickerButtonStyleNext];
             
             if(endIsFull)
-                self.pickerView.datePicker.maximumDate = [self.dateFin dateByAddingTimeInterval:-15*60];;
+                self.pickerView.datePicker.maximumDate = [self.dateFin dateByAddingTimeInterval:-15*60];
         }
         
         // Rénitialise date min
