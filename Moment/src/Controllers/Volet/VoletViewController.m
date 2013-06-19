@@ -30,6 +30,7 @@ static VoletViewController *actualVoletViewController;
     BOOL isShowingInvitations;
     int nbNewInvitations;
     int nbNewNotifications;
+    int nbNewNotificationsShowing;
 }
 
 @end
@@ -194,6 +195,7 @@ static VoletViewController *actualVoletViewController;
         self.nbNotificationsView.hidden = YES;
     else
     {
+        nbNewNotificationsShowing = taille;
         self.nbNotificationsView.hidden = NO;
         texte = [NSString stringWithFormat:@"%d", taille];
         self.nbNotificationsLabel.text = texte;
@@ -271,7 +273,7 @@ static VoletViewController *actualVoletViewController;
         [self.invitations addObjectsFromArray:notifications[@"invitations"]];
         
         // Update nb labels
-        nbNewInvitations = [notifications[@"nb_new_notifs"] intValue];
+        nbNewInvitations = [notifications[@"nb_new_invits"] intValue];
         nbNewNotifications = [notifications[@"total_notifs"] intValue] - nbNewInvitations;
         [self designNbNotificationsViews];
         
@@ -351,13 +353,43 @@ static VoletViewController *actualVoletViewController;
         
         if(isEmpty){
             cell = [[VoletViewControllerEmptyCell alloc] initWithSize:self.tableView.frame.size.height withStyle:isShowingInvitations];
-        }else {
+        } else {
             
             if(isShowingInvitations) {
                 cell = [[VoletViewControllerInvitationCell alloc] initWithNotification:self.invitations[indexPath.row]];
             }
             else {
                 cell = [[VoletViewControllerNotificationCell alloc] initWithNotification:self.notifications[indexPath.row]];
+                
+                LocalNotification *notif = [self.notifications objectAtIndex:indexPath.row];
+                
+                if (indexPath.row >= nbNewNotificationsShowing) {
+                    switch (notif.type) {
+                            
+                        case NotificationTypeModification:
+                             ((VoletViewControllerNotificationCell *)cell).pictoView.image = [UIImage imageNamed:@"picto_bulle_past"];
+                             break;
+                            
+                        case NotificationTypeNewChat:
+                            ((VoletViewControllerNotificationCell *)cell).pictoView.image = [UIImage imageNamed:@"picto_message_past"];
+                            break;
+                            
+                        case NotificationTypeNewPhoto:
+                             ((VoletViewControllerNotificationCell *)cell).pictoView.image = [UIImage imageNamed:@"picto_photo_past"];
+                             break;
+                             
+                        case NotificationTypeNewFollower:
+                             ((VoletViewControllerNotificationCell *)cell).pictoView.image = [UIImage imageNamed:@"picto_invite_past"];
+                             break;
+                             
+                        case NotificationTypeFollowRequest:
+                             ((VoletViewControllerNotificationCell *)cell).pictoView.image = [UIImage imageNamed:@"picto_invite_past"];
+                             break;
+                            
+                        default:
+                            break;
+                    }
+                }
             }
         }
     }
