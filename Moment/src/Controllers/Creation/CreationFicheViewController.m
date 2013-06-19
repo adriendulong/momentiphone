@@ -23,6 +23,7 @@
     @private
     BOOL isEdition;
     BOOL adresseTextFieldShouldClear;
+    BOOL alreadyClicked;
     
     UIImage *modifiedCover;
 }
@@ -160,6 +161,7 @@
         self.timeLineViewContoller = timeLine;
         viewHeight = [[VersionControl sharedInstance] screenHeight] - TOPBAR_HEIGHT;
         adresseTextFieldShouldClear = NO;
+        alreadyClicked = NO;
         
         self.switchControlState = YES;
     }
@@ -653,8 +655,6 @@
 
 - (void)clicCreate
 {
-    static BOOL alreadyClicked = NO;
-    
     // Empecher le clic successif sur le bouton
     if(!alreadyClicked)
     {
