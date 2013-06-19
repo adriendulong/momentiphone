@@ -21,7 +21,6 @@
 #import "FullScreenPhotoViewController.h"
 #import "Harpy.h"
 #import "iRate.h"
-#import <Crashlytics/Crashlytics.h>
 
 @implementation AppDelegate
 
@@ -87,10 +86,7 @@
 }
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
-{
-    // ------------ Crashlytics -------------
-    [Crashlytics startWithAPIKey:@"29102ea2e5812e5fc05998578d5016cf3d268a1b"];
-    
+{    
     // ------------ Test Flight API -------------
     // !!!: Use the next line only during beta
 #pragma clang diagnostic push
