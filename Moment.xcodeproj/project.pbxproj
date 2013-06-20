@@ -584,10 +584,6 @@
 		5BB7DE3017204D5000C46E10 /* btn_volet_enfoncé.png in Resources */ = {isa = PBXBuildFile; fileRef = 5BB7DE2E17204D5000C46E10 /* btn_volet_enfoncé.png */; };
 		5BB7DE3117204D5000C46E10 /* btn_volet_enfoncé@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5BB7DE2F17204D5000C46E10 /* btn_volet_enfoncé@2x.png */; };
 		5BB7E417170A7A9A002E6C6E /* CustomTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BB7E416170A7A9A002E6C6E /* CustomTextView.m */; };
-		5BB7E428170A851A002E6C6E /* libTestFlight.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BB7E424170A851A002E6C6E /* libTestFlight.a */; };
-		5BB7E429170A851B002E6C6E /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 5BB7E425170A851A002E6C6E /* README.md */; };
-		5BB7E42A170A851B002E6C6E /* release_notes.md in Resources */ = {isa = PBXBuildFile; fileRef = 5BB7E426170A851A002E6C6E /* release_notes.md */; };
-		5BB7E42C170A8555002E6C6E /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BB7E42B170A8555002E6C6E /* libz.dylib */; };
 		5BBBA2C1169E1BEE00867B31 /* TTTAttributedLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BBBA2C0169E1BEE00867B31 /* TTTAttributedLabel.m */; };
 		5BBBA2C3169E1C0000867B31 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BBBA2C2169E1C0000867B31 /* CoreText.framework */; };
 		5BC6B2C6169CD6D8001649A7 /* VersionControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BC6B2C5169CD6D8001649A7 /* VersionControl.m */; };
@@ -902,6 +898,10 @@
 		5BFF3BC4175CCDA700F3D464 /* picto_check_blanc@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5BFF3BBE175CCDA700F3D464 /* picto_check_blanc@2x.png */; };
 		5BFF3BC5175CCDA700F3D464 /* picto_croix_blanche.png in Resources */ = {isa = PBXBuildFile; fileRef = 5BFF3BBF175CCDA700F3D464 /* picto_croix_blanche.png */; };
 		5BFF3BC6175CCDA700F3D464 /* picto_croix_blanche@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5BFF3BC0175CCDA700F3D464 /* picto_croix_blanche@2x.png */; };
+		6E21188B17730F7F009931F8 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 6E21188717730F7F009931F8 /* README.md */; };
+		6E21188C17730F7F009931F8 /* release_notes.md in Resources */ = {isa = PBXBuildFile; fileRef = 6E21188817730F7F009931F8 /* release_notes.md */; };
+		6E21188E17730FB4009931F8 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E21188D17730FB4009931F8 /* libz.dylib */; };
+		6E2118901773109A009931F8 /* libTestFlight.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E21188F1773109A009931F8 /* libTestFlight.a */; };
 		6E80BEC21765CCF400E6041F /* MesReglagesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E80BEBD1765CCF400E6041F /* MesReglagesViewController.m */; };
 		6E80BEC31765CCF400E6041F /* MesReglagesViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6E80BEBE1765CCF400E6041F /* MesReglagesViewController.xib */; };
 		6E80BEC41765CCF400E6041F /* ModifierUserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E80BEC01765CCF400E6041F /* ModifierUserViewController.m */; };
@@ -1763,11 +1763,6 @@
 		5BB7E416170A7A9A002E6C6E /* CustomTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomTextView.m; sourceTree = "<group>"; };
 		5BB7E419170A7F16002E6C6E /* CustomTextArea.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CustomTextArea.h; sourceTree = "<group>"; };
 		5BB7E41A170A7F16002E6C6E /* CustomTextArea.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CustomTextArea.m; sourceTree = "<group>"; };
-		5BB7E424170A851A002E6C6E /* libTestFlight.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libTestFlight.a; sourceTree = "<group>"; };
-		5BB7E425170A851A002E6C6E /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
-		5BB7E426170A851A002E6C6E /* release_notes.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = release_notes.md; sourceTree = "<group>"; };
-		5BB7E427170A851A002E6C6E /* TestFlight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestFlight.h; sourceTree = "<group>"; };
-		5BB7E42B170A8555002E6C6E /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		5BBBA2BF169E1BEE00867B31 /* TTTAttributedLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TTTAttributedLabel.h; sourceTree = "<group>"; };
 		5BBBA2C0169E1BEE00867B31 /* TTTAttributedLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TTTAttributedLabel.m; sourceTree = "<group>"; };
 		5BBBA2C2169E1C0000867B31 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
@@ -2169,6 +2164,11 @@
 		5BFF3BBE175CCDA700F3D464 /* picto_check_blanc@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "picto_check_blanc@2x.png"; sourceTree = "<group>"; };
 		5BFF3BBF175CCDA700F3D464 /* picto_croix_blanche.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = picto_croix_blanche.png; sourceTree = "<group>"; };
 		5BFF3BC0175CCDA700F3D464 /* picto_croix_blanche@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "picto_croix_blanche@2x.png"; sourceTree = "<group>"; };
+		6E21188717730F7F009931F8 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
+		6E21188817730F7F009931F8 /* release_notes.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = release_notes.md; sourceTree = "<group>"; };
+		6E21188917730F7F009931F8 /* TestFlight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestFlight.h; sourceTree = "<group>"; };
+		6E21188D17730FB4009931F8 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
+		6E21188F1773109A009931F8 /* libTestFlight.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libTestFlight.a; sourceTree = "<group>"; };
 		6E80BEBC1765CCF400E6041F /* MesReglagesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MesReglagesViewController.h; sourceTree = "<group>"; };
 		6E80BEBD1765CCF400E6041F /* MesReglagesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MesReglagesViewController.m; sourceTree = "<group>"; };
 		6E80BEBE1765CCF400E6041F /* MesReglagesViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MesReglagesViewController.xib; sourceTree = "<group>"; };
@@ -2194,6 +2194,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6E21188E17730FB4009931F8 /* libz.dylib in Frameworks */,
 				5BCCDE7716A1DC9A00C86579 /* SystemConfiguration.framework in Frameworks */,
 				5B6A106E1738B54A005BCB7D /* StoreKit.framework in Frameworks */,
 				5B69928C172C398F00F07271 /* Security.framework in Frameworks */,
@@ -2206,7 +2207,6 @@
 				320AF8492C47A4D819F7C451 /* QuartzCore.framework in Frameworks */,
 				320A5A189C235877202780D5 /* libThree20Network.a in Frameworks */,
 				320CC833B8AF0ACFD35E6225 /* libThree20Style.a in Frameworks */,
-				5BB7E42C170A8555002E6C6E /* libz.dylib in Frameworks */,
 				5BAB90C816ED79450055C960 /* MessageUI.framework in Frameworks */,
 				5B5EF80216E41D38001C5A00 /* EventKit.framework in Frameworks */,
 				5B95C1F916D1BA1E00EE556D /* AssetsLibrary.framework in Frameworks */,
@@ -2224,8 +2224,8 @@
 				5BF02E7A169C8F7400232E75 /* Foundation.framework in Frameworks */,
 				5BF02E7C169C8F7400232E75 /* CoreGraphics.framework in Frameworks */,
 				5B0DFEE816C6A86A00033C86 /* FacebookSDK.framework in Frameworks */,
-				5BB7E428170A851A002E6C6E /* libTestFlight.a in Frameworks */,
 				5B4E91A8175E0A53006A08F6 /* libGoogleAnalytics.a in Frameworks */,
+				6E2118901773109A009931F8 /* libTestFlight.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3407,18 +3407,6 @@
 			name = TextView;
 			sourceTree = "<group>";
 		};
-		5BB7E423170A851A002E6C6E /* TestFlightSDK1 */ = {
-			isa = PBXGroup;
-			children = (
-				5BB7E42B170A8555002E6C6E /* libz.dylib */,
-				5BB7E424170A851A002E6C6E /* libTestFlight.a */,
-				5BB7E425170A851A002E6C6E /* README.md */,
-				5BB7E426170A851A002E6C6E /* release_notes.md */,
-				5BB7E427170A851A002E6C6E /* TestFlight.h */,
-			);
-			path = TestFlightSDK1;
-			sourceTree = "<group>";
-		};
 		5BBBA2BE169E1BEE00867B31 /* TTTAttributedLabel */ = {
 			isa = PBXGroup;
 			children = (
@@ -3614,7 +3602,7 @@
 				5B04BF3D176CC359003379FE /* Settings.bundle */,
 				5BF02E7D169C8F7400232E75 /* Moment */,
 				5B4E91A0175E0A53006A08F6 /* GoogleAnalyticsiOS_2.0beta4 */,
-				5BB7E423170A851A002E6C6E /* TestFlightSDK1 */,
+				6E21188517730F7F009931F8 /* TestFlightSDK1 */,
 				5BF02E76169C8F7400232E75 /* Frameworks */,
 				5BF02E74169C8F7400232E75 /* Products */,
 			);
@@ -3631,6 +3619,7 @@
 		5BF02E76169C8F7400232E75 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				6E21188D17730FB4009931F8 /* libz.dylib */,
 				5B6A106D1738B547005BCB7D /* StoreKit.framework */,
 				5B69928B172C398F00F07271 /* Security.framework */,
 				5B9D96E3172BECFC0064D9ED /* Twitter.framework */,
@@ -4467,6 +4456,17 @@
 			path = HTAutocompleteTextField;
 			sourceTree = "<group>";
 		};
+		6E21188517730F7F009931F8 /* TestFlightSDK1 */ = {
+			isa = PBXGroup;
+			children = (
+				6E21188F1773109A009931F8 /* libTestFlight.a */,
+				6E21188717730F7F009931F8 /* README.md */,
+				6E21188817730F7F009931F8 /* release_notes.md */,
+				6E21188917730F7F009931F8 /* TestFlight.h */,
+			);
+			path = TestFlightSDK1;
+			sourceTree = "<group>";
+		};
 		6E80BEBB1765CCE300E6041F /* Parametres */ = {
 			isa = PBXGroup;
 			children = (
@@ -5079,8 +5079,6 @@
 				5B51157316F30F8800B96DFD /* panier_oange@2x.png in Resources */,
 				5B239D7A170A5A950052036E /* 57_homescreenv2.png in Resources */,
 				5B239D7C170A5A990052036E /* 114_homescreenv2.png in Resources */,
-				5BB7E429170A851B002E6C6E /* README.md in Resources */,
-				5BB7E42A170A851B002E6C6E /* release_notes.md in Resources */,
 				5B37422717117E8200202ED1 /* FeedFollowCell.xib in Resources */,
 				5B37422917117ECF00202ED1 /* FeedChatCell_Small.xib in Resources */,
 				5B37423B1711D5E600202ED1 /* box_feed_chat_top.png in Resources */,
@@ -5367,6 +5365,8 @@
 				6EE322A11771A55E00375DCE /* picto_invite_past.png in Resources */,
 				6EE322A41771A5C800375DCE /* picto_bulle_past@2x.png in Resources */,
 				6EE322A51771A5C800375DCE /* picto_bulle_past.png in Resources */,
+				6E21188B17730F7F009931F8 /* README.md in Resources */,
+				6E21188C17730F7F009931F8 /* release_notes.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

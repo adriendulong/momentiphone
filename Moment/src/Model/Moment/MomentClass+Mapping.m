@@ -72,6 +72,10 @@ static NSDateFormatter *smallDateFormatter = nil;
         if(!end)
             end = [NSDate date];
         
+        if (attributes == nil) {
+            return attributes;
+        }
+        
         NSMutableDictionary *dico = @{
                                       @"ios_mapping":@"LOCAL",
                                       @"momentId":attributes[@"id"],

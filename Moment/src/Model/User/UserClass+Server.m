@@ -222,11 +222,11 @@
         if(block) {
             
             NSDictionary *localAttr = [UserClass mappingToLocalAttributes:attributes];
-            NSLog(@"Local Attributes : %@", localAttr);
+            //NSLog(@"Local Attributes : %@", localAttr);
             [UserCoreData updateCurrentUserWithAttributes:localAttr];
             
             UserClass *user = [UserCoreData getCurrentUser];
-            NSLog(@"user = %@", user);
+            //NSLog(@"user = %@", user);
             
             block(user);
         }
