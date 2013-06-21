@@ -287,7 +287,7 @@
 
 - (void)application:(UIApplication *)application didChangeStatusBarFrame:(CGRect)oldStatusBarFrame
 {
-    // Prvenir d'un changement de frame
+    // Prévenir d'un changement de frame
     // ------> Utilisé pour détecter l'apparition de la barre d'appel
     // ------> Il faut gérer le changement de Frame pour adapter l'écran en conséquence et éviter les bugs graphiques
    NSDictionary *dict = @{@"oldFrame":[NSValue valueWithCGRect:oldStatusBarFrame],
