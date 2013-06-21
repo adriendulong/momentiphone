@@ -28,6 +28,8 @@ enum InviteAddFontSize {
     NSString *contactSearchText;
     NSString *facebookSearchText;
     NSString *favorisSearchText;
+    UIAlertView *cancelConfirmAlertView, *successInvitedAlertView;
+    BOOL acceptReturnBackButton;
 }
 
 @end
@@ -68,6 +70,7 @@ enum InviteAddFontSize {
         self.selectedFriends = [[NSMutableArray alloc] init];
         self.notifSelectedFriends = [[NSMutableArray alloc] init];
         self.selectedOnglet = 0;
+        acceptReturnBackButton = NO;
     }
     return self;
 }
@@ -305,6 +308,25 @@ enum InviteAddFontSize {
     // Set Nav bar buttons
     self.navigationItem.rightBarButtonItems = @[negativeSpace, buttons];
     [self selectNavigationBarButton:self.selectedOnglet];
+    
+    
+    
+    
+    UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
+    UIImage *img = [UIImage imageNamed:@"btn-back.png"];
+    
+    button.frame = CGRectMake(0, 0, img.size.width, img.size.height);
+    
+    [button setImage:img forState:UIControlStateNormal];
+    [button setImage:img forState:UIControlStateSelected];
+    
+    [button removeTarget:self.navigationController action:@selector(popViewControllerAnimated:) forControlEvents:UIControlEventTouchUpInside];
+    [button addTarget:self action:@selector(confirmCancel) forControlEvents:UIControlEventTouchUpInside];
+    
+    UIBarButtonItem *barBackItem = [[UIBarButtonItem alloc] initWithCustomView:button];
+    
+    self.navigationItem.hidesBackButton = TRUE;
+    self.navigationItem.leftBarButtonItem = barBackItem;
 }
 
 - (void)selectNavigationBarButton:(enum InviteAddTableViewControllerStyle)rank
@@ -512,12 +534,12 @@ enum InviteAddFontSize {
                     if(![self sendNotifToFacebookFriends]) {
                         
                         // Informer l'utilisateur que les invitations ont été envoyées
-                        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"InviteAddTableViewController_AlertView_InviteSuccess_Title", nil)
+                        successInvitedAlertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"InviteAddTableViewController_AlertView_InviteSuccess_Title", nil)
                                                                         message:NSLocalizedString(@"InviteAddTableViewController_AlertView_InviteSuccess_Message", nil)
                                                                        delegate:self
                                                               cancelButtonTitle:NSLocalizedString(@"AlertView_Button_OK", nil)
                                                               otherButtonTitles:nil];
-                        [alert show];
+                        [successInvitedAlertView show];
                     }
                 }
                 
@@ -777,8 +799,38 @@ enum InviteAddFontSize {
 
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
-    // Retour à la vue info
-    [self.navigationController popViewControllerAnimated:YES];
+    if (alertView == cancelConfirmAlertView) {
+        if (buttonIndex == 1) {
+            acceptReturnBackButton = YES;
+            [self clicValider];
+        } else {
+            [self.navigationController popViewControllerAnimated:YES];
+        }
+    } else if (alertView == successInvitedAlertView) {
+        if (acceptReturnBackButton)
+            [self.navigationController popViewControllerAnimated:YES];
+    }
+}
+
+- (void)confirmCancel
+{
+    if([self.selectedFriends count] != 0) {
+        NSString *message = [[NSString alloc] init];
+        
+        if([self.selectedFriends count] == 1 )
+            message = NSLocalizedString(@"InviteAddViewController_AlertView_BackButton_Message_One", nil);
+        else
+            message = NSLocalizedString(@"InviteAddViewController_AlertView_BackButton_Message_Several", nil);
+        
+        cancelConfirmAlertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"InviteAddViewController_AlertView_BackButton_Title", nil)
+                                                        message:message
+                                                       delegate:self
+                                              cancelButtonTitle:NSLocalizedString(@"AlertView_Button_NO", nil)
+                                              otherButtonTitles:NSLocalizedString(@"AlertView_Button_YES", nil), nil];
+        [cancelConfirmAlertView show];
+    } else {
+        [self.navigationController popViewControllerAnimated:YES];
+    }
 }
 
 @end
