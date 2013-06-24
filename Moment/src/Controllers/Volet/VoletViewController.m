@@ -31,6 +31,7 @@ static VoletViewController *actualVoletViewController;
     int nbNewInvitations;
     int nbNewNotifications;
     int nbNewNotificationsShowing;
+    int nbNewInvitationsShowing;
 }
 
 @end
@@ -161,10 +162,14 @@ static VoletViewController *actualVoletViewController;
     [super viewDidAppear:animated];
     
     // Show Notifications
-    [self clicNotifications];
+    if (nbNewNotifications == 0 && nbNewInvitations != 0) {
+        [self clicInvitations];
+    } else {
+        [self clicNotifications];
+    }
     
     // Load
-    [self loadInvitations];
+    //[self loadInvitations];
 }
 
 - (void)reloadUsername
@@ -197,7 +202,7 @@ static VoletViewController *actualVoletViewController;
     {
         nbNewNotificationsShowing = taille;
         self.nbNotificationsView.hidden = NO;
-        texte = [NSString stringWithFormat:@"%d", taille];
+        texte = [NSString stringWithFormat:@"%d", nbNewNotificationsShowing];
         self.nbNotificationsLabel.text = texte;
         expectedSize = [texte sizeWithFont:self.nbNotificationsLabel.font constrainedToSize:maxSize];
         expectedSize.width = MAX(height, expectedSize.width);
@@ -217,8 +222,9 @@ static VoletViewController *actualVoletViewController;
         self.nbInvitationsView.hidden = YES;
     else
     {
+        nbNewInvitationsShowing = taille;
         self.nbInvitationsView.hidden = NO;
-        texte = [NSString stringWithFormat:@"%d", taille];
+        texte = [NSString stringWithFormat:@"%d", nbNewInvitationsShowing];
         self.nbInvitationsLabel.text = texte;
         expectedSize = [texte sizeWithFont:self.nbInvitationsLabel.font constrainedToSize:maxSize];
         expectedSize.width = MAX(height, expectedSize.width);
@@ -367,24 +373,24 @@ static VoletViewController *actualVoletViewController;
                     switch (notif.type) {
                             
                         case NotificationTypeModification:
-                             ((VoletViewControllerNotificationCell *)cell).pictoView.image = [UIImage imageNamed:@"picto_bulle_past"];
-                             break;
+                            ((VoletViewControllerNotificationCell *)cell).pictoView.image = [UIImage imageNamed:@"picto_bulle_past"];
+                            break;
                             
                         case NotificationTypeNewChat:
                             ((VoletViewControllerNotificationCell *)cell).pictoView.image = [UIImage imageNamed:@"picto_message_past"];
                             break;
                             
                         case NotificationTypeNewPhoto:
-                             ((VoletViewControllerNotificationCell *)cell).pictoView.image = [UIImage imageNamed:@"picto_photo_past"];
-                             break;
-                             
+                            ((VoletViewControllerNotificationCell *)cell).pictoView.image = [UIImage imageNamed:@"picto_photo_past"];
+                            break;
+                            
                         case NotificationTypeNewFollower:
-                             ((VoletViewControllerNotificationCell *)cell).pictoView.image = [UIImage imageNamed:@"picto_invite_past"];
-                             break;
-                             
+                            ((VoletViewControllerNotificationCell *)cell).pictoView.image = [UIImage imageNamed:@"picto_invite_past"];
+                            break;
+                            
                         case NotificationTypeFollowRequest:
-                             ((VoletViewControllerNotificationCell *)cell).pictoView.image = [UIImage imageNamed:@"picto_invite_past"];
-                             break;
+                            ((VoletViewControllerNotificationCell *)cell).pictoView.image = [UIImage imageNamed:@"picto_invite_past"];
+                            break;
                             
                         default:
                             break;
@@ -460,13 +466,6 @@ static VoletViewController *actualVoletViewController;
     }
     
 }
-
-/*
-- (void)tableView:(UITableView*)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath
-{
-
-}
- */
 
 #pragma mark - Actions
 
@@ -672,7 +671,7 @@ static VoletViewController *actualVoletViewController;
         }
         
         // Load Notifs
-        [self loadNotifications];
+        //[self loadNotifications];
     }
 }
 

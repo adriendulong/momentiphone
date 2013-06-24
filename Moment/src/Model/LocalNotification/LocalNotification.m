@@ -102,11 +102,11 @@
         
         NSArray *localInvitations = [self arrayWithArrayOfAttributesFromWeb:JSON[@"invitations"]];
         NSNumber *total = JSON[@"total_notifs"] ?: @(0);
-        NSNumber *newNotifs = JSON[@"nb_new_notifs"] ?: @(0);
+        NSNumber *newInvits = JSON[@"nb_new_invits"] ?: @(0);
         
         if(block) {
             block(@{
-                  @"nb_new_notifs" : newNotifs,
+                  @"nb_new_invits" : newInvits,
                   @"total_notifs" : total,
                   @"invitations" : localInvitations
                   });
