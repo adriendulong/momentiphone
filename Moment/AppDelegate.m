@@ -237,6 +237,7 @@
     if([self.actualViewController isKindOfClass:[TimeLineViewController class]]) {
         TimeLineViewController *timeline = (TimeLineViewController*)self.actualViewController;
         [timeline reloadData];
+        [timeline.rootViewController updateVolet];
     }
     // Mettre à jour Feed
     else if([self.actualViewController isKindOfClass:[FeedViewController class]]) {
