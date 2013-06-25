@@ -29,27 +29,27 @@
         switch (notification.type) {
             
             case NotificationTypeModification:
-                self.pictoView.image = [UIImage imageNamed:@"picto_bulle"];
+                self.pictoView.image = [UIImage imageNamed:@"picto_bulle_past"];
                 self.texteLabel.text = [NSString stringWithFormat:@"Modification sur le moment : %@", notification.moment.titre.uppercaseString];
                 break;
                 
             case NotificationTypeNewChat:
-                self.pictoView.image = [UIImage imageNamed:@"picto_message"];
+                self.pictoView.image = [UIImage imageNamed:@"picto_message_past"];
                 self.texteLabel.text = [NSString stringWithFormat:@"Nouveau message sur le moment : %@", notification.moment.titre.uppercaseString];
                 break;
                 
             case NotificationTypeNewPhoto:
-                self.pictoView.image = [UIImage imageNamed:@"picto_photo"];
+                self.pictoView.image = [UIImage imageNamed:@"picto_photo_past"];
                 self.texteLabel.text = [NSString stringWithFormat:@"Nouvelle photo sur le moment : %@", notification.moment.titre.uppercaseString];
                 break;
                 
             case NotificationTypeNewFollower:
-                self.pictoView.image = [UIImage imageNamed:@"picto_invite"];
+                self.pictoView.image = [UIImage imageNamed:@"picto_invite_past"];
                 self.texteLabel.text = [NSString stringWithFormat:@"%@ vous suit maintenant", notification.follower.formatedUsername];
                 break;
                 
             case NotificationTypeFollowRequest:
-                self.pictoView.image = [UIImage imageNamed:@"picto_invite"];
+                self.pictoView.image = [UIImage imageNamed:@"picto_invite_past"];
                 self.texteLabel.text = [NSString stringWithFormat:@"Demande de suivi de %@", notification.requestFollower.formatedUsername];
                 break;
                 
