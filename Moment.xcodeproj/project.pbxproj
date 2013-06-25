@@ -902,6 +902,7 @@
 		6E21188C17730F7F009931F8 /* release_notes.md in Resources */ = {isa = PBXBuildFile; fileRef = 6E21188817730F7F009931F8 /* release_notes.md */; };
 		6E21188E17730FB4009931F8 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E21188D17730FB4009931F8 /* libz.dylib */; };
 		6E2118901773109A009931F8 /* libTestFlight.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E21188F1773109A009931F8 /* libTestFlight.a */; };
+		6E4D6EE8177850D60043B095 /* RowIndexInVolet.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4D6EE7177850D60043B095 /* RowIndexInVolet.m */; };
 		6E80BEC21765CCF400E6041F /* MesReglagesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E80BEBD1765CCF400E6041F /* MesReglagesViewController.m */; };
 		6E80BEC31765CCF400E6041F /* MesReglagesViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6E80BEBE1765CCF400E6041F /* MesReglagesViewController.xib */; };
 		6E80BEC41765CCF400E6041F /* ModifierUserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E80BEC01765CCF400E6041F /* ModifierUserViewController.m */; };
@@ -2169,6 +2170,8 @@
 		6E21188917730F7F009931F8 /* TestFlight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestFlight.h; sourceTree = "<group>"; };
 		6E21188D17730FB4009931F8 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		6E21188F1773109A009931F8 /* libTestFlight.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libTestFlight.a; sourceTree = "<group>"; };
+		6E4D6EE6177850D60043B095 /* RowIndexInVolet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RowIndexInVolet.h; sourceTree = "<group>"; };
+		6E4D6EE7177850D60043B095 /* RowIndexInVolet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RowIndexInVolet.m; sourceTree = "<group>"; };
 		6E80BEBC1765CCF400E6041F /* MesReglagesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MesReglagesViewController.h; sourceTree = "<group>"; };
 		6E80BEBD1765CCF400E6041F /* MesReglagesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MesReglagesViewController.m; sourceTree = "<group>"; };
 		6E80BEBE1765CCF400E6041F /* MesReglagesViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MesReglagesViewController.xib; sourceTree = "<group>"; };
@@ -4083,6 +4086,8 @@
 				5B737F2316CD76BB008D465C /* ChatMessage */,
 				5BF02F70169C944700232E75 /* Moment */,
 				5BF02F7C169C944700232E75 /* User */,
+				6E4D6EE6177850D60043B095 /* RowIndexInVolet.h */,
+				6E4D6EE7177850D60043B095 /* RowIndexInVolet.m */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -5560,6 +5565,7 @@
 				6E80BEC41765CCF400E6041F /* ModifierUserViewController.m in Sources */,
 				5B04BF1B176CA93D003379FE /* Moment.xcdatamodeld in Sources */,
 				5B0E9405176EB1F400986313 /* SMSComposeViewController.m in Sources */,
+				6E4D6EE8177850D60043B095 /* RowIndexInVolet.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

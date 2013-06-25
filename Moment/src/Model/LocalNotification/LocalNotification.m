@@ -24,6 +24,7 @@
         if(attributes) {
             self.date = [NSDate dateWithTimeIntervalSince1970:[attributes[@"time"] doubleValue]];
             self.type = [attributes[@"type_id"] intValue];
+            self.id_notif = attributes[@"id"];
             
             switch (self.type) {
                     
@@ -156,7 +157,7 @@
             break;
     }
     
-    return [NSString stringWithFormat:@"type = %@\nmoment = %@\ndate = %@", type, self.moment, self.date];
+    return [NSString stringWithFormat:@"id_notif = %@\ntype = %@\nmoment = %@\ndate = %@", self.id_notif, type, self.moment, self.date];
 }
 
 @end
