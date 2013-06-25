@@ -21,6 +21,7 @@
 #import "UserClass+Server.h"
 
 #import "EventMissingViewController.h"
+#import "RowIndexInVolet.h"
 
 static VoletViewController *actualVoletViewController;
 
@@ -31,7 +32,6 @@ static VoletViewController *actualVoletViewController;
     int nbNewInvitations;
     int nbNewNotifications;
     int nbNewNotificationsShowing;
-    int nbNewInvitationsShowing;
 }
 
 @end
@@ -76,6 +76,9 @@ static VoletViewController *actualVoletViewController;
         // Accès global au volet pour les Push Notifications
         actualVoletViewController = self;
         
+        //Initialisation du tableau de décompte des lignes des nouvelles notifications.
+        RowIndexInVolet *sharedManager = [RowIndexInVolet sharedManager];
+        sharedManager.indexNotifications = [NSMutableArray array];
     }
     return self;
 }
@@ -190,9 +193,7 @@ static VoletViewController *actualVoletViewController;
     CGSize expectedSize;
     CGRect frame;
     
-    // Update Badge
-    NSInteger badgeNumber = nbNewInvitations + nbNewNotifications;
-    [[PushNotificationManager sharedInstance] setNbNotifcations:badgeNumber];
+    RowIndexInVolet *rowIndexInVolet = [RowIndexInVolet sharedManager];
     
     // Notifications
     int taille = nbNewNotifications;//[self.notifications count];
@@ -200,9 +201,19 @@ static VoletViewController *actualVoletViewController;
         self.nbNotificationsView.hidden = YES;
     else
     {
+        for (int i=0; i < taille; i++) {
+            LocalNotification *notif = [self.notifications objectAtIndex:i];
+            
+            if (![rowIndexInVolet.indexNotifications containsObject:notif.id_notif]) {
+                [rowIndexInVolet.indexNotifications addObject:notif.id_notif];
+                
+                NSLog(@"count = %i | sharedManager.indexNotifications = %@",[rowIndexInVolet.indexNotifications count], rowIndexInVolet.indexNotifications);
+            }
+        }
+        
         nbNewNotificationsShowing = taille;
         self.nbNotificationsView.hidden = NO;
-        texte = [NSString stringWithFormat:@"%d", nbNewNotificationsShowing];
+        texte = [NSString stringWithFormat:@"%i", [rowIndexInVolet.indexNotifications count]];
         self.nbNotificationsLabel.text = texte;
         expectedSize = [texte sizeWithFont:self.nbNotificationsLabel.font constrainedToSize:maxSize];
         expectedSize.width = MAX(height, expectedSize.width);
@@ -222,9 +233,8 @@ static VoletViewController *actualVoletViewController;
         self.nbInvitationsView.hidden = YES;
     else
     {
-        nbNewInvitationsShowing = taille;
         self.nbInvitationsView.hidden = NO;
-        texte = [NSString stringWithFormat:@"%d", nbNewInvitationsShowing];
+        texte = [NSString stringWithFormat:@"%d", taille];
         self.nbInvitationsLabel.text = texte;
         expectedSize = [texte sizeWithFont:self.nbInvitationsLabel.font constrainedToSize:maxSize];
         expectedSize.width = MAX(height, expectedSize.width);
@@ -237,6 +247,11 @@ static VoletViewController *actualVoletViewController;
         self.nbInvitationsLabel.frame = frame;
         self.nbInvitationsBackground.frame = frame;
     }
+    
+    // Update Badge
+    //NSInteger badgeNumber = nbNewInvitations + nbNewNotifications;    
+    NSInteger badgeNumber = nbNewInvitations + [rowIndexInVolet.indexNotifications count];
+    [[PushNotificationManager sharedInstance] setNbNotifcations:badgeNumber];
     
 }
 
@@ -251,15 +266,28 @@ static VoletViewController *actualVoletViewController;
     [LocalNotification getNotificationWithEnded:^(NSDictionary *notifications) {
         //NSLog(@"Notifications reçus : %@", notifications);
         
+        
         // Clear
         [self.notifications removeAllObjects];
         
         // Init notifications
         [self.notifications addObjectsFromArray:notifications[@"notifications"]];
         
+        //NSLog(@"id_notif = %i",[notifications[@"id_notif"] intValue]);
+        
         // Update nb labels
         nbNewNotifications = [notifications[@"nb_new_notifs"] intValue];
         nbNewInvitations = [notifications[@"total_notifs"] intValue] - nbNewNotifications;
+        
+        /*if (nbNewNotifications != 0)
+        {
+            RowIndexInVolet *sharedManager = [RowIndexInVolet sharedManager];
+            if ([sharedManager.indexNotifications count] != 0)
+            {
+                [sharedManager.indexNotifications removeAllObjects];
+            }
+        }*/
+        
         [self designNbNotificationsViews];
         
         [self.tableView reloadData];
@@ -369,32 +397,33 @@ static VoletViewController *actualVoletViewController;
                 
                 LocalNotification *notif = [self.notifications objectAtIndex:indexPath.row];
                 
-                if (indexPath.row >= nbNewNotificationsShowing) {
-                    switch (notif.type) {
-                            
-                        case NotificationTypeModification:
-                            ((VoletViewControllerNotificationCell *)cell).pictoView.image = [UIImage imageNamed:@"picto_bulle_past"];
-                            break;
-                            
-                        case NotificationTypeNewChat:
-                            ((VoletViewControllerNotificationCell *)cell).pictoView.image = [UIImage imageNamed:@"picto_message_past"];
-                            break;
-                            
-                        case NotificationTypeNewPhoto:
-                            ((VoletViewControllerNotificationCell *)cell).pictoView.image = [UIImage imageNamed:@"picto_photo_past"];
-                            break;
-                            
-                        case NotificationTypeNewFollower:
-                            ((VoletViewControllerNotificationCell *)cell).pictoView.image = [UIImage imageNamed:@"picto_invite_past"];
-                            break;
-                            
-                        case NotificationTypeFollowRequest:
-                            ((VoletViewControllerNotificationCell *)cell).pictoView.image = [UIImage imageNamed:@"picto_invite_past"];
-                            break;
-                            
-                        default:
-                            break;
-                    }
+                RowIndexInVolet *rowIndexInVolet = [RowIndexInVolet sharedManager];
+                if ([rowIndexInVolet.indexNotifications containsObject:notif.id_notif]) {
+                     switch (notif.type) {
+                     
+                         case NotificationTypeModification:
+                             ((VoletViewControllerNotificationCell *)cell).pictoView.image = [UIImage imageNamed:@"picto_bulle"];
+                             break;
+                     
+                         case NotificationTypeNewChat:
+                             ((VoletViewControllerNotificationCell *)cell).pictoView.image = [UIImage imageNamed:@"picto_message"];
+                             break;
+                     
+                         case NotificationTypeNewPhoto:
+                             ((VoletViewControllerNotificationCell *)cell).pictoView.image = [UIImage imageNamed:@"picto_photo"];
+                             break;
+                     
+                         case NotificationTypeNewFollower:
+                             ((VoletViewControllerNotificationCell *)cell).pictoView.image = [UIImage imageNamed:@"picto_invite"];
+                             break;
+                     
+                         case NotificationTypeFollowRequest:
+                             ((VoletViewControllerNotificationCell *)cell).pictoView.image = [UIImage imageNamed:@"picto_invite"];
+                             break;
+                     
+                         default:
+                             break;
+                     }
                 }
             }
         }
@@ -463,8 +492,13 @@ static VoletViewController *actualVoletViewController;
             default:
                 break;
         }
+        
+        // Passera l'icône en gris après le clic.
+        RowIndexInVolet *rowIndexInVolet = [RowIndexInVolet sharedManager];
+        
+        if ([rowIndexInVolet.indexNotifications containsObject:notif.id_notif])
+            [rowIndexInVolet.indexNotifications removeObject:notif.id_notif];
     }
-    
 }
 
 #pragma mark - Actions
