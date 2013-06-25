@@ -277,4 +277,10 @@ shouldReloadMoments:(BOOL)reloadMoments
     return self.privateTimeLine;
 }
 
+- (void)updateVolet
+{
+    // Préload Volet
+    [[VoletViewController volet] loadNotifications];
+}
+
 @end

@@ -34,5 +34,6 @@ withNavigationController:(UINavigationController*)navController
 - (IBAction)clicChangeTimeLine;
 - (void)showAddEvent;
 - (TimeLineViewController*)timeLineForMoment:(MomentClass*)moment;
+- (void)updateVolet;
 
 @end
