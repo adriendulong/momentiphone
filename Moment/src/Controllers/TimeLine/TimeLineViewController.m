@@ -405,7 +405,7 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
     //Premier lancement de l'application
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     BOOL hasRunOnce = [defaults boolForKey:@"hasRunOnce"];
-    NSLog(hasRunOnce ? @"Yes" : @"No");
+    //NSLog(hasRunOnce ? @"Yes" : @"No");
     if (!hasRunOnce)
     {
         // Start Reload Moment
@@ -783,10 +783,12 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
         NSUInteger index = [self.moments indexOfObject:moment];
         if(index != NSNotFound) {
             row = (NSInteger)index;
-            NSLog(@"row = %d", row);
+            //NSLog(@"row = %d", row);
         }
+        /*
         else
             NSLog(@"NOT FOUND %@", moment);
+        */
     }
     
     
@@ -1255,7 +1257,7 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
                     // Reload data
                     [self reloadDataWithMoments:array];
                     [self updateCellsRowWithDecalage:-[moments count]];
-                    NSLog(@"Chargement dans le futur fini");
+                    //NSLog(@"Chargement dans le futur fini");
                 }
                 
                 isLoading = NO;
@@ -1311,7 +1313,7 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
                     // Scroll à la position précédente
                     [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:([moments count]+1) inSection:0] atScrollPosition:UITableViewScrollPositionMiddle animated:NO];
                     
-                    NSLog(@"Chargement dans le passé fini");
+                    //NSLog(@"Chargement dans le passé fini");
                     
                 }
                 

@@ -527,11 +527,11 @@ enum PhotoPickerDestination {
                                 self.phoneTextField.text = self.secondPhoneTextField.text;
                                 self.secondPhoneTextField.text = @"";
                                 
-                                NSLog(@"self.phoneTextField.text = %@", self.secondPhoneTextField.text);
+                                //NSLog(@"self.phoneTextField.text = %@", self.secondPhoneTextField.text);
                             } else {
                                 self.phoneTextField.text = phoneNumber;
                                 
-                                NSLog(@"self.phoneTextField.text = %@", phoneNumber);
+                                //NSLog(@"self.phoneTextField.text = %@", phoneNumber);
                             }
                         }
                         if(secondPhoneNumber)

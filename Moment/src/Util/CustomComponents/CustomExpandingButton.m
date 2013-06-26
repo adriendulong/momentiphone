@@ -68,7 +68,7 @@
             break;
         
         default:
-            NSLog(@"Other state : %d\n", state);
+            //NSLog(@"Other state : %d\n", state);
             break;
     }
     

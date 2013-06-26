@@ -112,7 +112,7 @@ static NSString *baseURL = @"https://www.googleapis.com/shopping/search/v1/publi
 {
     NSString *path = @"products";
     
-    NSLog(@"LOAD INDEX %d", startIndex);
+    //NSLog(@"LOAD INDEX %d", startIndex);
     
     // Query
     NSDictionary *params = @{

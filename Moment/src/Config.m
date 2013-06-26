@@ -100,7 +100,14 @@ static Config *sharedInstance = nil;
          Lightweight migration will only work for a limited set of schema changes; consult "Core Data Model Versioning and Data Migration Programming Guide" for details.
          
          */
-        NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+        //NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+        [TestFlight passCheckpoint:@"COREDATA OPENNING FAIL !"];
+        [[[UIAlertView alloc]
+          initWithTitle:@"Erreur Fatale"
+          message:@"Il semblerait qu'il y ait eu un problème lors de l'installation de l'application. La seule solution est de supprimer puis re-télécharger Moment sur l'Appstore pour que tout fonctionne à nouveau correctement. Veuillez nous excuser pour ce désagrément."
+          delegate:nil
+          cancelButtonTitle:@"OK"
+          otherButtonTitles:nil] show];
         abort();
     }
     
@@ -115,7 +122,7 @@ static Config *sharedInstance = nil;
         if ([managedObjectContext hasChanges] && ![managedObjectContext save:&error]) {
             // Replace this implementation with code to handle the error appropriately.
             // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-            NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+            //NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
             abort();
         }
     }
@@ -217,10 +224,12 @@ static Config *sharedInstance = nil;
     
     newImage = UIGraphicsGetImageFromCurrentImageContext();
     
+    /*
     if(newImage == nil)
     {
         NSLog(@"could not scale image");
     }
+    */
     
     //pop the context to get back to the default
     UIGraphicsEndImageContext();
@@ -339,7 +348,7 @@ static Config *sharedInstance = nil;
     NSError *error = nil;
     if( [fileManager fileExistsAtPath:fullPath] ){
     	if( ![fileManager removeItemAtPath:fullPath error:&error] ) {
-    		NSLog(@"Failed deleting background image file %@", error);
+    		//NSLog(@"Failed deleting background image file %@", error);
     		// the write below should fail. Add your own flag and check below.
     	}
     }
@@ -414,7 +423,7 @@ static Config *sharedInstance = nil;
     }
     else
     {
-        NSLog(@"mail composer fail");
+        //NSLog(@"mail composer fail");
         
         [[[UIAlertView alloc] initWithTitle:@"Envoi impossible"
                                     message:@"Votre appareil ne supporte pas l'envoi d'email"

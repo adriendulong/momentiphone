@@ -134,12 +134,12 @@
         
         if(event.owner) {
             self.owner = event.owner;
-            NSLog(@"has user");
+            //NSLog(@"has user");
         }
         else if(event.ownerAttributes[@"id"]) {
             self.owner = [UserCoreData requestUserWithAttributes:@{@"facebookId":event.ownerAttributes[@"id"]}];
-            NSLog(@"no user = %@", self.owner);
-            NSLog(@"user found = %@", self.owner);
+            //NSLog(@"no user = %@", self.owner);
+            //NSLog(@"user found = %@", self.owner);
         }
         
         self.adresse = event.location;

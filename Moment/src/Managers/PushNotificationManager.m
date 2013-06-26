@@ -72,7 +72,7 @@ static PushNotificationManager *sharedInstance = nil;
 
 - (void)receivePushNotification:(NSDictionary*)attributes updateUI:(BOOL)updateUI
 {
-    NSLog(@"Push Notification : %@", attributes);
+    //NSLog(@"Push Notification : %@", attributes);
     
     NSDictionary *aps = attributes[@"aps"];
     enum NotificationType pushType = [attributes[@"type_id"] intValue];

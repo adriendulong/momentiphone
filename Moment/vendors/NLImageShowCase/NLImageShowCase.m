@@ -299,7 +299,7 @@
 }
 - (void) deleteImage:(NLImageShowCaseCell *)imageShowCaseCell imageIndex:(NSInteger)index
 {
-    NSLog(@"Deleting item with key: %d",index);
+    //NSLog(@"Deleting item with key: %d",index);
     NSInteger indexOfCell = [itemsInShowCase indexOfObject:imageShowCaseCell];
     [imageShowCaseCell removeFromSuperview];
     [itemsInShowCase removeObject:imageShowCaseCell ];

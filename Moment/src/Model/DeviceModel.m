@@ -73,7 +73,7 @@ static NSString * deviceTokenKey = @"DeviceTokenKey";
                                  @"device_id":[self openUDID],
                                  }, token, lang];
         
-        NSLog(@"%@", stringError);
+        //NSLog(@"%@", stringError);
         
         [[[UIAlertView alloc] initWithTitle:@"Data Model Error" message:stringError delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
     }
@@ -111,13 +111,13 @@ static NSString * deviceTokenKey = @"DeviceTokenKey";
         // Logout success
         [self setDeviceShouldLogout:NO];
         
-        NSLog(@"STOP Push Notification Success");
+        //NSLog(@"STOP Push Notification Success");
         
         [[NSUserDefaults standardUserDefaults] synchronize];
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         
-        NSLog(@"STOP Push Notifications Fail");
+        //NSLog(@"STOP Push Notifications Fail");
         HTTP_ERROR(operation, error);
         
         // Logout Fail -> Force Logout when it's possible

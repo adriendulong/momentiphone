@@ -185,7 +185,7 @@ enum ProfilOnglet {
         self.user.state = @(UserStateCurrent);
     }
     
-    NSLog(@"User = %@", self.user);
+    //NSLog(@"User = %@", self.user);
 
 }
 

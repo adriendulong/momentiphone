@@ -138,7 +138,7 @@
     
     if( !matches )
     {
-        NSLog(@"Error GetMessages : %@", error.localizedDescription);
+        //NSLog(@"Error GetMessages : %@", error.localizedDescription);
         abort();
     }
     else {
@@ -175,7 +175,7 @@
     int taille = [messages count];
     for(int i=0; i<taille ; i++) {
         if(i >= max) {
-            NSLog(@"delete message = %@", [messages[i] message]);
+            //NSLog(@"delete message = %@", [messages[i] message]);
             [[Config sharedInstance].managedObjectContext deleteObject:messages[i]];
         }
         i++;

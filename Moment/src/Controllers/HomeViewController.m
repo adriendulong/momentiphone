@@ -133,7 +133,7 @@ static UIImageView *splashScreen = nil;
     //Premier lancement de l'application
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     BOOL hasRunOnce = [defaults boolForKey:@"hasRunOnce"];
-    NSLog(hasRunOnce ? @"Yes" : @"No");
+    //NSLog(hasRunOnce ? @"Yes" : @"No");
     if (!hasRunOnce)
     {
         [self showTutorialAnimated:YES];

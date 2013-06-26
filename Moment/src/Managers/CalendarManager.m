@@ -40,7 +40,7 @@ static MomentClass *currentMoment = nil;
                         }
                         // Error
                         else {
-                            NSLog(@"EKEventStore Authorisation Access Fail");
+                            //NSLog(@"EKEventStore Authorisation Access Fail");
                             dispatch_async(dispatch_get_main_queue(), ^{
                                 [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"CalendarManager_EventStoreAccessFail_Title", nil)
                                                             message:NSLocalizedString(@"CalendarManager_EventStoreAccessFail_Message", nil)
@@ -61,7 +61,7 @@ static MomentClass *currentMoment = nil;
                     
                 // Error
                 default:
-                    NSLog(@"EKEventStore Authorisation Not Valid");
+                    //NSLog(@"EKEventStore Authorisation Not Valid");
                     [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"CalendarManager_EventStoreAccessRefused_Title", nil)
                                                 message:NSLocalizedString(@"CalendarManager_EventStoreAccessRefused_Message", nil)
                                                delegate:nil
@@ -158,14 +158,14 @@ static MomentClass *currentMoment = nil;
                     
                     if(block)
                         block(YES);
-                    NSLog(@"the event saved and committed correctly with identifier %@", myEvent.eventIdentifier);
+                    //NSLog(@"the event saved and committed correctly with identifier %@", myEvent.eventIdentifier);
                     
                 } else {
                     
                     if(block)
                         block(NO);
                     
-                    NSLog(@"there was an error saving and committing the event");
+                    //NSLog(@"there was an error saving and committing the event");
                 }
             });
             

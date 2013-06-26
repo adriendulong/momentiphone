@@ -140,7 +140,7 @@
 }
 
 - (void)clicProfile {
-    NSLog(@"pop message = %@ user = %@ navController = %@\n\n", self.message, self.message.user, self.navigationController);
+    //NSLog(@"pop message = %@ user = %@ navController = %@\n\n", self.message, self.message.user, self.navigationController);
     ProfilViewController *profil = [[ProfilViewController alloc] initWithUser:self.message.user];
     [self.navigationController pushViewController:profil animated:YES];
 }

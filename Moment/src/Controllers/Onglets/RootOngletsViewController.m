@@ -72,7 +72,7 @@
 }
 
 - (void)updateShouldShowInviteViewController {
-    NSLog(@"update show invite");
+    //NSLog(@"update show invite");
     self.shouldShowInviteViewController = YES;
 }
 

@@ -433,7 +433,7 @@
     int taille = [moments count];
     for(int i=0; i<taille ; i++) {
         if(i >= max) {
-            NSLog(@"delete moment = %@", [moments[i] titre]);
+            //NSLog(@"delete moment = %@", [moments[i] titre]);
             [[Config sharedInstance].managedObjectContext deleteObject:moments[i]];
         }
         i++;

@@ -1651,7 +1651,6 @@ static CGFloat DescriptionBoxHeightMax = 100;
 
 - (void)clicExpandDescriptionView
 {
-    NSLog(@"Pop");
     // Forcer recréation de la vue
     shouldShowFullDescription = YES;
     firstLoad = YES;
@@ -1660,7 +1659,6 @@ static CGFloat DescriptionBoxHeightMax = 100;
 }
 
 - (IBAction)clicShareMail {
-    NSLog(@"Mail");
     
     // Google Analytics
     [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Partager Mail" value:nil];
@@ -1695,7 +1693,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
     }
     else
     {
-        NSLog(@"mail composer fail");
+        //NSLog(@"mail composer fail");
         
         [[[UIAlertView alloc] initWithTitle:@"Envoi impossible"
                                     message:@"Votre appareil ne supporte pas l'envoi d'email"
@@ -1708,7 +1706,6 @@ static CGFloat DescriptionBoxHeightMax = 100;
 }
 
 - (IBAction)clicShareLink {
-    NSLog(@"Link");
     
     // Copy To Clipboard
     if(self.moment.uniqueURL) {
@@ -1724,7 +1721,6 @@ static CGFloat DescriptionBoxHeightMax = 100;
 }
 
 - (IBAction)clicShareFacebook {
-    NSLog(@"Facebook");
     
     // Google Analytics
     [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Partager Facebook" value:nil];
@@ -1775,7 +1771,6 @@ static CGFloat DescriptionBoxHeightMax = 100;
 }
 
 - (IBAction)clicShareTwitter {
-    NSLog(@"Twitter");
     
     // Google Analytics
     [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Partager Twitter" value:nil];
@@ -1954,16 +1949,16 @@ static CGFloat DescriptionBoxHeightMax = 100;
     switch (result)
     {
         case MFMailComposeResultCancelled:
-            NSLog(@"Mail cancelled");
+            //NSLog(@"Mail cancelled");
             break;
         case MFMailComposeResultSaved:
-            NSLog(@"Mail saved");
+            //NSLog(@"Mail saved");
             break;
         case MFMailComposeResultSent:
-            NSLog(@"Mail sent");
+            //NSLog(@"Mail sent");
             break;
         case MFMailComposeResultFailed:
-            NSLog(@"Mail sent failure: %@", [error localizedDescription]);
+            //NSLog(@"Mail sent failure: %@", [error localizedDescription]);
             
             [[[UIAlertView alloc] initWithTitle:@"Erreur d'envoi"
                                         message:[error localizedDescription]

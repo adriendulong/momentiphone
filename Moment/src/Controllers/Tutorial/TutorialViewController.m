@@ -70,7 +70,7 @@
 	
     if (isIphone5)
     {
-        NSLog(@"iPhone 5");
+        //NSLog(@"iPhone 5");
         //NSArray *colors = [NSArray arrayWithObjects:[UIColor redColor], [UIColor greenColor], [UIColor blueColor], nil];
         NSArray *images5 = [NSArray arrayWithObjects:
                             [UIImage imageNamed:@"walkthoughtv2_iphone5_part1"],
@@ -81,7 +81,7 @@
         
         [self.images setArray:images5];
     } else {
-        NSLog(@"iPhone 4/4S or 3GS");
+        //NSLog(@"iPhone 4/4S or 3GS");
         NSArray *images4S = [NSArray arrayWithObjects:
                              [UIImage imageNamed:@"walkthoughtv2_iphone4_part1"],
                              [UIImage imageNamed:@"walkthoughtv2_iphone4_part2"],
