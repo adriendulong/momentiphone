@@ -533,6 +533,8 @@ enum InviteAddFontSize {
                     // Si il n'y a pas d'invitations Facebook
                     if(![self sendNotifToFacebookFriends]) {
                         
+                        acceptReturnBackButton = YES;
+                        
                         // Informer l'utilisateur que les invitations ont été envoyées
                         successInvitedAlertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"InviteAddTableViewController_AlertView_InviteSuccess_Title", nil)
                                                                         message:NSLocalizedString(@"InviteAddTableViewController_AlertView_InviteSuccess_Message", nil)
