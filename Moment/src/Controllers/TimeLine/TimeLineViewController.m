@@ -1554,8 +1554,6 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
                 
         }];
         
-        
-        [rootOnglets.infoMomentViewController changeRSVP:UserStateRefused];
     }
     
 }
