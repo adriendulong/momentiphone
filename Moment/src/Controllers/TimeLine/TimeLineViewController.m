@@ -427,6 +427,10 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
             hud.labelText = NSLocalizedString(@"MBProgressHUD_Loading_Moments", nil);
             [self reloadDataWithWaitUntilFinished:NO withEnded:^(BOOL success) {
                 [MBProgressHUD hideHUDForView:self.view animated:YES];
+                
+                // Update & affiche (en synchronisation avec les animations)
+                [self performSelector:@selector(updateBandeauWithMoment:) withObject:[self.moments objectAtIndex:rowForToday] afterDelay:0.2];
+                [self performSelector:@selector(afficherBandeau) withObject:nil afterDelay:0.4];
             }];
         }
         else {
@@ -436,11 +440,6 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
     }
     
     firstLoad = NO;
-    
-    
-    // Update & affiche (en synchronisation avec les animations)
-    [self performSelector:@selector(updateBandeauWithMoment:) withObject:self.moments[rowForToday] afterDelay:0.2];
-    [self performSelector:@selector(afficherBandeau) withObject:nil afterDelay:0.4];
 }
 
 - (void)viewDidUnload
