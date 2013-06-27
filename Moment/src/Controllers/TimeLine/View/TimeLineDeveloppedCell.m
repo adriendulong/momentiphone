@@ -7,6 +7,8 @@
 //
 
 #import "TimeLineDeveloppedCell.h"
+#import "Config.h"
+#import "Photos.h"
 
 @implementation TimeLineDeveloppedCell {
     @private
@@ -76,7 +78,7 @@
         self.dateLabel.frame = frame;
         
         // Image
-        self.medallion.borderWidth = 3.0;
+        self.medallion.borderWidth = 1.95;
         self.medallion.defaultStyle = MedallionStyleCover;
         __weak TimeLineDeveloppedCell *dp = self;
         [self.medallion addTarget:self action:@selector(medaillionClic) forControlEvents:UIControlEventTouchUpInside];
