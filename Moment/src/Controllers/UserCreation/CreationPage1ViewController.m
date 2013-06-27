@@ -117,7 +117,7 @@
     self.trackedViewName = @"Vue Inscription";
     
     // iPhone 4 layout
-    if ( [[VersionControl sharedInstance] screenHeight] != 568 )
+    if ( ![[VersionControl sharedInstance] isIphone5] )
     {
         // Move & Resize Box
         CGRect frame = self.boxView.frame;
@@ -447,7 +447,7 @@
 
 #pragma mark - UIImagePickerController Delegate
 
--(void) imagePickerController:(UIImagePickerController *)UIPicker didFinishPickingMediaWithInfo:(NSDictionary *) info
+-(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
 {
     UIImage *image = [[Config sharedInstance] imageWithMaxSize:info[@"UIImagePickerControllerOriginalImage"] maxSize:200];
     
@@ -455,7 +455,7 @@
     self.photoProfil.image = self.imageProfile;
     _mdpLabel.returnKeyType = UIReturnKeyDone;
     
-    [[VersionControl sharedInstance] dismissModalViewControllerFromRoot:UIPicker animated:YES];
+    [[VersionControl sharedInstance] dismissModalViewControllerFromRoot:picker animated:YES];
 }
 
 #pragma mark - UIActionSheet Delegate
@@ -513,7 +513,8 @@
                     
                     if(user.imageString)
                     {
-                        [self.photoProfil setImage:nil imageString:user.imageString withSaveBlock:^(UIImage *image) {
+                        [self.photoProfil setImage:nil imageString:user.imageString withSaveBlock:^(UIImage *image_raw) {
+                            UIImage *image = [[Config sharedInstance] imageWithMaxSize:image_raw maxSize:200];
                             self.imageProfile = image;
                         }];
                     }

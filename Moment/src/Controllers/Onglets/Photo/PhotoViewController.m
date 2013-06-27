@@ -697,7 +697,7 @@ withRootViewController:(UIViewController *)rootViewController
     // ----- Evoi au Server -----
     int totalImages = [images count];
     
-    // Péload cadres des images
+    // Préload cadres des images
     NSInteger nouvelleTaille = [self.photos count] + totalImages + 1; // Anciennes + Nouvelle + PLUS_BUTTON
 #ifdef ACTIVE_PRINT_MODE
     nouvelleTaille += (nouvelleTaille > PHOTOVIEW_PRINT_BUTTON_INDEX)? 1 : 0; // Si on atteint PRINT, on ajoute
