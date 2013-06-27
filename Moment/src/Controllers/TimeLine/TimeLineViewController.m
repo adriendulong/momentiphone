@@ -16,7 +16,7 @@
 #import "MomentClass+Server.h"
 #import "VersionControl.h"
 
-#define bigCellHeight 263
+#define bigCellHeight 200
 #define smallCellHeight 130
 
 #define DEGREES_TO_RADIANS(x) (M_PI * x / 180.0)
@@ -1556,6 +1556,7 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
         }];
         
         
+        [rootOnglets.infoMomentViewController changeRSVP:UserStateRefused];
     }
     
 }
