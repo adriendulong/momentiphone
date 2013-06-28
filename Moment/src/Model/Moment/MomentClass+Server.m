@@ -29,7 +29,7 @@
     if(attributes[@"dataImage"]) {
         
         // Si il n'y a pas d'url pour l'image
-        if(!attributes[@"photo_url"])
+        if(!attributes[@"cover_photo_url"])
         {
             // Conversion si nécessaire
             if([attributes[@"dataImage"] isKindOfClass:[UIImage class]]) {
