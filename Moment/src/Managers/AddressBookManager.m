@@ -23,8 +23,7 @@
                                                                    CFArrayGetCount(people),
                                                                    people
                                                                    );
-        
-        
+                
         CFArraySortValues(
                           allPeople,
                           CFRangeMake(0, CFArrayGetCount(allPeople)),
