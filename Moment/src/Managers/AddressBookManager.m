@@ -16,10 +16,24 @@
     if(addressBook)
     {
         NSMutableArray *list = [[NSMutableArray alloc] init];
-        ABRecordRef source = ABAddressBookCopyDefaultSource(addressBook);
-        CFArrayRef allPeople = ABAddressBookCopyArrayOfAllPeopleInSourceWithSortOrdering(addressBook, source, kABPersonSortByFirstName);
         
+        CFArrayRef people = ABAddressBookCopyArrayOfAllPeople(addressBook);
+        CFMutableArrayRef allPeople = CFArrayCreateMutableCopy(
+                                                                   kCFAllocatorDefault,
+                                                                   CFArrayGetCount(people),
+                                                                   people
+                                                                   );
+        
+        
+        CFArraySortValues(
+                          allPeople,
+                          CFRangeMake(0, CFArrayGetCount(allPeople)),
+                          (CFComparatorFunction) ABPersonComparePeopleByName,
+                          (void*) ABPersonGetSortOrdering()
+                          );
+
         CFIndex nPeople = CFArrayGetCount(allPeople);
+        
         
         for ( int i = 0; i < nPeople; i++ )
         {
@@ -98,6 +112,8 @@
         }
         
         CFRelease(addressBook);
+        CFRelease(people);
+        CFRelease(allPeople);
         
         return (NSArray*)list;
     }
