@@ -428,7 +428,7 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
             [self reloadDataWithWaitUntilFinished:NO withEnded:^(BOOL success) {
                 [MBProgressHUD hideHUDForView:self.view animated:YES];
                 
-                if (![self.moments objectAtIndex:rowForToday]) {
+                if ([self.moments objectAtIndex:rowForToday] != [NSNull null]) {
                     // Update & affiche (en synchronisation avec les animations)
                     [self performSelector:@selector(updateBandeauWithMoment:) withObject:[self.moments objectAtIndex:rowForToday] afterDelay:0.2];
                     [self performSelector:@selector(afficherBandeau) withObject:nil afterDelay:0.4];
@@ -767,12 +767,18 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
     point = [self.view convertPoint:point toView:self.tableView];
     
     NSIndexPath *indexPath = [self.tableView indexPathForRowAtPoint:point];
-        
-    if(self.selectedIndex != indexPath.row) {
+    
+    [self updateSelectedMoment:self.moments[indexPath.row] atRow:indexPath.row];
+    
+    if(self.bandeauTitre.alpha == 0) {
+        [self afficherBandeau];
+    }
+    
+    /*if(self.selectedIndex != indexPath.row) {
         [self updateSelectedMoment:self.moments[indexPath.row] atRow:indexPath.row];
     } else if(self.bandeauTitre.alpha == 0) {
         [self afficherBandeau];
-    }
+    }*/
         
 }
 
