@@ -428,9 +428,11 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
             [self reloadDataWithWaitUntilFinished:NO withEnded:^(BOOL success) {
                 [MBProgressHUD hideHUDForView:self.view animated:YES];
                 
-                // Update & affiche (en synchronisation avec les animations)
-                [self performSelector:@selector(updateBandeauWithMoment:) withObject:[self.moments objectAtIndex:rowForToday] afterDelay:0.2];
-                [self performSelector:@selector(afficherBandeau) withObject:nil afterDelay:0.4];
+                if (![self.moments objectAtIndex:rowForToday]) {
+                    // Update & affiche (en synchronisation avec les animations)
+                    [self performSelector:@selector(updateBandeauWithMoment:) withObject:[self.moments objectAtIndex:rowForToday] afterDelay:0.2];
+                    [self performSelector:@selector(afficherBandeau) withObject:nil afterDelay:0.4];
+                }
             }];
         }
         else {
@@ -824,9 +826,11 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
     
     [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:row inSection:0] atScrollPosition:UITableViewScrollPositionMiddle animated:YES];
     
-    // Update & affiche (en synchronisation avec les animations)
-    [self performSelector:@selector(updateBandeauWithMoment:) withObject:self.moments[indexPath.row] afterDelay:0.2];
-    [self performSelector:@selector(afficherBandeau) withObject:nil afterDelay:0.4];
+    if (!moment) {
+        // Update & affiche (en synchronisation avec les animations)
+        [self performSelector:@selector(updateBandeauWithMoment:) withObject:self.moments[indexPath.row] afterDelay:0.2];
+        [self performSelector:@selector(afficherBandeau) withObject:nil afterDelay:0.4];
+    }
     
     // Placer au fond
     //[self sendEchelleLabelsToBack];
