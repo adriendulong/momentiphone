@@ -17,7 +17,8 @@
 //@"http://apitest.appmoment.fr";
 
 // Base URL du server
-static NSString * const kAFBaseURLString = @"http://api.appmoment.fr";
+//static NSString * const kAFBaseURLString = @"http://api.appmoment.fr";
+static NSString * const kAFBaseURLString = @"http://apidev.appmoment.fr";
 // Clef NSUserDefaults pour le stockage des cookies
 static NSString * const kAFLastHeaderResponse = @"lastHeaderResponse";
 
