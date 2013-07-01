@@ -111,7 +111,7 @@
 "InviteAddViewController_NewUser_Invalide_Phone_Mobile" = "Veuillez rentrer un numéro de téléphone portable";
 
 // Envoi SMS
-"InviteAddViewController_SendSMS_Message" = "Je viens de t'inviter à : %@ sur l'application Moment : %@.\n. Rejoins nous pour partager toutes les photos, et organiser l'évènement. A bientôt, %@";
+"InviteAddViewController_SendSMS_Message" = "Je viens de t'inviter à : %@ sur l'application Moment : %@\nRejoins-nous pour partager toutes les photos, et organiser l'évènement. À bientôt, %@";
 "InviteAddViewController_SendSMS_Fail" = "L'envoi de(s) sms a échoué";
 // Notifs Facebook
 "InviteAddViewController_NotifsFB_Message" = "%@ vient de t'inviter à son évènement : %@ sur l'application Moment.";
