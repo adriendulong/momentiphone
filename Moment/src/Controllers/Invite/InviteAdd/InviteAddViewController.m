@@ -490,12 +490,20 @@ enum InviteAddFontSize {
                     NSMutableSet *smsList = [[NSMutableSet alloc] init];
                     for(UserClass *user in self.notifSelectedFriends)
                     {
-                        // Envoyer que aux 06 ou 07
-                        if(user.numeroMobile && [[Config sharedInstance] isMobilePhoneNumber:user.numeroMobile forceValidation:NO]) {
-                            [smsList addObject:[user.numeroMobile stringByReplacingOccurrencesOfString:@" " withString:@""]];
+                        // Envoyer qu'aux 06 ou 07 (+33 ou 0033)
+                        if(user.numeroMobile) {
+                            NSString *formattedNum = [user.numeroMobile stringByReplacingOccurrencesOfString:@" " withString:@""];
+                            
+                            if ([[Config sharedInstance] isMobilePhoneNumber:formattedNum forceValidation:YES]) {
+                                [smsList addObject:formattedNum];
+                            }
                         }
-                        if(user.secondPhone && [[Config sharedInstance] isMobilePhoneNumber:user.secondPhone forceValidation:NO]) {
-                            [smsList addObject:[user.secondPhone stringByReplacingOccurrencesOfString:@" " withString:@""]];
+                        if(user.secondPhone) {
+                            NSString *formattedNum = [user.secondPhone stringByReplacingOccurrencesOfString:@" " withString:@""];
+                            
+                            if ([[Config sharedInstance] isMobilePhoneNumber:formattedNum forceValidation:YES]) {
+                                [smsList addObject:formattedNum];
+                            }
                         }
                     }
                     
@@ -677,9 +685,9 @@ enum InviteAddFontSize {
         if([temp count] == 0)
         {
             // On vérifie si c'est un début de numéro de téléphone
-            NSString *regex = @"0[1-9]([0-9]*)";
-            NSPredicate *test = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", regex];
-            BOOL phone = [test evaluateWithObject:searchBar.text];
+            NSString *formattedNum = [searchBar.text stringByReplacingOccurrencesOfString:@" " withString:@""];
+            NSLog(@"formattedNum = %@",formattedNum);
+            BOOL phone = [[Config sharedInstance] isValidPhoneNumber:formattedNum];
             
             // User attributes
             NSMutableDictionary *attr = [[NSMutableDictionary alloc] init];
