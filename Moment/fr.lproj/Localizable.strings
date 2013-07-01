@@ -220,6 +220,9 @@
 "VoletViewController_Section_Invitations" = "INVITATIONS";
 "VoletViewController_Section_Notifications" = "NOTIFICATIONS";
 
+// Search
+"VoletSearchViewController_Placeholder_Search" = "Rechercher";
+
 /* ---------------- VoletSearchViewController ------------------ */
 // Empty Cell
 "VoletSearchViewController_EmptyCell_Moments" = "Aucun moment correspondant à votre recherche. Essayez en respectant bien l’accentuation !";

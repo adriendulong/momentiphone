@@ -149,6 +149,8 @@
     
     // Background
     self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg_volet"]];
+    
+    [self.searchBarTextField setPlaceholder:NSLocalizedString(@"VoletSearchViewController_Placeholder_Search", nil)];
 }
 
 - (void)viewWillAppear:(BOOL)animated
