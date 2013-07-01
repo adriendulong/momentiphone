@@ -285,9 +285,7 @@
 #endif
                              
                              // Création NotExist terminée -> Création locale des fb_exist
-                             NSLog(@"fb_exist = %@",fb_exist);
                              NSMutableArray *moments_exist = [MomentClass arrayOfMomentsWithFacebookEvents:fb_exist].mutableCopy;
-                             NSLog(@"moments_exist = %@",moments_exist);
                              
                              
                              // ----- Ajouter en tant qu'invité aux moments déjà existant -> Requete de création ----
