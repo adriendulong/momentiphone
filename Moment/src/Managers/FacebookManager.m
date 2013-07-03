@@ -22,7 +22,8 @@
 @synthesize tokenCachingStrategy = _tokenCachingStrategy;
 
 static NSString *kFbGraphBaseURL = @"http://graph.facebook.com/";
-static NSString *FBSessionStateChangedNotification = @"com.appMoment.Moment:FBSessionStateChangedNotification";
+//static NSString *FBSessionStateChangedNotification = @"com.appMoment.Moment:FBSessionStateChangedNotification";
+static NSString *FBSessionStateChangedNotification = @"com.devappmoment.Moment:FBSessionStateChangedNotification";
 
 // Permissions
 static NSString *kFbPermissionEmail = @"email";
