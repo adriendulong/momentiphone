@@ -302,8 +302,11 @@
                                       NSLog(@"OWNER : {\n %@ \n}", moment.owner);
                                       NSLog(@"\n-------------------------------------------------------------------\n");
 #endif
-                                      // Update moments with server attributes
-                                      [moments_exist replaceObjectAtIndex:i withObject:moment];
+                                      if(moment)
+                                      {
+                                          // Update moments with server attributes
+                                          [moments_exist replaceObjectAtIndex:i withObject:moment];
+                                      }
                                   }
                                   i++;
                                   
