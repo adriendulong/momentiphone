@@ -15,6 +15,7 @@
 #import "NSDate+NSDateAdditions.h"
 #import "MomentClass+Server.h"
 #import "VersionControl.h"
+#import "FacebookManager.h"
 
 #define bigCellHeight 200
 #define smallCellHeight 130
@@ -73,6 +74,7 @@ enum ClockState {
     BOOL isLoading;
     BOOL firstLoad;
     BOOL shouldReloadMoments;
+    BOOL shouldLoadEventsFromFacebook;
     
     MomentClass *momentToDelete;
     
@@ -151,6 +153,7 @@ enum ClockState {
              withSize:(CGSize)size
 withRootViewController:(RootTimeLineViewController*)rootViewController
   shouldReloadMoments:(BOOL)reloadMoments
+shouldLoadEventsFromFacebook:(BOOL)loadEvents
 {    
     self = [super initWithNibName:@"TimeLineViewController" bundle:nil];
     if(self) {
@@ -171,6 +174,7 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
         isLoading = NO;
         firstLoad = YES;
         shouldReloadMoments = reloadMoments;
+        shouldLoadEventsFromFacebook = loadEvents;
         self.shoulShowInviteView = NO;
         self.rootViewController = rootViewController;
         momentToDelete = nil;
@@ -439,6 +443,11 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
             // Update timeScroller
             [self.timeScroller scrollViewDidScroll];
         }
+    }
+    
+    if (self.user.facebookId != nil && shouldLoadEventsFromFacebook) {
+        // Load Events
+        [self loadEvents];
     }
     
     firstLoad = NO;
@@ -1686,6 +1695,44 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
          [self.overlay removeFromSuperview];
          
      }];
+}
+
+- (void)loadEvents
+{
+    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    hud.labelText = NSLocalizedString(@"MBProgressHUD_Loading_FBEvents", nil);
+    
+    [MomentClass importFacebookEventsWithEnded:^(NSArray *events, NSArray *moments) {
+        
+        if (events && moments) {
+            
+            int nbEvent = [events count];
+            
+            if (nbEvent > 0) {
+                
+                if (nbEvent > 1) {
+                    [[MTStatusBarOverlay sharedInstance]
+                     postFinishMessage:[NSString stringWithFormat:NSLocalizedString(@"StatusBarOverlay_ImportFacebookEvent_several", nil), nbEvent]
+                     duration:2 animated:YES];
+                } else {
+                    [[MTStatusBarOverlay sharedInstance]
+                     postFinishMessage:[NSString stringWithFormat:NSLocalizedString(@"StatusBarOverlay_ImportFacebookEvent", nil), nbEvent]
+                     duration:2 animated:YES];
+                }
+                
+                // Save
+                [self.tableView reloadData];
+                [self reloadData];
+            }
+        }
+        else {
+            [[MTStatusBarOverlay sharedInstance]
+             postImmediateErrorMessage:NSLocalizedString(@"StatusBarOverlay_LoadingFailure", nil)
+             duration:2 animated:YES];
+        }
+        
+        [MBProgressHUD hideHUDForView:self.view animated:YES];
+    }];
 }
 
 @end 

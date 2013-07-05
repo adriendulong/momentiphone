@@ -232,6 +232,10 @@
 // Loading Failure
 "StatusBarOverlay_LoadingFailure" = "Le chargement a échoué";
 
+// Importation FB réussie
+"StatusBarOverlay_ImportFacebookEvent" = "%i évènement Facebook importé !";
+"StatusBarOverlay_ImportFacebookEvent_several" = "%i évènements Facebook importés !";
+
 /* ------------ PhotoViewController ------------- */
 // Upload Photo
 "StatusBarOverlay_Photo_Uploading" = "Envoie en cours ...";
