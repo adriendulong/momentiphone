@@ -9,9 +9,14 @@
 #import "Config.h"
 #import "TTTAttributedLabel.h"
 
+// Base URL du server
+static NSString * const kAFBaseURLString;
+
 static NSString *fontName = @"Numans-Regular";
 
 @implementation Config
+
+@synthesize kAFBaseURLString = _kAFBaseURLString;
 
 @synthesize managedObjectContext = _managedObjectContext;
 @synthesize managedObjectModel = _managedObjectModel;
@@ -431,6 +436,31 @@ static Config *sharedInstance = nil;
                           cancelButtonTitle:@"OK"
                           otherButtonTitles:nil]
          show];
+    }
+}
+
+#pragma mark - Switch DEV or PROD
+- (void)setDeveloppementVersion:(BOOL)activated {
+    if (activated) {
+        // DEV
+        
+        [self setKAFBaseURLString:@"http://apidev.appmoment.fr"];
+        
+        //NSMutableDictionary *plist = [NSMutableDictionary dictionaryWithContentsOfFile:@"Moment-Info.plist"];
+        //[plist setObject:@"com.devappmoment.${PRODUCT_NAME:rfc1034identifier}" forKey:@"CFBundleIdentifier"];
+        //[plist setObject:@"fb539966336039230" forKey:@"CFBundleURLSchemes"];
+        //[plist setObject:@"539966336039230" forKey:@"FacebookAppID"];
+        //[plist writeToFile:@"Moment-Info.plist" atomically:YES];
+    } else {
+        // PROD
+        
+        [self setKAFBaseURLString:@"http://api.appmoment.fr"];
+        
+        //NSMutableDictionary *plist = [NSMutableDictionary dictionaryWithContentsOfFile:@"Moment-Info.plist"];
+        //[plist setObject:@"com.appMoment.${PRODUCT_NAME:rfc1034identifier}" forKey:@"CFBundleIdentifier"];
+        //[plist setObject:@"fb445031162214877" forKey:@"CFBundleURLSchemes"];
+        //[plist setObject:@"445031162214877" forKey:@"FacebookAppID"];
+        //[plist writeToFile:@"Moment-Info.plist" atomically:YES];
     }
 }
 

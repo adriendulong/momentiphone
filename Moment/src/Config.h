@@ -46,6 +46,9 @@
 #pragma mark - Singleton
 + (Config*)sharedInstance;
 
+#pragma mark - Switch Dev/Prod
+@property (strong, nonatomic) NSString *kAFBaseURLString;
+
 #pragma mark - CoreData
 @property (readonly, strong, nonatomic) NSManagedObjectContext *managedObjectContext;
 @property (readonly, strong, nonatomic) NSManagedObjectModel *managedObjectModel;
@@ -86,5 +89,8 @@
 #pragma mark - FeedBack
 - (void)feedBackMailComposerWithDelegate:(id<MFMailComposeViewControllerDelegate>)delegate
                                     root:(UIViewController*)rootViewController;
+
+#pragma mark - Switch DEV or PROD
+- (void)setDeveloppementVersion:(BOOL)activated;
 
 @end

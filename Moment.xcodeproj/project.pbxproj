@@ -851,6 +851,8 @@
 		6E80BEC31765CCF400E6041F /* MesReglagesViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6E80BEBE1765CCF400E6041F /* MesReglagesViewController.xib */; };
 		6E80BEC41765CCF400E6041F /* ModifierUserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E80BEC01765CCF400E6041F /* ModifierUserViewController.m */; };
 		6E80BEC51765CCF400E6041F /* ModifierUserViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6E80BEC11765CCF400E6041F /* ModifierUserViewController.xib */; };
+		6EB9C533178553A100976CFC /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EB9C532178553A100976CFC /* AVFoundation.framework */; };
+		6EB9C53C178553A700976CFC /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EB9C53B178553A700976CFC /* AudioToolbox.framework */; };
 		6EDFEFA5175CD7CA0010E5D3 /* picto_feed.png in Resources */ = {isa = PBXBuildFile; fileRef = 6EDFEFA1175CD7CA0010E5D3 /* picto_feed.png */; };
 		6EDFEFA6175CD7CA0010E5D3 /* picto_feed@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6EDFEFA2175CD7CA0010E5D3 /* picto_feed@2x.png */; };
 		6EDFEFA7175CD7CA0010E5D3 /* picto_momentmissing.png in Resources */ = {isa = PBXBuildFile; fileRef = 6EDFEFA3175CD7CA0010E5D3 /* picto_momentmissing.png */; };
@@ -2069,6 +2071,8 @@
 		6E80BEBF1765CCF400E6041F /* ModifierUserViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModifierUserViewController.h; sourceTree = "<group>"; };
 		6E80BEC01765CCF400E6041F /* ModifierUserViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ModifierUserViewController.m; sourceTree = "<group>"; };
 		6E80BEC11765CCF400E6041F /* ModifierUserViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ModifierUserViewController.xib; sourceTree = "<group>"; };
+		6EB9C532178553A100976CFC /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		6EB9C53B178553A700976CFC /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		6EDFEFA1175CD7CA0010E5D3 /* picto_feed.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = picto_feed.png; sourceTree = "<group>"; };
 		6EDFEFA2175CD7CA0010E5D3 /* picto_feed@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "picto_feed@2x.png"; sourceTree = "<group>"; };
 		6EDFEFA3175CD7CA0010E5D3 /* picto_momentmissing.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = picto_momentmissing.png; sourceTree = "<group>"; };
@@ -2088,6 +2092,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6EB9C53C178553A700976CFC /* AudioToolbox.framework in Frameworks */,
+				6EB9C533178553A100976CFC /* AVFoundation.framework in Frameworks */,
 				6E21188E17730FB4009931F8 /* libz.dylib in Frameworks */,
 				5BCCDE7716A1DC9A00C86579 /* SystemConfiguration.framework in Frameworks */,
 				5B6A106E1738B54A005BCB7D /* StoreKit.framework in Frameworks */,
@@ -3481,6 +3487,8 @@
 		5BF02E76169C8F7400232E75 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				6EB9C53B178553A700976CFC /* AudioToolbox.framework */,
+				6EB9C532178553A100976CFC /* AVFoundation.framework */,
 				6E21188D17730FB4009931F8 /* libz.dylib */,
 				5B6A106D1738B547005BCB7D /* StoreKit.framework */,
 				5B69928B172C398F00F07271 /* Security.framework */,

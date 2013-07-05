@@ -10,15 +10,13 @@
 
 #import "AFJSONRequestOperation.h"
 #import "AFNetworkActivityIndicatorManager.h"
+#import "Config.h"
 
 //@"http://ec2-54-228-139-53.eu-west-1.compute.amazonaws.com";
 //@"http://api.appmoment.fr/";
 //@"http://92.146.87.91:5000";
 //@"http://apitest.appmoment.fr";
 
-// Base URL du server
-//static NSString * const kAFBaseURLString = @"http://api.appmoment.fr";
-static NSString * const kAFBaseURLString = @"http://apidev.appmoment.fr";
 // Clef NSUserDefaults pour le stockage des cookies
 static NSString * const kAFLastHeaderResponse = @"lastHeaderResponse";
 
@@ -30,7 +28,7 @@ static NSString * const kAFLastHeaderResponse = @"lastHeaderResponse";
     static AFMomentAPIClient *_sharedClient = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        _sharedClient = [[AFMomentAPIClient alloc] initWithBaseURL:[NSURL URLWithString:kAFBaseURLString]];
+        _sharedClient = [[AFMomentAPIClient alloc] initWithBaseURL:[NSURL URLWithString:[Config sharedInstance].kAFBaseURLString]];
     });
     
     return _sharedClient;
