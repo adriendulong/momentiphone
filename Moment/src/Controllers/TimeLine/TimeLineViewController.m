@@ -659,7 +659,7 @@ shouldLoadEventsFromFacebook:(BOOL)loadEvents
     if( (indexPath.row == 0) || (indexPath.row == [self.moments count]-1) ) // 1er ou Derniere cell
         return borderCellSize;
     else
-        return bigCellHeight;
+        return (CGFloat)bigCellHeight;
     /*else
         return smallCellHeight;*/
 }
