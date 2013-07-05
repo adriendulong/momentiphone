@@ -28,6 +28,8 @@
 @synthesize titreAproposLabel = _titreAproposLabel, titreNotificationLabel = _titreNotificationLabel, titreProfilLabel = _titreProfilLabel;
 @synthesize notifInvitLabel = _notifInvitLabel, notifModifLabel = _notifModifLabel, notifMessageLabel = _notifMessageLabel, notifPhotoLabel = _notifPhotoLabel;
 
+@synthesize likeButton = _likeButton;
+
 #pragma mark - Init
 
 - (id)initWithDDMenuDelegate:(DDMenuController *)delegate
@@ -104,6 +106,7 @@
     [self setNotifMessageButtonEmail:nil];
     [self setNotifModifButtonPush:nil];
     [self setNotifModifButtonEmail:nil];
+    [self setLikeButton:nil];
     [super viewDidUnload];
 }
 
@@ -144,6 +147,27 @@
 }
 
 - (IBAction)clicLikeBadge {
+    UIImageView *imgView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"coeur_photo"]];
+    imgView.transform = CGAffineTransformScale(CGAffineTransformIdentity, 0.001, 0.001);
+    
+    
+    [self.likeButton addSubview:imgView];
+    
+    [UIView animateWithDuration:0.3/1.5 animations:^{
+        imgView.transform = CGAffineTransformScale(CGAffineTransformIdentity, 1.1, 1.1);
+    } completion:^(BOOL finished) {
+        [UIView animateWithDuration:0.3/2 animations:^{
+            imgView.transform = CGAffineTransformScale(CGAffineTransformIdentity, 0.9, 0.9);
+        } completion:^(BOOL finished) {
+            [UIView animateWithDuration:0.3/2 animations:^{
+                imgView.transform = CGAffineTransformIdentity;
+            } completion:^(BOOL finished) {
+                if (finished) {
+                    [imgView removeFromSuperview];
+                }
+            }];
+        }];
+    }];
 }
 
 - (IBAction)clicTutoriel

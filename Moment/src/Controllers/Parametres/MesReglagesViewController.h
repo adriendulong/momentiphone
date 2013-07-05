@@ -43,6 +43,8 @@
 @property (weak, nonatomic) IBOutlet UIButton *notifModifButtonPush;
 @property (weak, nonatomic) IBOutlet UIButton *notifModifButtonEmail;
 
+// Like Button
+@property (weak, nonatomic) IBOutlet UIButton *likeButton;
 
 // --- Methodes ---
 
