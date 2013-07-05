@@ -447,6 +447,7 @@ static Config *sharedInstance = nil;
         [self setKAFBaseURLString:@"http://apidev.appmoment.fr"];
         
         //NSMutableDictionary *plist = [NSMutableDictionary dictionaryWithContentsOfFile:@"Moment-Info.plist"];
+        //[plist setObject:@"MomentDev" forKey:@"Bundle display name"];
         //[plist setObject:@"com.devappmoment.${PRODUCT_NAME:rfc1034identifier}" forKey:@"CFBundleIdentifier"];
         //[plist setObject:@"fb539966336039230" forKey:@"CFBundleURLSchemes"];
         //[plist setObject:@"539966336039230" forKey:@"FacebookAppID"];
@@ -457,6 +458,7 @@ static Config *sharedInstance = nil;
         [self setKAFBaseURLString:@"http://api.appmoment.fr"];
         
         //NSMutableDictionary *plist = [NSMutableDictionary dictionaryWithContentsOfFile:@"Moment-Info.plist"];
+        //[plist setObject:@"${PRODUCT_NAME}" forKey:@"Bundle display name"];
         //[plist setObject:@"com.appMoment.${PRODUCT_NAME:rfc1034identifier}" forKey:@"CFBundleIdentifier"];
         //[plist setObject:@"fb445031162214877" forKey:@"CFBundleURLSchemes"];
         //[plist setObject:@"445031162214877" forKey:@"FacebookAppID"];
