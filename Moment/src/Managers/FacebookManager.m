@@ -220,7 +220,12 @@ static FacebookManager *sharedInstance = nil;
     [[FBSession activeSession] requestNewReadPermissions:permissions completionHandler:^(FBSession *session, NSError *error) {
         
         if(block) {
-            block( error != nil );
+            //block( error != nil );
+            if (session != nil && error == nil) {
+                block(YES);
+            } else {
+                block(NO);
+            }
         }
         
     }];
@@ -231,7 +236,12 @@ static FacebookManager *sharedInstance = nil;
     [[FBSession activeSession] requestNewPublishPermissions:permissions defaultAudience:audience completionHandler:^(FBSession *session, NSError *error) {
         
         if(block) {
-            block( error != nil );
+            //block( error != nil );
+            if (session != nil && error == nil) {
+                block(YES);
+            } else {
+                block(NO);
+            }
         }
         
     }];
@@ -1078,7 +1088,11 @@ static FacebookManager *sharedInstance = nil;
             // responsiveness when the user tags their friends.
             
             // Save FB id
-            [self updateCurrentUserFacebookIdOnServer:nil];
+            UserClass *currentUser = [UserCoreData getCurrentUserWithLocalOnly:YES];
+            
+            if (currentUser) {
+                [self updateCurrentUserFacebookIdOnServer:nil];
+            }
             
         }
             break;
