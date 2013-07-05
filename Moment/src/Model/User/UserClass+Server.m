@@ -339,9 +339,6 @@
         // Prévenir Server d'arreter Push Notifications
         [DeviceModel logout];
         
-        // Suppression cookie de connexion automatique
-        [[AFMomentAPIClient sharedClient] clearConnexionCookie];
-        
         // Delete Current User
         //[[Config sharedInstance].managedObjectContext deleteObject:user];
         //[[Config sharedInstance] saveContext];
@@ -360,6 +357,9 @@
         
         // Logout Facebook
         [[FacebookManager sharedInstance] logout];
+        
+        // Suppression cookie de connexion automatique
+        [[AFMomentAPIClient sharedClient] clearConnexionCookie];
     }
     
     if(block)
