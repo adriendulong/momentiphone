@@ -17,6 +17,7 @@ static NSString *fontName = @"Numans-Regular";
 @implementation Config
 
 @synthesize kAFBaseURLString = _kAFBaseURLString;
+@synthesize FBSessionStateChangedNotification = _FBSessionStateChangedNotification;
 
 @synthesize managedObjectContext = _managedObjectContext;
 @synthesize managedObjectModel = _managedObjectModel;
@@ -445,6 +446,7 @@ static Config *sharedInstance = nil;
         // DEV
         
         [self setKAFBaseURLString:@"http://apidev.appmoment.fr"];
+        [self setFBSessionStateChangedNotification:@"com.devappmoment.Moment:FBSessionStateChangedNotification"];
         
         //NSMutableDictionary *plist = [NSMutableDictionary dictionaryWithContentsOfFile:@"Moment-Info.plist"];
         //[plist setObject:@"MomentDev" forKey:@"Bundle display name"];
@@ -456,6 +458,7 @@ static Config *sharedInstance = nil;
         // PROD
         
         [self setKAFBaseURLString:@"http://api.appmoment.fr"];
+        [self setFBSessionStateChangedNotification:@"com.appMoment.Moment:FBSessionStateChangedNotification"];
         
         //NSMutableDictionary *plist = [NSMutableDictionary dictionaryWithContentsOfFile:@"Moment-Info.plist"];
         //[plist setObject:@"${PRODUCT_NAME}" forKey:@"Bundle display name"];

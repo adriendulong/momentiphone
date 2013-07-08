@@ -12,6 +12,7 @@
 #import "FacebookEvent.h"
 #import "UserClass+Server.h"
 #import "UserClass+Mapping.h"
+#import "Config.h"
 
 @implementation FacebookManager
 
@@ -22,8 +23,6 @@
 @synthesize tokenCachingStrategy = _tokenCachingStrategy;
 
 static NSString *kFbGraphBaseURL = @"http://graph.facebook.com/";
-//static NSString *FBSessionStateChangedNotification = @"com.appMoment.Moment:FBSessionStateChangedNotification";
-static NSString *FBSessionStateChangedNotification = @"com.devappmoment.Moment:FBSessionStateChangedNotification";
 
 // Permissions
 static NSString *kFbPermissionEmail = @"email";
@@ -220,12 +219,7 @@ static FacebookManager *sharedInstance = nil;
     [[FBSession activeSession] requestNewReadPermissions:permissions completionHandler:^(FBSession *session, NSError *error) {
         
         if(block) {
-            //block( error != nil );
-            if (session != nil && error == nil) {
-                block(YES);
-            } else {
-                block(NO);
-            }
+            block( error != nil );
         }
         
     }];
@@ -236,12 +230,7 @@ static FacebookManager *sharedInstance = nil;
     [[FBSession activeSession] requestNewPublishPermissions:permissions defaultAudience:audience completionHandler:^(FBSession *session, NSError *error) {
         
         if(block) {
-            //block( error != nil );
-            if (session != nil && error == nil) {
-                block(YES);
-            } else {
-                block(NO);
-            }
+            block( error != nil );
         }
         
     }];
@@ -1088,11 +1077,7 @@ static FacebookManager *sharedInstance = nil;
             // responsiveness when the user tags their friends.
             
             // Save FB id
-            UserClass *currentUser = [UserCoreData getCurrentUserWithLocalOnly:YES];
-            
-            if (currentUser) {
-                [self updateCurrentUserFacebookIdOnServer:nil];
-            }
+            [self updateCurrentUserFacebookIdOnServer:nil];
             
         }
             break;
@@ -1114,7 +1099,7 @@ static FacebookManager *sharedInstance = nil;
             break;
     }
     
-    [[NSNotificationCenter defaultCenter] postNotificationName:FBSessionStateChangedNotification.copy
+    [[NSNotificationCenter defaultCenter] postNotificationName:[[Config sharedInstance] FBSessionStateChangedNotification].copy
                                                         object:session];
     
     if (error) {
