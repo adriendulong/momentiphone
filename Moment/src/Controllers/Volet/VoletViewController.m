@@ -206,8 +206,6 @@ static VoletViewController *actualVoletViewController;
             
             if (![rowIndexInVolet.indexNotifications containsObject:notif.id_notif]) {
                 [rowIndexInVolet.indexNotifications addObject:notif.id_notif];
-                
-                NSLog(@"count = %i | sharedManager.indexNotifications = %@",[rowIndexInVolet.indexNotifications count], rowIndexInVolet.indexNotifications);
             }
         }
         
