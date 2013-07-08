@@ -686,7 +686,6 @@ enum InviteAddFontSize {
         {
             // On vérifie si c'est un début de numéro de téléphone
             NSString *formattedNum = [searchBar.text stringByReplacingOccurrencesOfString:@" " withString:@""];
-            NSLog(@"formattedNum = %@",formattedNum);
             BOOL phone = [[Config sharedInstance] isValidPhoneNumber:formattedNum];
             
             // User attributes
