@@ -331,36 +331,30 @@
 
 + (void)logoutCurrentUserWithEnded:(void (^) (void))block
 {
-    //NSLog(@"LOGOUT");
+    // Prévenir Server d'arreter Push Notifications
+    [DeviceModel logout];
     
-    UserCoreData *user = [UserCoreData getCurrentUserAsCoreDataWithLocalOnly:NO];
-    if(user)
-    {
-        // Prévenir Server d'arreter Push Notifications
-        [DeviceModel logout];
-        
-        // Delete Current User
-        //[[Config sharedInstance].managedObjectContext deleteObject:user];
-        //[[Config sharedInstance] saveContext];
-        
-        // Clear data
-        [ChatMessageCoreData resetChatMessagesLocal];
-        [MomentCoreData resetMomentsLocal];
-        [UserCoreData resetUsersLocal];
-        
-        // Unsubscribe to local notifications
-        [[PushNotificationManager sharedInstance] removeNotifications];
-        [[Config sharedInstance] saveContext];
-        
-        // Suppression des préférences des push notifications
-        [ParametreNotification clearSettingsLocal];
-        
-        // Logout Facebook
-        [[FacebookManager sharedInstance] logout];
-        
-        // Suppression cookie de connexion automatique
-        [[AFMomentAPIClient sharedClient] clearConnexionCookie];
-    }
+    // Delete Current User
+    //[[Config sharedInstance].managedObjectContext deleteObject:user];
+    //[[Config sharedInstance] saveContext];
+    
+    // Clear data
+    [ChatMessageCoreData resetChatMessagesLocal];
+    [MomentCoreData resetMomentsLocal];
+    [UserCoreData resetUsersLocal];
+    
+    // Unsubscribe to local notifications
+    [[PushNotificationManager sharedInstance] removeNotifications];
+    [[Config sharedInstance] saveContext];
+    
+    // Suppression des préférences des push notifications
+    [ParametreNotification clearSettingsLocal];
+    
+    // Suppression cookie de connexion automatique
+    [[AFMomentAPIClient sharedClient] clearConnexionCookie];
+    
+    // Logout Facebook
+    [[FacebookManager sharedInstance] logout];
     
     if(block)
         block();
