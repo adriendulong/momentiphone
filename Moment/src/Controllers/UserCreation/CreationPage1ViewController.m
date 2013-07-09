@@ -20,6 +20,7 @@
 
 #import "UserClass+Server.h"
 #import "FacebookManager.h"
+#import "WebModalViewController.h"
 
 @interface CreationPage1ViewController () {
     @private
@@ -664,8 +665,8 @@
 }
 
 - (void)showCGU {
-    NSURL *url = [NSURL URLWithString:kAppMomentCGU];
-    [[UIApplication sharedApplication] openURL:url];
+    WebModalViewController *webView = [[WebModalViewController alloc] initWithURL:[NSURL URLWithString:kAppMomentCGU]];
+    [self presentViewController:webView animated:YES completion:nil];
 }
 
 @end

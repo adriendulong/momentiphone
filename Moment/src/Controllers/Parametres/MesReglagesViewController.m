@@ -185,10 +185,7 @@
 }
 
 - (IBAction)clicCGU {
-    //[[UIApplication sharedApplication] openURL:[NSURL URLWithString:kAppMomentCGU]];
     WebModalViewController *webView = [[WebModalViewController alloc] initWithURL:[NSURL URLWithString:kAppMomentCGU]];
-    //[webView setWantsFullScreenLayout:YES];
-    //[webView setModalPresentationStyle:UIModalPresentationFullScreen];
     [self presentViewController:webView animated:YES completion:nil];
 }
 
