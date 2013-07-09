@@ -775,9 +775,9 @@ shouldLoadEventsFromFacebook:(BOOL)loadEvents
     CGPoint point = CGPointMake(CGRectGetMidX(self.view.frame), CGRectGetMidY(self.view.frame));
     point = [self.view convertPoint:point toView:self.tableView];
     
-    NSIndexPath *indexPath = [self.tableView indexPathForRowAtPoint:point];
+    //NSIndexPath *indexPath = [self.tableView indexPathForRowAtPoint:point];
     
-    [self updateSelectedMoment:self.moments[indexPath.row] atRow:indexPath.row];
+    //[self updateSelectedMoment:self.moments[indexPath.row] atRow:indexPath.row];
     
     if(self.bandeauTitre.alpha == 0) {
         [self afficherBandeau];
