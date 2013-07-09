@@ -49,6 +49,7 @@
 #pragma mark - Switch Dev/Prod
 @property (strong, nonatomic) NSString *kAFBaseURLString;
 @property (strong, nonatomic) NSString *FBSessionStateChangedNotification;
+@property (strong, nonatomic) NSString *TestFlightAppToken;
 
 #pragma mark - CoreData
 @property (readonly, strong, nonatomic) NSManagedObjectContext *managedObjectContext;

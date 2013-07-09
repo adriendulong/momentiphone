@@ -96,7 +96,7 @@
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
     //[TestFlight setDeviceIdentifier:[[UIDevice currentDevice] uniqueIdentifier]];
 #pragma clang diagnostic pop
-    [TestFlight takeOff:@"85ba03e5-22dc-45c5-9810-be2274ed75d1"];
+    [TestFlight takeOff:[Config sharedInstance].TestFlightAppToken];
     // ------------------------------------------
     
     // ---------------- Initialisation -----------------    

@@ -18,6 +18,7 @@ static NSString *fontName = @"Numans-Regular";
 
 @synthesize kAFBaseURLString = _kAFBaseURLString;
 @synthesize FBSessionStateChangedNotification = _FBSessionStateChangedNotification;
+@synthesize TestFlightAppToken = _TestFlightAppToken;
 
 @synthesize managedObjectContext = _managedObjectContext;
 @synthesize managedObjectModel = _managedObjectModel;
@@ -447,6 +448,7 @@ static Config *sharedInstance = nil;
         
         [self setKAFBaseURLString:@"http://apidev.appmoment.fr"];
         [self setFBSessionStateChangedNotification:@"com.devappmoment.Moment:FBSessionStateChangedNotification"];
+        [self setTestFlightAppToken:@"01bdc3ce-6a5c-457a-8f65-346e800264b1"];
         
         //NSMutableDictionary *plist = [NSMutableDictionary dictionaryWithContentsOfFile:@"Moment-Info.plist"];
         //[plist setObject:@"MomentDev" forKey:@"Bundle display name"];
@@ -459,6 +461,7 @@ static Config *sharedInstance = nil;
         
         [self setKAFBaseURLString:@"http://api.appmoment.fr"];
         [self setFBSessionStateChangedNotification:@"com.appMoment.Moment:FBSessionStateChangedNotification"];
+        [self setTestFlightAppToken:@"85ba03e5-22dc-45c5-9810-be2274ed75d1"];
         
         //NSMutableDictionary *plist = [NSMutableDictionary dictionaryWithContentsOfFile:@"Moment-Info.plist"];
         //[plist setObject:@"${PRODUCT_NAME}" forKey:@"Bundle display name"];
