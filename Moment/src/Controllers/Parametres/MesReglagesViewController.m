@@ -14,6 +14,7 @@
 #import "PushNotificationManager.h"
 #import "TutorialViewController.h"
 #import "HomeViewController.h"
+#import "WebModalViewController.h"
 
 @interface MesReglagesViewController ()
 
@@ -184,7 +185,11 @@
 }
 
 - (IBAction)clicCGU {
-    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:kAppMomentCGU]];
+    //[[UIApplication sharedApplication] openURL:[NSURL URLWithString:kAppMomentCGU]];
+    WebModalViewController *webView = [[WebModalViewController alloc] initWithURL:[NSURL URLWithString:kAppMomentCGU]];
+    //[webView setWantsFullScreenLayout:YES];
+    //[webView setModalPresentationStyle:UIModalPresentationFullScreen];
+    [self presentViewController:webView animated:YES completion:nil];
 }
 
 - (IBAction)clicContactUs {

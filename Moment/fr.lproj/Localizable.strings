@@ -359,6 +359,9 @@
 "PopUpFunCreationViewController_Privacy_Private_Title" = "Secret :";
 "PopUpFunCreationViewController_Privacy_Private_Details" = "Seuls les invités peuvent voir ce moment";
 
+/* ------------ WebModalViewController ---------- */
+"WebModalViewController_Toolbar_CloseButton" = "Fermer";
+
 /* -------------------- Sharing Manager ------------------ */
 "Retrive_Photos_Event_Moment_Mail_Facebook" = "Retrouvez toutes les photos de l'évènement %@ sur l'application Moment !";
 "Retrive_Photos_Event_Moment_Twitter" = "Retrouvez toutes les photos de l'évènement %@ sur @appmoment !";
