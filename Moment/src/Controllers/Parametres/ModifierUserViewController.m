@@ -677,7 +677,7 @@ enum PhotoPickerDestination {
 
 -(void) imagePickerController:(UIImagePickerController *)UIPicker didFinishPickingMediaWithInfo:(NSDictionary *) info
 {
-    UIImage *image = [[Config sharedInstance] imageWithMaxSize:info[@"UIImagePickerControllerOriginalImage"] maxSize:200];
+    UIImage *image = info[@"UIImagePickerControllerOriginalImage"];
     
     switch (imagePickerDestination) {
         case PhotoPickerDestinationProfilPicture:
