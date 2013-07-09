@@ -246,8 +246,8 @@
 
 /* ------------ PhotoViewController ------------- */
 // Upload Photo
-"StatusBarOverlay_Photo_Uploading" = "Envoie en cours ...";
-"StatusBarOverlay_Photo_UploadEnded" = "Envoie Terminé";
+"StatusBarOverlay_Photo_Uploading" = "Envoi en cours ...";
+"StatusBarOverlay_Photo_UploadEnded" = "Envoi terminé";
 // Download Photo
 "PhotoViewController_DownloadPhoto_success" = "Téléchargement terminé";
 // Bandeau
