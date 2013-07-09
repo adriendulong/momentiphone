@@ -78,7 +78,7 @@
         self.dateLabel.frame = frame;
         
         // Image
-        self.medallion.borderWidth = 1.95;
+        self.medallion.borderWidth = 1.5;
         self.medallion.defaultStyle = MedallionStyleCover;
         __weak TimeLineDeveloppedCell *dp = self;
         [self.medallion addTarget:self action:@selector(medaillionClic) forControlEvents:UIControlEventTouchUpInside];
