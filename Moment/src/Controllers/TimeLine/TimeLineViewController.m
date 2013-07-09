@@ -17,7 +17,7 @@
 #import "VersionControl.h"
 #import "FacebookManager.h"
 
-#define bigCellHeight 200
+#define bigCellHeight 195
 #define smallCellHeight 130
 
 #define DEGREES_TO_RADIANS(x) (M_PI * x / 180.0)
