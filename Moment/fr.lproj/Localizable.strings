@@ -223,6 +223,14 @@
 // Search
 "VoletSearchViewController_Placeholder_Search" = "Rechercher";
 
+/* ---------------- VoletViewController ------------------ */
+
+"VoletViewControllerNotificationCell_ModifMoment" = "Modification apportée à : %@";
+"VoletViewControllerNotificationCell_NewMessage" = "Nouveau message dans : %@";
+"VoletViewControllerNotificationCell_NewPhoto" = "Nouvelle photo ajoutée à : %@";
+"VoletViewControllerNotificationCell_Follow" = "%@ vous suit maintenant";
+"VoletViewControllerNotificationCell_FollowDemand" = "Demande de suivi de %@";
+
 /* ---------------- VoletSearchViewController ------------------ */
 // Empty Cell
 "VoletSearchViewController_EmptyCell_Moments" = "Aucun moment correspondant à votre recherche. Essayez en respectant bien l’accentuation !";
