@@ -336,7 +336,7 @@
 /* ------------ FeedViewController ------------- */
 "FeedViewController_lire_messages_label1" = "Lire les";
 "FeedViewController_lire_messages_label2" = "%d autres messages";
-"FeedViewController_EmptyLabel" = "Vous n'avez aucune actualité pour le moment. Abonnez vous à vos amis, artistes ou vos marques préférées pour consulter les dernières photos de leurs vacances ou du dernier concert !";
+"FeedViewController_EmptyLabel" = "Vous n'avez aucune actualité pour le moment. Abonnez vous à vos amis, artistes ou vos marques préférées pour consulter les dernières photos de leurs vacances ou du dernier concert !\n\nPour retrouver vos amis, ouvrez le volet en haut à gauche et cherchez les dans la barre de recherche ! ";
 
 /* ------------ Cagnotte2ViewController ------------- */
 "Cagnotte2ViewController_EmptyCell" = "Aucun cadeau correspondant";
