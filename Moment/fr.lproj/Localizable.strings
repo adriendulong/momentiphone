@@ -292,6 +292,7 @@
 
 /* -------------- ImporterFBViewController ------------- */
 "MBProgressHUD_Loading_FBEvents" = "Importation en cours ...";
+"MBProgressHUD_Loading_FBEvents_2" = "Si l'importation dure plus de 30 secondes, retournez à l'étape précédente puis recommencez";
 "ImporterFBViewController_EmptyLabel" = "Aucun nouvel événement trouvé. Pour votre confort, nous importons uniquement les évènements auxquels vous avez répondu sur Facebook. Pensez donc à indiquez votre présence à l'évènement puis à l'importer sur Moment !";
 
 /* -------------- CreationHomeViewController ------------- */

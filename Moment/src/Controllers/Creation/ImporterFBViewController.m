@@ -41,6 +41,7 @@
 {
     MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
     hud.labelText = NSLocalizedString(@"MBProgressHUD_Loading_FBEvents", nil);
+    hud.detailsLabelText = NSLocalizedString(@"MBProgressHUD_Loading_FBEvents_2", nil);
     
     [MomentClass importFacebookEventsWithEnded:^(NSArray *events, NSArray *moments) {
         
