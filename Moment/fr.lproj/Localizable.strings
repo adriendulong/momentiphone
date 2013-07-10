@@ -215,7 +215,7 @@
 /* ---------------- VoletViewController ------------------ */
 // Empty Cell
 "VoletViewController_EmptyCell_invitationView" = "Aucune invitation pour l'instant. Appuyez sur l’onglet Moment Manquant dans le volet si vous ne retrouvez pas toutes vos invitations";
-"VoletViewController_EmptyCell_notificationView" = "Aucune notification pour le moment :(";
+"VoletViewController_EmptyCell_notificationView" = "\nAucune notification pour le moment :(\n\nDes vacances, un voyage, une soirée ? Pensez à créer un moment pour l'organiser et partager toutes les photos avec vos amis.";
 // Section
 "VoletViewController_Section_Invitations" = "INVITATIONS";
 "VoletViewController_Section_Notifications" = "NOTIFICATIONS";
