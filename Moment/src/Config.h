@@ -91,6 +91,8 @@
 #pragma mark - FeedBack
 - (void)feedBackMailComposerWithDelegate:(id<MFMailComposeViewControllerDelegate>)delegate
                                     root:(UIViewController*)rootViewController;
+- (void)feedBackRatingMailComposerWithDelegate:(id<MFMailComposeViewControllerDelegate>)delegate
+                                          root:(UIViewController*)rootViewController;
 
 #pragma mark - Switch DEV or PROD
 - (void)setDeveloppementVersion:(BOOL)activated;

@@ -399,7 +399,11 @@
 
 /* ------------- MFMailComposeViewController Moment --------------- */
 "MFMailComposeViewController_Moment_Subject" = "Hello Moment, un petit mot";
+"MFMailComposeViewController_Moment_Subject_Feedback" = "Moment - FeedBack";
+
 "MFMailComposeViewController_Moment_MessageBody" = "<i>C'était juste pour vous dire</i>";
+"MFMailComposeViewController_Moment_MessageBody_Feedback" = "Une petite remarque : \n\n\n%@.";
+"MFMailComposeViewController_Moment_MessageBody_Feedback_2" = "Bonjour Moment, J'ai quelques problèmes / suggestions à vous faire sur votre application :";
 
 "MFMailComposeViewController_Moment_Popup_Title" = "Envoi impossible";
 "MFMailComposeViewController_Moment_Popup_Message" = "Votre appareil ne supporte pas l'envoi d'email";

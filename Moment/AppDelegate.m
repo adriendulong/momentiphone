@@ -319,5 +319,15 @@
     [[PushNotificationManager sharedInstance] failToReceiveNotification:error];
 }
 
+#pragma mark - iRate mail
+
+- (void)iRateUserDidDeclineToRateApp {    
+    [[Config sharedInstance] feedBackRatingMailComposerWithDelegate:self root:self.window.rootViewController];
+}
+
+-(void)mailComposeController:(MFMailComposeViewController*)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError*)error {
+    [self.window.rootViewController dismissModalViewControllerAnimated:YES];
+}
+
 
 @end

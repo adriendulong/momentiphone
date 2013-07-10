@@ -415,9 +415,9 @@ static Config *sharedInstance = nil;
     if([MFMailComposeViewController canSendMail])
     {
         // Email Subject
-        NSString *emailTitle = @"Moment - FeedBack";
+        NSString *emailTitle = NSLocalizedString(@"MFMailComposeViewController_Moment_Subject_Feedback", nil);
         // Email Content
-        NSString *messageBody = [NSString stringWithFormat:@"Une petite remarque : \n\n\n%@.", [[UserCoreData getCurrentUser] formatedUsernameWithStyle:UsernameStyleCapitalized]];
+        NSString *messageBody = [NSString stringWithFormat:NSLocalizedString(@"MFMailComposeViewController_Moment_MessageBody_Feedback", nil), [[UserCoreData getCurrentUser] formatedUsernameWithStyle:UsernameStyleCapitalized]];
         
         MFMailComposeViewController *mc = [[MFMailComposeViewController alloc] init];
         mc.mailComposeDelegate = delegate;
@@ -432,10 +432,42 @@ static Config *sharedInstance = nil;
     {
         //NSLog(@"mail composer fail");
         
-        [[[UIAlertView alloc] initWithTitle:@"Envoi impossible"
-                                    message:@"Votre appareil ne supporte pas l'envoi d'email"
+        [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"MFMailComposeViewController_Moment_Popup_Title", nil)
+                                    message:NSLocalizedString(@"MFMailComposeViewController_Moment_Popup_Message", nil)
                                    delegate:nil
-                          cancelButtonTitle:@"OK"
+                          cancelButtonTitle:NSLocalizedString(@"AlertView_Button_OK", nil)
+                          otherButtonTitles:nil]
+         show];
+    }
+}
+
+- (void)feedBackRatingMailComposerWithDelegate:(id<MFMailComposeViewControllerDelegate>)delegate
+                                          root:(UIViewController*)rootViewController
+{
+    if([MFMailComposeViewController canSendMail])
+    {
+        // Email Subject
+        NSString *emailTitle = NSLocalizedString(@"MFMailComposeViewController_Moment_Subject_Feedback", nil);
+        // Email Content
+        NSString *messageBody = NSLocalizedString(@"MFMailComposeViewController_Moment_MessageBody_Feedback_2", nil);
+        
+        MFMailComposeViewController *mc = [[MFMailComposeViewController alloc] init];
+        mc.mailComposeDelegate = delegate;
+        [mc setSubject:emailTitle];
+        [mc setMessageBody:messageBody isHTML:NO];
+        [mc setToRecipients:@[kParameterContactMail]];
+        
+        // Present mail view controller on screen
+        [[VersionControl sharedInstance] presentModalViewController:mc fromRoot:rootViewController animated:YES];
+    }
+    else
+    {
+        //NSLog(@"mail composer fail");
+        
+        [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"MFMailComposeViewController_Moment_Popup_Title", nil)
+                                    message:NSLocalizedString(@"MFMailComposeViewController_Moment_Popup_Message", nil)
+                                   delegate:nil
+                          cancelButtonTitle:NSLocalizedString(@"AlertView_Button_OK", nil)
                           otherButtonTitles:nil]
          show];
     }
