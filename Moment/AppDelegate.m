@@ -32,12 +32,12 @@
 #pragma mark - Global View
 
 + (UIViewController*)actualViewController {
-    AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     return appDelegate.actualViewController;
 }
 
 + (void)updateActualViewController:(UIViewController*)viewController {
-    AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     appDelegate.actualViewController = viewController;
 }
 

@@ -206,7 +206,7 @@ static FacebookManager *sharedInstance = nil;
 
 - (BOOL)isLogged
 {
-    AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     
     return appDelegate.session.isOpen;
 }
