@@ -848,6 +848,7 @@
 		6E5F42511784675300A93335 /* picto_croix_rouge.png in Resources */ = {isa = PBXBuildFile; fileRef = 6E5F424F1784675300A93335 /* picto_croix_rouge.png */; };
 		6E5F42521784675300A93335 /* picto_croix_rouge@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6E5F42501784675300A93335 /* picto_croix_rouge@2x.png */; };
 		6E5F42541784755500A93335 /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E5F42531784755500A93335 /* FacebookSDK.framework */; };
+		6E7DB527178E923900CEC1BD /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E7DB526178E923900CEC1BD /* Crashlytics.framework */; };
 		6E80BEC21765CCF400E6041F /* MesReglagesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E80BEBD1765CCF400E6041F /* MesReglagesViewController.m */; };
 		6E80BEC31765CCF400E6041F /* MesReglagesViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6E80BEBE1765CCF400E6041F /* MesReglagesViewController.xib */; };
 		6E80BEC41765CCF400E6041F /* ModifierUserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E80BEC01765CCF400E6041F /* ModifierUserViewController.m */; };
@@ -2062,13 +2063,13 @@
 		6E21188F1773109A009931F8 /* libTestFlight.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libTestFlight.a; sourceTree = "<group>"; };
 		6E2485CC178B0E6300A33E69 /* WebModalViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebModalViewController.h; sourceTree = "<group>"; };
 		6E2485CD178B0E6300A33E69 /* WebModalViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebModalViewController.m; sourceTree = "<group>"; };
-		6E3D2AB8178D4EE900332D99 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		6E4D6EE6177850D60043B095 /* RowIndexInVolet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RowIndexInVolet.h; sourceTree = "<group>"; };
 		6E4D6EE7177850D60043B095 /* RowIndexInVolet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RowIndexInVolet.m; sourceTree = "<group>"; };
 		6E5F424E17842F3F00A93335 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		6E5F424F1784675300A93335 /* picto_croix_rouge.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = picto_croix_rouge.png; sourceTree = "<group>"; };
 		6E5F42501784675300A93335 /* picto_croix_rouge@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "picto_croix_rouge@2x.png"; sourceTree = "<group>"; };
 		6E5F42531784755500A93335 /* FacebookSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FacebookSDK.framework; sourceTree = "<group>"; };
+		6E7DB526178E923900CEC1BD /* Crashlytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Crashlytics.framework; sourceTree = "<group>"; };
 		6E80BEBC1765CCF400E6041F /* MesReglagesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MesReglagesViewController.h; sourceTree = "<group>"; };
 		6E80BEBD1765CCF400E6041F /* MesReglagesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MesReglagesViewController.m; sourceTree = "<group>"; };
 		6E80BEBE1765CCF400E6041F /* MesReglagesViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MesReglagesViewController.xib; sourceTree = "<group>"; };
@@ -2130,6 +2131,7 @@
 				5B4E91A8175E0A53006A08F6 /* libGoogleAnalytics.a in Frameworks */,
 				6E2118901773109A009931F8 /* libTestFlight.a in Frameworks */,
 				6E5F42541784755500A93335 /* FacebookSDK.framework in Frameworks */,
+				6E7DB527178E923900CEC1BD /* Crashlytics.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3491,7 +3493,7 @@
 		5BF02E76169C8F7400232E75 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				6E3D2AB8178D4EE900332D99 /* CFNetwork.framework */,
+				6E7DB526178E923900CEC1BD /* Crashlytics.framework */,
 				6EB9C53B178553A700976CFC /* AudioToolbox.framework */,
 				6EB9C532178553A100976CFC /* AVFoundation.framework */,
 				6E21188D17730FB4009931F8 /* libz.dylib */,
@@ -4355,6 +4357,7 @@
 				5BF02E6F169C8F7400232E75 /* Sources */,
 				5BF02E70169C8F7400232E75 /* Frameworks */,
 				5BF02E71169C8F7400232E75 /* Resources */,
+				6E7DB51E178E921200CEC1BD /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -5191,6 +5194,22 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		6E7DB51E178E921200CEC1BD /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "./Crashlytics.framework/run d9f095a3e9cf0cb5fe5c01a68d72a9b2d4cda490";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		5BF02E6F169C8F7400232E75 /* Sources */ = {
