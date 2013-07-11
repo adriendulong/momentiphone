@@ -5,6 +5,7 @@
 //
 
 #import "MBProgressHUD.h"
+#import "VersionControl.h"
 
 
 #if __has_feature(objc_arc)
@@ -383,7 +384,13 @@ static const CGFloat kDetailsLabelFontSize = 12.f;
 	detailsLabel = [[UILabel alloc] initWithFrame:self.bounds];
 	detailsLabel.font = self.detailsLabelFont;
 	detailsLabel.adjustsFontSizeToFitWidth = NO;
-	detailsLabel.textAlignment = kCTTextAlignmentCenter;
+    
+	//detailsLabel.textAlignment = kCTTextAlignmentCenter;
+    if ([[VersionControl sharedInstance] supportIOS6]) {
+        detailsLabel.textAlignment = NSTextAlignmentCenter;
+    } else {
+        detailsLabel.textAlignment = UITextAlignmentCenter;
+    }
 	detailsLabel.opaque = NO;
 	detailsLabel.backgroundColor = [UIColor clearColor];
 	detailsLabel.textColor = [UIColor whiteColor];

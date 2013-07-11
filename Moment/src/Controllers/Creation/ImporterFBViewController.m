@@ -41,10 +41,27 @@
 {
     MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
     hud.labelText = NSLocalizedString(@"MBProgressHUD_Loading_FBEvents", nil);
+    hud.detailsLabelText = NSLocalizedString(@"MBProgressHUD_Loading_FBEvents_2", nil);
     
     [MomentClass importFacebookEventsWithEnded:^(NSArray *events, NSArray *moments) {
         
         if (events && moments) {
+            
+            int nbEvent = [events count];
+            
+            if (nbEvent > 0) {
+                
+                if (nbEvent > 1) {
+                    [[MTStatusBarOverlay sharedInstance]
+                     postFinishMessage:[NSString stringWithFormat:NSLocalizedString(@"StatusBarOverlay_ImportFacebookEvent_several", nil), nbEvent]
+                     duration:2 animated:YES];
+                } else {
+                    [[MTStatusBarOverlay sharedInstance]
+                     postFinishMessage:[NSString stringWithFormat:NSLocalizedString(@"StatusBarOverlay_ImportFacebookEvent", nil), nbEvent]
+                     duration:2 animated:YES];
+                }
+            }
+            
             // Save
             self.events = events;
             self.moments = moments;

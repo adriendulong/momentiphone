@@ -11,6 +11,7 @@
 #import "LocalNotification.h"
 #import "VoletViewController.h"
 #import "Config.h"
+#import "RowIndexInVolet.h"
 
 #import "MTStatusBarOverlay.h"
 
@@ -78,7 +79,8 @@ static PushNotificationManager *sharedInstance = nil;
     NSNumber *momentId = attributes[@"id_moment"];
         
     // Update Badge Number
-    [[PushNotificationManager sharedInstance] setNbNotifcations:[aps[@"badge"] intValue]];
+    RowIndexInVolet *rowIndexInVolet = [RowIndexInVolet sharedManager];
+    [[PushNotificationManager sharedInstance] setNbNotifcations:[aps[@"badge"] intValue]+[rowIndexInVolet.indexNotifications count]];
     
     // Update volet
     [[VoletViewController volet] loadNotifications];
@@ -159,7 +161,7 @@ static PushNotificationManager *sharedInstance = nil;
     
     // Update
     _nbNotifcations = nbNotifcations;
-    [[UIApplication sharedApplication] setApplicationIconBadgeNumber:self.nbNotifcations];
+    [[UIApplication sharedApplication] setApplicationIconBadgeNumber:nbNotifcations];
     
     // Notify
     [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationChangeBadgeNumber object:@(nbNotifcations)];

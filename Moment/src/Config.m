@@ -9,9 +9,16 @@
 #import "Config.h"
 #import "TTTAttributedLabel.h"
 
+// Base URL du server
+static NSString * const kAFBaseURLString;
+
 static NSString *fontName = @"Numans-Regular";
 
 @implementation Config
+
+@synthesize kAFBaseURLString = _kAFBaseURLString;
+@synthesize FBSessionStateChangedNotification = _FBSessionStateChangedNotification;
+@synthesize TestFlightAppToken = _TestFlightAppToken;
 
 @synthesize managedObjectContext = _managedObjectContext;
 @synthesize managedObjectModel = _managedObjectModel;
@@ -408,9 +415,9 @@ static Config *sharedInstance = nil;
     if([MFMailComposeViewController canSendMail])
     {
         // Email Subject
-        NSString *emailTitle = @"Moment - FeedBack";
+        NSString *emailTitle = NSLocalizedString(@"MFMailComposeViewController_Moment_Subject_Feedback", nil);
         // Email Content
-        NSString *messageBody = [NSString stringWithFormat:@"Une petite remarque : \n\n\n%@.", [[UserCoreData getCurrentUser] formatedUsernameWithStyle:UsernameStyleCapitalized]];
+        NSString *messageBody = [NSString stringWithFormat:NSLocalizedString(@"MFMailComposeViewController_Moment_MessageBody_Feedback", nil), [[UserCoreData getCurrentUser] formatedUsernameWithStyle:UsernameStyleCapitalized]];
         
         MFMailComposeViewController *mc = [[MFMailComposeViewController alloc] init];
         mc.mailComposeDelegate = delegate;
@@ -425,12 +432,75 @@ static Config *sharedInstance = nil;
     {
         //NSLog(@"mail composer fail");
         
-        [[[UIAlertView alloc] initWithTitle:@"Envoi impossible"
-                                    message:@"Votre appareil ne supporte pas l'envoi d'email"
+        [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"MFMailComposeViewController_Moment_Popup_Title", nil)
+                                    message:NSLocalizedString(@"MFMailComposeViewController_Moment_Popup_Message", nil)
                                    delegate:nil
-                          cancelButtonTitle:@"OK"
+                          cancelButtonTitle:NSLocalizedString(@"AlertView_Button_OK", nil)
                           otherButtonTitles:nil]
          show];
+    }
+}
+
+- (void)feedBackRatingMailComposerWithDelegate:(id<MFMailComposeViewControllerDelegate>)delegate
+                                          root:(UIViewController*)rootViewController
+{
+    if([MFMailComposeViewController canSendMail])
+    {
+        // Email Subject
+        NSString *emailTitle = NSLocalizedString(@"MFMailComposeViewController_Moment_Subject_Feedback", nil);
+        // Email Content
+        NSString *messageBody = NSLocalizedString(@"MFMailComposeViewController_Moment_MessageBody_Feedback_2", nil);
+        
+        MFMailComposeViewController *mc = [[MFMailComposeViewController alloc] init];
+        mc.mailComposeDelegate = delegate;
+        [mc setSubject:emailTitle];
+        [mc setMessageBody:messageBody isHTML:NO];
+        [mc setToRecipients:@[kParameterContactMail]];
+        
+        // Present mail view controller on screen
+        [[VersionControl sharedInstance] presentModalViewController:mc fromRoot:rootViewController animated:YES];
+    }
+    else
+    {
+        //NSLog(@"mail composer fail");
+        
+        [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"MFMailComposeViewController_Moment_Popup_Title", nil)
+                                    message:NSLocalizedString(@"MFMailComposeViewController_Moment_Popup_Message", nil)
+                                   delegate:nil
+                          cancelButtonTitle:NSLocalizedString(@"AlertView_Button_OK", nil)
+                          otherButtonTitles:nil]
+         show];
+    }
+}
+
+#pragma mark - Switch DEV or PROD
+- (void)setDeveloppementVersion:(BOOL)activated {
+    if (activated) {
+        // DEV
+        
+        [self setKAFBaseURLString:@"http://apidev.appmoment.fr"];
+        [self setFBSessionStateChangedNotification:@"com.devappmoment.Moment:FBSessionStateChangedNotification"];
+        [self setTestFlightAppToken:@"01bdc3ce-6a5c-457a-8f65-346e800264b1"];
+        
+        //NSMutableDictionary *plist = [NSMutableDictionary dictionaryWithContentsOfFile:@"Moment-Info.plist"];
+        //[plist setObject:@"MomentDev" forKey:@"Bundle display name"];
+        //[plist setObject:@"com.devappmoment.${PRODUCT_NAME:rfc1034identifier}" forKey:@"CFBundleIdentifier"];
+        //[plist setObject:@"fb539966336039230" forKey:@"CFBundleURLSchemes"];
+        //[plist setObject:@"539966336039230" forKey:@"FacebookAppID"];
+        //[plist writeToFile:@"Moment-Info.plist" atomically:YES];
+    } else {
+        // PROD
+        
+        [self setKAFBaseURLString:@"http://api.appmoment.fr"];
+        [self setFBSessionStateChangedNotification:@"com.appMoment.Moment:FBSessionStateChangedNotification"];
+        [self setTestFlightAppToken:@"85ba03e5-22dc-45c5-9810-be2274ed75d1"];
+        
+        //NSMutableDictionary *plist = [NSMutableDictionary dictionaryWithContentsOfFile:@"Moment-Info.plist"];
+        //[plist setObject:@"${PRODUCT_NAME}" forKey:@"Bundle display name"];
+        //[plist setObject:@"com.appMoment.${PRODUCT_NAME:rfc1034identifier}" forKey:@"CFBundleIdentifier"];
+        //[plist setObject:@"fb445031162214877" forKey:@"CFBundleURLSchemes"];
+        //[plist setObject:@"445031162214877" forKey:@"FacebookAppID"];
+        //[plist writeToFile:@"Moment-Info.plist" atomically:YES];
     }
 }
 

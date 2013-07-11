@@ -106,7 +106,8 @@ enum TimeLineStyle {
              withUser:(UserClass*)user
              withSize:(CGSize)size
 withRootViewController:(RootTimeLineViewController*)rootViewController
-  shouldReloadMoments:(BOOL)reloadMoments;
+  shouldReloadMoments:(BOOL)reloadMoments
+shouldLoadEventsFromFacebook:(BOOL)loadEvents;
 
 - (void)updateSelectedMoment:(MomentClass*)moment atRow:(NSInteger)row;
 - (void)reloadData;
