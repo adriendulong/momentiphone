@@ -24,6 +24,7 @@ enum NotificationType {
 @property (nonatomic, strong) MomentClass *moment;
 @property (nonatomic, strong) UserClass *follower;
 @property (nonatomic, strong) UserClass *requestFollower;
+@property (nonatomic, strong) NSNumber *id_notif;
 
 // ----- Init -----
 - (id)initWithAttributesFromWeb:(NSDictionary*)attributes;

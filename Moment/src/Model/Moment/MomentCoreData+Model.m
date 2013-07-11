@@ -395,6 +395,13 @@
 
 + (void)updateMomentsWithArray:(NSArray*)array 
 {
+    
+    NSMutableArray *momentIdCoreData = [NSMutableArray array];
+    
+    for (MomentClass *momentCD in [MomentCoreData getMoments]) {
+        [momentIdCoreData addObject:momentCD.momentId];
+    }    
+    
     // Construction de la requete
     NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"MomentCoreData"];
     NSError *error = nil;
@@ -418,8 +425,21 @@
             MomentClass *moment = [[MomentClass alloc] initWithAttributesFromWeb:attributes];
             [self updateMoment:moment];
             
+            if ([momentIdCoreData containsObject:moment.momentId]) {
+                [momentIdCoreData removeObject:moment.momentId];
+            }
+            
         }
         
+    }
+    
+    for (NSNumber *momentId in momentIdCoreData) {
+        for (MomentClass *moment in [MomentCoreData getMoments]) {
+            if ([moment.momentId isEqualToNumber:momentId]) {
+                //NSLog(@"Suppression du moment (%@) : %@",moment.momentId, moment.titre);
+                [self deleteMoment:moment];
+            }
+        }
     }
     
 }

@@ -6,11 +6,11 @@
 //  Copyright 2011 TestFlight. All rights reserved.
 
 #import <Foundation/Foundation.h>
-#define TESTFLIGHT_SDK_VERSION @"1.2.4"
+#define TESTFLIGHT_SDK_VERSION @"1.2.6"
 #undef TFLog
 
 #if __cplusplus
-extern "C" { 
+extern "C" {
 #endif
     void TFLog(NSString *format, ...);
     void TFLogv(NSString *format, va_list arg_list);
@@ -23,13 +23,13 @@ extern "C" {
  * All methods are class level
  */
 @interface TestFlight : NSObject {
-
+    
 }
 
 /**
  * Add custom environment information
  * If you want to track custom information such as a user name from your application you can add it here
- * 
+ *
  * @param information A string containing the environment you are storing
  * @param key The key to store the information with
  */
@@ -84,7 +84,7 @@ extern "C" {
  * This method should only be used during testing so that you can identify a testers test data with them.
  * If you do not provide the identifier you will still see all session data, with checkpoints
  * and logs, but the data will be anonymized.
- * 
+ *
  * It is recommended that you only use this method during testing.
  * Apple may reject your app if left in a submitted app.
  *

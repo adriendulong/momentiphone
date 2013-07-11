@@ -276,7 +276,8 @@ static UIImageView *splashScreen = nil;
                                                     withSize:CGSizeMake(320, [VersionControl sharedInstance].screenHeight - TOPBAR_HEIGHT)
                                                     withStyle:TimeLineStyleComplete
                                                     withNavigationController:nil
-                                                    shouldReloadMoments:(!animated)];
+                                                    shouldReloadMoments:(!animated)
+                                                    shouldLoadEventsFromFacebook:NO];
         
         
         // Navigation controller

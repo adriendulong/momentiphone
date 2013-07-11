@@ -214,10 +214,11 @@
                     
                     // Valide ?
                     NSString *phone = [(UserClass*)person[@"user"] numeroMobile];
-                    if([[Config sharedInstance] isValidPhoneNumber:phone]) {
+                    NSString *formattedNum = [phone stringByReplacingOccurrencesOfString:@" " withString:@""];
+                    if([[Config sharedInstance] isValidPhoneNumber:formattedNum]) {
                         
                         // Numéro de Mobile
-                        if([[Config sharedInstance] isMobilePhoneNumber:phone forceValidation:NO]) {
+                        if([[Config sharedInstance] isMobilePhoneNumber:formattedNum forceValidation:YES]) {
                             // Ajout
                             person[@"isSelected"] = @(YES);
                             NSMutableArray *friends = self.friends.mutableCopy;

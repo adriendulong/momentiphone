@@ -137,7 +137,8 @@
     
     
     
-    UILabel *titlePage1 = [[UILabel alloc] initWithFrame:CGRectMake(5, 12, 300, 60)];
+    UILabel *titlePage1 = [[UILabel alloc] initWithFrame:CGRectMake(9
+                                                                    , 12, 300, 60)];
     [titlePage1 setText:NSLocalizedString(@"TutorialViewController_titlePage1", nil)];
     
     if(supportIOS6) {
@@ -153,7 +154,7 @@
         [text addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"Numans-Regular" size:17.0] range:NSMakeRange(0, 1)];
         [text addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"Numans-Regular" size:17.0] range:NSMakeRange(10, 1)];
         [text addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"Numans-Regular" size:17.0] range:NSMakeRange(12, 1)];
-        [text addAttribute:NSForegroundColorAttributeName value:[UIColor orangeColor] range:NSMakeRange(39, 7)];
+        [text addAttribute:NSForegroundColorAttributeName value:[UIColor orangeColor] range:NSMakeRange(19, 7)];
         [titlePage1 setAttributedText:text];
         
         [self.scrollView addSubview:titlePage1];
@@ -175,7 +176,7 @@
             [cf updateTTTAttributedString:mutableAttributedString withFontSize:17.0 onRange:NSMakeRange(10, 1)];
             [cf updateTTTAttributedString:mutableAttributedString withFontSize:17.0 onRange:NSMakeRange(12, 1)];
             
-            [cf updateTTTAttributedString:mutableAttributedString withColor:[UIColor orangeColor] onRange:NSMakeRange(39, 7)];
+            [cf updateTTTAttributedString:mutableAttributedString withColor:[UIColor orangeColor] onRange:NSMakeRange(19, 7)];
             
             return mutableAttributedString;
         }];
@@ -185,7 +186,7 @@
     
     
     // Page 2
-    UILabel *titlePage2 = [[UILabel alloc] initWithFrame:CGRectMake(self.scrollView.frame.size.width + 5, 12, 300, 60)];
+    UILabel *titlePage2 = [[UILabel alloc] initWithFrame:CGRectMake(self.scrollView.frame.size.width + 8, 12, 300, 60)];
     [titlePage2 setText:NSLocalizedString(@"TutorialViewController_titlePage2", nil)];
     
     if(supportIOS6) {
@@ -199,7 +200,7 @@
         
         NSMutableAttributedString *text = [[NSMutableAttributedString alloc] initWithString:titlePage2.text];
         [text addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"Numans-Regular" size:17.0] range:NSMakeRange(0, 1)];
-        [text addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"Numans-Regular" size:17.0] range:NSMakeRange(63, 1)];
+        [text addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"Numans-Regular" size:17.0] range:NSMakeRange(titlePage2.text.length-1, 1)];
         [titlePage2 setAttributedText:text];
         
         [self.scrollView addSubview:titlePage2];
@@ -218,7 +219,7 @@
             Config *cf = [Config sharedInstance];
             
             [cf updateTTTAttributedString:mutableAttributedString withFontSize:17.0 onRange:NSMakeRange(0, 1)];
-            [cf updateTTTAttributedString:mutableAttributedString withFontSize:17.0 onRange:NSMakeRange(63, 1)];
+            [cf updateTTTAttributedString:mutableAttributedString withFontSize:17.0 onRange:NSMakeRange(titlePage2.text.length-1, 1)];
             
             return mutableAttributedString;
         }];
@@ -230,7 +231,7 @@
     
     
     //Page 3
-    UILabel *titlePage3 = [[UILabel alloc] initWithFrame:CGRectMake(self.scrollView.frame.size.width*2 + 5, 12, 300, 60)];
+    UILabel *titlePage3 = [[UILabel alloc] initWithFrame:CGRectMake(self.scrollView.frame.size.width*2 + 10, 12, 300, 60)];
     [titlePage3 setText:NSLocalizedString(@"TutorialViewController_titlePage3", nil)];
     
     if(supportIOS6) {
@@ -244,8 +245,7 @@
         
         NSMutableAttributedString *text = [[NSMutableAttributedString alloc] initWithString:titlePage3.text];
         [text addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"Numans-Regular" size:17.0] range:NSMakeRange(0, 1)];
-        [text addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"Numans-Regular" size:17.0] range:NSMakeRange(10, 1)];
-        [text addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"Numans-Regular" size:17.0] range:NSMakeRange(21, 1)];
+        [text addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"Numans-Regular" size:17.0] range:NSMakeRange(12, 1)];
         [titlePage3 setAttributedText:text];
         
         [self.scrollView addSubview:titlePage3];
@@ -264,8 +264,7 @@
             Config *cf = [Config sharedInstance];
             
             [cf updateTTTAttributedString:mutableAttributedString withFontSize:17.0 onRange:NSMakeRange(0, 1)];
-            [cf updateTTTAttributedString:mutableAttributedString withFontSize:17.0 onRange:NSMakeRange(10, 1)];
-            [cf updateTTTAttributedString:mutableAttributedString withFontSize:17.0 onRange:NSMakeRange(21, 1)];
+            [cf updateTTTAttributedString:mutableAttributedString withFontSize:17.0 onRange:NSMakeRange(12, 1)];
             
             return mutableAttributedString;
         }];

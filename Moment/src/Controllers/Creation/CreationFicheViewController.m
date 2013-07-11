@@ -922,7 +922,7 @@
             [self.pickerView setButtonStyle:CustomDatePickerButtonStyleNext];
             
             if(endIsFull)
-                self.pickerView.datePicker.maximumDate = [self.dateFin dateByAddingTimeInterval:-15*60];;
+                self.pickerView.datePicker.maximumDate = [self.dateFin dateByAddingTimeInterval:-15*60];
         }
         
         // Rénitialise date min
@@ -943,6 +943,13 @@
             else {
                 self.pickerView.datePicker.date = self.dateFin;
                 self.pickerView.datePicker.maximumDate = nil;
+            }
+        } else {
+            
+            if(self.startDateTextField == textField) {
+                [self.startDateTextField setText:[self.dateFormatter stringFromDate:[self getRoundedDate:self.pickerView.datePicker.date]]];
+            } else {
+                [self.endDateTextField setText:[self.dateFormatter stringFromDate:[self getRoundedDate:self.pickerView.datePicker.date]]];
             }
         }
         
@@ -1061,6 +1068,23 @@
         _dateFormatter.timeZone = [NSTimeZone localTimeZone];
     }
     return _dateFormatter;
+}
+
+- (NSDate *)getRoundedDate:(NSDate *)inDate
+{
+    NSInteger minuteInterval = 15;
+    NSDateComponents *dateComponents = [[NSCalendar currentCalendar] components:NSMinuteCalendarUnit fromDate:inDate];
+    NSInteger minutes = [dateComponents minute];
+    
+    float minutesF = [[NSNumber numberWithInteger:minutes] floatValue];
+    float minuteIntervalF = [[NSNumber numberWithInteger:minuteInterval] floatValue];
+    
+    // Determine whether to add 0 or the minuteInterval to time found by rounding down
+    NSInteger roundingAmount = (fmodf(minutesF, minuteIntervalF)) > minuteIntervalF/2.0 ? minuteInterval : 0;
+    NSInteger minutesRounded = ( (NSInteger)(minutes / minuteInterval) ) * minuteInterval;
+    NSDate *roundedDate = [[NSDate alloc] initWithTimeInterval:60.0 * (minutesRounded + roundingAmount - minutes) sinceDate:inDate];
+    
+    return roundedDate;
 }
 
 - (void)setAdresseText:(NSString *)adresseText {

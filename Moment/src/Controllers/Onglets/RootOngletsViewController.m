@@ -44,11 +44,14 @@
             if(self.moment.momentId)
             {
                 [MomentClass getInfosMomentWithId:self.moment.momentId.intValue withEnded:^(NSDictionary *attributes) {
-                    self.moment = [[MomentClass alloc] initWithAttributesFromWeb:attributes];
-                    self.photoViewController.moment = moment;
-                    self.infoMomentViewController.moment = moment;
-                    self.chatViewController.moment = moment;
-                    [self.infoMomentViewController reloadData];
+                    
+                    if (attributes != nil) {
+                        self.moment = [[MomentClass alloc] initWithAttributesFromWeb:attributes];
+                        self.photoViewController.moment = self.moment;
+                        self.infoMomentViewController.moment = self.moment;
+                        self.chatViewController.moment = self.moment;
+                        [self.infoMomentViewController reloadData];
+                    }
                 }];
             }
         }

@@ -7,6 +7,8 @@
 //
 
 #import "TimeLineDeveloppedCell.h"
+#import "Config.h"
+#import "Photos.h"
 
 @implementation TimeLineDeveloppedCell {
     @private
@@ -76,7 +78,7 @@
         self.dateLabel.frame = frame;
         
         // Image
-        self.medallion.borderWidth = 3.0;
+        self.medallion.borderWidth = 1.5;
         self.medallion.defaultStyle = MedallionStyleCover;
         __weak TimeLineDeveloppedCell *dp = self;
         [self.medallion addTarget:self action:@selector(medaillionClic) forControlEvents:UIControlEventTouchUpInside];
@@ -85,7 +87,14 @@
         }];
         
         // Titre
-        self.titreMoment.text = self.moment.titre;
+        NSString *titreMoment = [[NSString alloc] init];
+        if ([self.moment.titre length] > 28) {
+            titreMoment = [self.moment.titre substringToIndex:28];
+        } else {
+            titreMoment = self.moment.titre;
+        }
+        
+        self.titreMoment.text = titreMoment;
         [self addShadowToView:self.titreMoment];
         
         // Date
