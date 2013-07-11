@@ -24,6 +24,7 @@
         if(attributes) {
             self.date = [NSDate dateWithTimeIntervalSince1970:[attributes[@"time"] doubleValue]];
             self.type = [attributes[@"type_id"] intValue];
+            self.id_notif = attributes[@"id"];
             
             switch (self.type) {
                     
@@ -102,11 +103,11 @@
         
         NSArray *localInvitations = [self arrayWithArrayOfAttributesFromWeb:JSON[@"invitations"]];
         NSNumber *total = JSON[@"total_notifs"] ?: @(0);
-        NSNumber *newNotifs = JSON[@"nb_new_notifs"] ?: @(0);
+        NSNumber *newInvits = JSON[@"nb_new_invits"] ?: @(0);
         
         if(block) {
             block(@{
-                  @"nb_new_notifs" : newNotifs,
+                  @"nb_new_invits" : newInvits,
                   @"total_notifs" : total,
                   @"invitations" : localInvitations
                   });
@@ -156,7 +157,7 @@
             break;
     }
     
-    return [NSString stringWithFormat:@"type = %@\nmoment = %@\ndate = %@", type, self.moment, self.date];
+    return [NSString stringWithFormat:@"id_notif = %@\ntype = %@\nmoment = %@\ndate = %@", self.id_notif, type, self.moment, self.date];
 }
 
 @end

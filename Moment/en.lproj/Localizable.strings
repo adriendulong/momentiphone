@@ -8,32 +8,32 @@
 
 /* ---------------- TutorialViewController ------------------ */
 // PAGE 1
-"TutorialViewController_titlePage1" = "BIENVENUE !\nCECI EST VOTRE TIMELINE DE MOMENTS,\nCRÉEZ ET GÉREZ LES SIMPLEMENT";
+"TutorialViewController_titlePage1" = "BIENVENUE !\nGRÂCE À MOMENT VOUS POUVEZ GÉRER TOUS VOS ÉVÈNEMENTS !";
 "TutorialViewController_basketPage1" = "Basket entre amis";
 "TutorialViewController_annivPage1" = "Anniversaire 23 ans de Paul";
 "TutorialViewController_vacNicePage1" = "Vacances à Nice";
 
 // PAGE 2
-"TutorialViewController_titlePage2" = "RÉCUPÉREZ ENFIN TOUTES VOS PHOTOS\nAPRÈS VOS MOMENTS ENTRE AMIS !";
+"TutorialViewController_titlePage2" = "TOUS LES INVITÉS PEUVENT AJOUTER EN 1 CLIC TOUTES LES PHOTOS PRISES DEPUIS LEUR MOBILE !";
 "TutorialViewController_parMarcPage2" = "PAR MARC N.";
 "TutorialViewController_photoDatePage2" = "12/02/13 21:04";
 "TutorialViewController_downloadPhotoPage2" = "Téléchargez toutes les photos\ndirectement sur votre téléphone !";
 
 // PAGE 3
-"TutorialViewController_titlePage3" = "PRÉPAREZ, ORGANISEZ, ECHANGEZ\nDURANT VOS MOMENTS ENTRE PROCHES.";
-"TutorialViewController_message1Page3" = "JE RAMÈNE DES CHIPS ?";
+"TutorialViewController_titlePage3" = "PRÉPAREZ ET DISCUTEZ AVEC TOUS VOS PROCHES DANS LE CHAT DE L'ÉVÈNEMENT.";
+"TutorialViewController_message1Page3" = "C'EST QUOI LE CODE DE LA PORTE ?";
 "TutorialViewController_dateMessage1Page3" = "Nico F. 3 août 2013";
 "TutorialViewController_hourMessage1Page3" = "19:47";
-"TutorialViewController_message2Page3" = "JE SAIS PAS JE M'OCCUPE DU PLAT..";
+"TutorialViewController_message2Page3" = "12B34 ! 3ÈME ÉTAGE PORTE DE GAUCHE.";
 "TutorialViewController_dateMessage2Page3" = "Julien V. 3 août 2013";
 "TutorialViewController_hourMessage2Page3" = "19:49";
-"TutorialViewController_message3Page3" = "MOI J'ARRIVE À 21H ! ET POUR LES CHIPS\nPREND TOUJOURS ON SAIT JAMAIS.";
+"TutorialViewController_message3Page3" = "JE SERAIS LÀ À 21H MOI, LE METRO EST\nEN GRÈVE :(";
 "TutorialViewController_dateMessage3Page3" = "Adrien D. 3 août 2013";
 "TutorialViewController_hourMessage3Page3" = "19:55";
-"TutorialViewController_message4Page3" = "PREND DES CHIPS OUI ;) ON SE RETROUVE\nDANS 45 MIN !";
+"TutorialViewController_message4Page3" = "OK, À TOUTE ! LES AUTRES PENSEZ À\nAJOUTER VOS PHOTOS";
 "TutorialViewController_dateMessage4Page3" = "Rémi B. 3 août 2013";
 "TutorialViewController_hourMessage4Page3" = "20:03";
-"TutorialViewController_message5Page3" = "OK CA MARCHE :) J'ARRIVE !";
+"TutorialViewController_message5Page3" = "J'AI DÉJÀ COMMENCÉ À EN RAJOUTER MOI :)";
 "TutorialViewController_dateMessage5Page3" = "Nico F. 3 août 2013";
 "TutorialViewController_hourMessage5Page3" = "20:25";
 
@@ -111,11 +111,16 @@
 "InviteAddViewController_NewUser_Invalide_Phone_Mobile" = "Veuillez rentrer un numéro de téléphone portable";
 
 // Envoi SMS
-"InviteAddViewController_SendSMS_Message" = "Je viens de t'inviter à : %@ sur l'application Moment : %@.\n. Rejoins nous pour partager toutes les photos, et organiser l'évènement. A bientôt, %@";
+"InviteAddViewController_SendSMS_Message" = "Je viens de t'inviter à : %@ sur l'application Moment : %@\nRejoins-nous pour partager toutes les photos, et organiser l'évènement. À bientôt, %@";
 "InviteAddViewController_SendSMS_Fail" = "L'envoi de(s) sms a échoué";
 // Notifs Facebook
 "InviteAddViewController_NotifsFB_Message" = "%@ vient de t'inviter à son évènement : %@ sur l'application Moment.";
 "InviteAddViewController_NotifsFB_Fail" = "L'envoi d'invitations Facebook a échoué";
+
+// ALERT VIEW BACK BUTTON
+"InviteAddViewController_AlertView_BackButton_Title" = "Attention";
+"InviteAddViewController_AlertView_BackButton_Message_One" = "Vous avez sélectionné un invité. Voulez-vous valider cette invitation ?";
+"InviteAddViewController_AlertView_BackButton_Message_Several" = "Vous avez sélectionné plusieurs invités. Voulez-vous valider ces invitations ?";
 
 /* ---------------- InvitePresentsViewController ------------------ */
 // AlertView Loading Fail
@@ -210,10 +215,21 @@
 /* ---------------- VoletViewController ------------------ */
 // Empty Cell
 "VoletViewController_EmptyCell_invitationView" = "Aucune invitation pour l'instant. Appuyez sur l’onglet Moment Manquant dans le volet si vous ne retrouvez pas toutes vos invitations";
-"VoletViewController_EmptyCell_notificationView" = "Aucune notification pour le moment :(";
+"VoletViewController_EmptyCell_notificationView" = "\nAucune notification pour le moment :(\n\nDes vacances, un voyage, une soirée ? Pensez à créer un moment pour l'organiser et partager toutes les photos avec vos amis.";
 // Section
 "VoletViewController_Section_Invitations" = "INVITATIONS";
 "VoletViewController_Section_Notifications" = "NOTIFICATIONS";
+
+// Search
+"VoletSearchViewController_Placeholder_Search" = "Search";
+
+/* ---------------- VoletViewController ------------------ */
+
+"VoletViewControllerNotificationCell_ModifMoment" = "Modification apportée à : %@";
+"VoletViewControllerNotificationCell_NewMessage" = "Nouveau message dans : %@";
+"VoletViewControllerNotificationCell_NewPhoto" = "Nouvelle photo ajoutée à : %@";
+"VoletViewControllerNotificationCell_Follow" = "%@ vous suit maintenant";
+"VoletViewControllerNotificationCell_FollowDemand" = "Demande de suivi de %@";
 
 /* ---------------- VoletSearchViewController ------------------ */
 // Empty Cell
@@ -224,10 +240,14 @@
 // Loading Failure
 "StatusBarOverlay_LoadingFailure" = "Le chargement a échoué";
 
+// Importation FB réussie
+"StatusBarOverlay_ImportFacebookEvent" = "%i évènement Facebook importé !";
+"StatusBarOverlay_ImportFacebookEvent_several" = "%i évènements Facebook importés !";
+
 /* ------------ PhotoViewController ------------- */
 // Upload Photo
-"StatusBarOverlay_Photo_Uploading" = "Envoie en cours ...";
-"StatusBarOverlay_Photo_UploadEnded" = "Envoie Terminé";
+"StatusBarOverlay_Photo_Uploading" = "Envoi en cours ...";
+"StatusBarOverlay_Photo_UploadEnded" = "Envoi terminé";
 // Download Photo
 "PhotoViewController_DownloadPhoto_success" = "Téléchargement terminé";
 // Bandeau
@@ -272,6 +292,7 @@
 
 /* -------------- ImporterFBViewController ------------- */
 "MBProgressHUD_Loading_FBEvents" = "Importation en cours ...";
+"MBProgressHUD_Loading_FBEvents_2" = "Si l'importation dure plus de 30 secondes, retournez à l'étape précédente puis recommencez";
 "ImporterFBViewController_EmptyLabel" = "Aucun nouvel événement trouvé. Pour votre confort, nous importons uniquement les évènements auxquels vous avez répondu sur Facebook. Pensez donc à indiquez votre présence à l'évènement puis à l'importer sur Moment !";
 
 /* -------------- CreationHomeViewController ------------- */
@@ -315,7 +336,7 @@
 /* ------------ FeedViewController ------------- */
 "FeedViewController_lire_messages_label1" = "Lire les";
 "FeedViewController_lire_messages_label2" = "%d autres messages";
-"FeedViewController_EmptyLabel" = "Vous n'avez aucune actualité pour le moment. Abonnez vous à vos amis, artistes ou vos marques préférées pour consulter les dernières photos de leurs vacances ou du dernier concert !";
+"FeedViewController_EmptyLabel" = "Vous n'avez aucune actualité pour le moment. Abonnez vous à vos amis, artistes ou vos marques préférées pour consulter les dernières photos de leurs vacances ou du dernier concert !\n\nPour retrouver vos amis, ouvrez le volet en haut à gauche et cherchez les dans la barre de recherche ! ";
 
 /* ------------ Cagnotte2ViewController ------------- */
 "Cagnotte2ViewController_EmptyCell" = "Aucun cadeau correspondant";
@@ -347,6 +368,9 @@
 "PopUpFunCreationViewController_Privacy_Private_Title" = "Secret :";
 "PopUpFunCreationViewController_Privacy_Private_Details" = "Seuls les invités peuvent voir ce moment";
 
+/* ------------ WebModalViewController ---------- */
+"WebModalViewController_Toolbar_CloseButton" = "Fermer";
+
 /* -------------------- Sharing Manager ------------------ */
 "Retrive_Photos_Event_Moment_Mail_Facebook" = "Retrouvez toutes les photos de l'évènement %@ sur l'application Moment !";
 "Retrive_Photos_Event_Moment_Twitter" = "Retrouvez toutes les photos de l'évènement %@ sur @appmoment !";
@@ -376,7 +400,11 @@
 
 /* ------------- MFMailComposeViewController Moment --------------- */
 "MFMailComposeViewController_Moment_Subject" = "Hello Moment, un petit mot";
+"MFMailComposeViewController_Moment_Subject_Feedback" = "Moment - FeedBack";
+
 "MFMailComposeViewController_Moment_MessageBody" = "<i>C'était juste pour vous dire</i>";
+"MFMailComposeViewController_Moment_MessageBody_Feedback" = "Une petite remarque : \n\n\n%@.";
+"MFMailComposeViewController_Moment_MessageBody_Feedback_2" = "Bonjour Moment, J'ai quelques problèmes / suggestions à vous faire sur votre application :";
 
 "MFMailComposeViewController_Moment_Popup_Title" = "Envoi impossible";
 "MFMailComposeViewController_Moment_Popup_Message" = "Votre appareil ne supporte pas l'envoi d'email";

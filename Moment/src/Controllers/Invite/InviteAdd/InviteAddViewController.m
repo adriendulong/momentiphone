@@ -28,6 +28,8 @@ enum InviteAddFontSize {
     NSString *contactSearchText;
     NSString *facebookSearchText;
     NSString *favorisSearchText;
+    UIAlertView *cancelConfirmAlertView, *successInvitedAlertView;
+    BOOL acceptReturnBackButton;
 }
 
 @end
@@ -68,6 +70,7 @@ enum InviteAddFontSize {
         self.selectedFriends = [[NSMutableArray alloc] init];
         self.notifSelectedFriends = [[NSMutableArray alloc] init];
         self.selectedOnglet = 0;
+        acceptReturnBackButton = NO;
     }
     return self;
 }
@@ -305,6 +308,25 @@ enum InviteAddFontSize {
     // Set Nav bar buttons
     self.navigationItem.rightBarButtonItems = @[negativeSpace, buttons];
     [self selectNavigationBarButton:self.selectedOnglet];
+    
+    
+    
+    
+    UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
+    UIImage *img = [UIImage imageNamed:@"btn-back.png"];
+    
+    button.frame = CGRectMake(0, 0, img.size.width, img.size.height);
+    
+    [button setImage:img forState:UIControlStateNormal];
+    [button setImage:img forState:UIControlStateSelected];
+    
+    [button removeTarget:self.navigationController action:@selector(popViewControllerAnimated:) forControlEvents:UIControlEventTouchUpInside];
+    [button addTarget:self action:@selector(confirmCancel) forControlEvents:UIControlEventTouchUpInside];
+    
+    UIBarButtonItem *barBackItem = [[UIBarButtonItem alloc] initWithCustomView:button];
+    
+    self.navigationItem.hidesBackButton = TRUE;
+    self.navigationItem.leftBarButtonItem = barBackItem;
 }
 
 - (void)selectNavigationBarButton:(enum InviteAddTableViewControllerStyle)rank
@@ -468,12 +490,20 @@ enum InviteAddFontSize {
                     NSMutableSet *smsList = [[NSMutableSet alloc] init];
                     for(UserClass *user in self.notifSelectedFriends)
                     {
-                        // Envoyer que aux 06 ou 07
-                        if(user.numeroMobile && [[Config sharedInstance] isMobilePhoneNumber:user.numeroMobile forceValidation:NO]) {
-                            [smsList addObject:[user.numeroMobile stringByReplacingOccurrencesOfString:@" " withString:@""]];
+                        // Envoyer qu'aux 06 ou 07 (+33 ou 0033)
+                        if(user.numeroMobile) {
+                            NSString *formattedNum = [user.numeroMobile stringByReplacingOccurrencesOfString:@" " withString:@""];
+                            
+                            if ([[Config sharedInstance] isMobilePhoneNumber:formattedNum forceValidation:YES]) {
+                                [smsList addObject:formattedNum];
+                            }
                         }
-                        if(user.secondPhone && [[Config sharedInstance] isMobilePhoneNumber:user.secondPhone forceValidation:NO]) {
-                            [smsList addObject:[user.secondPhone stringByReplacingOccurrencesOfString:@" " withString:@""]];
+                        if(user.secondPhone) {
+                            NSString *formattedNum = [user.secondPhone stringByReplacingOccurrencesOfString:@" " withString:@""];
+                            
+                            if ([[Config sharedInstance] isMobilePhoneNumber:formattedNum forceValidation:YES]) {
+                                [smsList addObject:formattedNum];
+                            }
                         }
                     }
                     
@@ -511,13 +541,15 @@ enum InviteAddFontSize {
                     // Si il n'y a pas d'invitations Facebook
                     if(![self sendNotifToFacebookFriends]) {
                         
+                        acceptReturnBackButton = YES;
+                        
                         // Informer l'utilisateur que les invitations ont été envoyées
-                        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"InviteAddTableViewController_AlertView_InviteSuccess_Title", nil)
+                        successInvitedAlertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"InviteAddTableViewController_AlertView_InviteSuccess_Title", nil)
                                                                         message:NSLocalizedString(@"InviteAddTableViewController_AlertView_InviteSuccess_Message", nil)
                                                                        delegate:self
                                                               cancelButtonTitle:NSLocalizedString(@"AlertView_Button_OK", nil)
                                                               otherButtonTitles:nil];
-                        [alert show];
+                        [successInvitedAlertView show];
                     }
                 }
                 
@@ -653,9 +685,8 @@ enum InviteAddFontSize {
         if([temp count] == 0)
         {
             // On vérifie si c'est un début de numéro de téléphone
-            NSString *regex = @"0[1-9]([0-9]*)";
-            NSPredicate *test = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", regex];
-            BOOL phone = [test evaluateWithObject:searchBar.text];
+            NSString *formattedNum = [searchBar.text stringByReplacingOccurrencesOfString:@" " withString:@""];
+            BOOL phone = [[Config sharedInstance] isValidPhoneNumber:formattedNum];
             
             // User attributes
             NSMutableDictionary *attr = [[NSMutableDictionary alloc] init];
@@ -777,8 +808,38 @@ enum InviteAddFontSize {
 
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
-    // Retour à la vue info
-    [self.navigationController popViewControllerAnimated:YES];
+    if (alertView == cancelConfirmAlertView) {
+        if (buttonIndex == 1) {
+            acceptReturnBackButton = YES;
+            [self clicValider];
+        } else {
+            [self.navigationController popViewControllerAnimated:YES];
+        }
+    } else if (alertView == successInvitedAlertView) {
+        if (acceptReturnBackButton)
+            [self.navigationController popViewControllerAnimated:YES];
+    }
+}
+
+- (void)confirmCancel
+{
+    if([self.selectedFriends count] != 0) {
+        NSString *message = [[NSString alloc] init];
+        
+        if([self.selectedFriends count] == 1 )
+            message = NSLocalizedString(@"InviteAddViewController_AlertView_BackButton_Message_One", nil);
+        else
+            message = NSLocalizedString(@"InviteAddViewController_AlertView_BackButton_Message_Several", nil);
+        
+        cancelConfirmAlertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"InviteAddViewController_AlertView_BackButton_Title", nil)
+                                                        message:message
+                                                       delegate:self
+                                              cancelButtonTitle:NSLocalizedString(@"AlertView_Button_NO", nil)
+                                              otherButtonTitles:NSLocalizedString(@"AlertView_Button_YES", nil), nil];
+        [cancelConfirmAlertView show];
+    } else {
+        [self.navigationController popViewControllerAnimated:YES];
+    }
 }
 
 @end
