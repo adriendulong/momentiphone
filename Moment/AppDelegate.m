@@ -21,6 +21,7 @@
 #import "FullScreenPhotoViewController.h"
 #import "Harpy.h"
 #import "iRate.h"
+#import <Crashlytics/Crashlytics.h>
 
 @implementation AppDelegate
 
@@ -32,12 +33,12 @@
 #pragma mark - Global View
 
 + (UIViewController*)actualViewController {
-    AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     return appDelegate.actualViewController;
 }
 
 + (void)updateActualViewController:(UIViewController*)viewController {
-    AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     appDelegate.actualViewController = viewController;
 }
 
@@ -66,6 +67,9 @@
 {
     [super initialize];
     
+    // VERSION DEV ou VERSION PROD
+    [[Config sharedInstance] setDeveloppementVersion:NO];
+    
     /* ------------------ iRate ------------------- */
     /*          ---> Noter l'application <--        */
     /* -------------------------------------------- */
@@ -87,13 +91,16 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    // ----------------- Crashlytics ----------------------
+    [Crashlytics startWithAPIKey:@"d9f095a3e9cf0cb5fe5c01a68d72a9b2d4cda490"];
+    
     // ------------ Test Flight API -------------
     // !!!: Use the next line only during beta
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
     //[TestFlight setDeviceIdentifier:[[UIDevice currentDevice] uniqueIdentifier]];
 #pragma clang diagnostic pop
-    [TestFlight takeOff:@"85ba03e5-22dc-45c5-9810-be2274ed75d1"];
+    [TestFlight takeOff:[Config sharedInstance].TestFlightAppToken];
     // ------------------------------------------
     
     // ---------------- Initialisation -----------------    
@@ -237,6 +244,7 @@
     if([self.actualViewController isKindOfClass:[TimeLineViewController class]]) {
         TimeLineViewController *timeline = (TimeLineViewController*)self.actualViewController;
         [timeline reloadData];
+        [timeline.rootViewController updateVolet];
     }
     // Mettre à jour Feed
     else if([self.actualViewController isKindOfClass:[FeedViewController class]]) {
@@ -287,7 +295,7 @@
 
 - (void)application:(UIApplication *)application didChangeStatusBarFrame:(CGRect)oldStatusBarFrame
 {
-    // Prvenir d'un changement de frame
+    // Prévenir d'un changement de frame
     // ------> Utilisé pour détecter l'apparition de la barre d'appel
     // ------> Il faut gérer le changement de Frame pour adapter l'écran en conséquence et éviter les bugs graphiques
    NSDictionary *dict = @{@"oldFrame":[NSValue valueWithCGRect:oldStatusBarFrame],
@@ -313,6 +321,16 @@
 
 - (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
     [[PushNotificationManager sharedInstance] failToReceiveNotification:error];
+}
+
+#pragma mark - iRate mail
+
+- (void)iRateUserDidDeclineToRateApp {    
+    [[Config sharedInstance] feedBackRatingMailComposerWithDelegate:self root:self.window.rootViewController];
+}
+
+-(void)mailComposeController:(MFMailComposeViewController*)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError*)error {
+    [self.window.rootViewController dismissModalViewControllerAnimated:YES];
 }
 
 

@@ -10,7 +10,7 @@
 #import "UserCoreData.h"
 #import "Three20/Three20.h"
 
-#define PHOTO_MAX_SIZE 1500.0f
+#define PHOTO_MAX_SIZE 900.0f
 
 // Le protocol TTPhoto est défini dans la librairie Three20
 // --> Il est utilisé par TTPhotoViewController

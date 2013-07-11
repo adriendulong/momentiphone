@@ -29,10 +29,12 @@
 - (id)initWithUser:(UserClass*)user
           withSize:(CGSize)size withStyle:(enum TimeLineStyle)style
 withNavigationController:(UINavigationController*)navController
-    shouldReloadMoments:(BOOL)reloadMoments;
+shouldReloadMoments:(BOOL)reloadMoments
+  shouldLoadEventsFromFacebook:(BOOL)loadEvents;
 
 - (IBAction)clicChangeTimeLine;
 - (void)showAddEvent;
 - (TimeLineViewController*)timeLineForMoment:(MomentClass*)moment;
+- (void)updateVolet;
 
 @end

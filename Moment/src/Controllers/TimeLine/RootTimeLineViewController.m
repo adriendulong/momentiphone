@@ -15,6 +15,7 @@
     @private
     UIButton *plusButton;
     BOOL shouldReloadMoments;
+    BOOL shouldLoadEventsFromFacebook;
 }
 
 @end
@@ -36,6 +37,7 @@
           withSize:(CGSize)size withStyle:(enum TimeLineStyle)style
 withNavigationController:(UINavigationController*)navController
 shouldReloadMoments:(BOOL)reloadMoments
+shouldLoadEventsFromFacebook:(BOOL)loadEvents
 {
     self = [super initWithNibName:@"RootTimeLineViewController" bundle:nil];
     if(self) {
@@ -44,6 +46,7 @@ shouldReloadMoments:(BOOL)reloadMoments
         [HomeViewController hideSplashScreen];
         
         shouldReloadMoments = reloadMoments;
+        shouldLoadEventsFromFacebook = loadEvents;
         
         self.user = user;
         self.navController = navController;
@@ -251,7 +254,8 @@ shouldReloadMoments:(BOOL)reloadMoments
                                                                   withUser:nil
                                                                   withSize:self.size
                                                     withRootViewController:self
-                                                       shouldReloadMoments:shouldReloadMoments];
+                                                       shouldReloadMoments:shouldReloadMoments
+                                              shouldLoadEventsFromFacebook:shouldLoadEventsFromFacebook];
         
     }
     return _privateTimeLine;
@@ -275,6 +279,12 @@ shouldReloadMoments:(BOOL)reloadMoments
     [self.privateTimeLine reloadDataWithMoments:array];
     
     return self.privateTimeLine;
+}
+
+- (void)updateVolet
+{
+    // Préload Volet
+    [[VoletViewController volet] loadNotifications];
 }
 
 @end

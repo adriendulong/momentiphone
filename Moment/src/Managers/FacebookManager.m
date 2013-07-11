@@ -12,6 +12,7 @@
 #import "FacebookEvent.h"
 #import "UserClass+Server.h"
 #import "UserClass+Mapping.h"
+#import "Config.h"
 
 @implementation FacebookManager
 
@@ -22,7 +23,6 @@
 @synthesize tokenCachingStrategy = _tokenCachingStrategy;
 
 static NSString *kFbGraphBaseURL = @"http://graph.facebook.com/";
-static NSString *FBSessionStateChangedNotification = @"com.appMoment.Moment:FBSessionStateChangedNotification";
 
 // Permissions
 static NSString *kFbPermissionEmail = @"email";
@@ -206,7 +206,7 @@ static FacebookManager *sharedInstance = nil;
 
 - (BOOL)isLogged
 {
-    AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     
     return appDelegate.session.isOpen;
 }
@@ -1099,7 +1099,7 @@ static FacebookManager *sharedInstance = nil;
             break;
     }
     
-    [[NSNotificationCenter defaultCenter] postNotificationName:FBSessionStateChangedNotification.copy
+    [[NSNotificationCenter defaultCenter] postNotificationName:[[Config sharedInstance] FBSessionStateChangedNotification].copy
                                                         object:session];
     
     if (error) {

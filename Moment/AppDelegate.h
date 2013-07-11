@@ -12,8 +12,10 @@
 #import "TimeLineViewController.h"
 #import "ChatViewController.h"
 #import "GAI.h"
+#import <MessageUI/MessageUI.h>
+#import <MessageUI/MFMailComposeViewController.h>
 
-@interface AppDelegate : UIResponder <UIApplicationDelegate>
+@interface AppDelegate : UIResponder <UIApplicationDelegate, MFMailComposeViewControllerDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
 @property(strong, nonatomic) MBProgressHUD *HUD;

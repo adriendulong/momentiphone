@@ -744,7 +744,8 @@ enum ProfilOnglet {
                                                                          withUser:self.user
                                                                          withSize:self.contentView.frame.size
                                                            withRootViewController:(RootTimeLineViewController*)self
-                                                              shouldReloadMoments:YES];
+                                                              shouldReloadMoments:YES
+                                                     shouldLoadEventsFromFacebook:NO];
         
         _timeLineViewController.view.frame = insertionFrame;
     }

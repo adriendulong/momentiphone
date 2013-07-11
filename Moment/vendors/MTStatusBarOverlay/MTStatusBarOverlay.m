@@ -63,8 +63,10 @@ MAX([UIApplication sharedApplication].statusBarFrame.size.width, [UIApplication 
 // Backgrounds
 ///////////////////////////////////////////////////////
 
-#define kStatusBarBackgroundColorActivity [UIColor colorWithHex:0x102247]
-#define kStatusBarBackgroundColorFinished [UIColor colorWithHex:0x0f5b05]
+//#define kStatusBarBackgroundColorActivity [UIColor colorWithHex:0x102247]
+//#define kStatusBarBackgroundColorFinished [UIColor colorWithHex:0x0f5b05]
+#define kStatusBarBackgroundColorActivity [UIColor colorWithHex:0xD28000]
+#define kStatusBarBackgroundColorFinished [UIColor colorWithHex:0xD28000]
 #define kStatusBarBackgroundColorError [UIColor colorWithHex:0x850c0c]
 
 ///////////////////////////////////////////////////////
@@ -94,9 +96,11 @@ MAX([UIApplication sharedApplication].statusBarFrame.size.width, [UIApplication 
 // Dark Theme (for UIStatusBarStyleBlackOpaque)
 ///////////////////////////////////////////////////////
 
-#define kDarkThemeTextColor							[UIColor colorWithRed:0.749f green:0.749f blue:0.749f alpha:1.0f]
+//#define kDarkThemeTextColor							[UIColor colorWithRed:0.749f green:0.749f blue:0.749f alpha:1.0f]
+#define kDarkThemeTextColor							[UIColor whiteColor]
 #define kDarkThemeErrorMessageTextColor             [UIColor colorWithRed:0.749f green:0.749f blue:0.749f alpha:1.0f] // [UIColor colorWithRed:0.918367f green:0.48385f blue:0.423895f alpha:1.0f]
-#define kDarkThemeFinishedMessageTextColor          [UIColor colorWithRed:0.749f green:0.749f blue:0.749f alpha:1.0f] // [UIColor colorWithRed:0.681767f green:0.918367f blue:0.726814f alpha:1.0f]
+//#define kDarkThemeFinishedMessageTextColor          [UIColor colorWithRed:0.749f green:0.749f blue:0.749f alpha:1.0f] // [UIColor colorWithRed:0.681767f green:0.918367f blue:0.726814f alpha:1.0f]
+#define kDarkThemeFinishedMessageTextColor          [UIColor whiteColor]
 #define kDarkThemeActivityIndicatorViewStyle		UIActivityIndicatorViewStyleWhite
 #define kDarkThemeDetailViewBackgroundColor			[UIColor colorWithRed:0.3f green:0.3f blue:0.3f alpha:1.0f]
 #define kDarkThemeDetailViewBorderColor				[UIColor whiteColor]
