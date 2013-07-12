@@ -14,10 +14,8 @@
 		<dict>
 			<key>CFBundleIconFiles</key>
 			<array>
-				<string>icon-57.png</string>
-				<string>icon-114.png</string>
-				<string>57_homescreenv2.png</string>
-				<string>114_homescreenv2.png</string>
+				<string>Icon.png</string>
+				<string>Icon@2x.png</string>
 			</array>
 			<key>UIPrerenderedIcon</key>
 			<true/>
@@ -45,7 +43,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>1</string>
+	<string>1.1</string>
 	<key>FacebookAppID</key>
 	<string>445031162214877</string>
 	<key>FacebookDisplayName</key>
