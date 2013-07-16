@@ -243,6 +243,7 @@
 // Importation FB réussie
 "StatusBarOverlay_ImportFacebookEvent" = "%i évènement Facebook importé !";
 "StatusBarOverlay_ImportFacebookEvent_several" = "%i évènements Facebook importés !";
+"StatusBarOverlay_ImportFacebookEvent_noResult" = "Aucun nouvel évènement !";
 
 /* ------------ PhotoViewController ------------- */
 // Upload Photo

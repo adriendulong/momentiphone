@@ -235,10 +235,15 @@
             // Get Facebook Events
             [[FacebookManager sharedInstance] getEventsWithEnded:^(NSArray *events) {
                 
-                if (!events || [events count] == 0) {
+                if (!events) {
                     if(block)
                         block(nil, nil);
-                } else {
+                }
+                else if([events count] == 0) {
+                    if(block)
+                        block(events, nil);
+                }
+                else {
                     // Identifier quels évenements sont déjà sur Moment
                     [self identifyFacebookEventsOnMoment:events withEnded:^(NSDictionary *results) {
                         
