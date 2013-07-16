@@ -10,7 +10,7 @@
 #import "UserCoreData.h"
 #import "Three20/Three20.h"
 
-#define PHOTO_MAX_SIZE 1500.0f
+#define PHOTO_MAX_SIZE 900.0f
 
 // Le protocol TTPhoto est défini dans la librairie Three20
 // --> Il est utilisé par TTPhotoViewController
@@ -19,6 +19,7 @@
 @property (nonatomic, strong) UserClass* owner;
 @property (nonatomic, strong) NSString *urlThumbnail;
 @property (nonatomic, strong) NSString *urlOriginal;
+@property (nonatomic, strong) NSString *uniqueURL;
 @property (nonatomic, strong) NSDate *date;
 @property (nonatomic, strong) UIImage *imageThumbnail;
 @property (nonatomic, strong) UIImage *imageOriginal;
@@ -36,6 +37,7 @@
            owner:(UserClass*)owner
     urlThumbnail:(NSString*)urlThumbnail
      urlOriginal:(NSString*)urlOriginal
+       uniqueURL:(NSString*)uniqueURL
           nbLike:(NSInteger)nbLike
             date:(NSDate*)date
             size:(CGSize)size;

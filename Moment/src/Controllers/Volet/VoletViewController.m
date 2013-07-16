@@ -9,8 +9,7 @@
 #import "VoletViewController.h"
 #import "UserCoreData+Model.h"
 #import "PushNotificationManager.h"
-#import "LocalNotificationCoreData+Model.h"
-#import "LocalNotificationCoreData+Server.h"
+#import "LocalNotification.h"
 #import "Config.h"
 
 #import "VoletViewControllerEmptyCell.h"
@@ -22,6 +21,7 @@
 #import "UserClass+Server.h"
 
 #import "EventMissingViewController.h"
+#import "RowIndexInVolet.h"
 
 static VoletViewController *actualVoletViewController;
 
@@ -29,6 +29,9 @@ static VoletViewController *actualVoletViewController;
     @private
     BOOL isEmpty;
     BOOL isShowingInvitations;
+    int nbNewInvitations;
+    int nbNewNotifications;
+    int nbNewNotificationsShowing;
 }
 
 @end
@@ -68,10 +71,14 @@ static VoletViewController *actualVoletViewController;
         isShowingInvitations = NO;
         self.notifications = [[NSMutableArray alloc] init];
         self.invitations = [[NSMutableArray alloc] init];
+        nbNewInvitations = nbNewNotifications = 0;
         
         // Accès global au volet pour les Push Notifications
         actualVoletViewController = self;
         
+        //Initialisation du tableau de décompte des lignes des nouvelles notifications.
+        RowIndexInVolet *sharedManager = [RowIndexInVolet sharedManager];
+        sharedManager.indexNotifications = [NSMutableArray array];
     }
     return self;
 }
@@ -105,6 +112,8 @@ static VoletViewController *actualVoletViewController;
     self.parametresButton.titleLabel.font = font;
     // Mes Moments
     self.mesMoments.titleLabel.font = font;
+    // Event Missing
+    self.eventMissingButton.titleLabel.font = font;
     
     // TableView
     frame = self.tableView.frame;
@@ -152,10 +161,24 @@ static VoletViewController *actualVoletViewController;
     //[self loadNotifications];
 }
 
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    
+    // Show Notifications
+    if (nbNewNotifications == 0 && nbNewInvitations != 0) {
+        [self clicInvitations];
+    } else {
+        [self clicNotifications];
+    }
+    
+    // Load
+    //[self loadInvitations];
+}
+
 - (void)reloadUsername
 {
     UserClass *user = [UserCoreData getCurrentUser];
-    NSString *userName = [NSString stringWithFormat:@"%@ %@", user.prenom?[user.prenom capitalizedString]:@"", user.nom?[user.nom capitalizedString]:@""];;
+    NSString *userName = [user formatedUsernameWithStyle:UsernameStyleCapitalized];
     [self.nomUserButton setTitle:userName forState:UIControlStateNormal];
     [self.nomUserButton setTitle:userName forState:UIControlStateHighlighted];
     [self.nomUserButton setTitle:userName forState:UIControlStateSelected];
@@ -170,14 +193,25 @@ static VoletViewController *actualVoletViewController;
     CGSize expectedSize;
     CGRect frame;
     
+    RowIndexInVolet *rowIndexInVolet = [RowIndexInVolet sharedManager];
+    
     // Notifications
-    int taille = [self.notifications count];
+    int taille = nbNewNotifications;//[self.notifications count];
     if(taille == 0)
         self.nbNotificationsView.hidden = YES;
     else
     {
+        for (int i=0; i < taille; i++) {
+            LocalNotification *notif = [self.notifications objectAtIndex:i];
+            
+            if (![rowIndexInVolet.indexNotifications containsObject:notif.id_notif]) {
+                [rowIndexInVolet.indexNotifications addObject:notif.id_notif];
+            }
+        }
+        
+        nbNewNotificationsShowing = taille;
         self.nbNotificationsView.hidden = NO;
-        texte = [NSString stringWithFormat:@"%d", taille];
+        texte = [NSString stringWithFormat:@"%i", [rowIndexInVolet.indexNotifications count]];
         self.nbNotificationsLabel.text = texte;
         expectedSize = [texte sizeWithFont:self.nbNotificationsLabel.font constrainedToSize:maxSize];
         expectedSize.width = MAX(height, expectedSize.width);
@@ -192,7 +226,7 @@ static VoletViewController *actualVoletViewController;
     }
     
     // Invitations
-    taille = [self.invitations count];
+    taille = nbNewInvitations;//[self.invitations count];
     if(taille == 0)
         self.nbInvitationsView.hidden = YES;
     else
@@ -212,6 +246,11 @@ static VoletViewController *actualVoletViewController;
         self.nbInvitationsBackground.frame = frame;
     }
     
+    // Update Badge
+    //NSInteger badgeNumber = nbNewInvitations + nbNewNotifications;    
+    NSInteger badgeNumber = nbNewInvitations + [rowIndexInVolet.indexNotifications count];
+    [[PushNotificationManager sharedInstance] setNbNotifcations:badgeNumber];
+    
 }
 
 - (void)didReceiveMemoryWarning
@@ -222,8 +261,9 @@ static VoletViewController *actualVoletViewController;
 
 - (void)loadNotifications {
     
-    [LocalNotificationCoreData getNotificationWithEnded:^(NSDictionary *notifications) {
+    [LocalNotification getNotificationWithEnded:^(NSDictionary *notifications) {
         //NSLog(@"Notifications reçus : %@", notifications);
+        
         
         // Clear
         [self.notifications removeAllObjects];
@@ -231,7 +271,21 @@ static VoletViewController *actualVoletViewController;
         // Init notifications
         [self.notifications addObjectsFromArray:notifications[@"notifications"]];
         
+        //NSLog(@"id_notif = %i",[notifications[@"id_notif"] intValue]);
+        
         // Update nb labels
+        nbNewNotifications = [notifications[@"nb_new_notifs"] intValue];
+        nbNewInvitations = [notifications[@"total_notifs"] intValue] - nbNewNotifications;
+        
+        /*if (nbNewNotifications != 0)
+        {
+            RowIndexInVolet *sharedManager = [RowIndexInVolet sharedManager];
+            if ([sharedManager.indexNotifications count] != 0)
+            {
+                [sharedManager.indexNotifications removeAllObjects];
+            }
+        }*/
+        
         [self designNbNotificationsViews];
         
         [self.tableView reloadData];
@@ -242,7 +296,7 @@ static VoletViewController *actualVoletViewController;
 
 - (void)loadInvitations {
     
-    [LocalNotificationCoreData getInvitationsWithEnded:^(NSDictionary *notifications) {
+    [LocalNotification getInvitationsWithEnded:^(NSDictionary *notifications) {
         
         // Clear
         [self.invitations removeAllObjects];
@@ -251,6 +305,8 @@ static VoletViewController *actualVoletViewController;
         [self.invitations addObjectsFromArray:notifications[@"invitations"]];
         
         // Update nb labels
+        nbNewInvitations = [notifications[@"nb_new_invits"] intValue];
+        nbNewNotifications = [notifications[@"total_notifs"] intValue] - nbNewInvitations;
         [self designNbNotificationsViews];
         
         [self.tableView reloadData];
@@ -283,6 +339,15 @@ static VoletViewController *actualVoletViewController;
     [super viewDidUnload];
 }
 
+#pragma mark - Google Analytics
+
+- (void)sendGoogleAnalyticsEvent:(NSString*)action label:(NSString*)label value:(NSNumber*)value {
+    [[[GAI sharedInstance] defaultTracker]
+     sendEventWithCategory:@"Volet"
+     withAction:action
+     withLabel:label
+     withValue:value];
+}
 
 #pragma mark - Table view data source
 
@@ -320,13 +385,44 @@ static VoletViewController *actualVoletViewController;
         
         if(isEmpty){
             cell = [[VoletViewControllerEmptyCell alloc] initWithSize:self.tableView.frame.size.height withStyle:isShowingInvitations];
-        }else {
+        } else {
             
             if(isShowingInvitations) {
                 cell = [[VoletViewControllerInvitationCell alloc] initWithNotification:self.invitations[indexPath.row]];
             }
             else {
                 cell = [[VoletViewControllerNotificationCell alloc] initWithNotification:self.notifications[indexPath.row]];
+                
+                LocalNotification *notif = [self.notifications objectAtIndex:indexPath.row];
+                
+                RowIndexInVolet *rowIndexInVolet = [RowIndexInVolet sharedManager];
+                if ([rowIndexInVolet.indexNotifications containsObject:notif.id_notif]) {
+                     switch (notif.type) {
+                     
+                         case NotificationTypeModification:
+                             ((VoletViewControllerNotificationCell *)cell).pictoView.image = [UIImage imageNamed:@"picto_bulle"];
+                             break;
+                     
+                         case NotificationTypeNewChat:
+                             ((VoletViewControllerNotificationCell *)cell).pictoView.image = [UIImage imageNamed:@"picto_message"];
+                             break;
+                     
+                         case NotificationTypeNewPhoto:
+                             ((VoletViewControllerNotificationCell *)cell).pictoView.image = [UIImage imageNamed:@"picto_photo"];
+                             break;
+                     
+                         case NotificationTypeNewFollower:
+                             ((VoletViewControllerNotificationCell *)cell).pictoView.image = [UIImage imageNamed:@"picto_invite"];
+                             break;
+                     
+                         case NotificationTypeFollowRequest:
+                             ((VoletViewControllerNotificationCell *)cell).pictoView.image = [UIImage imageNamed:@"picto_invite"];
+                             break;
+                     
+                         default:
+                             break;
+                     }
+                }
             }
         }
     }
@@ -347,69 +443,69 @@ static VoletViewController *actualVoletViewController;
 {
     if(!isEmpty)
     {
-        enum NotificationType type = -1;
-        MomentClass *moment = nil;
+        LocalNotification *notif = nil;
         
         if(isShowingInvitations) {
-            LocalNotificationCoreData *invit = self.invitations[indexPath.row];
-            type = invit.type.intValue;
-            moment = [invit.moment localCopy];
+            notif = self.invitations[indexPath.row];
             // Remove From Local
-            [self.invitations removeObject:invit];
-            // Remove From Core Data
-            [LocalNotificationCoreData deleteNotification:invit];
+            //[self.invitations removeObject:notif];
         }
         else {
-            LocalNotificationCoreData *notif = self.notifications[indexPath.row];
-            type = notif.type.intValue;
-            moment = [notif.moment localCopy];
+            notif = self.notifications[indexPath.row];
             // Remove From Local
-            [self.notifications removeObject:notif];
-            // Remove From Core Data
-            [LocalNotificationCoreData deleteNotification:notif];
+            //[self.notifications removeObject:notif];
         }
         
         // Update nb labels
-        [self designNbNotificationsViews];
+        //[self designNbNotificationsViews];
         
         // Reload
-        [self.tableView reloadData];
+        //[self.tableView reloadData];
         
-        switch (type) {
+        switch (notif.type) {
             case NotificationTypeModification:
-                [self redirectToInfoMoment:moment];
+                [self redirectToInfoMoment:notif.moment];
                 break;
                 
             case NotificationTypeNewChat:
-                [self redirectToChatMoment:moment];
+                [self redirectToChatMoment:notif.moment];
                 break;
                 
             case NotificationTypeNewPhoto:
-                [self redirectToPhotoMoment:moment];
+                [self redirectToPhotoMoment:notif.moment];
                 break;
                 
             case NotificationTypeInvitation:
-                [self redirectToInfoMoment:moment];
+                [self redirectToInfoMoment:notif.moment];
                 break;
                 
+            case NotificationTypeFollowRequest:
+                [self redirectToProfile:notif.requestFollower];
+                break;
+                
+            case NotificationTypeNewFollower:
+                [self redirectToProfile:notif.follower];
+                break;
+            
             default:
                 break;
         }
+        
+        // Passera l'icône en gris après le clic.
+        RowIndexInVolet *rowIndexInVolet = [RowIndexInVolet sharedManager];
+        
+        if ([rowIndexInVolet.indexNotifications containsObject:notif.id_notif])
+            [rowIndexInVolet.indexNotifications removeObject:notif.id_notif];
     }
-    
 }
-
-/*
-- (void)tableView:(UITableView*)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath
-{
-
-}
- */
 
 #pragma mark - Actions
 
 - (IBAction)clicInvitations
-{ 
+{
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Invitations Volet" value:nil];
+    
     if(!self.invitationsButton.isSelected) {
         
         [self loadInvitations];
@@ -425,6 +521,9 @@ static VoletViewController *actualVoletViewController;
 
 - (IBAction)clicNotifications
 {
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Notifications Volet" value:nil];
+    
     if(!self.notificationsButton.isSelected) {
         
         [self loadNotifications];
@@ -440,6 +539,9 @@ static VoletViewController *actualVoletViewController;
 
 - (IBAction)clicUser
 {
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Profil" value:nil];
+    
     ProfilViewController *profil = [[ProfilViewController alloc] initWithUser:[UserCoreData getCurrentUser]];
     UINavigationController *navController = (UINavigationController*)self.delegate.rootViewController;
     [self.delegate showRootController:NO];
@@ -448,6 +550,9 @@ static VoletViewController *actualVoletViewController;
 
 - (IBAction)clicParametres
 {
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Paramètres" value:nil];
+    
     MesReglagesViewController *reglages = [[MesReglagesViewController alloc] initWithDDMenuDelegate:self.delegate];
     UINavigationController *navController = (UINavigationController*)self.delegate.rootViewController;
     [self.delegate showRootController:NO];
@@ -478,7 +583,20 @@ static VoletViewController *actualVoletViewController;
 
 - (IBAction)clicChangeTimeLine:(UIButton*)sender {
     
-    if( (sender == self.mesActualites && !self.mesActualites.selected) || (sender == self.mesMoments && !self.mesMoments.selected) ) {
+    // Identification du bouton
+    BOOL actualitesButton = (sender == self.mesActualites) && (!self.mesActualites.selected);
+    BOOL momentsButton = (sender == self.mesMoments) && (!self.mesMoments.selected);
+    
+    // Google Analytics
+    if(actualitesButton) {
+        [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Actualités" value:nil];
+    }
+    else if(momentsButton) {
+        [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Moments" value:nil];
+    }
+    
+    // Change TimeLine
+    if( actualitesButton || momentsButton ) {
         [self.delegate showRootController:YES];
         [self.rootTimeLine clicChangeTimeLine];
     }
@@ -504,6 +622,15 @@ static VoletViewController *actualVoletViewController;
     [[self.rootTimeLine timeLineForMoment:moment] showTchatView:moment];
 }
 
+- (void)redirectToProfile:(UserClass*)user
+{
+    if(user) {
+        [self.delegate showRootController:NO];
+        
+        ProfilViewController *profile = [[ProfilViewController alloc] initWithUser:user];
+        [self.rootTimeLine.navController pushViewController:profile animated:YES];
+    }
+}
 
 #pragma mark - UITextField Delegate
 
@@ -533,6 +660,9 @@ static VoletViewController *actualVoletViewController;
 
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
 {
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Recherche" value:nil];
+    
     CATransition *transition = [CATransition animation];
     transition.duration = 0.3f;
     transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
@@ -553,6 +683,13 @@ static VoletViewController *actualVoletViewController;
     // Will Show Volet
     if(c == self)
     {
+        // Google Analytics
+        [[[GAI sharedInstance] defaultTracker]
+         sendEventWithCategory:@"Timeline"
+         withAction:@"Clic Bouton"
+         withLabel:@"Clic Volet"
+         withValue:nil];
+        
         // Si les informations du user sont incompletes --> Reload
         UserClass *user = [UserCoreData getCurrentUser];
         if( !isLoading && !(user && user.userId && (user.nom || user.prenom) ))
@@ -566,19 +703,7 @@ static VoletViewController *actualVoletViewController;
         }
         
         // Load Notifs
-        [self loadNotifications];
-        
-        // Reset Notif on Server
-        [LocalNotificationCoreData resetNotificationsWithEnded:nil];
-        
-        // Si il y des Invitations --> Afficher invitations
-        if([self.invitations count] > 0) {
-            [self clicInvitations];
-        }
-        // Sinon afficher notifications
-        else
-            [self clicNotifications];
-        
+        //[self loadNotifications];
     }
 }
 

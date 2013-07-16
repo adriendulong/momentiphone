@@ -10,13 +10,11 @@
 #import "ModifierUserViewController.h"
 #import "Config.h"
 #import "ParametreNotification.h"
+#import "UserClass+Server.h"
+#import "PushNotificationManager.h"
 #import "TutorialViewController.h"
 #import "HomeViewController.h"
-
-const static NSString *kParameterFacebookPageID = @"277911125648059";
-const static NSString *kParameterFacebookPageName = @"appmoment";
-const static NSString *kParameterTwitterPageName = @"appmoment";
-const static NSString *kParameterContactMail = @"hello@appmoment.fr";
+#import "WebModalViewController.h"
 
 @interface MesReglagesViewController ()
 
@@ -30,6 +28,8 @@ const static NSString *kParameterContactMail = @"hello@appmoment.fr";
 @synthesize followUsLabel = _followUsLabel, madeWithLoveLabel = _madeWithLoveLabel, versionLabel = _versionLabel;
 @synthesize titreAproposLabel = _titreAproposLabel, titreNotificationLabel = _titreNotificationLabel, titreProfilLabel = _titreProfilLabel;
 @synthesize notifInvitLabel = _notifInvitLabel, notifModifLabel = _notifModifLabel, notifMessageLabel = _notifMessageLabel, notifPhotoLabel = _notifPhotoLabel;
+
+@synthesize likeButton = _likeButton;
 
 #pragma mark - Init
 
@@ -49,7 +49,8 @@ const static NSString *kParameterContactMail = @"hello@appmoment.fr";
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    // Do any additional setup after loading the view from its nib.
+    // Google Analytics
+    self.trackedViewName = @"Vue Paramètre";
     
     // iPhone 5
     CGRect frame = self.view.frame;
@@ -106,6 +107,7 @@ const static NSString *kParameterContactMail = @"hello@appmoment.fr";
     [self setNotifMessageButtonEmail:nil];
     [self setNotifModifButtonPush:nil];
     [self setNotifModifButtonEmail:nil];
+    [self setLikeButton:nil];
     [super viewDidUnload];
 }
 
@@ -136,8 +138,7 @@ const static NSString *kParameterContactMail = @"hello@appmoment.fr";
         [app openURL:url];
     }
     // Ouverture dans twitter ( différent selon iOS version je suppose)
-    else if( [app canOpenURL:(url = [NSURL URLWithString:[NSString stringWithFormat:@"tweetie:///user?screen_name=%@", kParameterTwitterPageName]])] )
-    {
+    else if( [app canOpenURL:(url = [NSURL URLWithString:[NSString stringWithFormat:@"tweetie:///user?screen_name=%@", kParameterTwitterPageName]])] ) {
         [app openURL:url];
     }
     // Ouverture dans Safari
@@ -146,9 +147,28 @@ const static NSString *kParameterContactMail = @"hello@appmoment.fr";
     }
 }
 
-- (IBAction)clicLikeBadge
-{
+- (IBAction)clicLikeBadge {
+    UIImageView *imgView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"coeur_photo"]];
+    imgView.transform = CGAffineTransformScale(CGAffineTransformIdentity, 0.001, 0.001);
     
+    
+    [self.likeButton addSubview:imgView];
+    
+    [UIView animateWithDuration:0.3/1.5 animations:^{
+        imgView.transform = CGAffineTransformScale(CGAffineTransformIdentity, 1.1, 1.1);
+    } completion:^(BOOL finished) {
+        [UIView animateWithDuration:0.3/2 animations:^{
+            imgView.transform = CGAffineTransformScale(CGAffineTransformIdentity, 0.9, 0.9);
+        } completion:^(BOOL finished) {
+            [UIView animateWithDuration:0.3/2 animations:^{
+                imgView.transform = CGAffineTransformIdentity;
+            } completion:^(BOOL finished) {
+                if (finished) {
+                    [imgView removeFromSuperview];
+                }
+            }];
+        }];
+    }];
 }
 
 - (IBAction)clicTutoriel
@@ -164,26 +184,19 @@ const static NSString *kParameterContactMail = @"hello@appmoment.fr";
     [self.navigationController pushViewController:edit animated:YES];
 }
 
-- (IBAction)clicCGU
-{
-    
+- (IBAction)clicCGU {
+    WebModalViewController *webView = [[WebModalViewController alloc] initWithURL:[NSURL URLWithString:kAppMomentCGU]];
+    [self presentViewController:webView animated:YES completion:nil];
 }
 
-- (IBAction)clicContactUs
-{
+- (IBAction)clicContactUs {
         
     if([MFMailComposeViewController canSendMail])
-    {
-        
-        // Email Subject
-        NSString *emailTitle = @"Hello Moment, un petit mot";
-        // Email Content
-        NSString *messageBody = @"<i>C'était juste pour vous dire</i>";
-        
+    {        
         MFMailComposeViewController *mc = [[MFMailComposeViewController alloc] init];
         mc.mailComposeDelegate = self;
-        [mc setSubject:emailTitle];
-        [mc setMessageBody:messageBody isHTML:YES];
+        [mc setSubject:NSLocalizedString(@"MFMailComposeViewController_Moment_Subject", nil)];
+        [mc setMessageBody:NSLocalizedString(@"MFMailComposeViewController_Moment_MessageBody", nil) isHTML:YES];
         [mc setToRecipients:@[kParameterContactMail]];
         
         // Present mail view controller on screen
@@ -191,7 +204,7 @@ const static NSString *kParameterContactMail = @"hello@appmoment.fr";
     }
     else
     {
-        NSLog(@"mail composer fail");
+        //NSLog(@"mail composer fail");
 
         [[[UIAlertView alloc] initWithTitle:@"Envoi impossible"
                                     message:@"Votre appareil ne supporte pas l'envoi d'email"
@@ -204,11 +217,37 @@ const static NSString *kParameterContactMail = @"hello@appmoment.fr";
 
 - (IBAction)clicLogout
 {
-    [UserCoreData logoutCurrentUserWithEnded:^ {
+    
+    [[[UIAlertView alloc]
+      initWithTitle:NSLocalizedString(@"Logout_AlertView_Title", nil)
+      message:NSLocalizedString(@"Logout_AlertView_Message", nil)
+      delegate:self
+      cancelButtonTitle:NSLocalizedString(@"AlertView_Button_Cancel", nil)
+      otherButtonTitles:NSLocalizedString(@"Logout_AlertView_LogoutButton", nil),nil]
+     show];
+    
+    /*
+    [UserClass logoutCurrentUserWithEnded:^ {
         // Show Home
         [self.delegate showRootController:YES];
         [self.delegate.navigationController popToRootViewControllerAnimated:YES];
     }];
+    */
+}
+
+#pragma mark - UIAlertView Delegate
+
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+    // Déconnexion
+    if(buttonIndex == 1)
+    {
+        [UserClass logoutCurrentUserWithEnded:^ {
+            // Show Home
+            [self.delegate showRootController:YES];
+            [self.delegate.navigationController popToRootViewControllerAnimated:YES];
+        }];
+    }
 }
 
 #pragma mark - MFMailComposeViewControllerDelegate
@@ -219,16 +258,16 @@ const static NSString *kParameterContactMail = @"hello@appmoment.fr";
     switch (result)
     {
         case MFMailComposeResultCancelled:
-            NSLog(@"Mail cancelled");
+            //NSLog(@"Mail cancelled");
             break;
         case MFMailComposeResultSaved:
-            NSLog(@"Mail saved");
+            //NSLog(@"Mail saved");
             break;
         case MFMailComposeResultSent:
-            NSLog(@"Mail sent");
+            //NSLog(@"Mail sent");
             break;
         case MFMailComposeResultFailed:
-            NSLog(@"Mail sent failure: %@", [error localizedDescription]);
+            //NSLog(@"Mail sent failure: %@", [error localizedDescription]);
             
             [[[UIAlertView alloc] initWithTitle:@"Erreur d'envoi"
                                         message:[error localizedDescription]
@@ -250,6 +289,9 @@ const static NSString *kParameterContactMail = @"hello@appmoment.fr";
 
 - (void)loadParametresNotifications
 {
+    // Si les push notifications sont désactivés
+    BOOL loadPush = [[PushNotificationManager sharedInstance] pushNotificationEnabled];
+    
     // Si des données sont déjà stockées en local, on les charge en attendant
     if([ParametreNotification settingsStoredLocally]) {
         
@@ -258,19 +300,25 @@ const static NSString *kParameterContactMail = @"hello@appmoment.fr";
                            @(ParametreNotificationTypeNewChat),
                            @(ParametreNotificationTypeNewPhoto)
                            ];
-        NSArray *modes = @[@(ParametreNotificationModePush),
-                           @(ParametreNotificationModeEmail)
-                           ];
         
         for( NSNumber *t in types ) {
-            for( NSNumber *m in modes ) {
-                
-                enum ParametreNotificationType type = t.intValue;
-                enum ParametreNotificationMode mode = m.intValue;
-                BOOL val = [ParametreNotification localValueForType:type mode:mode];
-                
-                [self updateNotificationButton:type mode:mode value:val];
+            
+            enum ParametreNotificationType type = t.intValue;
+            BOOL val;
+            
+            // Push
+            if(loadPush) {
+                val = [ParametreNotification localValueForType:type mode:ParametreNotificationModePush];
+                [self updateNotificationButton:type mode:ParametreNotificationModePush value:val];
             }
+            else {
+                // Désactiver Boutons
+                [self updateNotificationButton:type mode:ParametreNotificationModePush value:NO];
+            }
+            
+            // Email
+            val = [ParametreNotification localValueForType:type mode:ParametreNotificationModeEmail];
+            [self updateNotificationButton:type mode:ParametreNotificationModeEmail value:val];
         }
         
     }
@@ -285,7 +333,10 @@ const static NSString *kParameterContactMail = @"hello@appmoment.fr";
                 BOOL push  = [params[@"push"] boolValue];
                 BOOL email = [params[@"mail"] boolValue];
                 
-                [self updateNotificationButton:type mode:ParametreNotificationModePush value:push];
+                if(loadPush)
+                    [self updateNotificationButton:type mode:ParametreNotificationModePush value:push];
+                else
+                    [self updateNotificationButton:type mode:ParametreNotificationModePush value:NO];
                 [self updateNotificationButton:type mode:ParametreNotificationModeEmail value:email];
             }
         }
@@ -353,37 +404,66 @@ const static NSString *kParameterContactMail = @"hello@appmoment.fr";
 
 - (IBAction)clicButton:(UIButton*)sender {
     
+    BOOL pushAuthorized = [[PushNotificationManager sharedInstance] pushNotificationEnabled];
+    BOOL pushTried = NO;
+    
     // Notification Invitation
-    if(sender == self.notifInviteButtonPush)
-        [self clicButton:sender type:ParametreNotificationTypeInvitation mode:ParametreNotificationModePush];
+    if(sender == self.notifInviteButtonPush) {
+        if(!sender.selected)
+            pushTried = YES;
+        
+        if(pushAuthorized)
+            [self clicButton:sender type:ParametreNotificationTypeInvitation mode:ParametreNotificationModePush];
+    }
     else if(sender == self.notifInviteButtonEmail)
         [self clicButton:sender type:ParametreNotificationTypeInvitation mode:ParametreNotificationModeEmail];
     
     // Notification Photo
-    else if(sender == self.notifPhotoButtonPush)
-        [self clicButton:sender type:ParametreNotificationTypeNewPhoto mode:ParametreNotificationModePush];
+    else if(sender == self.notifPhotoButtonPush) {
+        if(!sender.selected)
+            pushTried = YES;
+        
+        if(pushAuthorized)
+            [self clicButton:sender type:ParametreNotificationTypeNewPhoto mode:ParametreNotificationModePush];
+    }
     else if(sender == self.notifPhotoButtonEmail)
         [self clicButton:sender type:ParametreNotificationTypeNewPhoto mode:ParametreNotificationModeEmail];
     
     // Notification Message
-    else if(sender == self.notifMessageButtonPush)
-        [self clicButton:sender type:ParametreNotificationTypeNewChat mode:ParametreNotificationModePush];
+    else if(sender == self.notifMessageButtonPush) {
+        if(!sender.selected)
+            pushTried = YES;
+        
+        if(pushAuthorized)
+            [self clicButton:sender type:ParametreNotificationTypeNewChat mode:ParametreNotificationModePush];
+    }
     else if(sender == self.notifMessageButtonEmail)
         [self clicButton:sender type:ParametreNotificationTypeNewChat mode:ParametreNotificationModeEmail];
     
     // Notification Message
-    else if(sender == self.notifModifButtonPush)
-        [self clicButton:sender type:ParametreNotificationTypeModification mode:ParametreNotificationModePush];
+    else if(sender == self.notifModifButtonPush) {
+        if(!sender.selected)
+            pushTried = YES;
+        
+        if(pushAuthorized)
+            [self clicButton:sender type:ParametreNotificationTypeModification mode:ParametreNotificationModePush];
+    }
     else if(sender == self.notifModifButtonEmail)
         [self clicButton:sender type:ParametreNotificationTypeModification mode:ParametreNotificationModeEmail];
+    
+    // Si push désactivé
+    if(!pushAuthorized && pushTried) {
+        [[PushNotificationManager sharedInstance] pushNotificationDisabledAlertView];
+    }
 }
 
 ///////////////////////////////////////////
-#pragma mark - TestFlight SDK
-#pragma mark DEBUG
+//#pragma mark - TestFlight SDK
+//#pragma mark DEBUG
 
 -(IBAction)launchFeedback {
-    [TestFlight openFeedbackView];
+    //[TestFlight openFeedbackView];
+    [[Config sharedInstance] feedBackMailComposerWithDelegate:self root:self];
 }
 
 @end

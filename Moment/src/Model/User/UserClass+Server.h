@@ -17,22 +17,25 @@
 + (void)getUserFromServerWithId:(NSInteger)userId withEnded:(void (^) (UserClass *user))block;
 + (void)updateCurrentUserInformationsOnServerWithAttributes:(NSDictionary *)modifications
                                                   withEnded:(void (^) (BOOL success))block;
-
++ (void)changeCurrentUserPassword:(NSString*)newPassword
+                      oldPassword:(NSString*)oldPassword
+                        withEnded:(void (^) (NSInteger status))block;
 // Login
 + (void)getLoggedUserFromServerWithEnded:( void (^) (UserClass *user) )block waitUntilFinished:(BOOL)waitUntilFinished;
 + (void)getLoggedUserFromServerWithEnded:( void (^) (UserClass *user) )block;
 + (void)loginUserWithUsername:(NSString *)username withPassword:(NSString *)password withEnded:(void (^)(NSInteger status))block;
 
+// Logout
++ (void)logoutCurrentUserWithEnded:(void (^) (void))block;
+
 // Lost Password
 + (void)requestNewPasswordAtEmail:(NSString*)email withEnded:(void (^) (BOOL success))block;
 
-// Invites
-+ (void)inviteNewGuest:(NSArray*)users toMoment:(MomentClass*)moment withEnded:( void (^) (BOOL success) )block;
-+ (void)getInvitedUsersToMoment:(MomentClass*)moment
-         withAdminEncapsulation:(BOOL)adminEncapsulation
-                      withEnded:( void (^) (NSDictionary* invites) )block;
-+ (void)getInvitedUsersToMoment:(MomentClass*)moment withEnded:( void (^) (NSDictionary* invites) )block;
-+ (void)getFavorisUsersWithEnded:( void (^) (NSArray* favoris) )block;
+// Favoris
++ (void)getFavorisUsersWithEnded:(void (^) (NSArray* favoris) )block;
+
+// Follow Public Moment
+- (void)followPublicMoment:(MomentClass*)moment withEnded:( void (^) (BOOL success) )block;
 
 // Users on moment
 + (void)getUsersWhoAreOnMoment:(NSArray *)users withEnded:(void (^) (NSArray *usersOnMoment))block;
@@ -40,7 +43,9 @@
 // Follows/Followers
 - (void)getFollowsWithEnded:(void (^) (NSArray *follows))block;
 - (void)getFollowersWithEnded:(void (^) (NSArray *followers))block;
-- (void)toggleFollowWithEnded:(void (^) (BOOL success))block;
+- (void)toggleFollowWithEnded:(void (^) (BOOL success, BOOL waitForReponse))block;
++ (void)acceptFollowOfUser:(UserClass*)user withEnded:(void (^) (BOOL success))block;
++ (void)refuseFollowOfUser:(UserClass*)user withEnded:(void (^) (BOOL success))block;
 
 // Photos
 - (void)getPhotosWithEnded:(void (^) (NSArray *photos))block;

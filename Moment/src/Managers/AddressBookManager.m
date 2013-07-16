@@ -16,10 +16,23 @@
     if(addressBook)
     {
         NSMutableArray *list = [[NSMutableArray alloc] init];
-        ABRecordRef source = ABAddressBookCopyDefaultSource(addressBook);
-        CFArrayRef allPeople = ABAddressBookCopyArrayOfAllPeopleInSourceWithSortOrdering(addressBook, source, kABPersonSortByFirstName);
         
+        CFArrayRef people = ABAddressBookCopyArrayOfAllPeople(addressBook);
+        CFMutableArrayRef allPeople = CFArrayCreateMutableCopy(
+                                                                   kCFAllocatorDefault,
+                                                                   CFArrayGetCount(people),
+                                                                   people
+                                                                   );
+                
+        CFArraySortValues(
+                          allPeople,
+                          CFRangeMake(0, CFArrayGetCount(allPeople)),
+                          (CFComparatorFunction) ABPersonComparePeopleByName,
+                          (void*) ABPersonGetSortOrdering()
+                          );
+
         CFIndex nPeople = CFArrayGetCount(allPeople);
+        
         
         for ( int i = 0; i < nPeople; i++ )
         {
@@ -82,7 +95,7 @@
             NSMutableDictionary *dico = [[NSMutableDictionary alloc] init];
             if(nom) dico[@"nom"] = nom;
             if(prenom) dico[@"prenom"] = prenom;
-            if(image) dico[@"image"] = image;
+            if(image) dico[@"photo"] = image;
             if(adresse) dico[@"adresse"] = adresse;
             if(firstEmail) dico[@"email"] = firstEmail;
             if(secondEmail) dico[@"secondEmail"] = secondEmail;
@@ -98,6 +111,8 @@
         }
         
         CFRelease(addressBook);
+        CFRelease(people);
+        CFRelease(allPeople);
         
         return (NSArray*)list;
     }
@@ -128,7 +143,7 @@
                                 block([self getAddressBookList:addressBook]);
                         }
                         else {
-                            NSLog(@"Error acces addressBook : %@", error);
+                            //NSLog(@"Error acces addressBook : %@", error);
                             if(block)
                                 block(nil);
                         }
@@ -147,7 +162,7 @@
             default:
                 // The user has previously denied access
                 // Send an alert telling user to change privacy setting in settings app
-                NSLog(@"Acces to addressBook not authorized");
+                //NSLog(@"Acces to addressBook not authorized");
                 
                 [[[UIAlertView alloc] initWithTitle:@"Authorisation manquante"
                                             message:@"Veuillez changer les paramètres de confidentialité de l'iPhone afin d'accéder aux contacts"

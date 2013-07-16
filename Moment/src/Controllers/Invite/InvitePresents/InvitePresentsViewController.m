@@ -17,7 +17,10 @@
 
 #define HeaderHeight 49
 
-@interface InvitePresentsViewController ()
+@interface InvitePresentsViewController () {
+    @private
+    BOOL firstLoad;
+}
 
 @end
 
@@ -43,6 +46,7 @@
     if(self) {
         self.owner = owner;
         self.moment = moment;
+        firstLoad = YES;
     }
     return self;
 }
@@ -53,7 +57,7 @@
     // ------ Navigation Bar init
     [CustomNavigationController setBackButtonWithViewController:self];
     
-    if( (self.moment.state.intValue == UserStateAdmin) || (self.moment.state.intValue == UserStateOwner) )
+    if((self.moment.state.intValue == UserStateAdmin) || ([self.moment.owner.userId isEqualToNumber:[UserCoreData getCurrentUser].userId]))
     {
         // Remove space at right
         UIBarButtonItem *positiveSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:nil action:nil];
@@ -78,7 +82,7 @@
     MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
     hud.labelText = NSLocalizedString(@"MBProgressHUD_Loading", nil);
     
-    [UserClass getInvitedUsersToMoment:self.moment withEnded:^(NSDictionary *invites) {
+    [self.moment getInvitedUsersWithEnded:^(NSDictionary *invites) {
         
         if(invites) {
             self.invites = invites;
@@ -91,7 +95,7 @@
             [comingList addObjectsFromArray:self.invites[@"admin"]];
             
             // Authorisation
-            BOOL authotisation = ( (self.moment.state.intValue == UserStateOwner)||(self.moment.state.intValue == UserStateAdmin) );
+            BOOL authotisation = ((self.moment.state.intValue == UserStateAdmin)||([self.moment.owner.userId isEqualToNumber:[UserCoreData getCurrentUser].userId]));
             
             // Création ViewControllers
             self.comingTableViewController = [[InvitePresentsTableViewController alloc]
@@ -133,6 +137,36 @@
     }];
 }
 
+- (void)reloadData
+{
+    // -------- Loading
+    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    hud.labelText = NSLocalizedString(@"MBProgressHUD_Loading", nil);
+    
+    [self.moment getInvitedUsersWithEnded:^(NSDictionary *invites) {
+        
+        if(invites) {
+            self.invites = invites;
+            
+            // Construction listes
+            NSMutableArray *comingList = [[NSMutableArray alloc] init];
+            [comingList addObjectsFromArray:self.invites[@"coming"]];
+            if(self.invites[@"owner"])
+                [comingList addObject:self.invites[@"owner"]];
+            [comingList addObjectsFromArray:self.invites[@"admin"]];
+            
+            // Reload TableViews
+            [self.comingTableViewController reloadDataWithInvites:comingList];
+            [self.maybeTableViewController reloadDataWithInvites:[NSArray arrayWithArray:self.invites[@"maybe"]]];
+            [self.unknownTableViewController reloadDataWithInvites:[NSArray arrayWithArray:self.invites[@"unknown"]]];
+                    
+        }
+        
+        [MBProgressHUD hideHUDForView:self.view animated:YES];
+    }];
+    
+}
+
 #pragma mark - Life Cycle
 
 - (void)viewDidLoad
@@ -160,6 +194,15 @@
     // Loading
     [self loadContent];
     
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    if(!firstLoad)
+        [self reloadData];
+    else
+        firstLoad = NO;
 }
 
 - (void)didReceiveMemoryWarning

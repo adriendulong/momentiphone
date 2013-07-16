@@ -10,19 +10,26 @@
 
 @implementation FeedMessage
 
-@synthesize messages = _messages;
+@synthesize message = _message;
+@synthesize nbChats = _nbChats;
 
 - (id)initWithId:(NSInteger)feedId
         withUser:(UserClass *)user
       withMoment:(MomentClass *)moment
-     withMessage:(NSArray*)messages
+     withMessage:(ChatMessage*)message
+     withNbChats:(NSInteger)nbChats
         withDate:(NSDate*)date
 {
     self = [super initWithId:feedId withUser:user withMoment:moment withType:FeedTypeChat withDate:date];
     if(self) {
-        self.messages = messages;
+        self.message = message;
+        self.nbChats = nbChats;
     }
     return self;
+}
+
+- (BOOL)shouldUseLargeView {
+    return ( (self.nbChats > 1) || (self.message.message.length > 60) );
 }
 
 @end

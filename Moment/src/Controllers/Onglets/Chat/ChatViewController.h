@@ -47,4 +47,7 @@ enum ChatViewControllerMessagePosition {
 
 - (void)loadMessagesAtPosition:(enum ChatViewControllerMessagePosition)position;
 
+// Google Analytics
+- (void)sendGoogleAnalyticsView;
+
 @end

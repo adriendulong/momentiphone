@@ -34,15 +34,21 @@
 @synthesize uimage = _uimage;
 @synthesize isOpen = _isOpen;
 @synthesize isSponso = _isSponso;
+@synthesize uniqueURL = _uniqueURL;
+@synthesize coverPhotoURL = _coverPhotoURL;
 
 - (void)setupWithAttributes:(NSDictionary*)attributes
 {
-    self.momentId = attributes[@"momentId"];
-    self.titre = attributes[@"titre"];
-    self.dateDebut = attributes[@"dateDebut"];
-    self.dateFin = attributes[@"dateFin"];
-    self.isOpen = attributes[@"isOpen"];
-    self.isSponso = attributes[@"isSponso"];
+    if(attributes[@"momentId"])
+        self.momentId = attributes[@"momentId"];
+    if(attributes[@"titre"])
+        self.titre = attributes[@"titre"];
+    if(attributes[@"dateDebut"])
+        self.dateDebut = attributes[@"dateDebut"];
+    if(attributes[@"dateFin"])
+        self.dateFin = attributes[@"dateFin"];
+    if(attributes[@"isSponso"])
+        self.isSponso = attributes[@"isSponso"];
     
     /*
      if(attributes[@"facebookId"])
@@ -78,6 +84,18 @@
     
     if(attributes[@"state"])
         self.state = attributes[@"state"];
+    
+    if(attributes[@"facebookId"])
+        self.facebookId = [NSString stringWithFormat:@"%@", attributes[@"facebookId"]];
+    
+    if(attributes[@"isOpenInvit"])
+        self.isOpen = @([attributes[@"isOpenInvit"] boolValue]);
+    
+    if(attributes[@"privacy"])
+        self.privacy = attributes[@"privacy"];
+    
+    if(attributes[@"unique_url"])
+        self.uniqueURL = attributes[@"unique_url"];
     
     if(attributes[@"owner"]) {
         UserClass *owner = nil;
@@ -116,12 +134,12 @@
         
         if(event.owner) {
             self.owner = event.owner;
-            NSLog(@"has user");
+            //NSLog(@"has user");
         }
         else if(event.ownerAttributes[@"id"]) {
             self.owner = [UserCoreData requestUserWithAttributes:@{@"facebookId":event.ownerAttributes[@"id"]}];
-            NSLog(@"no user = %@", self.owner);
-            NSLog(@"user found = %@", self.owner);
+            //NSLog(@"no user = %@", self.owner);
+            //NSLog(@"user found = %@", self.owner);
         }
         
         self.adresse = event.location;
@@ -129,7 +147,8 @@
         self.dateFin = event.endTime;
         self.descriptionString = event.descriptionString;
         self.facebookId = event.eventId;
-        self.isOpen = @(!event.isPrivate);
+        // self.isOpen = @(!event.isPrivate);
+        self.privacy = @(event.privacy);
     }
     return self;
 }
@@ -162,7 +181,7 @@
 }
 
 - (NSString*)description {
-    return [NSString stringWithFormat:@"MOMENT %@ :\n{\ntitre = %@\ndebut = %@\nfin = %@\nimage = %@\nadresse = %@\nfbID = %@\ndescription = \n-----\n%@\n-----\nowner : \n-----\n%@\n-----\n}\n", self.momentId, self.titre, self.dateDebut, self.dateFin, self.imageString, self.adresse, self.facebookId, self.descriptionString, self.owner];
+    return [NSString stringWithFormat:@"MOMENT %@ :\n{\ntitre = %@\ndebut = %@\nfin = %@\nimageString = %@\nadresse = %@\nfbID = %@\ndescription = \n-----\n%@\n-----\nowner : \n-----\n%@\n-----\n}\n", self.momentId, self.titre, self.dateDebut, self.dateFin, self.imageString, self.adresse, self.facebookId, self.descriptionString, self.owner];
 }
 
 @end

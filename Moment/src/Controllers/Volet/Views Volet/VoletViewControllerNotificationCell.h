@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "LocalNotificationCoreData+Model.h"
+#import "LocalNotification.h"
 #import "TTTAttributedLabel.h"
 
 @interface VoletViewControllerNotificationCell : UITableViewCell
@@ -16,6 +16,6 @@
 
 @property (weak, nonatomic) IBOutlet UILabel *texteLabel;
 
-- (id)initWithNotification:(LocalNotificationCoreData*)notification;
+- (id)initWithNotification:(LocalNotification*)notification;
 
 @end

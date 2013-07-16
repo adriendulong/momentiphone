@@ -12,12 +12,15 @@
 
 // AlertViews
 @property (nonatomic, strong) UIAlertView *chatAlertView;
+@property (nonatomic, strong) UIAlertView *photoAlertView;
 @property (nonatomic) NSInteger nbNotifcations;
 
 // Sigleton
 + (PushNotificationManager*)sharedInstance;
 
 // Push Notifications
+- (BOOL)pushNotificationEnabled;
+- (void)pushNotificationDisabledAlertView;
 - (void)saveDeviceToken:(NSData*)deviceToken;
 - (void)receivePushNotification:(NSDictionary*)attributes updateUI:(BOOL)updateUI;
 - (void)failToReceiveNotification:(NSError*)error;

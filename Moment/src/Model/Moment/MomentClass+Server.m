@@ -10,6 +10,7 @@
 #import "MomentClass+Mapping.h"
 #import "AFMomentAPIClient.h"
 #import "FacebookManager.h"
+#import "UserClass+Mapping.h"
 
 @implementation MomentClass (Server)
 
@@ -28,7 +29,7 @@
     if(attributes[@"dataImage"]) {
         
         // Si il n'y a pas d'url pour l'image
-        if(!attributes[@"photo_url"])
+        if(!attributes[@"cover_photo_url"])
         {
             // Conversion si nécessaire
             if([attributes[@"dataImage"] isKindOfClass:[UIImage class]]) {
@@ -80,8 +81,8 @@
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         
-        NSLog(@"Error : %@", error.localizedDescription);
-        NSLog(@"Message : %@", operation.responseString);
+        //NSLog(@"Error : %@", error.localizedDescription);
+        //NSLog(@"Message : %@", operation.responseString);
         
         if(block)
             block(nil);
@@ -214,123 +215,152 @@
             
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             
-            NSLog(@"Error = %@", error.localizedDescription);
-            NSLog(@"Message = %@", operation.responseString);
+            //NSLog(@"Error = %@", error.localizedDescription);
+            //NSLog(@"Message = %@", operation.responseString);
             
             block(nil);
         }];
     }
 }
 
+//#define DEBUG_IMPORT_FACEBOOK_EVENT
 + (void)importFacebookEventsWithEnded:(void (^) (NSArray *events, NSArray* moments))block
 {
-    if(block)
-    {
-        // Get Facebook Events
-        [[FacebookManager sharedInstance] getEventsWithEnded:^(NSArray *events) {
+        
+    // Update Facebook Id
+    [[FacebookManager sharedInstance] updateCurrentUserFacebookIdOnServer:^(BOOL success) {
+        
+        if(success)
+        {
+            // Get Facebook Events
+            [[FacebookManager sharedInstance] getEventsWithEnded:^(NSArray *events) {
+                
+                if (!events || [events count] == 0) {
+                    if(block)
+                        block(nil, nil);
+                } else {
+                    // Identifier quels évenements sont déjà sur Moment
+                    [self identifyFacebookEventsOnMoment:events withEnded:^(NSDictionary *results) {
                         
-            // Identifier quels évenements sont déjà sur Moment
-            [self identifyFacebookEventsOnMoment:events withEnded:^(NSDictionary *results) {
-                                
-                // Facebook Events à afficher
-                NSArray *fb_exist = results[@"exist"];
-                NSArray *fb_notExist = results[@"not_exist"];
-                
-                // --------- Créer Moments qui ne sont pas sur le server ---
-                NSMutableArray *moments_notExist = [MomentClass arrayOfMomentsWithFacebookEvents:fb_notExist].mutableCopy;
-                
-                NSLog(@"\n$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ NOT EXISTED $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n");
-                
-                __block int i = 0;
-                // Création sur le server
-                [MomentClass createMultipleMomentsFromLocalToServerWithMoments:moments_notExist
-                                                                withTransition:
-                 ^(MomentClass *moment) {
-                     
-                     
-                     NSLog(@"\n-------------------------------------------------------------------\n");
-                     NSLog(@"MOMENT\n : {\n %@ \n}", moment);
-                     NSLog(@"OWNER : {\n %@ \n}", moment.owner);
-                     NSLog(@"\n-------------------------------------------------------------------\n");
-                     
-                     
-                     if(moment)
-                     {
-                         // Update moments with server attributes
-                         [moments_notExist replaceObjectAtIndex:i withObject:moment];
-                     }
-                     
-                     i++;
-                     
-                 } withEnded:
-                 ^{
-                     
-                     NSLog(@"\n$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ EXISTED $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n");
-                     
-                     // Création NotExist terminée -> Création locale des fb_exist
-                     NSMutableArray *moments_exist = [MomentClass arrayOfMomentsWithFacebookEvents:fb_exist].mutableCopy;
-                     
-                     
-                     // ----- Ajouter en tant qu'invité aux moments déjà existant -> Requete de création ----
-                     i = 0;
-                     [MomentClass createMultipleMomentsFromLocalToServerWithMoments:moments_exist
-                                                                     withTransition:
-                      ^(MomentClass *moment) {
-                          
-                          
-                          NSLog(@"\n-------------------------------------------------------------------\n");
-                          NSLog(@"MOMENT\n : {\n %@ \n}", moment);
-                          NSLog(@"OWNER : {\n %@ \n}", moment.owner);
-                          NSLog(@"\n-------------------------------------------------------------------\n");
+                        // Facebook Events à afficher
+                        NSArray *fb_exist = results[@"exist"];
+                        NSArray *fb_notExist = results[@"not_exist"];
                         
-                          
-                          // Update moments with server attributes
-                          [moments_exist replaceObjectAtIndex:i withObject:moment];
-                          i++;
-                          
-                      } withEnded:^{
-                          
-                          //  ----- Facebook Events par ordre chronologique -----
-                          int taille = [fb_exist count] + [fb_notExist count];
-                          NSMutableArray *fb = [[NSMutableArray alloc] initWithCapacity:taille];
-                          [fb addObjectsFromArray:fb_exist];
-                          [fb addObjectsFromArray:fb_notExist];
-                          [fb sortUsingComparator:^NSComparisonResult(FacebookEvent *e1, FacebookEvent *e2) {
-                              return [e1.startTime compare:e2.startTime];
-                          }];
-                          
-                          //  ----- Moments par ordre chronologique -----
-                          NSMutableArray *moments = [[NSMutableArray alloc] initWithCapacity:taille];
-                          [moments addObjectsFromArray:moments_exist];
-                          [moments addObjectsFromArray:moments_notExist];
-                          [moments sortUsingComparator:^NSComparisonResult( MomentClass *m1, MomentClass *m2) {
-                              return [m1.dateDebut compare:m2.dateDebut];
-                          }];
-                          
-                          
-                           NSLog(@"\n$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ FIN $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n");
-                          
-                          NSLog(@"\n-------------------------------------------------------------------\n");
-                          NSLog(@"MOMENT\n : {\n %@ \n}", moments);
-                          NSLog(@"EVENTS : {\n %@ \n}", fb);
-                          NSLog(@"\n-------------------------------------------------------------------\n");
-                          
-                          
-                          // Retourne tableaux
-                          block(fb, moments);
-                          
-                      }];
-                     
-                     
-                 }];
-
+                        // --------- Créer Moments qui ne sont pas sur le server ---
+                        NSMutableArray *moments_notExist = [MomentClass arrayOfMomentsWithFacebookEvents:fb_notExist].mutableCopy;
+                        
+#ifdef DEBUG_IMPORT_FACEBOOK_EVENT
+                        NSLog(@"\n$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ NOT EXISTED $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n");
+#endif
+                        
+                        __block int i = 0;
+                        // Création sur le server
+                        [MomentClass createMultipleMomentsFromLocalToServerWithMoments:moments_notExist
+                                                                        withTransition:
+                         ^(MomentClass *moment) {
+                             
+                             if(block) {
+                                 
+#ifdef DEBUG_IMPORT_FACEBOOK_EVENT
+                                 NSLog(@"\n-------------------------------------------------------------------\n");
+                                 NSLog(@"MOMENT\n : {\n %@ \n}", moment);
+                                 NSLog(@"OWNER : {\n %@ \n}", moment.owner);
+                                 NSLog(@"\n-------------------------------------------------------------------\n");
+#endif
+                                 
+                                 
+                                 if(moment)
+                                 {
+                                     // Update moments with server attributes
+                                     [moments_notExist replaceObjectAtIndex:i withObject:moment];
+                                 }
+                             }
+                             i++;
+                             
+                         } withEnded:
+                         ^{
+                             
+#ifdef DEBUG_IMPORT_FACEBOOK_EVENT
+                             NSLog(@"\n$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ EXISTED $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n");
+#endif
+                             
+                             // Création NotExist terminée -> Création locale des fb_exist
+                             NSMutableArray *moments_exist = [MomentClass arrayOfMomentsWithFacebookEvents:fb_exist].mutableCopy;
+                             
+                             
+                             // ----- Ajouter en tant qu'invité aux moments déjà existant -> Requete de création ----
+                             i = 0;
+                             [MomentClass createMultipleMomentsFromLocalToServerWithMoments:moments_exist
+                                                                             withTransition:
+                              ^(MomentClass *moment) {
+                                  
+                                  if(block) {
+                                      
+#ifdef DEBUG_IMPORT_FACEBOOK_EVENT
+                                      NSLog(@"\n-------------------------------------------------------------------\n");
+                                      NSLog(@"MOMENT\n : {\n %@ \n}", moment);
+                                      NSLog(@"OWNER : {\n %@ \n}", moment.owner);
+                                      NSLog(@"\n-------------------------------------------------------------------\n");
+#endif
+                                      if(moment)
+                                      {
+                                          // Update moments with server attributes
+                                          [moments_exist replaceObjectAtIndex:i withObject:moment];
+                                      }
+                                  }
+                                  i++;
+                                  
+                              } withEnded:^{
+                                  
+                                  if(block) {
+                                      //  ----- Facebook Events par ordre chronologique -----
+                                      int taille = [fb_exist count] + [fb_notExist count];
+                                      NSMutableArray *fb = [[NSMutableArray alloc] initWithCapacity:taille];
+                                      [fb addObjectsFromArray:fb_exist];
+                                      [fb addObjectsFromArray:fb_notExist];
+                                      [fb sortUsingComparator:^NSComparisonResult(FacebookEvent *e1, FacebookEvent *e2) {
+                                          return [e1.startTime compare:e2.startTime];
+                                      }];
+                                      
+                                      //  ----- Moments par ordre chronologique -----
+                                      NSMutableArray *moments = [[NSMutableArray alloc] initWithCapacity:taille];
+                                      [moments addObjectsFromArray:moments_exist];
+                                      [moments addObjectsFromArray:moments_notExist];
+                                      [moments sortUsingComparator:^NSComparisonResult( MomentClass *m1, MomentClass *m2) {
+                                          return [m1.dateDebut compare:m2.dateDebut];
+                                      }];
+                                      
+#ifdef DEBUG_IMPORT_FACEBOOK_EVENT
+                                      NSLog(@"\n$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ FIN $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n");
+                                      
+                                      NSLog(@"\n-------------------------------------------------------------------\n");
+                                      NSLog(@"MOMENT\n : {\n %@ \n}", moments);
+                                      NSLog(@"EVENTS : {\n %@ \n}", fb);
+                                      NSLog(@"\n-------------------------------------------------------------------\n");
+#endif
+                                      
+                                      // Retourne tableaux
+                                      block(fb, moments);
+                                  }
+                                  
+                              }]; // Fin Moments Exists
+                             
+                             
+                         }]; // Fin Moments Not Exists
+                        
+                        
+                    }];// Fin identifyFacebookEvents
+                }
                 
                 
-            }];// Fin identifyFacebookEvents
-
-            
-        }];
-    }
+            }];
+        }
+        else
+        {
+            block(nil, nil);
+        }
+        
+    }];
 }
 
 #pragma mark - Get Moments
@@ -340,14 +370,14 @@
     NSString *path = [NSString stringWithFormat:@"momentsofuser/%d", user.userId.intValue];
         
     [[AFMomentAPIClient sharedClient] getPath:path parameters:nil encoding:AFFormURLParameterEncoding success:^(AFHTTPRequestOperation *operation, id JSON) {
-                
+        
         if(block)
             block([MomentClass arrayOfMomentsWithArrayOfAttributesFromWeb:JSON[@"moments"]]);
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         
-        NSLog(@"Error = %@", error.localizedDescription);
-        NSLog(@"Message = %@", operation.responseString);
+        //NSLog(@"Error = %@", error.localizedDescription);
+        //NSLog(@"Message = %@", operation.responseString);
         
         if(block)
             block(nil);
@@ -370,8 +400,8 @@
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         
-        NSLog(@"Error = %@", error.localizedDescription);
-        NSLog(@"Message = %@", operation.responseString);
+        //NSLog(@"Error = %@", error.localizedDescription);
+        //NSLog(@"Message = %@", operation.responseString);
         
         if(block)
             block(NO);
@@ -385,7 +415,10 @@
     [self getMomentsServerWithEnded:block waitUntilFinished:NO];
 }
 
-+ (void) getMomentsServerAfterDate:(NSDate*)date withEnded:(void (^) (NSArray* moments))block
++ (void) getMomentsServerAfterDate:(NSDate*)date
+                     timeDirection:(enum TimeDirectiion)timeDirection
+                              user:(UserClass*)user
+                         withEnded:(void (^) (NSArray* moments))block
 {
     static NSDateFormatter *df = nil;
     
@@ -397,7 +430,13 @@
         df.dateFormat = @"yyyy-MM-dd";
     }
     
-    NSString *path = [NSString stringWithFormat:@"momentsafter/%@", [df stringFromDate:date]];
+    NSString *path = nil;
+    if(user) {
+        path = [NSString stringWithFormat:@"momentsafter/%@/%d/%@", [df stringFromDate:date], timeDirection, user.userId];
+    }
+    else {
+        path = [NSString stringWithFormat:@"momentsafter/%@/%d", [df stringFromDate:date], timeDirection];
+    }
         
     [[AFMomentAPIClient sharedClient] getPath:path parameters:nil encoding:AFFormURLParameterEncoding success:^(AFHTTPRequestOperation *operation, id JSON) {
         
@@ -412,8 +451,8 @@
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         
-        NSLog(@"Error = %@", error.localizedDescription);
-        NSLog(@"Message = %@", operation.responseString);
+        //NSLog(@"Error = %@", error.localizedDescription);
+        //NSLog(@"Message = %@", operation.responseString);
         
         if(block)
             block(nil);
@@ -422,11 +461,17 @@
 }
 
 // Blindage --> Supprime moment déjà présent en local
-+ (void) getMomentsServerAfterDateOfMoment:(MomentClass*)moment withEnded:(void (^) (NSArray* moments))block
++ (void) getMomentsServerAfterDateOfMoment:(MomentClass*)moment
+                             timeDirection:(enum TimeDirectiion)timeDirection
+                                      user:(UserClass*)user
+                                 withEnded:(void (^) (NSArray* moments))block
 {
     if(block)
     {
-        [self getMomentsServerAfterDate:moment.dateDebut withEnded:^(NSArray *moments) {
+        [self getMomentsServerAfterDate:moment.dateDebut
+                          timeDirection:timeDirection
+                                   user:user
+                              withEnded:^(NSArray *moments) {
             
             NSMutableArray *array = moments.mutableCopy;
             if([array containsObject:moment]) {
@@ -493,7 +538,24 @@
     
     [[AFMomentAPIClient sharedClient] getPath:path parameters:nil encoding:AFFormURLParameterEncoding success:^(AFHTTPRequestOperation *operation, id JSON) {
                 
-        NSLog(@"Change state : %@", JSON);
+        //NSLog(@"Change state : %@", JSON);
+        
+        // Update RSVP on facebook
+        if(self.facebookId)
+        {
+            [[FacebookManager sharedInstance] updateRSVP:state moment:self withEnded:^(BOOL success) {
+                
+                /*
+                if(success) {
+                    NSLog(@"Change Facebook RSVP Success");
+                }
+                else {
+                    NSLog(@"Change Facebook RSVP Fail");
+                }
+                 */
+                
+            }];
+        }
         
         if(block) {
             self.state = @(state);
@@ -517,7 +579,7 @@
     
     [[AFMomentAPIClient sharedClient] getPath:path parameters:nil encoding:AFFormURLParameterEncoding success:^(AFHTTPRequestOperation *operation, id JSON) {
                 
-        NSLog(@"Admin : %@", JSON);
+        //NSLog(@"Admin : %@", JSON);
         
         if(block) {
             block(YES);
@@ -540,24 +602,24 @@
     
     NSMutableDictionary *params = [self mappingToWeb].mutableCopy;
     
+    //NSLog(@"Params = %@", params);
+    
     NSData *file = nil;
     // Si il y a une image
-    if(params[@"dataImage"]) {
+    if(params[@"photo"]) {
         
         // Conversion si nécessaire
-        if([params[@"dataImage"] isKindOfClass:[UIImage class]]) {
-            file = UIImagePNGRepresentation(params[@"dataImage"]);
+        if([params[@"photo"] isKindOfClass:[UIImage class]]) {
+            file = UIImagePNGRepresentation(params[@"photo"]);
         }
-        else if([params[@"dataImage"] isKindOfClass:[NSData class]]) {
-            file = params[@"dataImage"];
+        else if([params[@"photo"] isKindOfClass:[NSData class]]) {
+            file = params[@"photo"];
         }
         
         [params removeObjectForKey:@"photo"];
     }
-    
-    NSDictionary *mapped = [MomentClass mappingToWebWithAttributes:params];
-    
-    NSMutableURLRequest *request = [[AFMomentAPIClient sharedClient] multipartFormRequestWithMethod:@"POST" path:path parameters:mapped constructingBodyWithBlock: ^(id <AFMultipartFormData>formData) {
+        
+    NSMutableURLRequest *request = [[AFMomentAPIClient sharedClient] multipartFormRequestWithMethod:@"POST" path:path parameters:params constructingBodyWithBlock: ^(id <AFMultipartFormData>formData) {
         if(file)
             [formData appendPartWithFileData:file name:@"photo" fileName:@"photo.png" mimeType:@"image/png"];
     }];
@@ -575,17 +637,28 @@
     
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id JSON) {
         
+        //NSLog(@"Moment Modified = %@", JSON);
+        //NSLog(@"Local Moment = %@", self);
+        // Save Headers
         [[AFMomentAPIClient sharedClient] saveHeaderResponse:operation.response];
         
+        // Save URL
+        if(file) {
+            self.imageString = JSON[@"photo"];
+            self.dataImage = nil;
+            self.uimage = nil;
+        }
+        
+        // Mettre à jour CoreData
         [MomentCoreData updateMoment:self];
                 
         if(block)
             block(YES);
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        
-        NSLog(@"Error : %@", error.localizedDescription);
-        NSLog(@"Message : %@", operation.responseString);
+                
+        //NSLog(@"Error : %@", error.localizedDescription);
+        //NSLog(@"Message : %@", operation.responseString);
                 
         if(block)
             block(NO);
@@ -595,6 +668,7 @@
     [operation start];
 }
 
+/*
 - (void)togglePrivacyWithEnded:(void (^) (BOOL success))block
 {
     NSString *path = [NSString stringWithFormat:@"openmoment/%@", self.momentId];
@@ -617,6 +691,7 @@
     }];
     
 }
+ */
 
 
 #pragma mark - Photos
@@ -624,7 +699,6 @@
 - (void)getPhotosWithEnded:( void (^) (NSArray* photos) )block
 {
     NSString *path = [NSString stringWithFormat:@"photosmoment/%d", self.momentId.intValue];
-    NSLog(@"path tried = %@", path);
     
     [[AFMomentAPIClient sharedClient] getPath:path parameters:nil encoding:AFFormURLParameterEncoding success:^(AFHTTPRequestOperation *operation, id JSON) {
                         
@@ -677,13 +751,23 @@
         
         Photos *photo = [[Photos alloc] initWithAttributesFromWeb:JSON[@"success"]];
         
+        // Notify Facebook Notification
+        if(self.facebookId)
+        {
+            [[FacebookManager sharedInstance] postMessageOnEventWall:self photo:photo withEnded:^(BOOL success) {
+                if(!success) {
+                    [TestFlight passCheckpoint:[NSString stringWithFormat:@"Facebook Notification Fail - Photo %d - Moment %@", photo.photoId, self.momentId]];
+                }
+            }];
+        }
+        
         if(endBlock)
             endBlock(photo);
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         
-        NSLog(@"Error : %@", error.localizedDescription);
-        NSLog(@"Message : %@", operation.responseString);
+        //NSLog(@"Error : %@", error.localizedDescription);
+        //NSLog(@"Message : %@", operation.responseString);
         
         if(endBlock)
             endBlock(nil);
@@ -705,7 +789,7 @@
                                                        withStart:startBlock
                                                  withProgression:progressBlock
                                                        withEnded:endBlock];
-        
+    
     [operation start];
 }
 
@@ -776,7 +860,7 @@
 {
     NSString *path = [NSString stringWithFormat:@"delmoment/%@", self.momentId];
     
-    NSLog(@"delete moment path = %@", path);
+    //NSLog(@"delete moment path = %@", path);
     
     [[AFMomentAPIClient sharedClient] getPath:path parameters:nil encoding:AFFormURLParameterEncoding success:^(AFHTTPRequestOperation *operation, id JSON) {
         
@@ -794,6 +878,123 @@
     }];
     
 }
-                            
+
+#pragma mark - Invites
+
+- (void)inviteNewGuest:(NSArray*)users withEnded:( void (^) (BOOL success) )block
+{
+    NSString *path = [NSString stringWithFormat:@"newguests/%d", self.momentId.intValue];
+    
+    // Mapping
+    NSMutableArray *params = [[NSMutableArray alloc] initWithCapacity:[users count]];
+    for( UserClass *u in users) {
+        [params addObject:[u mappingToWeb]];
+    }
+    
+    [[AFMomentAPIClient sharedClient] postPath:path parameters:@{@"users":params} encoding:AFJSONParameterEncoding success:^(AFHTTPRequestOperation *operation, id JSON) {
+        
+        if(block)
+            block(YES);
+        
+        
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        
+        HTTP_ERROR(operation, error);
+        
+        if(block)
+            block(NO);
+    }];
+}
+
+// --- Local Conversions ----
+
+// Englobe sous la forme @{@"user":user, @"isAdmin":@(isAdmin)}
++ (NSMutableDictionary*)englobeUserWithAdminAttributeFromWeb:(NSDictionary*)userAttriubtes admin:(BOOL)isAdmin
+{
+    NSMutableDictionary *dico = [[NSMutableDictionary alloc] initWithCapacity:2];
+    dico[@"user"] = [[UserClass alloc] initWithAttributesFromWeb:userAttriubtes];
+    dico[@"isAdmin"] = @(isAdmin);
+    return dico;
+}
+
+// Array avec la forme d'au dessus
++ (NSArray*)englobeUserArrayWithAdminAttributesFromWeb:(NSArray*)users admin:(BOOL)isAdmin
+{
+    NSMutableArray *final = [[NSMutableArray alloc] initWithCapacity:[users count]];
+    for( NSDictionary* user in users ) {
+        NSMutableDictionary *newUser = [MomentClass englobeUserWithAdminAttributeFromWeb:user admin:isAdmin];
+        [final addObject:newUser];
+    }
+    return final;
+}
+
+- (void)getInvitedUsersWithAdminEncapsulation:(BOOL)adminEncapsulation
+                      withEnded:( void (^) (NSDictionary* invites) )block
+{
+    NSString *path = [NSString stringWithFormat:@"guests/%d", self.momentId.intValue];
+    
+    [[AFMomentAPIClient sharedClient] getPath:path parameters:nil encoding:AFFormURLParameterEncoding
+                                      success:^(AFHTTPRequestOperation *operation, id JSON) {
+                                          
+                                          if(block) {
+                                              NSArray *ownerArray = (NSArray*)JSON[@"owner"];
+                                              id owner = nil;
+                                              if([ownerArray count] > 0) {
+                                                  owner = ownerArray[0];
+                                              }
+                                              NSArray *maybe = (NSArray*)JSON[@"maybe"];
+                                              NSArray *coming = (NSArray*)JSON[@"coming"];
+                                              NSArray *not_coming = (NSArray*)JSON[@"not_coming"];
+                                              NSArray *unknown = (NSArray*)JSON[@"unknown"];
+                                              NSArray *admin = (NSArray*)JSON[@"admin"];
+                                              
+                                              if(adminEncapsulation)
+                                              {
+                                                  // Update Admins As Admin
+                                                  admin = [MomentClass englobeUserArrayWithAdminAttributesFromWeb:admin admin:YES];
+                                                  if(owner)
+                                                      owner = [MomentClass englobeUserWithAdminAttributeFromWeb:owner admin:YES];
+                                                  
+                                                  // Convert non admins
+                                                  maybe = [MomentClass englobeUserArrayWithAdminAttributesFromWeb:maybe admin:NO];
+                                                  coming = [MomentClass englobeUserArrayWithAdminAttributesFromWeb:coming admin:NO];
+                                                  not_coming = [MomentClass englobeUserArrayWithAdminAttributesFromWeb:not_coming admin:NO];
+                                                  unknown = [MomentClass englobeUserArrayWithAdminAttributesFromWeb:unknown admin:NO];
+                                              }
+                                              else {
+                                                  admin = [UserClass arrayOfUsersWithArrayOfAttributesFromWeb:admin];
+                                                  if(owner)
+                                                      owner = [[UserClass alloc] initWithAttributesFromWeb:owner];
+                                                  maybe = [UserClass arrayOfUsersWithArrayOfAttributesFromWeb:maybe];
+                                                  coming = [UserClass arrayOfUsersWithArrayOfAttributesFromWeb:coming];
+                                                  not_coming = [UserClass arrayOfUsersWithArrayOfAttributesFromWeb:not_coming];
+                                                  unknown = [UserClass arrayOfUsersWithArrayOfAttributesFromWeb:unknown];
+                                              }
+                                              
+                                              NSMutableDictionary *dico = [[NSMutableDictionary alloc] init];
+                                              if(owner) dico[@"owner"] = owner;
+                                              if(maybe) dico[@"maybe"] = maybe;
+                                              if(coming) dico[@"coming"] = coming;
+                                              if(not_coming) dico[@"not_coming"] = not_coming;
+                                              if(unknown) dico[@"unknown"] = unknown;
+                                              if(admin) dico[@"admin"] = admin;
+                                              
+                                              block(dico);
+                                          }
+                                          
+                                      } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                          
+                                          HTTP_ERROR(operation, error);
+                                          
+                                          if(block)
+                                              block(nil);
+                                          
+                                      }];
+}
+
+- (void)getInvitedUsersWithEnded:( void (^) (NSDictionary* invites) )block {
+    [self getInvitedUsersWithAdminEncapsulation:YES withEnded:block];
+}
+
 
 @end

@@ -9,9 +9,16 @@
 #import "Config.h"
 #import "TTTAttributedLabel.h"
 
+// Base URL du server
+static NSString * const kAFBaseURLString;
+
 static NSString *fontName = @"Numans-Regular";
 
 @implementation Config
+
+@synthesize kAFBaseURLString = _kAFBaseURLString;
+@synthesize FBSessionStateChangedNotification = _FBSessionStateChangedNotification;
+@synthesize TestFlightAppToken = _TestFlightAppToken;
 
 @synthesize managedObjectContext = _managedObjectContext;
 @synthesize managedObjectModel = _managedObjectModel;
@@ -54,7 +61,7 @@ static Config *sharedInstance = nil;
     if (_managedObjectModel != nil) {
         return _managedObjectModel;
     }
-    NSURL *modelURL = [[NSBundle mainBundle] URLForResource:@"Moment" withExtension:@"mom"]; // ou @"momd"
+    NSURL *modelURL = [[NSBundle mainBundle] URLForResource:@"Moment" withExtension:@"momd"]; // ou @"momd"
     _managedObjectModel = [[NSManagedObjectModel alloc] initWithContentsOfURL:modelURL];
     return _managedObjectModel;
 }
@@ -100,7 +107,14 @@ static Config *sharedInstance = nil;
          Lightweight migration will only work for a limited set of schema changes; consult "Core Data Model Versioning and Data Migration Programming Guide" for details.
          
          */
-        NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+        //NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+        [TestFlight passCheckpoint:@"COREDATA OPENNING FAIL !"];
+        [[[UIAlertView alloc]
+          initWithTitle:@"Erreur Fatale"
+          message:@"Il semblerait qu'il y ait eu un problème lors de l'installation de l'application. La seule solution est de supprimer puis re-télécharger Moment sur l'Appstore pour que tout fonctionne à nouveau correctement. Veuillez nous excuser pour ce désagrément."
+          delegate:nil
+          cancelButtonTitle:@"OK"
+          otherButtonTitles:nil] show];
         abort();
     }
     
@@ -115,7 +129,7 @@ static Config *sharedInstance = nil;
         if ([managedObjectContext hasChanges] && ![managedObjectContext save:&error]) {
             // Replace this implementation with code to handle the error appropriately.
             // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-            NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+            //NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
             abort();
         }
     }
@@ -217,10 +231,12 @@ static Config *sharedInstance = nil;
     
     newImage = UIGraphicsGetImageFromCurrentImageContext();
     
+    /*
     if(newImage == nil)
     {
         NSLog(@"could not scale image");
     }
+    */
     
     //pop the context to get back to the default
     UIGraphicsEndImageContext();
@@ -277,9 +293,21 @@ static Config *sharedInstance = nil;
 
 - (BOOL)isValidPhoneNumber:(NSString*)phoneNumber
 {
-    NSString *regex = @"0[1-9]((([0-9]{2}){4})|((\\s[0-9]{2}){4})|((-[0-9]{2}){4}))";
+    NSString *regex = @"(0|0033|\\+33)[1-9]((([0-9]{2}){4})|((\\s[0-9]{2}){4})|((-[0-9]{2}){4}))";
     NSPredicate *test = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", regex];
     return [test evaluateWithObject:phoneNumber];
+}
+
+- (BOOL)isMobilePhoneNumber:(NSString*)phoneNumber forceValidation:(BOOL)force
+{
+    if(force) {
+        NSString *regex = @"(0|0033|\\+33)[67]((([0-9]{2}){4})|((\\s[0-9]{2}){4})|((-[0-9]{2}){4}))";
+        NSPredicate *test = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", regex];
+        return [test evaluateWithObject:phoneNumber];
+    }
+
+    NSString *start = [phoneNumber substringWithRange:NSMakeRange(0, 2)];
+    return [start isEqualToString:@"06"] || [start isEqualToString:@"07"];
 }
 
 #pragma mark - Cover Image
@@ -327,7 +355,7 @@ static Config *sharedInstance = nil;
     NSError *error = nil;
     if( [fileManager fileExistsAtPath:fullPath] ){
     	if( ![fileManager removeItemAtPath:fullPath error:&error] ) {
-    		NSLog(@"Failed deleting background image file %@", error);
+    		//NSLog(@"Failed deleting background image file %@", error);
     		// the write below should fail. Add your own flag and check below.
     	}
     }
@@ -337,6 +365,143 @@ static Config *sharedInstance = nil;
 {
     NSString *fullPath = [self coverImageFullPath];
     [self deleteFileAtPath:fullPath];
+}
+
+/*
+#pragma mark - Texte Formatage
+
+- (NSString*)twitterShareTextForMoment:(MomentClass*)moment nbMaxCaracters:(NSInteger)nbMaxCarac
+{
+    // Limitation à 160 caractères max
+    NSString *format = @"Bon Moment @%@ !";
+    NSInteger taille = moment.titre.length + format.length - 2;
+    NSString *initialText = nil;
+    NSInteger tailleRestante;
+    
+    // Titre seul trop grand = ne pas afficher titre
+    if(moment.titre.length >= nbMaxCarac) {
+        initialText = @"Bon Moment !";
+        tailleRestante = 0;
+    }
+    // Taille totale assez petite
+    else if(taille <= nbMaxCarac) {
+        initialText = [NSString stringWithFormat:format, moment.titre];
+        tailleRestante = nbMaxCarac - taille;
+    }
+    // Taille totale trop grande
+    else {
+        NSInteger lastPosition = nbMaxCarac - (format.length - 2) - 3;
+        // Réduction du titre
+        if(lastPosition > 0) {
+            NSString *titre = [NSString stringWithFormat:@"%@...", [moment.titre substringWithRange:NSMakeRange(0, lastPosition)]];
+            initialText = [NSString stringWithFormat:format, titre];
+            tailleRestante = 0;
+        }
+        // Pas la place de réduire le titre = ne pas afficher le titre
+        else {
+            initialText = [NSMutableString stringWithFormat:format, moment.titre];
+            tailleRestante = nbMaxCarac - taille;
+        }
+    }
+    
+    return initialText;
+}
+ */
+
+#pragma mark - FeedBack
+- (void)feedBackMailComposerWithDelegate:(id<MFMailComposeViewControllerDelegate>)delegate
+                                    root:(UIViewController*)rootViewController
+{
+    if([MFMailComposeViewController canSendMail])
+    {
+        // Email Subject
+        NSString *emailTitle = NSLocalizedString(@"MFMailComposeViewController_Moment_Subject_Feedback", nil);
+        // Email Content
+        NSString *messageBody = [NSString stringWithFormat:NSLocalizedString(@"MFMailComposeViewController_Moment_MessageBody_Feedback", nil), [[UserCoreData getCurrentUser] formatedUsernameWithStyle:UsernameStyleCapitalized]];
+        
+        MFMailComposeViewController *mc = [[MFMailComposeViewController alloc] init];
+        mc.mailComposeDelegate = delegate;
+        [mc setSubject:emailTitle];
+        [mc setMessageBody:messageBody isHTML:NO];
+        [mc setToRecipients:@[kParameterContactMail]];
+        
+        // Present mail view controller on screen
+        [[VersionControl sharedInstance] presentModalViewController:mc fromRoot:rootViewController animated:YES];
+    }
+    else
+    {
+        //NSLog(@"mail composer fail");
+        
+        [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"MFMailComposeViewController_Moment_Popup_Title", nil)
+                                    message:NSLocalizedString(@"MFMailComposeViewController_Moment_Popup_Message", nil)
+                                   delegate:nil
+                          cancelButtonTitle:NSLocalizedString(@"AlertView_Button_OK", nil)
+                          otherButtonTitles:nil]
+         show];
+    }
+}
+
+- (void)feedBackRatingMailComposerWithDelegate:(id<MFMailComposeViewControllerDelegate>)delegate
+                                          root:(UIViewController*)rootViewController
+{
+    if([MFMailComposeViewController canSendMail])
+    {
+        // Email Subject
+        NSString *emailTitle = NSLocalizedString(@"MFMailComposeViewController_Moment_Subject_Feedback", nil);
+        // Email Content
+        NSString *messageBody = NSLocalizedString(@"MFMailComposeViewController_Moment_MessageBody_Feedback_2", nil);
+        
+        MFMailComposeViewController *mc = [[MFMailComposeViewController alloc] init];
+        mc.mailComposeDelegate = delegate;
+        [mc setSubject:emailTitle];
+        [mc setMessageBody:messageBody isHTML:NO];
+        [mc setToRecipients:@[kParameterContactMail]];
+        
+        // Present mail view controller on screen
+        [[VersionControl sharedInstance] presentModalViewController:mc fromRoot:rootViewController animated:YES];
+    }
+    else
+    {
+        //NSLog(@"mail composer fail");
+        
+        [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"MFMailComposeViewController_Moment_Popup_Title", nil)
+                                    message:NSLocalizedString(@"MFMailComposeViewController_Moment_Popup_Message", nil)
+                                   delegate:nil
+                          cancelButtonTitle:NSLocalizedString(@"AlertView_Button_OK", nil)
+                          otherButtonTitles:nil]
+         show];
+    }
+}
+
+#pragma mark - Switch DEV or PROD
+- (void)setDeveloppementVersion:(BOOL)activated {
+    if (activated) {
+        // DEV
+        
+        [self setKAFBaseURLString:@"http://apidev.appmoment.fr"];
+        [self setFBSessionStateChangedNotification:@"com.devappmoment.Moment:FBSessionStateChangedNotification"];
+        [self setTestFlightAppToken:@"01bdc3ce-6a5c-457a-8f65-346e800264b1"];
+        
+        //NSMutableDictionary *plist = [NSMutableDictionary dictionaryWithContentsOfFile:@"Moment-Info.plist"];
+        //[plist setObject:@"MomentDev" forKey:@"Bundle display name"];
+        //[plist setObject:@"com.devappmoment.${PRODUCT_NAME:rfc1034identifier}" forKey:@"CFBundleIdentifier"];
+        //[plist setObject:@"fb539966336039230" forKey:@"CFBundleURLSchemes"];
+        //[plist setObject:@"539966336039230" forKey:@"FacebookAppID"];
+        //[plist writeToFile:@"Moment-Info.plist" atomically:YES];
+    } else {
+        // PROD
+        
+        [self setKAFBaseURLString:@"http://api.appmoment.fr"];
+        [self setFBSessionStateChangedNotification:@"com.appMoment.Moment:FBSessionStateChangedNotification"];
+        [self setTestFlightAppToken:@"85ba03e5-22dc-45c5-9810-be2274ed75d1"];
+        
+        //NSMutableDictionary *plist = [NSMutableDictionary dictionaryWithContentsOfFile:@"Moment-Info.plist"];
+        //[plist setObject:@"${PRODUCT_NAME}" forKey:@"Bundle display name"];
+        //[plist setObject:@"com.appMoment.${PRODUCT_NAME:rfc1034identifier}" forKey:@"CFBundleIdentifier"];
+        //[plist setObject:@"fb445031162214877" forKey:@"CFBundleURLSchemes"];
+        //[plist setObject:@"445031162214877" forKey:@"FacebookAppID"];
+        //[plist writeToFile:@"Moment-Info.plist" atomically:YES];
+    }
 }
 
 @end

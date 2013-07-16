@@ -14,9 +14,13 @@
     self.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"separation.png"]];
 }
 
+- (CGRect)frameForPosition:(CGFloat)position {
+    return CGRectMake(0, position, 320, 2);
+}
+
 - (id)initAtPosition:(CGFloat)position
 {
-    CGRect frame = CGRectMake(0, position, 320, 2);
+    CGRect frame = [self frameForPosition:position];
     self = [self initWithFrame:frame];
     return self;
 }

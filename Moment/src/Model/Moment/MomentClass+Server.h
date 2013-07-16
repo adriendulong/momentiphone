@@ -11,6 +11,11 @@
 #import "Photos.h"
 #import "AFJSONRequestOperation.h"
 
+enum TimeDirectiion {
+    TimeDirectionPast = 0,
+    TimeDirectionFutur = 1
+};
+
 @interface MomentClass (Server)
 
 // Create
@@ -31,7 +36,10 @@
 + (void)getInfosMomentWithId:(NSInteger)momentId withEnded:(void (^) (NSDictionary* attributes) )block;
 + (void)getMomentsServerWithEnded:(void (^)(BOOL success))block waitUntilFinished:(BOOL)waitUntilFinished;
 + (void)getMomentsServerWithEnded:(void (^)(BOOL success))block;
-+ (void)getMomentsServerAfterDateOfMoment:(MomentClass*)moment withEnded:(void (^) (NSArray* moments))block;
++ (void) getMomentsServerAfterDateOfMoment:(MomentClass*)moment
+                             timeDirection:(enum TimeDirectiion)timeDirection
+                                      user:(UserClass*)user
+                                 withEnded:(void (^) (NSArray* moments))block;
 
 // Facebook Events
 + (void)identifyFacebookEventsOnMoment:(NSArray*)events withEnded:(void (^) (NSDictionary* results))block;
@@ -44,7 +52,7 @@
 - (void)updateMomentFromServerWithEnded:(void (^) (BOOL success) )block;
 - (void)updateUserWithIdAsAdmin:(NSInteger)userId withEnded:(void (^) (BOOL success) )block;
 - (void)updateMomentFromLocalToServerWithEnded:(void (^) (BOOL success))block;
-- (void)togglePrivacyWithEnded:(void (^) (BOOL success))block;
+//- (void)togglePrivacyWithEnded:(void (^) (BOOL success))block;
 
 // Photos
 - (void)getPhotosWithEnded:( void (^) (NSArray* photos) )block;
@@ -62,5 +70,11 @@
 
 // Suppression
 - (void)deleteWithEnded:(void (^) (BOOL success))block;
+
+// Invités
+- (void)inviteNewGuest:(NSArray*)users withEnded:( void (^) (BOOL success) )block;
+- (void)getInvitedUsersWithAdminEncapsulation:(BOOL)adminEncapsulation
+                                    withEnded:( void (^) (NSDictionary* invites) )block;
+- (void)getInvitedUsersWithEnded:( void (^) (NSDictionary* invites) )block;
 
 @end

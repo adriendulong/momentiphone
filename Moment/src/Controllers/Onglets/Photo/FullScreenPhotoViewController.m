@@ -8,6 +8,7 @@
 
 #import "FullScreenPhotoViewController.h"
 #import "Photos.h"
+#import "GAI.h"
 
 @interface FullScreenPhotoViewController ()
 
@@ -33,13 +34,20 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    [self showPhotoAtIndex:self.delegate.selectedIndex];
+    //[self showPhotoAtIndex:self.delegate.selectedIndex];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
     [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleBlackOpaque;
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    // Google Analytics
+    [[[GAI sharedInstance] defaultTracker] sendView:@"Vue Photo FullScreen"];
 }
 
 /*
@@ -71,10 +79,9 @@
 }
  */
 
-- (void)showPhotoAtIndex:(NSInteger)index
+- (void)showPhoto:(id<TTPhoto>)photo
 {
-    NSLog(@"show photo at index %d", index);
-    _centerPhotoIndex = index;
+    self.centerPhoto = photo;
 }
 
 #pragma mark - TTPhotoViewController

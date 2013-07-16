@@ -9,6 +9,7 @@
 #import "CagnotteProduct.h"
 #import "AFNetworking.h"
 #import "AFMomentAPIClient.h"
+#import "Config.h"
 
 @implementation CagnotteProduct
 
@@ -26,7 +27,6 @@
 
 static AFHTTPClient *_httpClient = nil;
 static NSString *baseURL = @"https://www.googleapis.com/shopping/search/v1/public/";
-static NSString *apiKey = @"AIzaSyAXb81v4E4Xn2bvBxBV8CYvSBEQhqLOPxM";
 
 + (AFHTTPClient*)httpClient {
     if(!_httpClient) {
@@ -112,11 +112,11 @@ static NSString *apiKey = @"AIzaSyAXb81v4E4Xn2bvBxBV8CYvSBEQhqLOPxM";
 {
     NSString *path = @"products";
     
-    NSLog(@"LOAD INDEX %d", startIndex);
+    //NSLog(@"LOAD INDEX %d", startIndex);
     
     // Query
     NSDictionary *params = @{
-                             @"key":apiKey,
+                             @"key":kGoogleAPIKey,
                              @"country":[[NSLocale currentLocale] objectForKey: NSLocaleCountryCode],
                              @"q":query,
                              @"startIndex":@((startIndex > 0)? startIndex : 1)//,

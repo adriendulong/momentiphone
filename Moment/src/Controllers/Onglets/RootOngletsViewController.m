@@ -29,7 +29,9 @@
 @synthesize scrollView = _scrollView;
 
 
-- (id)initWithMoment:(MomentClass*)moment withOnglet:(enum OngletRank)onglet
+- (id)initWithMoment:(MomentClass*)moment
+          withOnglet:(enum OngletRank)onglet
+        withTimeLine:(UIViewController <TimeLineDelegate>*)timeLine;
 {
     self = [super initWithNibName:@"RootOngletsViewController" bundle:nil];
     if(self) {
@@ -42,11 +44,14 @@
             if(self.moment.momentId)
             {
                 [MomentClass getInfosMomentWithId:self.moment.momentId.intValue withEnded:^(NSDictionary *attributes) {
-                    self.moment = [[MomentClass alloc] initWithAttributesFromWeb:attributes];
-                    self.photoViewController.moment = moment;
-                    self.infoMomentViewController.moment = moment;
-                    self.chatViewController.moment = moment;
-                    [self.infoMomentViewController reloadData];
+                    
+                    if (attributes != nil) {
+                        self.moment = [[MomentClass alloc] initWithAttributesFromWeb:attributes];
+                        self.photoViewController.moment = self.moment;
+                        self.infoMomentViewController.moment = self.moment;
+                        self.chatViewController.moment = self.moment;
+                        [self.infoMomentViewController reloadData];
+                    }
                 }];
             }
         }
@@ -55,7 +60,7 @@
         self.selectedOnglet = onglet;
         viewHeight = [[VersionControl sharedInstance] screenHeight] - TOPBAR_HEIGHT;
         self.shouldShowInviteViewController = NO;
-        //self.timeLine = timeLine;
+        self.timeLine = timeLine;
         
         // Update state (Unknown -> Maybe)
         if(self.moment.state.intValue == UserStateUnknown) {
@@ -67,7 +72,7 @@
 }
 
 - (void)updateShouldShowInviteViewController {
-    NSLog(@"update show invite");
+    //NSLog(@"update show invite");
     self.shouldShowInviteViewController = YES;
 }
 
@@ -99,21 +104,32 @@
 
 - (void)selectNavigationBarButton:(enum OngletRank)rank
 {
-    
     switch (rank) {
         case OngletInfoMoment:
+            
+            // Google Analytics
+            [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Icone Infos" value:nil];
+            
             self.infoButton.selected = YES;
             self.chatButton.selected = NO;
             self.photoButton.selected = NO;
             break;
             
         case OngletChat:
+            
+            // Google Analytics
+            [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Icone Chat" value:nil];
+            
             self.infoButton.selected = NO;
             self.chatButton.selected = YES;
             self.photoButton.selected = NO;
             break;
             
         case OngletPhoto:
+            
+            // Google Analytics
+            [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Icone Photos" value:nil];
+            
             self.infoButton.selected = NO;
             self.chatButton.selected = NO;
             self.photoButton.selected = YES;
@@ -152,20 +168,20 @@
              */
             
             // Préload Vue de Droite et Gauche
-            if(!_photoViewController)
+            if( (!_photoViewController) || (![self.photoViewController.view isDescendantOfView:self.scrollView]) )
                 [self addOngletView:self.photoViewController.view rank:OngletPhoto];
-            if(!_chatViewController)
+            if( (!_chatViewController) || (![self.chatViewController.view isDescendantOfView:self.scrollView]) )
                 [self addOngletView:self.chatViewController.view rank:OngletChat];
              
             break;
             
         case OngletPhoto:
-            if(!_photoViewController)
+            if( (!_photoViewController) || (![self.photoViewController.view isDescendantOfView:self.scrollView]) )
                 [self addOngletView:self.photoViewController.view rank:onglet];
             break;
             
         case OngletChat:
-            if(!_chatViewController)
+            if( (!_chatViewController) || (![self.chatViewController.view isDescendantOfView:self.scrollView]) )
                 [self addOngletView:self.chatViewController.view rank:onglet];
             break;
     }
@@ -181,16 +197,19 @@
             if(!_infoMomentViewController)
                 [self addOngletView:self.infoMomentViewController.view rank:onglet];
             [AppDelegate updateActualViewController:self.infoMomentViewController];
+            [self.infoMomentViewController sendGoogleAnalyticsView];
             break;
         case OngletPhoto:
             if(!_photoViewController)
                 [self addOngletView:self.photoViewController.view rank:onglet];
             [AppDelegate updateActualViewController:self.photoViewController];
+            [self.photoViewController sendGoogleAnalyticsView];
             break;
         case OngletChat:
             if(!_chatViewController)
                 [self addOngletView:self.chatViewController.view rank:onglet];
             [AppDelegate updateActualViewController:self.chatViewController];
+            [self.chatViewController sendGoogleAnalyticsView];
             break;
     }
     
@@ -207,6 +226,16 @@
     [self addOnglet:onglet];
     self.selectedOnglet = onglet;
     [self automaticScroll];
+}
+
+#pragma mark - Google Analytics
+
+- (void)sendGoogleAnalyticsEvent:(NSString*)action label:(NSString*)label value:(NSNumber*)value {
+    [[[GAI sharedInstance] defaultTracker]
+     sendEventWithCategory:@"Infos"
+     withAction:action
+     withLabel:label
+     withValue:value];
 }
 
 #pragma mark - NavigationBar Buttons Actions
@@ -279,6 +308,7 @@
         InviteAddViewController *inviteViewController = [[InviteAddViewController alloc] initWithOwner:self.user withMoment:self.moment];
         [self.navigationController pushViewController:inviteViewController animated:NO];
     }
+    [self.infoMomentViewController reloadData];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -352,7 +382,32 @@
      */
     
     if( !((int)scrollView.contentOffset.x%320) ) {
+        
+        // Next Onglet
         NSInteger select = scrollView.contentOffset.x/320;
+        
+        // Google Analytics
+        switch (self.selectedOnglet) {
+            case OngletInfoMoment:
+                if(select == OngletPhoto) {
+                    [self sendGoogleAnalyticsEvent:@"Swipe" label:@"Swipe Infos vers Photo" value:nil];
+                } else if(select == OngletChat) {
+                    [self sendGoogleAnalyticsEvent:@"Swipe" label:@"Swipe Infos vers Chat" value:nil];
+                }
+                break;
+                
+            case OngletChat:
+                if(select == OngletInfoMoment)
+                    [self sendGoogleAnalyticsEvent:@"Swipe" label:@"Swipe Chat vers Infos" value:nil];
+                break;
+                
+            case OngletPhoto:
+                if(select == OngletInfoMoment)
+                    [self sendGoogleAnalyticsEvent:@"Swipe" label:@"Swipe Photo vers Infos" value:nil];
+                break;
+        }
+        
+        // Change Onglet
         [self addAndScrollToOnglet:select];
         
         // Si le bouton expand de la vue info moment est encore développé, on le referme

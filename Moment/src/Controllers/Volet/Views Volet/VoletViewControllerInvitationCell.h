@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "LocalNotificationCoreData.h"
+#import "LocalNotification.h"
 
 @interface VoletViewControllerInvitationCell : UITableViewCell
 
@@ -17,6 +17,6 @@
 @property (weak, nonatomic) IBOutlet UILabel *nbInvitesLabel;
 @property (weak, nonatomic) IBOutlet UILabel *heureLabel;
 
-- (id)initWithNotification:(LocalNotificationCoreData*)notification;
+- (id)initWithNotification:(LocalNotification*)notification;
 
 @end

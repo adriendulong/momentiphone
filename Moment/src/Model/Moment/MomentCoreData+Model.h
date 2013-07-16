@@ -13,9 +13,9 @@
 #define MOMENTS_NO_LIMIT -1
 
 enum MomentPrivacy {
-    MomentPrivacyPrivate = 0,
-    MomentPrivacyOpen = 1,
-    MomentPrivacyPublic = 2
+    MomentPrivacySecret = 0,
+    MomentPrivacyOpen = 2,
+    MomentPrivacyFriends = 1
     };
 
 @interface MomentCoreData (Model)
@@ -24,7 +24,7 @@ enum MomentPrivacy {
 - (void)setupWithMoment:(MomentClass*)moment;
 
 // Persist
-+ (MomentCoreData*)insertWithMemoryReleaseNewMoment:(MomentClass*)moment;
+//+ (MomentCoreData*)insertWithMemoryReleaseNewMoment:(MomentClass*)moment;
 + (MomentClass*)newMomentWithAttributesFromLocal:(NSDictionary*)attributes;
 + (MomentClass*)newMomentWithAttributesFromWeb:(NSDictionary*)attributes;
 + (MomentClass*)newMomentWithFacebookEvent:(FacebookEvent*)event;
@@ -54,6 +54,7 @@ enum MomentPrivacy {
 + (void)releaseMomentsAfterIndex:(NSInteger)max;
 + (void)resetMomentsLocal;
 + (void)deleteMoment:(MomentClass*)moment;
++ (void)deleteMomentsWhileEnteringBackground;
 
 // Setters & Getters
 - (UIImage*)uimage;

@@ -10,11 +10,7 @@
 #import "UserClass+Mapping.h"
 #import "Config.h"
 #import "MomentCoreData+Model.h"
-#import "AFMomentAPIClient.h"
-#import "PushNotificationManager.h"
 #import "UserClass+Server.h"
-#import "LocalNotificationCoreData+Model.h"
-#import "ParametreNotification.h"
 
 #define NB_USERS_STORED 10
 
@@ -43,6 +39,9 @@ static NSTimeInterval lastUpdateTime = 0;
     self.nb_followers = user.nb_followers;
     self.is_followed = user.is_followed;
     self.descriptionString = user.descriptionString;
+    self.privacy = user.privacy;
+    self.request_follower = user.request_follower;
+    self.request_follow_me = user.request_follow_me;
 }
 
 - (void)setupWithAttributes:(NSDictionary*)attributes
@@ -76,6 +75,13 @@ static NSTimeInterval lastUpdateTime = 0;
         self.is_followed = @([attributes[@"is_followed"] boolValue]);
     if(attributes[@"description"])
         self.descriptionString = attributes[@"description"];
+    
+    if(attributes[@"privacy"] != nil)
+        self.privacy = attributes[@"privacy"];
+    if(attributes[@"request_follow_me"])
+        self.request_follow_me = attributes[@"request_follow_me"];
+    if(attributes[@"request_follower"])
+        self.request_follower = attributes[@"request_follower"];
 }
 
 #pragma mark - Persist
@@ -91,6 +97,7 @@ static NSTimeInterval lastUpdateTime = 0;
     return storedUser;
 }
 
+/*
 + (UserCoreData*)insertWithMemoryReleaseNewUser:(UserClass*)user
 {
     // Release old moment if needed
@@ -101,11 +108,13 @@ static NSTimeInterval lastUpdateTime = 0;
     
     return storedUser;
 }
+ */
 
 + (UserClass*)newUserWithAttributes:(NSDictionary*)attributes
 {
     UserClass *user = [[UserClass alloc] initWithAttributesFromLocal:attributes];
-    [self insertWithMemoryReleaseNewUser:user];
+    //[self insertWithMemoryReleaseNewUser:user];
+    [self insertUser:user];
     
     return user;
 }
@@ -115,7 +124,7 @@ static NSTimeInterval lastUpdateTime = 0;
     UserCoreData *userCoreData = [UserCoreData requestUserAsCoreDataWithUser:user];
     [userCoreData setupWithUser:user];
     [[Config sharedInstance] saveContext];
-    NSLog(@"USERCOREDATA : %@ - %@ - %@ - %@ - %@", userCoreData.userId, userCoreData.prenom, userCoreData.nom, userCoreData.facebookId, userCoreData.nb_follows);
+    //NSLog(@"USERCOREDATA : %@ - %@ - %@ - %@ - %@ - %@", userCoreData.userId, userCoreData.prenom, userCoreData.nom, userCoreData.facebookId, userCoreData.nb_follows, userCoreData.privacy);
 }
 
 #pragma mark - Current User
@@ -124,14 +133,14 @@ static NSTimeInterval lastUpdateTime = 0;
     [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationCurrentUserNeedsUpdate object:nil];
 }
 
-+ (UserCoreData*)getCurrentUserAsCoreData
++ (UserCoreData*)getCurrentUserAsCoreDataWithLocalOnly:(BOOL)localOnly
 {
     static BOOL isLoading = NO;
     
     //NSLog(@"GET CURRENT USER");
     // Vérifier si l'utilisateur existe déjà
     NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"UserCoreData"];
-    request.returnsObjectsAsFaults = NO;    
+    request.returnsObjectsAsFaults = NO;
     NSSortDescriptor *sort = [NSSortDescriptor sortDescriptorWithKey:@"userId" ascending:YES];
     request.sortDescriptors = @[sort];
     request.predicate = [NSPredicate predicateWithFormat:@"state = %@", @(UserStateCurrent)];
@@ -152,56 +161,65 @@ static NSTimeInterval lastUpdateTime = 0;
         user = match[0];
     }
     
-    
-    // Si ca fait un moment qu'on a pas rechargé les infos, on recharge depuis le server
-    NSTimeInterval now = [NSDate timeIntervalSinceReferenceDate];
-    if( !isLoading && ( (now - lastUpdateTime > UPDATE_USER_DIFFERENCE_TIME) ||
-       // Ou si les données du user sont incomplète
-       !(user && user.userId && user.email && user.nom && user.prenom && user.nb_follows && user.nb_followers) ) )
+    if(!localOnly)
     {
-        //NSLog(@"----- UPDATE CURRENT USER BECAUSE OF %f DIFFERENCE TIME (force = %d) -----", now - lastUpdateTime, currentUserNeedsUpdateCoreData);
-        lastUpdateTime = now;
-        // Ask Server
-        isLoading = YES;
-        [UserClass getLoggedUserFromServerWithEnded:^(UserClass *userServer) {
-            if(userServer)
-            {
-                if(!user)
-                    user = [UserCoreData insertUser:userServer];
-                else
-                    [user setupWithUser:userServer];
-                [[Config sharedInstance] saveContext];
-                
-                // Update did happen, udpate view
-                [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationCurrentUserDidUpdate object:nil];
-                isLoading = NO;
-            }
-        } waitUntilFinished:YES];
-        
+        // Si ca fait un moment qu'on a pas rechargé les infos, on recharge depuis le server
+        NSTimeInterval now = [NSDate timeIntervalSinceReferenceDate];
+        if( !isLoading && ( (now - lastUpdateTime > UPDATE_USER_DIFFERENCE_TIME) ||
+                           // Ou si les données du user sont incomplète
+                           !(user && user.userId && user.email && user.nom && user.prenom && user.nb_follows && user.nb_followers) ) )
+        {
+            //NSLog(@"----- UPDATE CURRENT USER BECAUSE OF %f DIFFERENCE TIME (force = %d) -----", now - lastUpdateTime, currentUserNeedsUpdateCoreData);
+            lastUpdateTime = now;
+            // Ask Server
+            isLoading = YES;
+            [UserClass getLoggedUserFromServerWithEnded:^(UserClass *userServer) {
+                if(userServer)
+                {
+                    if(!user)
+                        user = [UserCoreData insertUser:userServer];
+                    else
+                        [user setupWithUser:userServer];
+                    [[Config sharedInstance] saveContext];
+                    
+                    // Update did happen, udpate view
+                    [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationCurrentUserDidUpdate object:nil];
+                    isLoading = NO;
+                }
+            } waitUntilFinished:YES];
+            
+        }
     }
     
     return user;
 }
 
-+ (UserClass*)getCurrentUser {
++ (UserClass*)getCurrentUserWithLocalOnly:(BOOL)localOnly {
     
     // Update si ca fait longtemps
-    UserCoreData *user = [self getCurrentUserAsCoreData];
+    UserCoreData *user = [self getCurrentUserAsCoreDataWithLocalOnly:localOnly];
         
     return [user localCopy];
 }
 
++ (UserClass*)getCurrentUser {
+    return [self getCurrentUserWithLocalOnly:NO];
+}
 
 + (void)updateCurrentUserWithAttributes:(NSDictionary*)attributes
 {    
     // Get Current
-    UserClass *current = [UserCoreData getCurrentUser];
+    UserClass *current = [UserCoreData getCurrentUserWithLocalOnly:NO];
         
     // Update attributes
     NSMutableDictionary *dico = attributes.mutableCopy;
     dico[@"state"] = @(UserStateCurrent);
     if(attributes[@"userId"])
         dico[@"userId"] = attributes[@"userId"];
+    else if(attributes[@"numeroMobile"]) 
+        dico[@"numeroMobile"] = attributes[@"numeroMobile"];
+    else if(attributes[@"secondPhone"])
+        dico[@"secondPhone"] = attributes[@"secondPhone"];
         
     if(!current) {
         current = [UserCoreData newUserWithAttributes:dico];
@@ -289,7 +307,8 @@ static NSTimeInterval lastUpdateTime = 0;
     }
     else if( [matches count] == 0 ){
         UserClass *user = [[UserClass alloc] initWithAttributesFromLocal:attributes];
-        return [self insertWithMemoryReleaseNewUser:user];
+        //return [self insertWithMemoryReleaseNewUser:user];
+        return [self insertUser:user];
     }
     
     // Mise à jour
@@ -327,7 +346,8 @@ static NSTimeInterval lastUpdateTime = 0;
         abort();
     }
     else if ([matches count] == 0) {
-        return [self insertWithMemoryReleaseNewUser:user];
+        //return [self insertWithMemoryReleaseNewUser:user];
+        return [self insertUser:user];
     }
     
     // Mise à jour
@@ -369,6 +389,7 @@ static NSTimeInterval lastUpdateTime = 0;
     user.nb_followers = self.nb_followers;
     user.is_followed = self.is_followed;
     user.descriptionString = self.descriptionString;
+    user.privacy = self.privacy;
     
     return user;
 }
@@ -394,41 +415,6 @@ static NSTimeInterval lastUpdateTime = 0;
     self.dataImage = UIImagePNGRepresentation(image);
 }
 
-#pragma mark - Logout
-
-+ (void)logoutCurrentUserWithEnded:(void (^) (void))block
-{
-    NSLog(@"LOGOUT");
-    
-    UserCoreData *user = [UserCoreData getCurrentUserAsCoreData];
-    if(user)
-    {
-        // Delete Current User
-        [[Config sharedInstance].managedObjectContext deleteObject:user];
-        [[Config sharedInstance] saveContext];
-        
-        // Clear data
-        [MomentCoreData resetMomentsLocal];
-        [ChatMessageCoreData resetChatMessagesLocal];
-        [LocalNotificationCoreData resetNotifcationsLocal];
-        
-        // Suppression cookie de connexion automatique
-        [[AFMomentAPIClient sharedClient] clearConnexionCookie];
-        
-        // Unsubscribe to local notifications
-        [[PushNotificationManager sharedInstance] removeNotifications];
-        
-        // Suppression des préférences des push notifications
-        [ParametreNotification clearSettingsLocal];
-        
-#warning Prévenir le server -> arreter push notifications
-    }
-    
-    if(block)
-        block();
-
-}
-
 #pragma mark - Release
 
 + (void)releaseUsersAfterIndex:(NSInteger)max
@@ -446,6 +432,92 @@ static NSTimeInterval lastUpdateTime = 0;
     [[Config sharedInstance] saveContext];
 }
 
++ (void)deleteUsersWhileEnteringBackground
+{
+    // On récupère tous les moments
+    // -> Cette méthode étant appellée après deleteMomentsWhileEnteringBackground,
+    // Tous les moments dans la BDD sont forcément les plus récents
+    NSMutableArray *moments = [[MomentCoreData getMomentsAsCoreData] mutableCopy];
+    
+    // ------------- On récupère tous les users ----------------
+    NSArray *users = [UserCoreData getUsersAsCoreData];
+    UserCoreData *currentUser = [UserCoreData getCurrentUserAsCoreDataWithLocalOnly:NO];
+    
+    // Enregistrer la tentative de suppression
+    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:kUsersDeleteTry];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    
+    // ------ Suppression ------
+    @try {
+    
+        // On supprime tous les users qui ne sont pas owner des moments récents
+        BOOL keep;
+        for(UserCoreData *u in users) {
+            keep = NO;
+            
+            if([u.userId isEqualToNumber:currentUser.userId]) {
+                keep = YES;
+            }
+            else if(u && u.userId) {
+                for(MomentCoreData *m in moments) {
+                    
+                    //NSLog(@"-------");
+                    //NSLog(@"Owner = %@", m.owner.userId);
+                    //NSLog(@"User = %@", u.userId);
+                    
+                    if( m && m.owner && m.owner.userId && [m.owner.userId isEqualToNumber:u.userId]) {
+                        keep = YES;
+                        break;
+                    }
+                }
+            }
+            
+            //NSLog(@"-----------");
+            //NSLog(@"User : %@", u.formatedUsername);
+            
+            // On supprime le user du CoreData
+            if(!keep) {
+                //NSLog(@"DELETE");
+                [[Config sharedInstance].managedObjectContext deleteObject:u];
+            }/*
+            else {
+                NSLog(@"KEEP");
+            }
+              */
+        }
+    
+        // Save
+        [[Config sharedInstance] saveContext];
+        
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:kMomentsDeleteTry];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+    }
+    @catch (NSException *exception) {
+        // Enregistrer l'erreur
+        [[NSUserDefaults standardUserDefaults] setValue:exception.description forKey:kUsersDeleteFail];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+        
+        // TestFlight
+        //[TestFlight passCheckpoint:kUsersDeleteFail];
+        
+        // Google Analytics
+        //[[[GAI sharedInstance] defaultTracker] sendException:NO withNSException:exception];
+        
+        [[[UIAlertView alloc]
+          initWithTitle:@"CoreData Error"
+          message:exception.description
+          delegate:nil
+          cancelButtonTitle:@"OK"
+          otherButtonTitles:nil]
+         show];
+        NSLog(@"Core Data User Fail : %@", exception.description);
+    }
+    @finally {
+        
+    }
+    
+}
+
 + (void)resetUsersLocal
 {
     NSArray *users = [UserCoreData getUsersAsCoreData];
@@ -456,6 +528,16 @@ static NSTimeInterval lastUpdateTime = 0;
     }
     
     [[Config sharedInstance] saveContext];
+}
+
+#pragma mark - Util
+
+- (NSString*)formatedUsername {
+    return [self formatedUsernameWithStyle:UsernameStyleUppercase];
+}
+
+- (NSString*)formatedUsernameWithStyle:(enum UsernameStyle)style {
+    return [UserClass formatedUsernameWithFirstname:self.prenom lastname:self.nom style:style];
 }
 
 @end

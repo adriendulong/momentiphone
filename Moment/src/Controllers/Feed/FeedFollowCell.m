@@ -74,15 +74,7 @@
 - (void)setUserLabel:(UILabel*)label textForUser:(UserClass*)user
 {
     // User
-    if(user.prenom && user.nom)
-        label.text = [NSString stringWithFormat:@"%@ %@", [user.prenom uppercaseString], [user.nom uppercaseString]];
-    else if(user.prenom || user.nom)
-    {
-        if(user.prenom)
-            label.text = [user.prenom uppercaseString];
-        else
-            label.text = [user.nom uppercaseString];
-    }
+    label.text = user.formatedUsername;
     label.font = [[Config sharedInstance] defaultFontWithSize:11];
 }
 

@@ -9,6 +9,9 @@
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
+// Activer Hashtag dans l'application
+//#define HASHTAG_ENABLE
+
 // NSNotificationCenter
 #define kNotificationNewChat @"NotificationNewChat"
 #define kNotificationNewPhoto @"NotificationNewPhoto"
@@ -21,10 +24,32 @@
 #define kNotificationChangeCover @"ChangeCoverNotification"
 #define kNotificationStatusBarFrameChanged @"NotificationStatusBarFrameChanged"
 
+// Google Account API Key
+#define kGoogleAPIKey @"AIzaSyBOpJuAT7dEsXCxPbd_6m89wJPUbEIEM80"//@"AIzaSyBLhi9BP6Lmcr8NM2UeK8t9PYwOzJOnEBU"
+
+// Links
+#define kAppMomentCGU @"http://appmoment.fr/cgu"
+#define kParameterFacebookPageID @"277911125648059"
+#define kParameterFacebookPageName @"appmoment"
+#define kParameterTwitterPageName @"appmoment"
+#define kParameterContactMail @"hello@appmoment.fr"
+
+// Clé UserDefaults
+// -> Vérification que la suppression du coredata c'est bien passée
+#define kMomentsDeleteTry @"MomentsDeleteTry"
+#define kMomentsDeleteFail @"MomentsDeleteFail"
+#define kUsersDeleteTry @"MomentsDeleteTry"
+#define kUsersDeleteFail @"MomentsDeleteFail"
+
 @interface Config : NSObject
 
 #pragma mark - Singleton
 + (Config*)sharedInstance;
+
+#pragma mark - Switch Dev/Prod
+@property (strong, nonatomic) NSString *kAFBaseURLString;
+@property (strong, nonatomic) NSString *FBSessionStateChangedNotification;
+@property (strong, nonatomic) NSString *TestFlightAppToken;
 
 #pragma mark - CoreData
 @property (readonly, strong, nonatomic) NSManagedObjectContext *managedObjectContext;
@@ -51,10 +76,25 @@
 - (NSString*)formatedPhoneNumber:(NSString*)phoneNumber;
 - (BOOL)isValidEmail:(NSString*)email;
 - (BOOL)isValidPhoneNumber:(NSString*)phoneNumber;
+- (BOOL)isMobilePhoneNumber:(NSString*)phoneNumber forceValidation:(BOOL)force;
 
 #pragma mark - Cover Image
 - (void)saveNewCoverImage:(UIImage *)image;
 - (UIImage*)coverImage;
 - (void)deleteCoverImage;
+
+/*
+#pragma mark - Texte Formatage
+- (NSString*)twitterShareTextForMoment:(MomentClass*)moment nbMaxCaracters:(NSInteger)nbMaxCarac;
+*/
+ 
+#pragma mark - FeedBack
+- (void)feedBackMailComposerWithDelegate:(id<MFMailComposeViewControllerDelegate>)delegate
+                                    root:(UIViewController*)rootViewController;
+- (void)feedBackRatingMailComposerWithDelegate:(id<MFMailComposeViewControllerDelegate>)delegate
+                                          root:(UIViewController*)rootViewController;
+
+#pragma mark - Switch DEV or PROD
+- (void)setDeveloppementVersion:(BOOL)activated;
 
 @end

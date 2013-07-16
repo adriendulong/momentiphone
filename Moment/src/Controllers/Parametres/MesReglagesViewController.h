@@ -8,8 +8,9 @@
 
 #import <UIKit/UIKit.h>
 #import <MessageUI/MessageUI.h>
+#import "GAITrackedViewController.h"
 
-@interface MesReglagesViewController : UIViewController <MFMailComposeViewControllerDelegate>
+@interface MesReglagesViewController : GAITrackedViewController <MFMailComposeViewControllerDelegate, UIAlertViewDelegate>
 
 // --- Properties ---
 
@@ -42,6 +43,8 @@
 @property (weak, nonatomic) IBOutlet UIButton *notifModifButtonPush;
 @property (weak, nonatomic) IBOutlet UIButton *notifModifButtonEmail;
 
+// Like Button
+@property (weak, nonatomic) IBOutlet UIButton *likeButton;
 
 // --- Methodes ---
 

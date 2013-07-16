@@ -9,10 +9,13 @@
 #import "RootTimeLineViewController.h"
 #import "MomentClass+Server.h"
 #import "VoletViewController.h"
+#import "HomeViewController.h"
 
 @interface RootTimeLineViewController () {
     @private
     UIButton *plusButton;
+    BOOL shouldReloadMoments;
+    BOOL shouldLoadEventsFromFacebook;
 }
 
 @end
@@ -33,9 +36,18 @@
 - (id)initWithUser:(UserClass*)user
           withSize:(CGSize)size withStyle:(enum TimeLineStyle)style
 withNavigationController:(UINavigationController*)navController
+shouldReloadMoments:(BOOL)reloadMoments
+shouldLoadEventsFromFacebook:(BOOL)loadEvents
 {
     self = [super initWithNibName:@"RootTimeLineViewController" bundle:nil];
     if(self) {
+        
+        // Cacher Splash Screnn
+        [HomeViewController hideSplashScreen];
+        
+        shouldReloadMoments = reloadMoments;
+        shouldLoadEventsFromFacebook = loadEvents;
+        
         self.user = user;
         self.navController = navController;
         self.size = size;
@@ -79,7 +91,13 @@ withNavigationController:(UINavigationController*)navController
     [self showContentViewController:self.privateTimeLine];
     // Préload public timeLine
     [self.publicFeedList.view setNeedsDisplay];
+    [self.publicFeedList.view setNeedsLayout];
     self.publicFeedList.view.alpha = 0;
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
     
     // Préload Volet
     [[VoletViewController volet] loadNotifications];
@@ -101,6 +119,16 @@ withNavigationController:(UINavigationController*)navController
 
 - (void)showContentViewController:(UIViewController*)viewController
 {
+    // Google Analytics
+    if(self.isShowingPrivateTimeLine) {
+        [TimeLineViewController sendGoogleAnalyticsView];
+        [AppDelegate updateActualViewController:self.privateTimeLine];
+    }
+    else {
+        [FeedViewController sendGoogleAnalyticsView];
+        [AppDelegate updateActualViewController:self.publicFeedList];
+    }
+    
     // Add new TimeLine
     viewController.view.alpha = 0;
     [self.view addSubview:viewController.view];
@@ -138,7 +166,11 @@ withNavigationController:(UINavigationController*)navController
 
 - (IBAction)clicChangeTimeLine {    
     
+    // Show Feed
     if(self.isShowingPrivateTimeLine) {
+        
+        // Google Analytics
+        [self sendGoogleAnalyticsEvent:@"Timeline" action:@"Clic Bouton" label:@"Clic Afficher Feed" value:nil];
         
         // Hide Plus Button
         [UIView animateWithDuration:0.3 animations:^{
@@ -156,7 +188,11 @@ withNavigationController:(UINavigationController*)navController
         [self showContentViewController:self.publicFeedList];
         
     }
+    // Show Timeline
     else {
+        
+        // Google Analytics
+        [self sendGoogleAnalyticsEvent:@"Feed" action:@"Clic Bouton" label:@"Clic Afficher Timeline" value:nil];
         
         // Show Plus Button
         [UIView animateWithDuration:0.3 animations:^{
@@ -176,8 +212,25 @@ withNavigationController:(UINavigationController*)navController
 
 - (void)showAddEvent
 {
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Timeline" action:@"Clic Bouton" label:@"Clic Ajout Moment" value:nil];
+    
     CreationHomeViewController *creationViewController = [[CreationHomeViewController alloc] initWithUser:self.user withTimeLine:self.privateTimeLine];
     [self.navController pushViewController:creationViewController animated:YES];
+}
+
+#pragma mark - Google Analytics
+
+- (void)sendGoogleAnalyticsEvent:(NSString*)category
+                          action:(NSString*)action
+                           label:(NSString*)label
+                           value:(NSNumber*)value
+{
+    [[[GAI sharedInstance] defaultTracker]
+     sendEventWithCategory:category
+     withAction:action
+     withLabel:label
+     withValue:value];
 }
 
 #pragma mark - Getters and Setters
@@ -196,7 +249,13 @@ withNavigationController:(UINavigationController*)navController
         
         NSArray *moments = [MomentCoreData getMoments];
         
-        _privateTimeLine = [[TimeLineViewController alloc] initWithMoments:moments withStyle:self.timeLineStyle withSize:self.size withRootViewController:self];
+        _privateTimeLine = [[TimeLineViewController alloc] initWithMoments:moments
+                                                                 withStyle:self.timeLineStyle
+                                                                  withUser:nil
+                                                                  withSize:self.size
+                                                    withRootViewController:self
+                                                       shouldReloadMoments:shouldReloadMoments
+                                              shouldLoadEventsFromFacebook:shouldLoadEventsFromFacebook];
         
     }
     return _privateTimeLine;
@@ -220,6 +279,12 @@ withNavigationController:(UINavigationController*)navController
     [self.privateTimeLine reloadDataWithMoments:array];
     
     return self.privateTimeLine;
+}
+
+- (void)updateVolet
+{
+    // Préload Volet
+    [[VoletViewController volet] loadNotifications];
 }
 
 @end

@@ -54,6 +54,12 @@
         
         if([imageString length] > 0)
         {
+            // On centre l'indicateur
+            CGRect frame = self.activityIndicatorView.frame;
+            frame.origin.x = (self.frame.size.width - frame.size.width)/2.0;
+            frame.origin.y = (self.frame.size.height - frame.size.height)/2.0;
+            self.activityIndicatorView.frame = frame;
+            
             [self.activityIndicatorView startAnimating];
             
             self.imageString = imageString;
@@ -80,9 +86,9 @@
             }
                                  failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error) {
                                      [varInstance.activityIndicatorView stopAnimating];
-                                     NSLog(@"CustomUIimage Fail to load image : %@", imageString);
-                                     NSLog(@"error : %@", error.localizedDescription);
-                                     NSLog(@"Response : %d", response.statusCode);
+                                     //NSLog(@"CustomUIimage Fail to load image : %@", imageString);
+                                     //NSLog(@"error : %@", error.localizedDescription);
+                                     //NSLog(@"Response : %d", response.statusCode);
             }];
             
             /*

@@ -164,7 +164,7 @@
 						<double key="IBUIContentEdgeInsets.bottom">0.0</double>
 						<double key="IBUIContentEdgeInsets.left">52</double>
 						<double key="IBUIContentEdgeInsets.right">0.0</double>
-						<string key="IBUINormalTitle">Moment Manquant</string>
+						<string key="IBUINormalTitle">Moments Manquants</string>
 						<object class="NSColor" key="IBUIHighlightedTitleColor">
 							<int key="NSColorSpace">1</int>
 							<bytes key="NSRGB">MC40NzA1ODgyMzUzIDAuNDYyNzQ1MDk4IDAuNDYyNzQ1MDk4AA</bytes>
@@ -228,9 +228,9 @@
 						<int key="IBUIContentMode">1</int>
 						<bool key="IBUIUserInteractionEnabled">NO</bool>
 						<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
-						<object class="NSCustomResource" key="IBUIImage" id="733557440">
+						<object class="NSCustomResource" key="IBUIImage">
 							<string key="NSClassName">NSImage</string>
-							<string key="NSResourceName">picto_bulle.png</string>
+							<string key="NSResourceName">picto_feed.png</string>
 						</object>
 					</object>
 					<object class="IBUIImageView" id="320606149">
@@ -244,7 +244,7 @@
 						<int key="IBUIContentMode">1</int>
 						<bool key="IBUIUserInteractionEnabled">NO</bool>
 						<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
-						<object class="NSCustomResource" key="IBUIImage" id="140324859">
+						<object class="NSCustomResource" key="IBUIImage">
 							<string key="NSClassName">NSImage</string>
 							<string key="NSResourceName">picto_param.png</string>
 						</object>
@@ -252,7 +252,7 @@
 					<object class="IBUIImageView" id="979759868">
 						<reference key="NSNextResponder" ref="191373211"/>
 						<int key="NSvFlags">292</int>
-						<string key="NSFrame">{{8, 175}, {25, 25}}</string>
+						<string key="NSFrame">{{8, 178}, {25, 25}}</string>
 						<reference key="NSSuperview" ref="191373211"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="192466356"/>
@@ -260,7 +260,10 @@
 						<int key="IBUIContentMode">1</int>
 						<bool key="IBUIUserInteractionEnabled">NO</bool>
 						<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
-						<reference key="IBUIImage" ref="140324859"/>
+						<object class="NSCustomResource" key="IBUIImage">
+							<string key="NSClassName">NSImage</string>
+							<string key="NSResourceName">picto_momentmissing.png</string>
+						</object>
 					</object>
 					<object class="IBUITextField" id="774736937">
 						<reference key="NSNextResponder" ref="191373211"/>
@@ -527,7 +530,10 @@
 						<int key="IBUIContentMode">1</int>
 						<bool key="IBUIUserInteractionEnabled">NO</bool>
 						<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
-						<reference key="IBUIImage" ref="733557440"/>
+						<object class="NSCustomResource" key="IBUIImage">
+							<string key="NSClassName">NSImage</string>
+							<string key="NSResourceName">picto_bulle.png</string>
+						</object>
 					</object>
 				</array>
 				<string key="NSFrame">{{0, 20}, {320, 548}}</string>
@@ -556,7 +562,7 @@
 				<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
 			</object>
 			<object class="IBUIView" id="920485070">
-				<nil key="NSNextResponder"/>
+				<reference key="NSNextResponder"/>
 				<int key="NSvFlags">292</int>
 				<array class="NSMutableArray" key="NSSubviews">
 					<object class="IBUIImageView" id="917527192">
@@ -564,6 +570,7 @@
 						<int key="NSvFlags">274</int>
 						<string key="NSFrameSize">{19, 20}</string>
 						<reference key="NSSuperview" ref="920485070"/>
+						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="1070086019"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<reference key="IBUIBackgroundColor" ref="790377490"/>
@@ -579,6 +586,7 @@
 						<int key="NSvFlags">292</int>
 						<string key="NSFrameSize">{19, 20}</string>
 						<reference key="NSSuperview" ref="920485070"/>
+						<reference key="NSWindow"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<reference key="IBUIBackgroundColor" ref="790377490"/>
 						<bool key="IBUIOpaque">NO</bool>
@@ -601,6 +609,8 @@
 					</object>
 				</array>
 				<string key="NSFrameSize">{19, 20}</string>
+				<reference key="NSSuperview"/>
+				<reference key="NSWindow"/>
 				<reference key="NSNextKeyView" ref="917527192"/>
 				<string key="NSReuseIdentifierKey">_NS:9</string>
 				<reference key="IBUIBackgroundColor" ref="790377490"/>
@@ -608,7 +618,7 @@
 				<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
 			</object>
 			<object class="IBUIView" id="815389072">
-				<nil key="NSNextResponder"/>
+				<reference key="NSNextResponder"/>
 				<int key="NSvFlags">292</int>
 				<array class="NSMutableArray" key="NSSubviews">
 					<object class="IBUIImageView" id="870842269">
@@ -616,6 +626,7 @@
 						<int key="NSvFlags">274</int>
 						<string key="NSFrameSize">{19, 20}</string>
 						<reference key="NSSuperview" ref="815389072"/>
+						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="897880932"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<reference key="IBUIBackgroundColor" ref="790377490"/>
@@ -628,6 +639,7 @@
 						<int key="NSvFlags">292</int>
 						<string key="NSFrameSize">{19, 20}</string>
 						<reference key="NSSuperview" ref="815389072"/>
+						<reference key="NSWindow"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<reference key="IBUIBackgroundColor" ref="790377490"/>
 						<bool key="IBUIOpaque">NO</bool>
@@ -650,6 +662,8 @@
 					</object>
 				</array>
 				<string key="NSFrameSize">{19, 20}</string>
+				<reference key="NSSuperview"/>
+				<reference key="NSWindow"/>
 				<reference key="NSNextKeyView" ref="870842269"/>
 				<string key="NSReuseIdentifierKey">_NS:9</string>
 				<reference key="IBUIBackgroundColor" ref="790377490"/>
@@ -1327,6 +1341,8 @@
 			<string key="invite_down.png">{134, 28}</string>
 			<string key="notif_down.png">{134, 28}</string>
 			<string key="picto_bulle.png">{32, 33}</string>
+			<string key="picto_feed.png">{32, 33}</string>
+			<string key="picto_momentmissing.png">{32, 33}</string>
 			<string key="picto_param.png">{32, 33}</string>
 			<string key="picto_profil.png">{32, 33}</string>
 			<string key="segment_shadow.png">{9, 9}</string>

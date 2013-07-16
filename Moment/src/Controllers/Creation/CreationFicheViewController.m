@@ -17,10 +17,15 @@
 #import "NSMutableAttributedString+FontAndTextColor.h"
 #import "TTTAttributedLabel.h"
 #import "PopUpFinCreationViewController.h"
+#import "PlacesViewController.h"
 
 @interface CreationFicheViewController () {
     @private
     BOOL isEdition;
+    BOOL adresseTextFieldShouldClear;
+    BOOL alreadyClicked;
+    
+    UIImage *modifiedCover;
 }
 
 @end
@@ -43,7 +48,6 @@
 @synthesize coverView = _coverView;
 @synthesize titreMomentLabel = _titreMomentLabel;
 @synthesize changerCoverButton = _changerCoverButton;
-@synthesize changerCoverLabel = _changerCoverLabel;
 @synthesize pickerView = _pickerView;
 @synthesize startDateTextField = _startDateTextField;
 @synthesize endDateTextField = _endDateTextField;
@@ -56,10 +60,10 @@
 @synthesize step1ScrollView = _step1ScrollView;
 @synthesize ouLabel = _ouLabel;
 @synthesize etape2Label = _etape2Label;
-@synthesize adresseTextField = _adresseTextField;
 @synthesize infoLieuTextField = _infoLieuTextField;
 @synthesize hashtagTextField = _hashtagTextField;
 @synthesize adresseLabel = _adresseLabel;
+@synthesize adresseText = _adresseText;
 @synthesize infoLieuLabel = _infoLieuLabel;
 @synthesize descriptionLabel = _descriptionLabel;
 @synthesize hashtagLabel = _hashtagLabel;
@@ -122,7 +126,7 @@
             [previousButton setEnabled:YES];
             
             // Second Button enable
-            if( (self.adresseTextField.text.length > 0) && (self.descriptionTextView.text.length > 0) ){
+            if( ((self.adresseLabel.text.length > 0)||(self.adresseText.length > 0)) && (self.descriptionTextView.text.length > 0) ){
                 secondButtonEnable = YES;
             }
 
@@ -156,6 +160,8 @@
         self.user = user;
         self.timeLineViewContoller = timeLine;
         viewHeight = [[VersionControl sharedInstance] screenHeight] - TOPBAR_HEIGHT;
+        adresseTextFieldShouldClear = NO;
+        alreadyClicked = NO;
         
         self.switchControlState = YES;
     }
@@ -236,47 +242,51 @@
 
 - (UIView*)setLabelText:(CustomLabel*)label text:(NSString*)texteLabel minFontSize:(NSInteger)minSize maxFontSize:(NSInteger)maxSize color:(UIColor*)color
 {
-    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:texteLabel];
-    
-    if( [[VersionControl sharedInstance] supportIOS6] )
+    if(texteLabel.length > 0)
     {
-        // Attributs du label
-        NSRange range = NSMakeRange(0, 1);
-        [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:maxSize] range:range];
-        range = NSMakeRange(1, [attributedString length]-1);
-        [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:minSize] range:range];
-        [attributedString setTextColor:color];
+        NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:texteLabel];
         
-        [label setAttributedText:attributedString];
-        
-        return label;
+        if( [[VersionControl sharedInstance] supportIOS6] )
+        {
+            // Attributs du label
+            NSRange range = NSMakeRange(0, 1);
+            [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:maxSize] range:range];
+            range = NSMakeRange(1, [attributedString length]-1);
+            [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:minSize] range:range];
+            [attributedString setTextColor:color];
+            
+            [label setAttributedText:attributedString];
+            
+            return label;
+        }
+        else
+        {
+            TTTAttributedLabel *tttLabel = [[TTTAttributedLabel alloc] initWithFrame:label.frame];
+            tttLabel.backgroundColor = [UIColor clearColor];
+            [tttLabel setText:texteLabel afterInheritingLabelAttributesAndConfiguringWithBlock:^NSMutableAttributedString *(NSMutableAttributedString *mutableAttributedString) {
+                
+                NSInteger taille = [texteLabel length];
+                Config *cf = [Config sharedInstance];
+                
+                // 1er Lettre Font
+                [cf updateTTTAttributedString:mutableAttributedString withFontSize:maxSize onRange:NSMakeRange(0, 1)];
+                
+                // Autres Lettres Font
+                [cf updateTTTAttributedString:mutableAttributedString withFontSize:minSize onRange:NSMakeRange(1, taille-1 )];
+                
+                // Couleurs
+                [cf updateTTTAttributedString:mutableAttributedString withColor:color onRange:NSMakeRange(0, taille)];
+                
+                return mutableAttributedString;
+            }];
+            
+            [label.superview addSubview:tttLabel];
+            label.hidden = YES;
+            
+            return tttLabel;
+        }
     }
-    else
-    {
-        TTTAttributedLabel *tttLabel = [[TTTAttributedLabel alloc] initWithFrame:label.frame];
-        tttLabel.backgroundColor = [UIColor clearColor];
-        [tttLabel setText:texteLabel afterInheritingLabelAttributesAndConfiguringWithBlock:^NSMutableAttributedString *(NSMutableAttributedString *mutableAttributedString) {
-            
-            NSInteger taille = [texteLabel length];
-            Config *cf = [Config sharedInstance];
-            
-            // 1er Lettre Font
-            [cf updateTTTAttributedString:mutableAttributedString withFontSize:maxSize onRange:NSMakeRange(0, 1)];
-            
-            // Autres Lettres Font
-            [cf updateTTTAttributedString:mutableAttributedString withFontSize:minSize onRange:NSMakeRange(1, taille-1 )];
-            
-            // Couleurs
-            [cf updateTTTAttributedString:mutableAttributedString withColor:color onRange:NSMakeRange(0, taille)];
-            
-            return mutableAttributedString;
-        }];
-        
-        [label.superview addSubview:tttLabel];
-        label.hidden = YES;
-        
-        return tttLabel;
-    }
+    return label;
 }
 
 - (void)designTitreLabel:(CustomLabel*)label
@@ -351,10 +361,8 @@
     // Label titre
     UIView *titre = [self setLabelText:self.titreMomentLabel text:[self.nomEvent uppercaseString] minFontSize:12 maxFontSize:16 color:[UIColor whiteColor]];
     // Label Changer Cover
-    UIView *changerCover = [self setLabelText:self.changerCoverLabel text:self.changerCoverLabel.text minFontSize:14 maxFontSize:15 color:[UIColor whiteColor]];
     
     [self addShadowToView:titre];
-    [self addShadowToView:changerCover];
     
     [self.step1ScrollView bringSubviewToFront:self.changerCoverButton];
 }
@@ -375,6 +383,8 @@
     
     [self setLabelText:self.startDateLabel text:self.startDateLabel.text minFontSize:minSize maxFontSize:maxSize color:color];
     [self setLabelText:self.endDateLabel text:self.endDateLabel.text minFontSize:minSize maxFontSize:maxSize color:color];
+    
+    self.changerCoverButton.titleLabel.font = [[Config sharedInstance] defaultFontWithSize:13];
 }
 
 - (void)initDatePicker
@@ -404,14 +414,17 @@
 {
     NSInteger maxSize = 15, minSize = 11;
     UIColor *textColor = [Config sharedInstance].textColor;
-    UIColor *orangeColor = [[Config sharedInstance] orangeColor];
     
     [self setLabelText:self.adresseLabel text:self.adresseLabel.text minFontSize:minSize maxFontSize:maxSize color:textColor];
     [self setLabelText:self.infoLieuLabel text:self.infoLieuLabel.text minFontSize:minSize maxFontSize:maxSize color:textColor];
     [self setLabelText:self.descriptionLabel text:self.descriptionLabel.text minFontSize:minSize maxFontSize:maxSize color:textColor];
     
+    self.adresseButton.titleLabel.font = [[Config sharedInstance] defaultFontWithSize:14];
     
     // HashTag Label
+#ifdef HASHTAG_ENABLE
+    UIColor *orangeColor = [[Config sharedInstance] orangeColor];
+    
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:self.hashtagLabel.text];
     NSInteger taille = [self.hashtagLabel.text length];
 
@@ -503,6 +516,12 @@
         self.infoHashtagLabel.hidden = YES;
         
     }
+#else
+    self.hashtagLabel.hidden = YES;
+    self.hashtagTextField.hidden = YES;
+    self.switchButton.hidden = YES;
+    self.switchBackground.hidden = YES;
+#endif
 
 }
 
@@ -525,7 +544,7 @@
         self.dateFin = self.moment.dateFin;
         self.startDateTextField.text = [self.dateFormatter stringFromDate:self.dateDebut];
         self.endDateTextField.text = [self.dateFormatter stringFromDate:self.dateFin];
-        self.adresseTextField.text = self.moment.adresse;
+        [self setAdresseText:self.moment.adresse];
         self.descriptionTextView.text = self.moment.descriptionString;
         self.coverImage = self.moment.uimage;
         [self.coverView setImage:self.coverImage imageString:self.moment.imageString withSaveBlock:^(UIImage *image) {
@@ -558,6 +577,12 @@
 {
     [super viewDidAppear:animated];
     [AppDelegate updateActualViewController:self];
+    
+    // Cacher clavier
+    [self.view endEditing:YES];
+    
+    // Google Analytics
+    [[[GAI sharedInstance] defaultTracker] sendView:@"Création Event 1"];
 }
 
 #pragma mark - Util
@@ -565,7 +590,7 @@
 - (BOOL)formIsValid
 {
     if( self.dateDebut && self.dateFin &&
-        (self.adresseTextField.text.length > 0) && (self.descriptionTextView.text.length > 0) )
+        (self.adresseText.length > 0) && (self.descriptionTextView.text.length > 0) )
     {
         return YES;
     }
@@ -591,6 +616,9 @@
 
 - (void)clicNext
 {
+    // Google Analytics
+    [[[GAI sharedInstance] defaultTracker] sendView:@"Création Event 2"];
+    
     // Cacher clavier
     [self.view endEditing:YES];
     
@@ -602,6 +630,9 @@
 
 - (void)clicPrev
 {
+    // Google Analytics
+    [[[GAI sharedInstance] defaultTracker] sendView:@"Création Event 1"];
+    
     // Cacher clavier
     [self.view endEditing:YES];
     
@@ -624,122 +655,145 @@
 
 - (void)clicCreate
 {
-    // Cacher clavier
-    [self.view endEditing:YES];
-    
-    // Update dates
-    if ( self.startDateTextField.text.length > 0 )
-        self.dateDebut = [self.dateFormatter dateFromString:self.startDateTextField.text];
-    if ( self.endDateTextField.text.length > 0 )
-        self.dateFin = [self.dateFormatter dateFromString:self.endDateTextField.text];
-    
-    if([self formIsValid])
+    // Empecher le clic successif sur le bouton
+    if(!alreadyClicked)
     {
-        //NSLog(@"Form valide");
+        alreadyClicked = YES;
         
-        //NSLog(@"date envoyée :\ndate début = %@\ndate fin = %@", _dateDebut, _dateFin);
+        // Cacher clavier
+        [self.view endEditing:YES];
         
-        NSMutableDictionary *attributes = @{
-        @"adresse":_adresseTextField.text,
-        @"titre":_nomEvent,
-        @"dateDebut":_dateDebut,
-        @"dateFin":_dateFin,
-        }.mutableCopy;
+        // Update dates
+        if ( self.startDateTextField.text.length > 0 )
+            self.dateDebut = [self.dateFormatter dateFromString:self.startDateTextField.text];
+        if ( self.endDateTextField.text.length > 0 )
+            self.dateFin = [self.dateFormatter dateFromString:self.endDateTextField.text];
         
-        if([_infoLieuTextField.text length] > 0)
-            attributes[@"infoLieu"] = _infoLieuTextField.text;
-        if([_descriptionTextView.text length] > 0)
-            attributes[@"descriptionString"] = _descriptionTextView.text;
-        if([_hashtagTextField.text length] > 0)
-            attributes[@"hashtag"] = _hashtagTextField.text;
-        if(self.moment && self.moment.facebookId)
-            attributes[@"facebbokId"] = self.moment.facebookId;
-        if(_coverImage)
-            attributes[@"dataImage"] = _coverImage;
-        
-        
-        MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-        hud.labelText = NSLocalizedString(@"MBProgressHUD_Loading", nil);
-        
-        // Edition d'un moment
-        if(isEdition)
+        if([self formIsValid])
         {
-            [self.moment updateMomentFromLocalToServerWithEnded:^(BOOL success) {
-                
-                if(success) {
-                    [self.timeLineViewContoller reloadData];
-                    [self.timeLineViewContoller showInviteViewControllerWithMoment:self.moment];
-                }
-                else{
-                    [[[UIAlertView alloc] initWithTitle:@"Erreur"
-                                         message:@"Une erreur est survenue. Veuillez réessayer ultérieurement"
-                                        delegate:nil
-                               cancelButtonTitle:@"OK"
-                               otherButtonTitles:nil]
-                    show];
-                }
-             
-                [MBProgressHUD hideHUDForView:self.view animated:YES];
-             
-            }];
-        }
-        // Création d'un moment
-        else
-        {
-            [MomentClass createMomentWithAttributes:attributes withEnded:^(MomentClass* moment) {
-                
-                if(moment) {
+            
+            NSMutableDictionary *attributes = @{
+                                                @"adresse":_adresseLabel.text,
+                                                @"titre":_nomEvent,
+                                                @"dateDebut":_dateDebut,
+                                                @"dateFin":_dateFin,
+                                                }.mutableCopy;
+            
+            if([_infoLieuTextField.text length] > 0)
+                attributes[@"infoLieu"] = _infoLieuTextField.text;
+            if([_descriptionTextView.text length] > 0)
+                attributes[@"descriptionString"] = _descriptionTextView.text;
+#ifdef HASHTAG_ENABLE
+            if([_hashtagTextField.text length] > 0)
+                attributes[@"hashtag"] = _hashtagTextField.text;
+#endif
+            if(self.moment && self.moment.facebookId)
+                attributes[@"facebbokId"] = self.moment.facebookId;
+            if(modifiedCover)
+                attributes[@"dataImage"] = modifiedCover;
+            
+            // Mettre à jour Moment Local
+            [self.moment setupWithAttributes:attributes];
+            // Si nouvelle image, supprimer url pour mettre à jour
+            if(modifiedCover) {
+                self.moment.imageString = nil;
+            }
+            
+            MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+            hud.labelText = NSLocalizedString(@"MBProgressHUD_Loading", nil);
+            
+            // Edition d'un moment
+            if(isEdition)
+            {
+                [self.moment updateMomentFromLocalToServerWithEnded:^(BOOL success) {
                     
-                    [self.timeLineViewContoller reloadData];
-                    
-                    // ---- Capture d'écran ----
-                    UIWindow *keyWindow = [[UIApplication sharedApplication] keyWindow];
-                    CGRect rect = [keyWindow bounds];
-                    
-                    UIGraphicsBeginImageContextWithOptions( rect.size ,YES,0.0f);
-                    CGContextRef context = UIGraphicsGetCurrentContext();
-                    [keyWindow.layer renderInContext:context];
-                    UIImage *capturedScreen = UIGraphicsGetImageFromCurrentImageContext();
-                    UIGraphicsEndImageContext();
-                    
-                    CGRect contentRect;
-                    if ([[VersionControl sharedInstance] isRetina]) {
-                        // Retina
-                        contentRect = CGRectMake(0, 2*STATUS_BAR_HEIGHT, 2*rect.size.width, 2*(rect.size.height-STATUS_BAR_HEIGHT));
-                    } else {
-                        // Not Retina
-                        contentRect = CGRectMake(0, STATUS_BAR_HEIGHT, rect.size.width, (rect.size.height-STATUS_BAR_HEIGHT));
+                    if(success) {
+                        
+                        [self.timeLineViewContoller.rootOngletsViewController.infoMomentViewController reloadData];
+                        [self.timeLineViewContoller reloadData];
+                        [self.timeLineViewContoller updateSelectedMoment:self.moment atRow:-1];
+                        [self.timeLineViewContoller reloadMomentPicture:self.moment];
+                        [MBProgressHUD hideHUDForView:self.view animated:YES];
+                        [self.navigationController popViewControllerAnimated:YES];
+                        
                     }
-                    CGImageRef imageRef = CGImageCreateWithImageInRect([capturedScreen CGImage], contentRect );
+                    else{
+                        alreadyClicked = NO;
+                        
+                        [[[UIAlertView alloc] initWithTitle:@"Erreur"
+                                                    message:@"Une erreur est survenue. Veuillez réessayer ultérieurement"
+                                                   delegate:nil
+                                          cancelButtonTitle:@"OK"
+                                          otherButtonTitles:nil]
+                         show];
+                        
+                        [MBProgressHUD hideHUDForView:self.view animated:YES];
+                    }
                     
-                    UIImage *croppedImage = [UIImage imageWithCGImage:imageRef];
-                    CGImageRelease(imageRef);
+                }];
+            }
+            // Création d'un moment
+            else
+            {
+                [MomentClass createMomentWithAttributes:attributes withEnded:^(MomentClass* moment) {
                     
+                    if(moment) {
+                        
+                        [self.timeLineViewContoller reloadData];
+                        
+                        // ---- Capture d'écran ----
+                        UIWindow *keyWindow = [[UIApplication sharedApplication] keyWindow];
+                        CGRect rect = [keyWindow bounds];
+                        
+                        UIGraphicsBeginImageContextWithOptions( rect.size ,YES,0.0f);
+                        CGContextRef context = UIGraphicsGetCurrentContext();
+                        [keyWindow.layer renderInContext:context];
+                        UIImage *capturedScreen = UIGraphicsGetImageFromCurrentImageContext();
+                        UIGraphicsEndImageContext();
+                        
+                        CGRect contentRect;
+                        if ([[VersionControl sharedInstance] isRetina]) {
+                            // Retina
+                            contentRect = CGRectMake(0, 2*STATUS_BAR_HEIGHT, 2*rect.size.width, 2*(rect.size.height-STATUS_BAR_HEIGHT));
+                        } else {
+                            // Not Retina
+                            contentRect = CGRectMake(0, STATUS_BAR_HEIGHT, rect.size.width, (rect.size.height-STATUS_BAR_HEIGHT));
+                        }
+                        CGImageRef imageRef = CGImageCreateWithImageInRect([capturedScreen CGImage], contentRect );
+                        
+                        UIImage *croppedImage = [UIImage imageWithCGImage:imageRef];
+                        CGImageRelease(imageRef);
+                        
+                        //  ---- Popup ----
+                        PopUpFinCreationViewController *popup = [[PopUpFinCreationViewController alloc]
+                                                                 initWithRootViewController:self withMoment:moment
+                                                                 withTimeLine:self.timeLineViewContoller
+                                                                 withBackground:croppedImage];
+                        [self.navigationController pushViewController:popup animated:NO];
+                        
+                        
+                    }else{
+                        alreadyClicked = NO;
+                        
+                        [[[UIAlertView alloc] initWithTitle:@"Erreur"
+                                                    message:@"Une erreur est survenue. Veuillez réessayer ultérieurement"
+                                                   delegate:nil
+                                          cancelButtonTitle:@"OK"
+                                          otherButtonTitles:nil]
+                         show];
+                    }
                     
-                    //  ---- Popup ----
-                    PopUpFinCreationViewController *popup = [[PopUpFinCreationViewController alloc]
-                                                             initWithRootViewController:self withMoment:moment
-                                                             withTimeLine:self.timeLineViewContoller
-                                                             withBackground:croppedImage];
-                    [self.navigationController pushViewController:popup animated:NO];
-                     
+                    [MBProgressHUD hideHUDForView:self.view animated:YES];
                     
-                }else{
-                    [[[UIAlertView alloc] initWithTitle:@"Erreur"
-                                                message:@"Une erreur est survenue. Veuillez réessayer ultérieurement"
-                                               delegate:nil
-                                      cancelButtonTitle:@"OK"
-                                      otherButtonTitles:nil]
-                     show];
-                }
-                
-                [MBProgressHUD hideHUDForView:self.view animated:YES];
-                
-            }];
+                }];
+            }
+            
+        }
+        else {
+            alreadyClicked = NO;
         }
         
-    }
-    
+    }// Fin Already CLicked
 }
 
 - (IBAction)clicChangeCover
@@ -786,15 +840,16 @@
     
     if(_currentStep == 2)
     {
-        if (textField == _adresseTextField) {
-            [_infoLieuTextField becomeFirstResponder];
-        }
-        else if(textField == _infoLieuTextField) {
+#ifdef HASHTAG_ENABLE
+        if(textField == _infoLieuTextField) {
             [_hashtagTextField becomeFirstResponder];
         }
         else {
             [textField resignFirstResponder];
         }
+#else
+        [textField resignFirstResponder];
+#endif
         
         return YES;
     }
@@ -842,9 +897,6 @@
         
     }
     
-    if( textField == self.adresseTextField )
-        [self setNavBarSecondButtonEnable:NO];
-    
     return YES;
 }
 
@@ -870,7 +922,7 @@
             [self.pickerView setButtonStyle:CustomDatePickerButtonStyleNext];
             
             if(endIsFull)
-                self.pickerView.datePicker.maximumDate = [self.dateFin dateByAddingTimeInterval:-15*60];;
+                self.pickerView.datePicker.maximumDate = [self.dateFin dateByAddingTimeInterval:-15*60];
         }
         
         // Rénitialise date min
@@ -892,21 +944,29 @@
                 self.pickerView.datePicker.date = self.dateFin;
                 self.pickerView.datePicker.maximumDate = nil;
             }
+        } else {
+            
+            if(self.startDateTextField == textField) {
+                [self.startDateTextField setText:[self.dateFormatter stringFromDate:[self getRoundedDate:self.pickerView.datePicker.date]]];
+            } else {
+                [self.endDateTextField setText:[self.dateFormatter stringFromDate:[self getRoundedDate:self.pickerView.datePicker.date]]];
+            }
         }
         
         if( [VersionControl sharedInstance].screenHeight == 480 )
             [_step1ScrollView adjustOffsetToIdealIfNeeded];
         
     }
-    else
+    else {
         [_step2ScrollView adjustOffsetToIdealIfNeeded];
+    }
 }
 
 - (void)updateSecondNavBarEnable
 {
     if(_currentStep == 2) {
         
-        if( (self.adresseTextField.text.length > 0) && (self.descriptionTextView.text.length > 0) ) {
+        if( ((self.adresseLabel.text.length > 0)||(self.adresseText.length > 0)) && (self.descriptionTextView.text.length > 0) ) {
             [self setNavBarSecondButtonEnable:YES];
         }
         else {
@@ -928,19 +988,7 @@
 {    
     if(_currentStep == 1)
         return NO;
-    
-    // Check if textField empty
-    if( textField == self.adresseTextField ) {
-        
-        NSRange textFieldRange = NSMakeRange(0, [textField.text length]);
-        if (NSEqualRanges(range, textFieldRange) && [string length] == 0) {
-            [self setNavBarSecondButtonEnable:NO];
-        }
-        else if(textField.text.length > 0) {
-            [self setNavBarSecondButtonEnable:YES];
-        }
-    }
-        
+            
     return YES;
 }
 
@@ -952,13 +1000,23 @@
     // Check if textField empty
     if( textView == self.descriptionTextView ) {
         
+        
+        
         NSRange textFieldRange = NSMakeRange(0, [textView.text length]);
         if (NSEqualRanges(range, textFieldRange) && [text length] == 0) {
             [self setNavBarSecondButtonEnable:NO];
         }
-        else if(textView.text.length > 0) {
+        else  {
+            
+            NSString *newText = [textView.text stringByReplacingCharactersInRange:range withString:text];
+            
+            if(newText.length > 0 && ((self.adresseLabel.text.length > 0)||(self.adresseText.length > 0)) ) {
                 [self setNavBarSecondButtonEnable:YES];
+            }
+
+            
         }
+    
     }
     
     return YES;
@@ -971,6 +1029,7 @@
     UIImage *image = [[Config sharedInstance] imageWithMaxSize:info[@"UIImagePickerControllerOriginalImage"] maxSize:600];
     
     self.coverImage = image;
+    modifiedCover = image;
     self.coverView.contentMode = UIViewContentModeScaleAspectFill;
     self.coverView.image = image;
     
@@ -998,7 +1057,7 @@
     [[VersionControl sharedInstance] presentModalViewController:picker fromRoot:self animated:YES];
 }
 
-#pragma mark - Getter
+#pragma mark - Getters & Setters
 
 - (NSDateFormatter*)dateFormatter {
     if(!_dateFormatter) {
@@ -1011,5 +1070,50 @@
     return _dateFormatter;
 }
 
+- (NSDate *)getRoundedDate:(NSDate *)inDate
+{
+    NSInteger minuteInterval = 15;
+    NSDateComponents *dateComponents = [[NSCalendar currentCalendar] components:NSMinuteCalendarUnit fromDate:inDate];
+    NSInteger minutes = [dateComponents minute];
+    
+    float minutesF = [[NSNumber numberWithInteger:minutes] floatValue];
+    float minuteIntervalF = [[NSNumber numberWithInteger:minuteInterval] floatValue];
+    
+    // Determine whether to add 0 or the minuteInterval to time found by rounding down
+    NSInteger roundingAmount = (fmodf(minutesF, minuteIntervalF)) > minuteIntervalF/2.0 ? minuteInterval : 0;
+    NSInteger minutesRounded = ( (NSInteger)(minutes / minuteInterval) ) * minuteInterval;
+    NSDate *roundedDate = [[NSDate alloc] initWithTimeInterval:60.0 * (minutesRounded + roundingAmount - minutes) sinceDate:inDate];
+    
+    return roundedDate;
+}
 
+- (void)setAdresseText:(NSString *)adresseText {
+    _adresseText = adresseText;
+    
+    NSInteger maxSize = 15, minSize = 11;
+    UIColor *textColor = [Config sharedInstance].textColor;
+    
+    [self setLabelText:self.adresseLabel text:adresseText minFontSize:minSize maxFontSize:maxSize color:textColor];
+    
+    // Activer bouton si champs obligatoires remplis
+    if(_currentStep == 2 && adresseText.length > 0 && self.descriptionTextView.text.length > 0) {
+        [self setNavBarSecondButtonEnable:YES];
+    }
+}
+
+#pragma mark - Actions
+
+- (IBAction)clicPlaces {
+    
+    // Google Places
+    PlacesViewController *places = [[PlacesViewController alloc] initWithDelegate:self];
+    [self.navigationController pushViewController:places animated:YES];
+    
+}
+
+- (void)viewDidUnload {
+    [self setAdresseButton:nil];
+    [self setSwitchBackground:nil];
+    [super viewDidUnload];
+}
 @end

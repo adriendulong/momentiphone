@@ -24,8 +24,10 @@
 #import "RootOngletsViewController.h"
 #import "MDCParallaxView.h"
 #import "IgnoreTouchView.h"
+#import <MessageUI/MessageUI.h>
+#import "GAI.h"
 
-@interface InfoMomentViewController : UIViewController <RNExpandingButtonBarDelegate, UIScrollViewDelegate, OngletViewController> {
+@interface InfoMomentViewController : UIViewController <RNExpandingButtonBarDelegate, UIScrollViewDelegate, OngletViewController, MFMailComposeViewControllerDelegate> {
     
     @private
     NSInteger hauteur;
@@ -35,7 +37,7 @@
 }
 
 @property (nonatomic, strong) MomentClass *moment;
-@property (nonatomic, weak) UserClass *user;
+@property (nonatomic, strong) UserClass *user;
 
 @property (nonatomic, weak) RootOngletsViewController *rootViewController;
 @property (nonatomic, strong) IgnoreTouchView *foregroundView;
@@ -55,6 +57,13 @@
 @property (nonatomic, strong) IBOutlet UIView *titreView;
 @property (nonatomic, strong) TTTAttributedLabel* ttTitreLabel;
 @property (nonatomic, weak) IBOutlet CustomLabel* titreLabel;
+
+/* ----- RSVP View ----- */
+@property (strong, nonatomic) IBOutlet UIView *rsvpView;
+@property (weak, nonatomic) IBOutlet UILabel *rsvpLabel;
+@property (weak, nonatomic) IBOutlet UIButton *rsvpMaybeButton;
+@property (weak, nonatomic) IBOutlet UIButton *rsvpYesButton;
+@property (weak, nonatomic) IBOutlet UIButton *rsvpNoButton;
 
 /* ----- Description View ----- */
 @property (nonatomic, strong) IBOutlet UIView *descriptionView;
@@ -114,10 +123,29 @@
 @property (weak, nonatomic) IBOutlet UILabel *cagnotteCagnotteLabel;
 @property (weak, nonatomic) IBOutlet UILabel *cagnotteCompteLabel;
 
+/* ------ Partage View ----- */
+@property (nonatomic, strong) IBOutlet UIView *partageView;
 
-- (id)initWithMoment:(MomentClass*)moment withRootViewController:(UIViewController*)rootViewController;
+
+// ------------------- METHODES ------------------------ //
+- (id)initWithMoment:(MomentClass*)moment withRootViewController:(RootOngletsViewController*)rootViewController;
 
 - (IBAction)clicInviteButton;
 - (void)reloadData;
+- (IBAction)clicRSVPButton:(UIButton*)sender;
+
+- (IBAction)clicShareMail;
+- (IBAction)clicShareLink;
+- (IBAction)clicShareFacebook;
+- (IBAction)clicShareTwitter;
+//- (IBAction)clicShareInstagram;
+
+- (IBAction)clicCagnotteButton;
+//- (IBAction)clicCoursesButton;
+- (IBAction)clicComptesButton;
+- (IBAction)clicFeedBackButton;
+
+// Google Analytics
+- (void)sendGoogleAnalyticsView;
 
 @end

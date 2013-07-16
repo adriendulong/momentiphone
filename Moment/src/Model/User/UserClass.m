@@ -28,6 +28,10 @@
 @synthesize nb_photos = _nb_photos;
 @synthesize is_followed = _is_followed;
 @synthesize descriptionString = _descriptionString;
+@synthesize privacy = _privacy;
+@synthesize request_follow_me = _request_follow_me;
+@synthesize request_follower = _request_follower;
+@synthesize sex = _sex;
 
 #pragma mark - Setup
 
@@ -69,6 +73,12 @@
         self.is_followed = attributes[@"is_followed"];
     if(attributes[@"description"])
         self.descriptionString = attributes[@"description"];
+    if(attributes[@"privacy"] != nil)
+        self.privacy = attributes[@"privacy"];
+    if(attributes[@"request_follower"])
+        self.request_follower = attributes[@"request_follower"];
+    if(attributes[@"request_follow_me"])
+        self.request_follow_me = attributes[@"request_follow_me"];
 }
 
 - (void)setupWithAttributesFromWeb:(NSDictionary*)attributes {
@@ -114,6 +124,8 @@
     return array;
 }
 
+#pragma mark - Comparaison
+
 - (BOOL)isEqual:(id)object
 {
     if([object respondsToSelector:@selector(userId)] && [object userId]) {
@@ -122,8 +134,61 @@
     return NO;
 }
 
+#pragma mark - Util
+
+- (NSString*)formatedUsername {
+    return [self formatedUsernameWithStyle:UsernameStyleUppercase];
+}
+
+- (NSString*)formatedUsernameWithStyle:(enum UsernameStyle)style {
+    return [UserClass formatedUsernameWithFirstname:self.prenom lastname:self.nom style:style];
+}
+
++ (NSString*)formatedUsernameWithFirstname:(NSString*)firstname
+                                  lastname:(NSString*)lastname
+                                     style:(enum UsernameStyle)style
+{
+    // Nom de l'expéditeur
+    NSString *username = nil;
+    NSString *prenom = nil;
+    NSString *nom = nil;
+    
+    // Style
+    switch (style) {
+        case UsernameStyleUppercase:
+            prenom = firstname.uppercaseString;
+            nom = lastname.uppercaseString;
+            break;
+            
+        case UsernameStyleCapitalized:
+            prenom = firstname.capitalizedString;
+            nom = lastname.capitalizedString;
+            break;
+            
+        case UsernameStyleUnchanged:
+            prenom = firstname;
+            nom = lastname;
+            break;
+    }
+    
+    // Format
+    if(lastname && firstname) {
+        username = [NSString stringWithFormat:@"%@ %@", prenom, nom];
+    }
+    else if(lastname || firstname) {
+        if(firstname)
+            username = prenom;
+        else
+            username = nom;
+    }
+    
+    return username ?: @"";
+}
+
+#pragma mark - Debug
+
 - (NSString*)description {
-    return [NSString stringWithFormat:@"USER %@ :\n{\nnom = %@\nprenom = %@\nfacebookId = %@\npictureString = %@\n}\n", self.userId, self.nom, self.prenom, self.facebookId, self.imageString];
+    return [NSString stringWithFormat:@"USER :\n{\nuserId = %@\nnom = %@\nprenom = %@\nfacebookId = %@\npictureString = %@\nrequest_follower = %@\nrequest_follow_me = %@\nprivacy = %@\nstate = %@\n}\n", self.userId, self.nom, self.prenom, self.facebookId, self.imageString, self.request_follower, self.request_follow_me, self.privacy, self.state];
 }
 
 @end

@@ -460,9 +460,11 @@ static void AFNetworkReachabilityReleaseCallback(const void *info) {
                     break;
             }
             
+            /*
             if (error) {
                 NSLog(@"%@ %@: %@", [self class], NSStringFromSelector(_cmd), error);
             }
+            */
         }
     }
     

@@ -30,6 +30,8 @@
 @property (weak, nonatomic) IBOutlet UIButton *friendsButton;
 @property (weak, nonatomic) IBOutlet UIButton *privateButton;
 
+@property (weak, nonatomic) IBOutlet UILabel *privacyTitleLabel;
+@property (weak, nonatomic) IBOutlet UILabel *privacyDetailsLabel;
 
 
 - (id)initWithRootViewController:(UIViewController*)rootViewController

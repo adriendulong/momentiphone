@@ -16,8 +16,15 @@ enum UserState {
     UserStateValid = 2,
     UserStateRefused = 3,
     UserStateUnknown = 4,
-    UserStateWaiting = 5
+    UserStateWaiting = 5,
+    UserStateNoInvited = 6
 };
+
+enum UserPrivacy {
+    UserPrivacyClosed = 0,
+    UserPrivacyPrivate = 1,
+    UserPrivacyOpen = 2
+    };
 
 #define USERS_NO_LIMIT -1
 
@@ -27,7 +34,7 @@ enum UserState {
 - (void)setupWithUser:(UserClass*)user;
 
 // Persist
-+ (UserCoreData*)insertWithMemoryReleaseNewUser:(UserClass*)user;
+//+ (UserCoreData*)insertWithMemoryReleaseNewUser:(UserClass*)user;
 + (UserClass*)newUserWithAttributes:(NSDictionary*)attributes;
 //+ (void)updateUser:(UserClass*)user;
 
@@ -52,13 +59,18 @@ enum UserState {
 
 // Current User
 + (void)currentUserNeedsUpdate;
-+ (UserCoreData*)getCurrentUserAsCoreData;
++ (UserCoreData*)getCurrentUserAsCoreDataWithLocalOnly:(BOOL)localOnly;
++ (UserClass*)getCurrentUserWithLocalOnly:(BOOL)localOnly;
 + (UserClass*)getCurrentUser;
 + (void)updateCurrentUserWithAttributes:(NSDictionary*)attributes;
-+ (void)logoutCurrentUserWithEnded:(void (^) (void))block;
 
 // Release
 + (void)releaseUsersAfterIndex:(NSInteger)max;
 + (void)resetUsersLocal;
++ (void)deleteUsersWhileEnteringBackground;
+
+// Util
+- (NSString*)formatedUsername;
+- (NSString*)formatedUsernameWithStyle:(enum UsernameStyle)style;
 
 @end

@@ -10,23 +10,20 @@
 #import "MomentClass.h"
 #import "UserCoreData.h"
 
-#define IS_IPHONE ( [ [ [ UIDevice currentDevice ] model ] isEqualToString: @"iPhone" ] )
-#define IS_IPOD   ( [ [ [ UIDevice currentDevice ] model ] isEqualToString: @"iPod touch" ] )
-
-#define IS_WIDESCREEN ( fabs( ( double )[ [ UIScreen mainScreen ] bounds ].size.height - ( double )568 ) < DBL_EPSILON )
-#define IS_IPHONE_5 ( IS_IPHONE && IS_WIDESCREEN )
-
 // Protocol
+@class RootOngletsViewController;
 @protocol TimeLineDelegate <NSObject>
 
 @property NSInteger selectedIndex;
 @property CGSize size;
 @property (nonatomic, weak) UINavigationController *navController;
+@property (nonatomic, strong) RootOngletsViewController *rootOngletsViewController;
 
 // Update TimeLine
 - (void)updateSelectedMoment:(MomentClass*)moment atRow:(NSInteger)row;
-- (void)reloadDataWithWaitUntilFinished:(BOOL)waitUntilFinished;
+- (void)reloadDataWithWaitUntilFinished:(BOOL)waitUntilFinished withEnded:(void (^) (BOOL success))block;
 - (void)reloadData;
+- (void)reloadMomentPicture:(MomentClass*)momentParam;
 
 // Redirection Onglets
 - (void)showInfoMomentView:(MomentClass*)moment;
@@ -51,6 +48,7 @@
 #import "CreationHomeViewController.h"
 #import "RootOngletsViewController.h"
 #import "TTTAttributedLabel.h"
+#import "GAI.h"
 
 enum TimeLineStyle {
     TimeLineStyleComplete = 0,
@@ -83,8 +81,13 @@ enum TimeLineStyle {
 @property (nonatomic, weak) IBOutlet CustomLabel *nomOwnerLabel;
 @property (nonatomic, weak) IBOutlet CustomLabel *fullDateLabel;
 @property (nonatomic, strong) TTTAttributedLabel *nomMomentTTLabel;
+/*
 @property (nonatomic, strong) TTTAttributedLabel *nomOwnerTTLabel;
 @property (nonatomic, strong) TTTAttributedLabel *fullDateTTLabel;
+ */
+@property (nonatomic, strong) UILabel *nomOwnerTTLabel;
+@property (nonatomic, strong) UILabel *fullDateTTLabel;
+//
 @property (nonatomic, strong) CustomTimeScroller *timeScroller;
 @property (nonatomic, weak) IBOutlet UIButton *B2PButton;
 
@@ -100,12 +103,16 @@ enum TimeLineStyle {
 
 - (id)initWithMoments:(NSArray*)momentsParam
             withStyle:(enum TimeLineStyle)style
+             withUser:(UserClass*)user
              withSize:(CGSize)size
-withRootViewController:(RootTimeLineViewController*)rootViewController;
+withRootViewController:(RootTimeLineViewController*)rootViewController
+  shouldReloadMoments:(BOOL)reloadMoments
+shouldLoadEventsFromFacebook:(BOOL)loadEvents;
 
 - (void)updateSelectedMoment:(MomentClass*)moment atRow:(NSInteger)row;
 - (void)reloadData;
 - (void)reloadDataWithMoments:(NSArray*)moments;
+- (void)reloadMomentPicture:(MomentClass*)momentParam;
 
 - (void)showInfoMomentView:(MomentClass*)moment;
 - (void)showPhotoView:(MomentClass*)moment;
@@ -113,6 +120,9 @@ withRootViewController:(RootTimeLineViewController*)rootViewController;
 - (void)deleteMoment:(MomentClass*)moment;
 
 - (IBAction)clicButtonClock;
+
+// Google Analytics
++ (void)sendGoogleAnalyticsView ;
 
 @end
 

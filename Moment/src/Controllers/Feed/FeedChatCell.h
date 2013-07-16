@@ -17,11 +17,11 @@
 @property (nonatomic, weak) IBOutlet CustomUIImageView *profileView;
 @property (nonatomic, weak) IBOutlet UILabel *userLabel;
 @property (nonatomic, weak) IBOutlet UILabel *infoLabel;
+@property (nonatomic, weak) IBOutlet UILabel *nbMessagesLabel;
 @property (nonatomic, weak) IBOutlet UILabel *momentLabel;
 @property (nonatomic, weak) IBOutlet UILabel *messageLabel;
 @property (nonatomic, weak) IBOutlet UIImageView *iconeView;
 @property (nonatomic, weak) IBOutlet UILabel *dateLabel;
-@property (nonatomic, weak) IBOutlet CustomUIImageView *coverView;
 
 - (id)initWithFeed:(FeedMessage*)feed
    reuseIdentifier:(NSString*)reuseIdentifier

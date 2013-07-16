@@ -14,11 +14,48 @@
 #import "TTTAttributedLabel.h"
 #import "NSDate+NSDateAdditions.h"
 #import "MomentClass+Server.h"
+#import "VersionControl.h"
+#import "FacebookManager.h"
 
-#define bigCellHeight 263
+#define bigCellHeight 195
 #define smallCellHeight 130
 
 #define DEGREES_TO_RADIANS(x) (M_PI * x / 180.0)
+
+#pragma mark - Reverse Array
+
+@implementation NSArray (Reverse)
+
+- (NSArray *)reversedArray {
+    NSMutableArray *array = [NSMutableArray arrayWithCapacity:[self count]];
+    NSEnumerator *enumerator = [self reverseObjectEnumerator];
+    for (id element in enumerator) {
+        [array addObject:element];
+    }
+    return array;
+}
+
+@end
+
+@implementation NSMutableArray (Reverse)
+
+- (void)reverse {
+    if ([self count] == 0)
+        return;
+    NSUInteger i = 0;
+    NSUInteger j = [self count] - 1;
+    while (i < j) {
+        [self exchangeObjectAtIndex:i
+                  withObjectAtIndex:j];
+        
+        i++;
+        j--;
+    }
+}
+
+@end
+
+#pragma mark - TimeLineViewController
 
 enum ClockState {
     ClockStateUp = 0,
@@ -35,6 +72,9 @@ enum ClockState {
     
     CGFloat borderCellSize;
     BOOL isLoading;
+    BOOL firstLoad;
+    BOOL shouldReloadMoments;
+    BOOL shouldLoadEventsFromFacebook;
     
     MomentClass *momentToDelete;
     
@@ -109,15 +149,21 @@ enum ClockState {
 
 - (id)initWithMoments:(NSArray*)momentsParam
             withStyle:(enum TimeLineStyle)style
+             withUser:(UserClass*)user
              withSize:(CGSize)size
 withRootViewController:(RootTimeLineViewController*)rootViewController
+  shouldReloadMoments:(BOOL)reloadMoments
+shouldLoadEventsFromFacebook:(BOOL)loadEvents
 {    
     self = [super initWithNibName:@"TimeLineViewController" bundle:nil];
     if(self) {
-        
+
         // Init
         self.moments = [self arrayWithEmptyObjectsAddedToArray:momentsParam];
-        self.user = [UserCoreData getCurrentUser];
+        if(style == TimeLineStyleProfil)
+            self.user = user;
+        else
+            self.user = [UserCoreData getCurrentUser];
         self.selectedMoment = nil;
         self.selectedIndex = -1;
         self.bandeauIndex = -1;
@@ -126,6 +172,9 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
         //shouldUpdateClock= YES;
         bandeauAnimating = NO;
         isLoading = NO;
+        firstLoad = YES;
+        shouldReloadMoments = reloadMoments;
+        shouldLoadEventsFromFacebook = loadEvents;
         self.shoulShowInviteView = NO;
         self.rootViewController = rootViewController;
         momentToDelete = nil;
@@ -145,7 +194,6 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
                                                        object:nil];
         }
         
-    
     }
     return self;
 }
@@ -171,19 +219,21 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
 
 - (void)sendEchelleLabelsToBack
 {
+    /*
     // Placer en fond
     [self.tableView sendSubviewToBack:self.echelleFuturLabel];
     [self.tableView sendSubviewToBack:self.echellePasseLabel];
     [self.tableView sendSubviewToBack:self.echelleTodayLabel];
+     */
 }
 
 - (void)placerEchelleLabels
 {
     // -- Echelle Labels
-    UIFont *echelleFont = [[Config sharedInstance] defaultFontWithSize:10];
     CGFloat contentWidth = self.view.frame.size.width;
     CGFloat contentHeight = self.view.frame.size.height;
-    CGFloat division = 5.0f;
+    //CGFloat division = 5.0f;
+    /*
     CGRect todayRect = [self.tableView rectForRowAtIndexPath:[NSIndexPath indexPathForRow:rowForToday inSection:0]];
     CGFloat originToday = todayRect.origin.y - todayRect.size.height/2.0f;
     
@@ -201,10 +251,12 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
         [self .tableView addSubview:self.echelleTodayLabel];
         [self.tableView sendSubviewToBack:self.tableView.backgroundView];
     }
+     */
     
-    [self sendEchelleLabelsToBack];
+    //[self sendEchelleLabelsToBack];
     
     // Futur
+    UIFont *echelleFont = [[Config sharedInstance] defaultFontWithSize:10];
     self.echelleFuturLabel.textColor = [UIColor whiteColor];
     [self addShadowToView:self.echelleFuturLabel];
     self.echelleFuturLabel.font = echelleFont;
@@ -212,7 +264,8 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
     [self.echelleFuturLabel sizeToFit];
     CGRect frame = self.echelleFuturLabel.frame;
     frame.origin.x = contentWidth - frame.size.width - 5;
-    frame.origin.y = (division-1)*(contentHeight - frame.size.height)/division + originToday;
+    //frame.origin.y = (division-1)*(contentHeight - frame.size.height)/division + originToday;
+    frame.origin.y = 5*(contentHeight - frame.size.height)/6.0;
     self.echelleFuturLabel.frame = frame;
     
     // Today
@@ -223,7 +276,8 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
     [self.echelleTodayLabel sizeToFit];
     frame = self.echelleTodayLabel.frame;
     frame.origin.x = contentWidth - frame.size.width - 5;
-    frame.origin.y = (contentHeight - frame.size.height)/2.0f + originToday;
+    //frame.origin.y = (contentHeight - frame.size.height)/2.0f + originToday;
+    frame.origin.y = (contentHeight - frame.size.height)/2.0;
     self.echelleTodayLabel.frame = frame;
     
     // Passé
@@ -234,7 +288,8 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
     [self.echellePasseLabel sizeToFit];
     frame = self.echellePasseLabel.frame;
     frame.origin.x = contentWidth - frame.size.width - 5;
-    frame.origin.y =  (contentHeight - frame.size.height)/division + originToday;
+    //frame.origin.y =  (contentHeight - frame.size.height)/division + originToday;
+    frame.origin.y = (contentHeight - frame.size.height)/6.0;
     self.echellePasseLabel.frame = frame;
 }
 
@@ -351,15 +406,51 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
     // Placer labels
     [self placerEchelleLabels];
     
-    
     //Premier lancement de l'application
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     BOOL hasRunOnce = [defaults boolForKey:@"hasRunOnce"];
-    NSLog(hasRunOnce ? @"Yes" : @"No");
+    //NSLog(hasRunOnce ? @"Yes" : @"No");
     if (!hasRunOnce)
     {
-        [self showTutorialOverlayWithFrame:CGRectMake(0, -20, screenSize.width, screenSize.height)];
+        // Start Reload Moment
+        if(shouldReloadMoments && !isLoading) {
+            [self reloadDataWithWaitUntilFinished:NO withEnded:^(BOOL success) {
+                [self showTutorialOverlayWithFrame:CGRectMake(0, -20, screenSize.width, screenSize.height)];
+            }];
+        }
+        else {
+            [self showTutorialOverlayWithFrame:CGRectMake(0, -20, screenSize.width, screenSize.height)];
+        }
+        
     }
+    else {
+        
+        // Start Reload Moment
+        if(shouldReloadMoments && !isLoading) {
+            MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+            hud.labelText = NSLocalizedString(@"MBProgressHUD_Loading_Moments", nil);
+            [self reloadDataWithWaitUntilFinished:NO withEnded:^(BOOL success) {
+                [MBProgressHUD hideHUDForView:self.view animated:YES];
+                
+                if ([self.moments objectAtIndex:rowForToday] != [NSNull null]) {
+                    // Update & affiche (en synchronisation avec les animations)
+                    [self performSelector:@selector(updateBandeauWithMoment:) withObject:[self.moments objectAtIndex:rowForToday] afterDelay:0.2];
+                    [self performSelector:@selector(afficherBandeau) withObject:nil afterDelay:0.4];
+                }
+            }];
+        }
+        else {
+            // Update timeScroller
+            [self.timeScroller scrollViewDidScroll];
+        }
+    }
+    
+    if (self.user.facebookId != nil && shouldLoadEventsFromFacebook) {
+        // Load Events
+        [self loadEvents];
+    }
+    
+    firstLoad = NO;
 }
 
 - (void)viewDidUnload
@@ -383,7 +474,8 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
 
 - (void)viewDidAppear:(BOOL)animated
 {
-    [super viewDidAppear:animated];    
+    [super viewDidAppear:animated];
+    [TimeLineViewController sendGoogleAnalyticsView];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -406,6 +498,20 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
 {
     // Return YES for supported orientations
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
+}
+
+#pragma mark - Google Analytics
+
++ (void)sendGoogleAnalyticsView {
+    [[[GAI sharedInstance] defaultTracker] sendView:@"Vue Timeline"];
+}
+
++ (void)sendGoogleAnalyticsEvent:(NSString*)action label:(NSString*)label value:(NSNumber*)value {
+    [[[GAI sharedInstance] defaultTracker]
+     sendEventWithCategory:@"Timeline"
+     withAction:action
+     withLabel:label
+     withValue:value];
 }
 
 #pragma mark - Table view data source
@@ -436,6 +542,8 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
     NSString *CellIdentifier = nil;
     UITableViewCell *cell = nil;
     
+    
+    
     // 1er ou Derniere cell
     if( (indexPath.row == 0) || (indexPath.row == [self.moments count]-1) ) {
         
@@ -445,6 +553,51 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
         // Load
         cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
         
+        // Create if needed
+        if(cell == nil) {
+            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
+            
+        }
+        
+        // Custom
+        cell.backgroundColor = [UIColor clearColor];
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        
+    }
+    
+    // Cellule développée
+    else {
+        
+        // Cell ID
+        MomentClass *moment = self.moments[indexPath.row];
+        CellIdentifier = [NSString stringWithFormat:@"TimeLineCell_Developped_%@", moment.momentId];
+        
+        // Load
+        cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+        
+        // Create if needed
+        if(cell == nil) {
+            cell = [[TimeLineDeveloppedCell alloc] initWithMoment:moment
+                                                     withDelegate:self
+                                                  reuseIdentifier:CellIdentifier];
+        }
+        
+        
+    }
+    
+    
+    
+    
+    
+    /*// 1er ou Derniere cell
+    if( (indexPath.row == 0) || (indexPath.row == [self.moments count]-1) ) {
+     
+        // Cell ID
+        CellIdentifier = @"TimeLineCell_BorderCell";
+     
+        // Load
+        cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+     
         // Create if needed
         if(cell == nil) {
             cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
@@ -495,7 +648,7 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
                                         reuseIdentifier:CellIdentifier];
         }
         
-    }
+    }*/
     
     
     return cell;
@@ -505,10 +658,10 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
 {
     if( (indexPath.row == 0) || (indexPath.row == [self.moments count]-1) ) // 1er ou Derniere cell
         return borderCellSize;
-    else if(indexPath.row == self.selectedIndex)
-        return bigCellHeight;
     else
-        return smallCellHeight;
+        return (CGFloat)bigCellHeight;
+    /*else
+        return smallCellHeight;*/
 }
 
 #pragma mark - Table view delegate
@@ -518,6 +671,9 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
     // Si une cellule est selectionnée, la deselectionner
     if(self.selectedIndex != -1)
     {
+        // Google Analytics
+        [TimeLineViewController sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Diminution Moment" value:nil];
+        
         NSIndexPath *previousIndex = [NSIndexPath indexPathForRow:self.selectedIndex inSection:0];
         self.selectedIndex = -1;
         self.selectedMoment = nil;
@@ -533,22 +689,74 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
 
 #pragma mark Update TimeLine
 
-- (void)reloadDataWithWaitUntilFinished:(BOOL)waitUntilFinished
+- (void)reloadDataWithWaitUntilFinished:(BOOL)waitUntilFinished withEnded:(void (^) (BOOL success))block
 {
     if(!isLoading)
     {
         isLoading = YES;
-        [MomentClass getMomentsServerWithEnded:^(BOOL success) {
-            NSArray *array = [MomentCoreData getMoments];
-            [self reloadDataWithMoments:array];
-            isLoading = NO;
-        } waitUntilFinished:NO];
+        
+        if(self.timeLineStyle == TimeLineStyleComplete) {
+            [MomentClass getMomentsServerWithEnded:^(BOOL success) {
+                if(success) {
+                    NSArray *array = [MomentCoreData getMoments];
+                    [self reloadDataWithMoments:array];
+                }
+                
+                isLoading = NO;
+                
+                if(block) {
+                    block(success);
+                }
+            } waitUntilFinished:NO];
+        }
+        else {
+            [MomentClass getMomentsForUser:self.user withEnded:^(NSArray *moments) {
+                if(moments) {
+                    [self reloadDataWithMoments:moments];
+                }
+                
+                isLoading = NO;
+                
+                if(block) {
+                    block(moments != nil);
+                }
+            }];
+        }
+        
     }
 }
 
-- (void)reloadData
-{
+- (void)reloadDataWithWaitUntilFinished:(BOOL)waitUntilFinished {
+    [self reloadDataWithWaitUntilFinished:waitUntilFinished withEnded:nil];
+}
+
+- (void)reloadData {
     [self reloadDataWithWaitUntilFinished:NO];
+}
+
+- (void)reloadMomentPicture:(MomentClass*)momentParam
+{
+    NSInteger index;
+    if( (index = [self.moments indexOfObject:momentParam]) != NSNotFound ) {
+        MomentClass* moment = self.moments[index];
+        moment.imageString = momentParam.imageString;
+        
+        NSString */*identifier = [NSString stringWithFormat:@"TimeLineCell_Classique_%@", moment.momentId];
+        TimeLineCell *cSmall = [self.tableView dequeueReusableCellWithIdentifier:identifier];
+        if(cSmall) {
+            [cSmall.medallion setImage:nil imageString:momentParam.imageString withSaveBlock:^(UIImage *image) {
+                moment.uimage = image;
+            }];
+        }*/
+        
+        identifier = [NSString stringWithFormat:@"TimeLineCell_Developped_%@", moment.momentId];
+        TimeLineDeveloppedCell *cBig = [self.tableView dequeueReusableCellWithIdentifier:identifier];
+        if(cBig) {
+            [cBig.medallion setImage:nil imageString:momentParam.imageString withSaveBlock:^(UIImage *image) {
+                moment.uimage = image;
+            }];
+        }
+    }
 }
 
 - (void)reloadDataWithMoments:(NSArray*)moments
@@ -558,6 +766,8 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
     
     [self.tableView reloadData];
     [self placerEchelleLabels];
+    // Update timeScroller
+    [self.timeScroller scrollViewDidScroll];
 }
 
 - (void)selectActualMiddleCell {
@@ -565,13 +775,19 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
     CGPoint point = CGPointMake(CGRectGetMidX(self.view.frame), CGRectGetMidY(self.view.frame));
     point = [self.view convertPoint:point toView:self.tableView];
     
-    NSIndexPath *indexPath = [self.tableView indexPathForRowAtPoint:point];
-        
-    if(self.selectedIndex != indexPath.row) {
+    //NSIndexPath *indexPath = [self.tableView indexPathForRowAtPoint:point];
+    
+    //[self updateSelectedMoment:self.moments[indexPath.row] atRow:indexPath.row];
+    
+    if(self.bandeauTitre.alpha == 0) {
+        [self afficherBandeau];
+    }
+    
+    /*if(self.selectedIndex != indexPath.row) {
         [self updateSelectedMoment:self.moments[indexPath.row] atRow:indexPath.row];
     } else if(self.bandeauTitre.alpha == 0) {
         [self afficherBandeau];
-    }
+    }*/
         
 }
 
@@ -583,16 +799,18 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
         NSUInteger index = [self.moments indexOfObject:moment];
         if(index != NSNotFound) {
             row = (NSInteger)index;
-            NSLog(@"row = %d", row);
+            //NSLog(@"row = %d", row);
         }
+        /*
         else
             NSLog(@"NOT FOUND %@", moment);
+        */
     }
     
     
     //First we check if a cell is already expanded.
     //If it is we want to minimize make sure it is reloaded to minimize it back
-    if(self.selectedIndex >= 0)
+    /*if(self.selectedIndex >= 0)
     {
         NSIndexPath *previousPath = [NSIndexPath indexPathForRow:self.selectedIndex inSection:0];
         self.selectedIndex = row;
@@ -603,7 +821,7 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
         
         [self.tableView reloadRowsAtIndexPaths:@[previousPath] withRowAnimation:UITableViewRowAnimationFade];
         //[self.tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:previousPath] withRowAnimation:UITableViewRowAnimationNone];
-    }
+    }*/
     
     
     //Finally set the selected index to the new selection and reload it to expand
@@ -611,25 +829,26 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
     self.selectedMoment = moment;
         
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:0];
-    TimeLineCell* cell = (TimeLineCell*)[self.tableView cellForRowAtIndexPath:indexPath];
-    [cell willDisappear];
+    //TimeLineCell* cell = (TimeLineCell*)[self.tableView cellForRowAtIndexPath:indexPath];
+    //TimeLineDeveloppedCell* cell = (TimeLineDeveloppedCell*)[self.tableView cellForRowAtIndexPath:indexPath];
+    //[cell willDisappear];
     
-    //[self.tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    [self.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:row inSection:0]] withRowAnimation:UITableViewRowAnimationFade];
+    [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
     
-    TimeLineDeveloppedCell* bigCell = (TimeLineDeveloppedCell*)[self.tableView cellForRowAtIndexPath:
-                                                             [NSIndexPath indexPathForRow:_selectedIndex inSection:0]];
+    //TimeLineDeveloppedCell* bigCell = (TimeLineDeveloppedCell*)[self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:_selectedIndex inSection:0]];
     
-    [bigCell didAppear];
+    //[bigCell didAppear];
     
-    [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_selectedIndex inSection:0] atScrollPosition:UITableViewScrollPositionMiddle animated:YES];
+    [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:row inSection:0] atScrollPosition:UITableViewScrollPositionMiddle animated:YES];
     
-    // Update & affiche (en synchronisation avec les animations)
-    [self performSelector:@selector(updateBandeauWithMoment:) withObject:self.selectedMoment afterDelay:0.2];
-    [self performSelector:@selector(afficherBandeau) withObject:nil afterDelay:0.4];
+    if (!moment) {
+        // Update & affiche (en synchronisation avec les animations)
+        [self performSelector:@selector(updateBandeauWithMoment:) withObject:self.moments[indexPath.row] afterDelay:0.2];
+        [self performSelector:@selector(afficherBandeau) withObject:nil afterDelay:0.4];
+    }
     
     // Placer au fond
-    [self sendEchelleLabelsToBack];
+    //[self sendEchelleLabelsToBack];
     
 }
 
@@ -638,11 +857,21 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
 - (void)showOnglet:(enum OngletRank)onglet forMoment:(MomentClass*)moment
 {
     // Si une nouvelle cellule a été selectionnée
+    /*
     if( (!self.rootOngletsViewController) || (self.rootOngletsViewController.moment != moment) ) {
-        self.rootOngletsViewController = [[RootOngletsViewController alloc] initWithMoment:moment withOnglet:onglet];
+        self.rootOngletsViewController = [[RootOngletsViewController alloc]
+                                          initWithMoment:moment
+                                          withOnglet:onglet
+                                          withTimeLine:self];
     }
     else
         [self.rootOngletsViewController addAndScrollToOnglet:onglet];
+    */
+    // Création
+    self.rootOngletsViewController = [[RootOngletsViewController alloc]
+                                      initWithMoment:moment
+                                      withOnglet:onglet
+                                      withTimeLine:self];
     
     if(self.shoulShowInviteView) {
         self.rootOngletsViewController.shouldShowInviteViewController = YES;
@@ -788,6 +1017,7 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
             self.nomOwnerTTLabel = nil;
         }
         
+        /*
         TTTAttributedLabel *tttLabel = [[TTTAttributedLabel alloc] initWithFrame:self.nomOwnerLabel.frame];
         tttLabel.backgroundColor = [UIColor clearColor];
         [tttLabel setText:texteLabel afterInheritingLabelAttributesAndConfiguringWithBlock:^NSMutableAttributedString *(NSMutableAttributedString *mutableAttributedString) {
@@ -808,7 +1038,17 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
         [self.nomOwnerLabel.superview addSubview:tttLabel];
         self.nomOwnerLabel.hidden = YES;
         self.nomOwnerTTLabel = tttLabel;
+        */
         
+        UILabel *label = [[UILabel alloc] initWithFrame:self.nomOwnerLabel.frame];
+        label.text = texteLabel;
+        label.font = [[Config sharedInstance] defaultFontWithSize:12];
+        label.textColor = [Config sharedInstance].orangeColor;
+        label.textAlignment = NSTextAlignmentLeft;
+        self.nomOwnerTTLabel = label;
+        [self.nomOwnerLabel.superview addSubview:label];
+        self.nomOwnerLabel.hidden = YES;
+         
         //[self.titreLabel setAttributedTextFromString:texteLabel withFontSize:InfoMomentFontSizeMedium];
         //self.titreLabel.textAlignment = NSTextAlignmentLeft;
     }
@@ -839,7 +1079,7 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
     }
     
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:texteLabel];
-    NSInteger taille = [texteLabel length];
+    //NSInteger taille = [texteLabel length];
     NSInteger rank = (jourVal >= 10)? 2 : 1;
     
 #pragma CustomLabel
@@ -860,7 +1100,7 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
         [attributedString setTextColor:[[Config sharedInstance] textColor]];
         
         [self.fullDateLabel setAttributedText:attributedString];
-        self.fullDateLabel.textAlignment = kCTRightTextAlignment;
+        self.fullDateLabel.textAlignment = NSTextAlignmentRight;
     }
     else
     {
@@ -869,6 +1109,7 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
             self.fullDateTTLabel = nil;
         }
         
+        /*
         TTTAttributedLabel *tttLabel = [[TTTAttributedLabel alloc] initWithFrame:self.fullDateLabel.frame];
         tttLabel.backgroundColor = [UIColor clearColor];
         [tttLabel setText:texteLabel afterInheritingLabelAttributesAndConfiguringWithBlock:^NSMutableAttributedString *(NSMutableAttributedString *mutableAttributedString) {
@@ -893,33 +1134,36 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
         [self.fullDateLabel.superview addSubview:tttLabel];
         self.fullDateLabel.hidden = YES;
         self.fullDateTTLabel = tttLabel;
+        */
+        
+        UILabel *label = [[UILabel alloc] initWithFrame:self.fullDateLabel.frame];
+        label.text = texteLabel;
+        label.font = [[Config sharedInstance] defaultFontWithSize:12];
+        label.textColor = [Config sharedInstance].textColor;
+        label.textAlignment = NSTextAlignmentRight;
+        self.fullDateTTLabel = label;
+        [self.fullDateLabel.superview addSubview:label];
+        self.fullDateLabel.hidden = YES;
         
         //[self.titreLabel setAttributedTextFromString:texteLabel withFontSize:InfoMomentFontSizeMedium];
         //self.titreLabel.textAlignment = NSTextAlignmentLeft;
     }
 }
 
-- (void)updateBandeauWithMoment:(MomentCoreData*)moment
+- (void)updateBandeauWithMoment:(MomentClass*)moment
 {
     if(self.timeLineStyle == TimeLineStyleComplete)
     {
-        [self setNomMomentLabelText:moment.titre];
+        [self setNomMomentLabelText:(moment.titre ?: @"")];
         
-        if(moment.owner)
-        {
-            if(moment.owner.prenom && moment.owner.nom) {
-                [self setNomOwnerLabelText:[NSString stringWithFormat:@"%@ %@", moment.owner.prenom.uppercaseString, moment.owner.nom.uppercaseString]];
-            }
-            else if(moment.owner.prenom || moment.owner.nom) {
-                if(moment.owner.prenom)
-                    [self setNomOwnerLabelText:moment.owner.prenom.uppercaseString];
-                else
-                    [self setNomOwnerLabelText:moment.owner.nom.uppercaseString];
-            }
-            else
-                [self setNomOwnerLabelText:@"..."];
+        if(moment.owner) {
+            [self setNomOwnerLabelText:moment.owner.formatedUsername];
         }
-        
+        else {
+            //[self setNomOwnerLabelText:@""];
+            self.nomOwnerLabel.text = @"";
+            self.nomOwnerTTLabel.text = @"";
+        }
         
         [self setDateLabelTextFromDate:moment.dateDebut];
         
@@ -965,9 +1209,40 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
 
 #pragma mark - Scroll Infinite Load
 
+- (void)updateCellsRowWithDecalage:(NSInteger)decalage {
+    
+    NSInteger taille = [self.moments count];
+    if(taille <= 2)
+        return;
+    if(taille == 3) {
+        // Cell ID
+        MomentClass *moment = self.moments[1];
+        NSString *cellId = [NSString stringWithFormat:@"TimeLineCell_Classique_%@", moment.momentId];
+        // Load
+        TimeLineCell *cell = [self.tableView dequeueReusableCellWithIdentifier:cellId];
+        if(cell) {
+            [cell decallerRow:decalage];
+        }
+    }
+    else {
+        taille = taille - 1;
+        NSInteger i;
+        for(i = 1; i < taille; i++) {
+            MomentClass *moment = self.moments[i];
+            NSString *cellId = [NSString stringWithFormat:@"TimeLineCell_Classique_%@", moment.momentId];
+            // Load
+            TimeLineCell *cell = [self.tableView dequeueReusableCellWithIdentifier:cellId];
+            if(cell) {
+                [cell decallerRow:decalage];
+            }
+        }
+        
+    }
+}
+
 - (void)loadMomentsInFuture
 {
-    if(!isLoading)
+    if(!isLoading && !firstLoad)
     {
         // Si il y a des moments dans la timeLine
         int taille = [self.moments count];
@@ -975,8 +1250,13 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
             
             // Load les moments dans le futur (fin du tableau)
             isLoading = YES;
+            //NSLog(@"Moments After : début = %@ || fin = %@", [self.moments[taille - 2] dateDebut], [self.moments[taille - 2] dateFin]);
+            UserClass *user = (self.timeLineStyle == TimeLineStyleProfil) ? self.user : nil;
             
-            [MomentClass getMomentsServerAfterDateOfMoment:self.moments[taille - 2] withEnded:^(NSArray *moments) {
+            [MomentClass getMomentsServerAfterDateOfMoment:self.moments[taille - 2]
+                                             timeDirection:TimeDirectionFutur
+                                                      user:user
+                                                 withEnded:^(NSArray *moments) {
                 
                 // Si il y a des moments à charger
                 if([moments count] > 0)
@@ -984,24 +1264,18 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
                     // Merge des tableau
                     NSMutableArray *array = self.moments.mutableCopy;
                     
-                    // ---Debug
-#warning DEBUG
-                    if([[moments[0] dateDebut] isLaterThan:[self.moments[taille - 2] dateDebut]])
-                    {
-                        // Supprime cellules vides
-                        [array removeObjectAtIndex:0];
-                        [array removeLastObject];
-                        
-                        // Ajout à la fin du tableau
-                        NSIndexSet *indexSet = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange([array count], [moments count])];
-                        [array insertObjects:moments atIndexes:indexSet];
-                        
-                        // Reload data
-                        [self reloadDataWithMoments:array];
-                        NSLog(@"Chargement dans le futur fini");
-                    }
+                    // Supprime cellules vides
+                    [array removeObjectAtIndex:0];
+                    [array removeLastObject];
                     
+                    // Ajout à la fin du tableau
+                    NSIndexSet *indexSet = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange([array count], [moments count])];
+                    [array insertObjects:moments atIndexes:indexSet];
                     
+                    // Reload data
+                    [self reloadDataWithMoments:array];
+                    [self updateCellsRowWithDecalage:-[moments count]];
+                    //NSLog(@"Chargement dans le futur fini");
                 }
                 
                 isLoading = NO;
@@ -1013,7 +1287,7 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
 
 - (void)loadMomentsInPast
 {
-    if(!isLoading)
+    if(!isLoading && !firstLoad)
     {
         // Si il y a des moments dans la timeLine
         int taille = [self.moments count];
@@ -1021,7 +1295,12 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
             
             // Load les moments dans le passé (début du tableau)
             isLoading = YES;
-            [MomentClass getMomentsServerAfterDateOfMoment:self.moments[1] withEnded:^(NSArray *moments) {
+            
+            UserClass *user = (self.timeLineStyle == TimeLineStyleProfil) ? self.user : nil;
+            [MomentClass getMomentsServerAfterDateOfMoment:self.moments[1]
+                                             timeDirection:TimeDirectionPast
+                                                      user:user
+                                                 withEnded:^(NSArray *moments) {
                 
                 // Si il y a des moments à charger
                 if([moments count] > 0)
@@ -1029,24 +1308,30 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
                     // Merge des tableau
                     NSMutableArray *array = self.moments.mutableCopy;
                     
+                    // Supprime cellules vides
+                    [array removeObjectAtIndex:0];
+                    [array removeLastObject];
                     
-                    // --Debug
-#warning DEBUG
-                    if([[moments[0] dateDebut] isEarlierThan:[self.moments[1] dateDebut]])
-                    {
-                        // Supprime cellules vides
-                        [array removeObjectAtIndex:0];
-                        [array removeLastObject];
-                        
-                        // Ajout au début du tableau
-                        NSIndexSet *indexSet = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [moments count])];
-                        [array insertObjects:moments atIndexes:indexSet];
-                        
-                        // Reload data
-                        [self reloadDataWithMoments:array];
-                        NSLog(@"Chargement dans le passé fini");
+                    // Ajout au début du tableau
+                    moments = [moments reversedArray]; // Inverser le tableau
+                    NSIndexSet *indexSet = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [moments count])];
+                    [array insertObjects:moments atIndexes:indexSet];
+                    
+                    // Moment précédement sélectionné
+                    MomentClass *actualMoment = (self.selectedIndex > 0) ? self.moments[self.selectedIndex] : nil;
+                    
+                    // Reload data
+                    [self reloadDataWithMoments:array];
+                    [self updateCellsRowWithDecalage:[moments count]];
+                    
+                    if(actualMoment) {
+                        // Sélectionner le moment précedement selectionné
+                        [self updateSelectedMoment:actualMoment atRow:([moments count]+1+self.selectedIndex)];
                     }
+                    // Scroll à la position précédente
+                    [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:([moments count]+1) inSection:0] atScrollPosition:UITableViewScrollPositionMiddle animated:NO];
                     
+                    //NSLog(@"Chargement dans le passé fini");
                     
                 }
                 
@@ -1142,7 +1427,7 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
     
     NSIndexPath *indexPath = [self.tableView indexPathForCell:cell];
     if( (indexPath.row>0) && (indexPath.row<[self.moments count]-2) ) {
-        MomentCoreData *m = (self.moments)[indexPath.row];
+        MomentClass *m = (self.moments)[indexPath.row];
         return m.dateDebut;
     }
     return nil;
@@ -1214,6 +1499,10 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
 - (IBAction)clicButtonClock
 {
     if([self.moments count] > 3) {
+        
+        // Google Analytics
+        [TimeLineViewController sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Today" value:nil];
+        
         [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:rowForToday inSection:0] atScrollPosition:UITableViewScrollPositionMiddle animated:YES];
         [self updateBandeauWithMoment:self.moments[rowForToday]];
         [self performSelector:@selector(selectActualMiddleCell) withObject:nil afterDelay:0.3];        
@@ -1284,7 +1573,6 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
                 
         }];
         
-        
     }
     
 }
@@ -1293,11 +1581,9 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
     UIImage *image_overlay;
     self.overlay = [[UIImageView alloc] initWithFrame:frame];
     
-    if (IS_WIDESCREEN) {
-        NSLog(@"IS iPhone 5");
+    if ([[VersionControl sharedInstance] isIphone5]) {
         image_overlay = [UIImage imageNamed:@"tuto_overlay"];
     } else {
-        NSLog(@"IS iPhone 4/4S");
         image_overlay = [UIImage imageNamed:@"tuto_overlay_iphone4"];
     }
     
@@ -1322,8 +1608,8 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
     [overlay_label1_2 setTextAlignment:NSTextAlignmentLeft];
     [overlay_label1_1 setFont:[UIFont fontWithName:@"Hand Of Sean" size:16.0]];
     [overlay_label1_2 setFont:[UIFont fontWithName:@"Hand Of Sean" size:16.0]];
-    [overlay_label1_1 setText:@"Recherche,"];
-    [overlay_label1_2 setText:@"notifications, profil,..."];
+    [overlay_label1_1 setText:NSLocalizedString(@"TimeLineViewController_Overlay_Label1", nil)];
+    [overlay_label1_2 setText:NSLocalizedString(@"TimeLineViewController_Overlay_Label2", nil)];
     [overlay_label1_1 setTextColor:[UIColor whiteColor]];
     [overlay_label1_2 setTextColor:[UIColor whiteColor]];
     
@@ -1339,8 +1625,8 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
     [overlay_label2_2 setTextAlignment:NSTextAlignmentRight];
     [overlay_label2_1 setFont:[UIFont fontWithName:@"Hand Of Sean" size:16.0]];
     [overlay_label2_2 setFont:[UIFont fontWithName:@"Hand Of Sean" size:16.0]];
-    [overlay_label2_1 setText:@"Crée un moment ou"];
-    [overlay_label2_2 setText:@"importe tes events Facebook !"];
+    [overlay_label2_1 setText:NSLocalizedString(@"TimeLineViewController_Overlay_Label3", nil)];
+    [overlay_label2_2 setText:NSLocalizedString(@"TimeLineViewController_Overlay_Label4", nil)];
     [overlay_label2_1 setTextColor:[UIColor whiteColor]];
     [overlay_label2_2 setTextColor:[UIColor whiteColor]];
     [overlay_label2_1 setTransform:CGAffineTransformMakeRotation(DEGREES_TO_RADIANS(-2))];
@@ -1351,7 +1637,7 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
     
     
     
-    if (IS_WIDESCREEN) {
+    if ([[VersionControl sharedInstance] isIphone5]) {
         UILabel *overlay_label3_1 = [[UILabel alloc] initWithFrame:CGRectMake(10, 380, 260, 30)];
         UILabel *overlay_label3_2 = [[UILabel alloc] initWithFrame:CGRectMake(10, 400, 260, 30)];
         [overlay_label3_1 setBackgroundColor:[UIColor clearColor]];
@@ -1360,8 +1646,8 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
         [overlay_label3_2 setTextAlignment:NSTextAlignmentCenter];
         [overlay_label3_1 setFont:[UIFont fontWithName:@"Hand Of Sean" size:16.0]];
         [overlay_label3_2 setFont:[UIFont fontWithName:@"Hand Of Sean" size:16.0]];
-        [overlay_label3_1 setText:@"Consulte l'activité évènementielle"];
-        [overlay_label3_2 setText:@"de tes proches !"];
+        [overlay_label3_1 setText:NSLocalizedString(@"TimeLineViewController_Overlay_Label5", nil)];
+        [overlay_label3_2 setText:NSLocalizedString(@"TimeLineViewController_Overlay_Label6", nil)];
         [overlay_label3_1 setTextColor:[UIColor whiteColor]];
         [overlay_label3_2 setTextColor:[UIColor whiteColor]];
         [overlay_label3_1 setTransform:CGAffineTransformMakeRotation(DEGREES_TO_RADIANS(-9))];
@@ -1378,8 +1664,8 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
         [overlay_label3_2 setTextAlignment:NSTextAlignmentCenter];
         [overlay_label3_1 setFont:[UIFont fontWithName:@"Hand Of Sean" size:16.0]];
         [overlay_label3_2 setFont:[UIFont fontWithName:@"Hand Of Sean" size:16.0]];
-        [overlay_label3_1 setText:@"Consulte l'activité évènementielle"];
-        [overlay_label3_2 setText:@"de tes proches !"];
+        [overlay_label3_1 setText:NSLocalizedString(@"TimeLineViewController_Overlay_Label5", nil)];
+        [overlay_label3_2 setText:NSLocalizedString(@"TimeLineViewController_Overlay_Label6", nil)];
         [overlay_label3_1 setTextColor:[UIColor whiteColor]];
         [overlay_label3_2 setTextColor:[UIColor whiteColor]];
         [overlay_label3_1 setTransform:CGAffineTransformMakeRotation(DEGREES_TO_RADIANS(-9))];
@@ -1409,6 +1695,44 @@ withRootViewController:(RootTimeLineViewController*)rootViewController
          [self.overlay removeFromSuperview];
          
      }];
+}
+
+- (void)loadEvents
+{
+    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    hud.labelText = NSLocalizedString(@"MBProgressHUD_Loading_FBEvents", nil);
+    
+    [MomentClass importFacebookEventsWithEnded:^(NSArray *events, NSArray *moments) {
+        
+        if (events && moments) {
+            
+            int nbEvent = [events count];
+            
+            if (nbEvent > 0) {
+                
+                if (nbEvent > 1) {
+                    [[MTStatusBarOverlay sharedInstance]
+                     postFinishMessage:[NSString stringWithFormat:NSLocalizedString(@"StatusBarOverlay_ImportFacebookEvent_several", nil), nbEvent]
+                     duration:2 animated:YES];
+                } else {
+                    [[MTStatusBarOverlay sharedInstance]
+                     postFinishMessage:[NSString stringWithFormat:NSLocalizedString(@"StatusBarOverlay_ImportFacebookEvent", nil), nbEvent]
+                     duration:2 animated:YES];
+                }
+                
+                // Save
+                [self.tableView reloadData];
+                [self reloadData];
+            }
+        }
+        else {
+            [[MTStatusBarOverlay sharedInstance]
+             postImmediateErrorMessage:NSLocalizedString(@"StatusBarOverlay_LoadingFailure", nil)
+             duration:2 animated:YES];
+        }
+        
+        [MBProgressHUD hideHUDForView:self.view animated:YES];
+    }];
 }
 
 @end 

@@ -52,8 +52,11 @@ static NSDateFormatter *dateFormatter = nil;
         if(event.rsvp_status == UserStateOwner) {
             self.ownerLabel.text = @"VOUS";
         }
+        else if(event.owner && (event.owner.prenom || event.owner.nom) ) {
+            self.ownerLabel.text = event.owner.formatedUsername;
+        }
         else {
-            self.ownerLabel.text = event.ownerAttributes[@"name"];
+            self.ownerLabel.text = [event.ownerAttributes[@"name"] uppercaseString];
         }
         self.ownerLabel.font = bigFont;
         self.creeParLabel.font = smallFont;

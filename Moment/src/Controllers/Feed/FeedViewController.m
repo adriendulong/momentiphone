@@ -17,6 +17,9 @@
 #import "FeedSmallCell.h"
 #import "FeedChatCell.h"
 #import "FeedFollowCell.h"
+#import "FeedNewMomentCell.h"
+
+#import "GAI.h"
 
 #define TABLEVIEW_SCROLLVIEW_TAG_IDENTIFER -1
 
@@ -94,8 +97,9 @@
          withSaveBlock:(void (^) (NSArray *feeds))saveBlock
              withEnded:(void (^) (void))endBlock
 {
-    [Feed getFeedsAtPage:nextPage withEnded:^(NSDictionary *feeds) {
+    [Feed getFeedsAtPage:page withEnded:^(NSDictionary *feeds) {
         
+        currentPage = page;
         nextPage = [feeds[@"next_page"] intValue];
         
         if(saveBlock)
@@ -146,6 +150,9 @@
 
 - (void)dropViewDidBeginRefreshing:(ODRefreshControl *)refreshControl
 {
+    // Google Analytics
+    [FeedViewController sendGoogleAnalyticsEvent:@"Swipe" label:@"Rechargement" value:nil];
+    
     [self reloadDataWithEnded:^{
         [refreshControl endRefreshing];
     }];
@@ -182,16 +189,21 @@
     
     switch (feed.type) {
         case FeedTypePhoto:
-            return 366.0f;
+            return 380.0f;
             break;
         
         case FeedTypeFollow:
-            return 115.0f;
+            return 104.0f;
             break;
             
-        case FeedTypeChat:
-            return 141.0f;
-            break;
+        case FeedTypeChat: {
+            FeedMessage *fm = (FeedMessage*)feed;
+            return fm.shouldUseLargeView ? 141.0f : 108.0f;
+        } break;
+            
+        case FeedTypeNewEvent:
+            return 155.0f;
+        break;
             
         default:
             return 163.0f;
@@ -218,12 +230,15 @@
             cell.frame = frame;
             
             UILabel *label = [[UILabel alloc] init];
-            label.text = @"Aucun feed actuellement ...";
+            label.text = NSLocalizedString(@"FeedViewController_EmptyLabel", nil);
             label.backgroundColor = [UIColor clearColor];
             label.font = [[Config sharedInstance] defaultFontWithSize:14];
             label.textColor = [Config sharedInstance].textColor;
-            [label sizeToFit];
+            label.numberOfLines = 0;
+            label.textAlignment = NSTextAlignmentCenter;
             frame = label.frame;
+            frame.size.width = self.view.frame.size.width - 20;
+            frame.size.height = 2.0*(self.view.frame.size.height)/3.0;
             frame.origin.x = (cell.frame.size.width - frame.size.width)/2.0;
             frame.origin.y = (cell.frame.size.height - frame.size.height)/4.0;
             label.frame = frame;
@@ -267,7 +282,7 @@
                 
             case FeedTypeFollow: {
                 
-                CellIdentifier = [NSString stringWithFormat:@"FeedViewController_ChatCell_%d", feed.feedId];
+                CellIdentifier = [NSString stringWithFormat:@"FeedViewController_FollowCell_%d", feed.feedId];
                 
                 cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
                 
@@ -279,9 +294,23 @@
                 
             } break;
                 
+            case FeedTypeNewEvent: {
+                
+                CellIdentifier = [NSString stringWithFormat:@"FeedViewController_NewMomentCell_%d", feed.feedId];
+                
+                cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+                
+                if(cell == nil) {
+                    cell = [[FeedNewMomentCell alloc] initWithFeed:feed
+                                                reuseIdentifier:CellIdentifier
+                                                       delegate:self];
+                }
+                
+            } break;
+                
             default:
                 
-                CellIdentifier = [NSString stringWithFormat:@"FeedViewController_FollowCell_%d", feed.feedId];
+                CellIdentifier = [NSString stringWithFormat:@"FeedViewController_Cell_%d", feed.feedId];
                 
                 cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
                 
@@ -310,16 +339,36 @@
     switch (feed.type) {
             
         case FeedTypeChat:
+            
+            // Google Analytics
+            [FeedViewController sendGoogleAnalyticsEvent:@"Clic Motif" label:@"Motif - Chat" value:nil];
+            
             [self showTchatView:feed.moment];
             break;
     
         case FeedTypePhoto:
+            
+            // Google Analytics
+            [FeedViewController sendGoogleAnalyticsEvent:@"Clic Motif" label:@"Motif - Photo" value:nil];
+            
             [self showPhotoView:feed.moment];
             break;
             
         case FeedTypeGoing:
+            
+            // Google Analytics
+            [FeedViewController sendGoogleAnalyticsEvent:@"Clic Motif" label:@"Motif - Va à un Moment" value:nil];
+            
         case FeedTypeInvited:
+            
+            // Google Analytics
+            [FeedViewController sendGoogleAnalyticsEvent:@"Clic Motif" label:@"Motif - Invitation" value:nil];
+            
         case FeedTypeNewEvent:
+            
+            // Google Analytics
+            [FeedViewController sendGoogleAnalyticsEvent:@"Clic Motif" label:@"Motif - Nouveau Moment" value:nil];
+            
             [self showInfoMomentView:feed.moment];
             break;
             
@@ -386,13 +435,27 @@
     return texte;
 }
 
+#pragma mark - Google Analytics
+
++ (void)sendGoogleAnalyticsView {
+    [[[GAI sharedInstance] defaultTracker] sendView:@"Vue Feed"];
+}
+
++ (void)sendGoogleAnalyticsEvent:(NSString*)action label:(NSString*)label value:(NSNumber*)value {
+    [[[GAI sharedInstance] defaultTracker]
+     sendEventWithCategory:@"Feed"
+     withAction:action
+     withLabel:label
+     withValue:value];
+}
+
 #pragma mark - UIScrollView Delegate
 
 - (void)scrollViewWillEndDragging:(UIScrollView *)scrollView
                      withVelocity:(CGPoint)velocity
               targetContentOffset:(inout CGPoint *)targetContentOffset
 {
-    
+    // Si ce n'est pas la scroll view principale mais une des scroll view des photos
     if(scrollView.tag != TABLEVIEW_SCROLLVIEW_TAG_IDENTIFER)
     {
         // Force à s'arreter sur une photo
@@ -409,7 +472,10 @@
 {
     // Si une nouvelle cellule a été selectionnée
     if( (!self.ongletsViewController) || (self.ongletsViewController.moment != moment) ) {
-        self.ongletsViewController = [[RootOngletsViewController alloc] initWithMoment:moment withOnglet:onglet];
+        self.ongletsViewController = [[RootOngletsViewController alloc]
+                                      initWithMoment:moment
+                                      withOnglet:onglet
+                                      withTimeLine:self.rootViewController.privateTimeLine];
     }
     else
         [self.ongletsViewController addAndScrollToOnglet:onglet];

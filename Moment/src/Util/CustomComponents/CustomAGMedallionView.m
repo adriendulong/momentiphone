@@ -115,9 +115,9 @@
                                  }
                                  failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error) {
                                      [self.activityIndicatorView stopAnimating];
-                                     NSLog(@"CustomAGMedallion Fail to load image : %@", imageString);
-                                     NSLog(@"error : %@", error.localizedDescription);
-                                     NSLog(@"Response : %d", response.statusCode);
+                                     //NSLog(@"CustomAGMedallion Fail to load image : %@", imageString);
+                                     //NSLog(@"error : %@", error.localizedDescription);
+                                     //NSLog(@"Response : %d", response.statusCode);
                                  }];
             
             //self.image = [UIImage imageWithData:[NSData dataWithContentsOfURL:<#(NSURL *)#>]]

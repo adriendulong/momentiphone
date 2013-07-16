@@ -9,6 +9,11 @@
 #import "DeviceModel.h"
 #import "OpenUDID.h"
 #import "UIDevice-Hardware.h"
+#import "AFMomentAPIClient.h"
+
+// Clé NSUserDefaults
+// -> Envoyer requete de logout si elle a échoué
+#define kDeviceShouldLogout @"DeviceShouldLogout"
 
 @implementation DeviceModel
 
@@ -68,12 +73,56 @@ static NSString * deviceTokenKey = @"DeviceTokenKey";
                                  @"device_id":[self openUDID],
                                  }, token, lang];
         
-        NSLog(@"%@", stringError);
+        //NSLog(@"%@", stringError);
         
         [[[UIAlertView alloc] initWithTitle:@"Data Model Error" message:stringError delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
     }
     
     return nil;
+}
+
+#pragma mark - Device Should Logout
+
++ (BOOL)deviceShouldLogout {
+    return [[NSUserDefaults standardUserDefaults] boolForKey:kDeviceShouldLogout];
+}
+
++ (void)setDeviceShouldLogout:(BOOL)logout {
+    
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    
+    if(logout) {
+        [userDefaults setBool:YES forKey:kDeviceShouldLogout];
+    } else {
+        [userDefaults removeObjectForKey:kDeviceShouldLogout];
+    }
+    
+    [userDefaults synchronize];
+}
+
+#pragma mark - Server
+
++ (void)logout
+{
+    NSString *path = [NSString stringWithFormat:@"logout/%@", [self openUDID]];
+    
+    [[AFMomentAPIClient sharedClient] getPath:path parameters:nil encoding:AFFormURLParameterEncoding success:^(AFHTTPRequestOperation *operation, id JSON) {
+        
+        // Logout success
+        [self setDeviceShouldLogout:NO];
+        
+        //NSLog(@"STOP Push Notification Success");
+        
+        [[NSUserDefaults standardUserDefaults] synchronize];
+        
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        
+        //NSLog(@"STOP Push Notifications Fail");
+        HTTP_ERROR(operation, error);
+        
+        // Logout Fail -> Force Logout when it's possible
+        [self setDeviceShouldLogout:YES];
+    }];
 }
 
 @end

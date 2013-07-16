@@ -10,6 +10,12 @@
 #import "UserCoreData.h"
 #import "MomentClass.h"
 
+// Delegate
+// -> Utilisé pour retourné la valeur depuis le PlacesViewController
+@protocol CreationFicheViewControllerDelegate <NSObject>
+@property (nonatomic, strong) NSString *adresseText;
+@end
+
 #import "TimeLineViewController.h"
 #import "CustomTextField.h"
 #import "CustomDatePicker.h"
@@ -18,7 +24,7 @@
 #import "CustomUIImageView.h"
 #import "CustomTextView.h"
 
-@interface CreationFicheViewController : UIViewController <UINavigationControllerDelegate,UIImagePickerControllerDelegate, UIActionSheetDelegate, UITextFieldDelegate, UITextViewDelegate> {
+@interface CreationFicheViewController : UIViewController <UINavigationControllerDelegate,UIImagePickerControllerDelegate, UIActionSheetDelegate, UITextFieldDelegate, UITextViewDelegate, CreationFicheViewControllerDelegate> {
     @private
     NSInteger viewHeight;
 }
@@ -42,7 +48,6 @@
 @property (nonatomic, weak) IBOutlet CustomUIImageView *coverView;
 @property (nonatomic, weak) IBOutlet CustomLabel *titreMomentLabel;
 @property (nonatomic, weak) IBOutlet UIButton *changerCoverButton;
-@property (nonatomic, weak) IBOutlet CustomLabel *changerCoverLabel;
 @property (nonatomic, strong) CustomDatePicker *pickerView;
 @property (nonatomic, weak) IBOutlet CustomTextField *startDateTextField;
 @property (nonatomic, weak) IBOutlet CustomTextField *endDateTextField;
@@ -51,14 +56,15 @@
 @property (nonatomic, strong) NSDateFormatter *dateFormatter;
 @property (nonatomic, strong) NSDate *dateDebut, *dateFin;
 
+
 /* ---- Step 2 ---- */
 @property (nonatomic, weak) IBOutlet TPKeyboardAvoidingScrollView *step1ScrollView;
 @property (nonatomic, weak) IBOutlet CustomLabel *ouLabel;
 @property (nonatomic, weak) IBOutlet CustomLabel *etape2Label;
-@property (nonatomic, weak) IBOutlet CustomTextField *adresseTextField;
 @property (nonatomic, weak) IBOutlet CustomTextField *infoLieuTextField;
 @property (nonatomic, weak) IBOutlet CustomTextField *hashtagTextField;
 @property (nonatomic, weak) IBOutlet CustomLabel *adresseLabel;
+@property (nonatomic, strong) NSString *adresseText;
 @property (nonatomic, weak) IBOutlet CustomLabel *infoLieuLabel;
 @property (nonatomic, weak) IBOutlet CustomLabel *descriptionLabel;
 @property (nonatomic, weak) IBOutlet CustomLabel *hashtagLabel;
@@ -67,8 +73,17 @@
 @property (nonatomic) BOOL switchControlState;
 @property (nonatomic, weak) IBOutlet UIImageView *backgroundDescriptionView;
 @property (nonatomic, weak) IBOutlet CustomTextView *descriptionTextView;
+@property (weak, nonatomic) IBOutlet UIButton *adresseButton;
+@property (weak, nonatomic) IBOutlet UIButton *switchBackground;
 
-- (id)initWithUser:(UserClass*)user withEventName:(NSString*)eventName withTimeLine:(UIViewController <TimeLineDelegate> *)timeLine;
-- (id)initWithUser:(UserClass*)user withMoment:(MomentClass*)moment withTimeLine:(UIViewController <TimeLineDelegate> *)timeLine;
+
+
+- (id)initWithUser:(UserClass*)user
+     withEventName:(NSString*)eventName
+      withTimeLine:(UIViewController <TimeLineDelegate> *)timeLine;
+
+- (id)initWithUser:(UserClass*)user
+        withMoment:(MomentClass*)moment
+      withTimeLine:(UIViewController <TimeLineDelegate> *)timeLine;
 
 @end

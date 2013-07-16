@@ -2,7 +2,7 @@
 //  UserCoreData.m
 //  Moment
 //
-//  Created by Mathieu PIERAGGI on 02/04/13.
+//  Created by Mathieu PIERAGGI on 03/06/13.
 //  Copyright (c) 2013 Moment. All rights reserved.
 //
 
@@ -14,6 +14,7 @@
 @implementation UserCoreData
 
 @dynamic dataImage;
+@dynamic descriptionString;
 @dynamic email;
 @dynamic facebookId;
 @dynamic imageString;
@@ -27,7 +28,9 @@
 @dynamic secondPhone;
 @dynamic state;
 @dynamic userId;
-@dynamic descriptionString;
+@dynamic privacy;
+@dynamic request_follower;
+@dynamic request_follow_me;
 @dynamic messages;
 @dynamic moments;
 

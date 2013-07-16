@@ -8,6 +8,17 @@
 
 #import <Foundation/Foundation.h>
 
+enum UsernameStyle {
+    UsernameStyleUppercase = 0,
+    UsernameStyleCapitalized = 1,
+    UsernameStyleUnchanged = 2
+    };
+
+enum UserSex {
+    UserSexMale = 0,
+    UserSexFemale = 1
+    };
+
 @interface UserClass : NSObject
 
 @property (nonatomic, strong) UIImage * uimage;
@@ -27,6 +38,10 @@
 @property (nonatomic, strong) NSNumber *nb_photos;
 @property (nonatomic, strong) NSNumber *is_followed;
 @property (nonatomic, strong) NSString *descriptionString;
+@property (nonatomic, strong) NSNumber *privacy;
+@property (nonatomic, strong) NSNumber *request_follower;
+@property (nonatomic, strong) NSNumber *request_follow_me;
+@property (nonatomic) enum UserSex sex;
 
 // Setup
 - (void)setupWithAttributesFromLocal:(NSDictionary*)attributes;
@@ -38,5 +53,12 @@
 
 + (NSArray*)arrayOfUsersWithArrayOfAttributesFromLocal:(NSArray*)arrayAttributes;
 + (NSArray*)arrayOfUsersWithArrayOfAttributesFromWeb:(NSArray*)arrayAttributes;
+
+// Util
+- (NSString*)formatedUsername;
+- (NSString*)formatedUsernameWithStyle:(enum UsernameStyle)style;
++ (NSString*)formatedUsernameWithFirstname:(NSString*)firstname
+                                  lastname:(NSString*)lastname
+                                     style:(enum UsernameStyle)style;
 
 @end

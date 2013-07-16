@@ -26,7 +26,9 @@ enum TextAlignment {
 #define NAVIGATION_BAR_HEIGHT 44 
 #define TOPBAR_HEIGHT (STATUS_BAR_HEIGHT+NAVIGATION_BAR_HEIGHT)
 - (CGFloat)screenHeight;
+- (CGSize)screenSize;
 - (BOOL)isRetina;
+- (BOOL)isIphone5;
 
 // Present / Dismiss View Controller
 - (void)dismissModalViewControllerFromRoot:(UIViewController*)root animated:(BOOL)animated;

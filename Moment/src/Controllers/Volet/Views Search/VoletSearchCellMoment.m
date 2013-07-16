@@ -8,6 +8,7 @@
 
 #import "VoletSearchCellMoment.h"
 #import "Config.h"
+#import "UserClass+Server.h"
 
 @implementation VoletSearchCellMoment
 
@@ -15,7 +16,8 @@
 @synthesize nomLabel = _nomLabel;
 @synthesize pictureView = _pictureView;
 
-- (id)initWithMoment:(MomentClass*)moment reuseIdentifier:(NSString*)reuseIdentifier;
+- (id)initWithMoment:(MomentClass*)moment
+     reuseIdentifier:(NSString*)reuseIdentifier
 {
     self = [super initWithStyle:UITableViewCellStyleDefault reuseIdentifier:reuseIdentifier];
     if (self) {
@@ -39,9 +41,26 @@
         
         // Background
         self.backgroundView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg_volet"]];
+        
+        // Follow Button
+        if(self.moment.privacy.intValue != MomentPrivacyOpen) {
+            self.followButton.hidden = YES;
+        }
     }
     return self;
 }
 
+- (IBAction)clicFollowMoment {
+    
+    UserClass *user = [UserCoreData getCurrentUser];
+    [user followPublicMoment:self.moment withEnded:^(BOOL success) {
+        
+        if(success) {
+            self.followButton.selected = !self.followButton.selected;
+        }
+        
+    }];
+    
+}
 
 @end

@@ -18,7 +18,7 @@
 @property (strong, nonatomic) NSDate *startTime;
 @property (strong, nonatomic) NSDate *endTime;
 @property (strong, nonatomic) NSString *location;
-@property (nonatomic) BOOL isPrivate;
+@property (nonatomic) enum MomentPrivacy privacy;
 @property (strong, nonatomic) NSDictionary *venue;
 @property (nonatomic) enum UserState rsvp_status;
 @property (strong, nonatomic) UIImage *picture;

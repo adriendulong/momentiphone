@@ -13,6 +13,12 @@
 #import "AFJSONRequestOperation.h"
 #import "DeviceModel.h"
 #import "Photos.h"
+#import "MomentClass+Server.h"
+#import "PushNotificationManager.h"
+#import "LocalNotification.h"
+#import "ParametreNotification.h"
+#import "Config.h"
+#import "FacebookManager.h"
 
 @implementation UserClass (Server)
 
@@ -101,7 +107,7 @@
     NSString *path = [NSString stringWithFormat:@"user/%d", userId];
     [[AFMomentAPIClient sharedClient] getPath:path parameters:nil encoding:AFFormURLParameterEncoding success:^(AFHTTPRequestOperation *operation, id JSON) {
         if(block && JSON) {
-            NSLog(@"JSON = %@", JSON);
+            //NSLog(@"JSON = %@", JSON);
             block([[UserClass alloc] initWithAttributesFromWeb:JSON]);
             //NSDictionary *mapped = [UserClass mappingToLocalAttributes:JSON];
             //UserClass *requested = [UserCoreData requestUserWithAttributes:mapped];
@@ -164,7 +170,7 @@
         
         [[AFMomentAPIClient sharedClient] saveHeaderResponse:operation.response];
         
-        NSLog(@"Response = %@", JSON);
+        //NSLog(@"Response = %@", JSON);
         
         if (block) {
             block(YES);
@@ -183,6 +189,27 @@
     [operation start];
 }
 
++ (void)changeCurrentUserPassword:(NSString*)newPassword
+                      oldPassword:(NSString*)oldPassword
+                        withEnded:(void (^) (NSInteger status))block
+{
+    NSString *path = [NSString stringWithFormat:@"changepassword/%@/%@", newPassword, oldPassword];
+    
+    [[AFMomentAPIClient sharedClient] getPath:path parameters:nil encoding:AFFormURLParameterEncoding success:^(AFHTTPRequestOperation *operation, id JSON) {
+        if(block) {
+            block(operation.response.statusCode);
+        }
+        
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+
+        HTTP_ERROR(operation, error);
+        
+        if(block)
+            block(operation.response.statusCode);
+        
+    } waitUntilFinisehd:NO];
+}
+
 #pragma mark - Login
 
 + (void)getLoggedUserFromServerWithEnded:( void (^) (UserClass *user) )block waitUntilFinished:(BOOL)waitUntilFinished
@@ -195,18 +222,18 @@
         if(block) {
             
             NSDictionary *localAttr = [UserClass mappingToLocalAttributes:attributes];
-            NSLog(@"Local Attributes : %@", localAttr);
+            //NSLog(@"Local Attributes : %@", localAttr);
             [UserCoreData updateCurrentUserWithAttributes:localAttr];
             
             UserClass *user = [UserCoreData getCurrentUser];
-            NSLog(@"user = %@", user);
+            //NSLog(@"user = %@", user);
             
             block(user);
         }
         
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-         NSLog(@"MIDDLE");
+         //NSLog(@"MIDDLE");
         HTTP_ERROR(operation, error);
         
         if(block)
@@ -243,7 +270,11 @@
     [[AFMomentAPIClient sharedClient] postPath:path parameters:params encoding:AFFormURLParameterEncoding success:^(AFHTTPRequestOperation *operation, id JSON) {
         
         if( operation.response.statusCode == 200 ){
-                        
+            
+            // User logged
+            // -> On ne doit pas se déconnecter
+            [DeviceModel setDeviceShouldLogout:NO];
+            
             // On récupère l'id du user
             NSDictionary *attributes = (NSDictionary*)JSON;
             int userId = [attributes[@"id"] intValue];
@@ -260,7 +291,7 @@
                     }
                     else {
                         
-                        NSLog(@"Fail to laod user informations");
+                        //NSLog(@"Fail to laod user informations");
                         if(block) {
                             block(500);
                         }
@@ -276,7 +307,7 @@
             
         }
         else {
-            NSLog(@"STATUS AUTRE : %d", operation.response.statusCode);
+            //NSLog(@"STATUS AUTRE : %d", operation.response.statusCode);
             if (block) {
                 block(operation.response.statusCode);
             }
@@ -285,7 +316,7 @@
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         
-        NSLog(@"%@", operation.request);
+        //NSLog(@"%@", operation.request);
         
         HTTP_ERROR(operation, error);
         if (block) {
@@ -293,6 +324,40 @@
         }
     }];
     
+    
+}
+
+#pragma mark - Logout
+
++ (void)logoutCurrentUserWithEnded:(void (^) (void))block
+{
+    // Prévenir Server d'arreter Push Notifications
+    [DeviceModel logout];
+    
+    // Delete Current User
+    //[[Config sharedInstance].managedObjectContext deleteObject:user];
+    //[[Config sharedInstance] saveContext];
+    
+    // Clear data
+    [ChatMessageCoreData resetChatMessagesLocal];
+    [MomentCoreData resetMomentsLocal];
+    [UserCoreData resetUsersLocal];
+    
+    // Unsubscribe to local notifications
+    [[PushNotificationManager sharedInstance] removeNotifications];
+    [[Config sharedInstance] saveContext];
+    
+    // Suppression des préférences des push notifications
+    [ParametreNotification clearSettingsLocal];
+    
+    // Suppression cookie de connexion automatique
+    [[AFMomentAPIClient sharedClient] clearConnexionCookie];
+    
+    // Logout Facebook
+    [[FacebookManager sharedInstance] logout];
+    
+    if(block)
+        block();
     
 }
 
@@ -318,125 +383,7 @@
     
 }
 
-#pragma mark - Invites
-
-+ (void)inviteNewGuest:(NSArray*)users toMoment:(MomentClass*)moment withEnded:( void (^) (BOOL success) )block
-{
-    NSString *path = [NSString stringWithFormat:@"newguests/%d", moment.momentId.intValue];
-    
-    // Mapping
-    NSMutableArray *params = [[NSMutableArray alloc] initWithCapacity:[users count]];
-    for( UserClass *u in users) {
-        [params addObject:[u mappingToWeb]];
-    }
-    
-    [[AFMomentAPIClient sharedClient] postPath:path parameters:@{@"users":params} encoding:AFJSONParameterEncoding success:^(AFHTTPRequestOperation *operation, id JSON) {
-                
-        if(block)
-            block(YES);
-        
-        
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        
-        HTTP_ERROR(operation, error);
-        
-        if(block)
-            block(NO);
-    }];
-}
-
-// --- Local Conversions ----
-
-// Englobe sous la forme @{@"user":user, @"isAdmin":@(isAdmin)}
-+ (NSMutableDictionary*)englobeUserWithAdminAttributeFromWeb:(NSDictionary*)userAttriubtes admin:(BOOL)isAdmin
-{
-    NSMutableDictionary *dico = [[NSMutableDictionary alloc] initWithCapacity:2];
-    dico[@"user"] = [[UserClass alloc] initWithAttributesFromWeb:userAttriubtes];
-    dico[@"isAdmin"] = @(isAdmin);
-    return dico;
-}
-
-// Array avec la forme d'au dessus
-+ (NSArray*)englobeUserArrayWithAdminAttributesFromWeb:(NSArray*)users admin:(BOOL)isAdmin
-{
-    NSMutableArray *final = [[NSMutableArray alloc] initWithCapacity:[users count]];
-    for( NSDictionary* user in users ) {
-        NSMutableDictionary *newUser = [UserClass englobeUserWithAdminAttributeFromWeb:user admin:isAdmin];
-        [final addObject:newUser];
-    }
-    return final;
-}
-
-// -----
-
-+ (void)getInvitedUsersToMoment:(MomentClass*)moment
-         withAdminEncapsulation:(BOOL)adminEncapsulation
-                      withEnded:( void (^) (NSDictionary* invites) )block
-{
-    NSString *path = [NSString stringWithFormat:@"guests/%d", moment.momentId.intValue];
-    
-    [[AFMomentAPIClient sharedClient] getPath:path parameters:nil encoding:AFFormURLParameterEncoding
-                                      success:^(AFHTTPRequestOperation *operation, id JSON) {
-                                                          
-        if(block) {
-            NSArray *ownerArray = (NSArray*)JSON[@"owner"];
-            id owner = nil;
-            if([ownerArray count] > 0) {
-                owner = ownerArray[0];
-            }
-            NSArray *maybe = (NSArray*)JSON[@"maybe"];
-            NSArray *coming = (NSArray*)JSON[@"coming"];
-            NSArray *not_coming = (NSArray*)JSON[@"not_coming"];
-            NSArray *unknown = (NSArray*)JSON[@"unknown"];
-            NSArray *admin = (NSArray*)JSON[@"admin"];
-            
-            if(adminEncapsulation)
-            {
-                // Update Admins As Admin
-                admin = [UserClass englobeUserArrayWithAdminAttributesFromWeb:admin admin:YES];
-                if(owner)
-                    owner = [UserClass englobeUserWithAdminAttributeFromWeb:owner admin:YES];
-                
-                // Convert non admins
-                maybe = [UserClass englobeUserArrayWithAdminAttributesFromWeb:maybe admin:NO];
-                coming = [UserClass englobeUserArrayWithAdminAttributesFromWeb:coming admin:NO];
-                not_coming = [UserClass englobeUserArrayWithAdminAttributesFromWeb:not_coming admin:NO];
-                unknown = [UserClass englobeUserArrayWithAdminAttributesFromWeb:unknown admin:NO];
-            }
-            else {
-                admin = [UserClass arrayOfUsersWithArrayOfAttributesFromWeb:admin];
-                if(owner)
-                    owner = [[UserClass alloc] initWithAttributesFromWeb:owner];
-                maybe = [UserClass arrayOfUsersWithArrayOfAttributesFromWeb:maybe];
-                coming = [UserClass arrayOfUsersWithArrayOfAttributesFromWeb:coming];
-                not_coming = [UserClass arrayOfUsersWithArrayOfAttributesFromWeb:not_coming];
-                unknown = [UserClass arrayOfUsersWithArrayOfAttributesFromWeb:unknown];
-            }
-            
-            NSMutableDictionary *dico = [[NSMutableDictionary alloc] init];
-            if(owner) dico[@"owner"] = owner;
-            if(maybe) dico[@"maybe"] = maybe;
-            if(coming) dico[@"coming"] = coming;
-            if(not_coming) dico[@"not_coming"] = not_coming;
-            if(unknown) dico[@"unknown"] = unknown;
-            if(admin) dico[@"admin"] = admin;
-                        
-            block(dico);
-        }
-        
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        
-        HTTP_ERROR(operation, error);
-        
-        if(block)
-            block(nil);
-        
-    }];
-}
-
-+ (void)getInvitedUsersToMoment:(MomentClass*)moment withEnded:( void (^) (NSDictionary* invites) )block {
-    [self getInvitedUsersToMoment:moment withAdminEncapsulation:YES withEnded:block];
-}
+#pragma mark - Favoris
 
 + (void)getFavorisUsersWithEnded:( void (^) (NSArray* favoris) )block
 {
@@ -462,6 +409,12 @@
             block(nil);
     }];
     
+}
+
+#pragma mark - Follow Public Moments
+
+- (void)followPublicMoment:(MomentClass*)moment withEnded:( void (^) (BOOL success) )block {
+    [moment inviteNewGuest:@[self] withEnded:block];
 }
 
 #pragma mark - Users On Moment
@@ -545,27 +498,80 @@
     }];
 }
 
-- (void)toggleFollowWithEnded:(void (^) (BOOL success))block
+- (void)toggleFollowWithEnded:(void (^) (BOOL success, BOOL waitForReponse))block
 {
     NSString *path = [NSString stringWithFormat:@"addfollow/%@", self.userId];
     
     [[AFMomentAPIClient sharedClient] getPath:path parameters:nil encoding:AFFormURLParameterEncoding success:^(AFHTTPRequestOperation *operation, id JSON) {
         
-        self.is_followed = @(!self.is_followed.boolValue);
+        BOOL waitForResponse = [JSON[@"code_follow"] boolValue];
+        if(!waitForResponse)
+            self.is_followed = @(!self.is_followed.boolValue);
         
         [UserCoreData currentUserNeedsUpdate];
         
         if(block) {
-            block(YES);
+            block(YES, waitForResponse);
         }
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         HTTP_ERROR(operation, error);
         
         if(block)
-            block(NO);
+            block(NO, NO);
     }];
 }
+
++ (void)acceptFollowOfUser:(UserClass*)user withEnded:(void (^) (BOOL success))block {
+    
+    if(user.request_follow_me.boolValue) {
+        
+        NSString *path = [NSString stringWithFormat:@"acceptfollow/%@", user.userId];
+        
+        [[AFMomentAPIClient sharedClient] getPath:path parameters:nil encoding:AFFormURLParameterEncoding success:^(AFHTTPRequestOperation *operation, id JSON) {
+            
+            [UserCoreData currentUserNeedsUpdate];
+            
+            if(block) {
+                block(YES);
+            }
+            
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            HTTP_ERROR(operation, error);
+            
+            if(block)
+                block(NO);
+        }];
+        
+    }
+}
+
++ (void)refuseFollowOfUser:(UserClass*)user withEnded:(void (^) (BOOL success))block {
+    
+    if(user.request_follow_me.boolValue) {
+        
+        NSString *path = [NSString stringWithFormat:@"refusefollow/%@", user.userId];
+        
+        [[AFMomentAPIClient sharedClient] getPath:path parameters:nil encoding:AFFormURLParameterEncoding success:^(AFHTTPRequestOperation *operation, id JSON) {
+            
+            //NSLog(@"JSON = %@", JSON);
+            
+            [UserCoreData currentUserNeedsUpdate];
+            
+            if(block) {
+                block(YES);
+            }
+            
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            HTTP_ERROR(operation, error);
+            
+            if(block)
+                block(NO);
+        }];
+        
+    }
+}
+
 
 #pragma mark - Photos
 
@@ -599,9 +605,7 @@
     if(block)
     {
         NSString *path = [NSString stringWithFormat:@"search/%@", [query stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
-        
-        NSLog(@"path = %@", path);
-        
+                
         [[AFMomentAPIClient sharedClient] getPath:path parameters:nil encoding:AFFormURLParameterEncoding success:^(AFHTTPRequestOperation *operation, id JSON) {
             
             NSArray *users = [UserClass arrayOfUsersWithArrayOfAttributesFromWeb:JSON[@"users"]];
@@ -614,7 +618,7 @@
             // Ajout des moments publics
             [moments addObjectsFromArray:publicMoments];
             
-            NSLog(@"users = \n%@\n\nmoments = \n%@\n\nnbPrivate = %d", users, moments, nbPrivateMoments);
+            //NSLog(@"users = \n%@\n\nmoments = \n%@\n\nnbPrivate = %d", users, moments, nbPrivateMoments);
             
             block(users, moments, nbPrivateMoments);
 

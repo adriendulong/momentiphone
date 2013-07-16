@@ -27,6 +27,7 @@
     enum PhotoViewControllerStyle photoViewStyle;
     BOOL suppressionModeActif;
     
+    /*
     // Position boutons Show suppression
     CGFloat trashButtonOriginShow;
     CGFloat likeButtonOriginShow;
@@ -39,6 +40,7 @@
     CGFloat facebookButtonOriginHide;
     CGFloat twitterButtonOriginHide;
     CGFloat downloadButtonOriginHide;
+     */
     
     // Action Sheets
     UIActionSheet *deleteActionSheet;
@@ -46,6 +48,10 @@
     
     // Animations
     BOOL shouldAnimate;
+    
+    NSMutableArray *onScreenPhotos;
+    NSMutableArray *loadedPhotos;
+    BOOL automaticScroll;
     
 }
 
@@ -98,6 +104,10 @@ withDelegate:(PhotoViewController*)photoViewController
         self.selectedIndex = -1;
         suppressionModeActif = YES;
         shouldAnimate = YES;
+        int count = [self.photos count];
+        onScreenPhotos = [[NSMutableArray alloc] initWithCapacity:count];
+        loadedPhotos = [[NSMutableArray alloc] initWithCapacity:count];
+        automaticScroll = NO;
         
         dateFormatter = [[NSDateFormatter alloc] init];
         dateFormatter.locale = [NSLocale currentLocale];
@@ -249,7 +259,8 @@ withDelegate:(PhotoViewController*)photoViewController
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    // Do any additional setup after loading the view from its nib.
+    // Google Analytics
+    self.trackedViewName = @"Vue Big Photo";
     
     // Background
     [self updateBackground];
@@ -276,6 +287,7 @@ withDelegate:(PhotoViewController*)photoViewController
     self.auteurLabel.font = font;
     self.dateLabel.font = font;
     
+    /*
     // Save Position Show Buttons
     trashButtonOriginShow = self.trashButton.frame.origin.x;
     likeButtonOriginShow = self.likeButton.frame.origin.x;
@@ -289,16 +301,56 @@ withDelegate:(PhotoViewController*)photoViewController
     facebookButtonOriginHide = likeButtonOriginHide+delta;
     twitterButtonOriginHide = facebookButtonOriginHide+delta;
     downloadButtonOriginHide = twitterButtonOriginHide+delta;
+     */
     
     // Clic FullScreen
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(showFullScreen)];
     [self.photoScrollView addGestureRecognizer:tap];
+    
+    int i, count = [self.photos count];
+    for(i=0; i<count; i++) {
+        CustomUIImageView *imageView = nil;
+        onScreenPhotos[i] = imageView = [[CustomUIImageView alloc] init];
+        imageView.frame = CGRectMake( i*self.photoScrollView.frame.size.width,0, self.photoScrollView.frame.size.width, self.photoScrollView.frame.size.height);
+        imageView.contentMode = UIViewContentModeScaleAspectFill;
+        imageView.clipsToBounds = YES;
+        [imageView setImage:nil imageString:nil withSaveBlock:nil];
+        [self.photoScrollView addSubview:imageView];
+        
+        loadedPhotos[i] = @(NO);
+    }
+    
+    automaticScroll = NO;
 }
 
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (void)clearScrollView {
+    for(UIView *v in self.photoScrollView.subviews) {
+        [v removeFromSuperview];
+    }
+    
+    int count = [self.photos count];
+    onScreenPhotos = [[NSMutableArray alloc] initWithCapacity:count];
+    loadedPhotos = [[NSMutableArray alloc] initWithCapacity:count];
+    int i;
+    for(i=0; i<count; i++) {
+        CustomUIImageView *imageView = nil;
+        onScreenPhotos[i] = imageView = [[CustomUIImageView alloc] init];
+        imageView.frame = CGRectMake( i*self.photoScrollView.frame.size.width,0, self.photoScrollView.frame.size.width, self.photoScrollView.frame.size.height);
+        imageView.contentMode = UIViewContentModeScaleAspectFill;
+        imageView.clipsToBounds = YES;
+        [imageView setImage:nil imageString:nil withSaveBlock:nil];
+        [self.photoScrollView addSubview:imageView];
+        loadedPhotos[i] = @(NO);
+    }
+    
+    self.photoScrollView.contentSize = CGSizeMake(count*self.photoScrollView.frame.size.width, self.photoScrollView.frame.size.height);
+    
 }
 
 - (void)viewDidUnload {
@@ -370,21 +422,20 @@ withDelegate:(PhotoViewController*)photoViewController
     return indexFromParentView;
 }
 
--(void)showViewAtIndex:(NSInteger)index fromParent:(BOOL)fromParent
+-(void)showViewAtIndex:(NSInteger)index fromParent:(BOOL)fromParent scroll:(BOOL)scroll
 {
     if(backgroundNeedsUpdate)
        [self updateBackground];
     
     if(fromParent)
         index = [self convertIndexFromParentView:index];
-    
     if( (index < [self.photos count]) && (index >= 0) ) {
         
         Photos *photo = (Photos*)self.photos[index];
-        if(!photo.imageOriginal) {
+        if( (!photo.imageOriginal) || ( ([loadedPhotos count]-1 < index) || ![loadedPhotos[index] boolValue]) ) {
             [self addIndexToScrollView:index];
         }
-        [self scrollToIndex:index animated:YES];
+        [self scrollToIndex:index animated:YES scroll:scroll];
         
         self.nextButton.enabled = (self.selectedIndex < [self.photos count]-1);
         self.previousButton.enabled = (self.selectedIndex > 0);
@@ -403,6 +454,13 @@ withDelegate:(PhotoViewController*)photoViewController
         
     }
     
+    if(fromParent)
+        automaticScroll = NO;
+    
+}
+
+- (void)showViewAtIndex:(NSInteger)index fromParent:(BOOL)fromParent {
+    [self showViewAtIndex:index fromParent:fromParent scroll:YES];
 }
 
 - (void)hideSuppressionMode
@@ -410,7 +468,9 @@ withDelegate:(PhotoViewController*)photoViewController
     if(suppressionModeActif)
     {
         suppressionModeActif = NO;
-                
+        
+        /*
+        
         __block CGRect frame = self.likeButton.frame;
         
         // Animation
@@ -466,7 +526,12 @@ withDelegate:(PhotoViewController*)photoViewController
             
         }];
         
+        */
         
+        // Changer Picto
+        UIImage *image = [UIImage imageNamed:@"report_photo"];
+        [self.trashButton setImage:image forState:UIControlStateNormal];
+        [self.trashButton setImage:image forState:UIControlStateHighlighted];
     }
 }
 
@@ -476,6 +541,7 @@ withDelegate:(PhotoViewController*)photoViewController
     {
         suppressionModeActif = YES;
         
+        /*
         __block CGRect frame = self.likeButton.frame;
         
         // Animation
@@ -530,36 +596,63 @@ withDelegate:(PhotoViewController*)photoViewController
             }];
             
         }];
+        */
         
+        // Changer Picto
+        UIImage *image = [UIImage imageNamed:@"trash_photo"];
+        [self.trashButton setImage:image forState:UIControlStateNormal];
+        [self.trashButton setImage:image forState:UIControlStateHighlighted];
     }
 }
 
 - (void)addIndexToScrollView:(NSInteger)index
 {
     Photos *photo = (Photos*)self.photos[index];
+    CustomUIImageView *imageView = nil;
     
-    CustomUIImageView *imageView = [[CustomUIImageView alloc] init];
-    imageView.frame = CGRectMake( index*self.photoScrollView.frame.size.width,0, self.photoScrollView.frame.size.width, self.photoScrollView.frame.size.height);
-    imageView.contentMode = UIViewContentModeScaleAspectFill;
-    imageView.clipsToBounds = YES;
-    [self.photoScrollView addSubview:imageView];
+    if([onScreenPhotos count]-1 > index)
+        imageView = onScreenPhotos[index];
+        
+    if(!imageView || [imageView isEqual:[NSNull null]]) {
+        imageView = [[CustomUIImageView alloc] init];
+        imageView.frame = CGRectMake( index*self.photoScrollView.frame.size.width,0, self.photoScrollView.frame.size.width, self.photoScrollView.frame.size.height);
+        imageView.contentMode = UIViewContentModeScaleAspectFill;
+        imageView.clipsToBounds = YES;
+        [self.photoScrollView addSubview:imageView];
+        if([onScreenPhotos count]-1 > index)
+            onScreenPhotos[index] = imageView;
+        else
+            [onScreenPhotos addObject:imageView];
+    }
+    
+    if([loadedPhotos count]-1 > index)
+        loadedPhotos[index] = @(YES);
+    else
+        [loadedPhotos addObject:@(YES)];
     
     [imageView setImage:photo.imageOriginal imageString:photo.urlOriginal withSaveBlock:^(UIImage *image) {
         photo.imageOriginal = image;
     }];
 }
 
-- (void)scrollToIndex:(NSInteger)index animated:(BOOL)animated
+- (void)scrollToIndex:(NSInteger)index animated:(BOOL)animated scroll:(BOOL)scroll
 {
-    [self.photoScrollView scrollRectToVisible:CGRectMake(index*self.photoScrollView.frame.size.width, 0, self.photoScrollView.frame.size.width, self.photoScrollView.frame.size.height) animated:animated];
+    if(scroll) {
+        automaticScroll = YES;
+        [self.photoScrollView scrollRectToVisible:CGRectMake(index*self.photoScrollView.frame.size.width, 0, self.photoScrollView.frame.size.width, self.photoScrollView.frame.size.height) animated:animated];
+    }
     self.selectedIndex = index;
     
     Photos *photo = (Photos*)self.photos[index];
-    self.auteurLabel.text = [NSString stringWithFormat:@"%@ %@", [photo.owner.prenom capitalizedString], [photo.owner.nom capitalizedString]];
+    self.auteurLabel.text = photo.owner.formatedUsername;
     
     // Date    
     self.dateLabel.text = [dateFormatter stringFromDate:photo.date];
     [self updateLikeNumber:photo.nbLike];
+}
+
+- (void)scrollToIndex:(NSInteger)index animated:(BOOL)animated {
+    [self scrollToIndex:index animated:animated scroll:YES];
 }
 
 - (void)updateLikeNumber:(NSInteger)nbLike
@@ -574,6 +667,16 @@ withDelegate:(PhotoViewController*)photoViewController
         self.likeNumberLabel.hidden = YES;
         self.likeImageView.hidden = YES;
     }
+}
+
+#pragma mark - Google Analytics
+
+- (void)sendGoogleAnalyticsEvent:(NSString*)action label:(NSString*)label value:(NSNumber*)value {
+    [[[GAI sharedInstance] defaultTracker]
+     sendEventWithCategory:@"Photos"
+     withAction:action
+     withLabel:label
+     withValue:value];
 }
 
 #pragma mark - Actions
@@ -593,53 +696,137 @@ withDelegate:(PhotoViewController*)photoViewController
     }];
 }
 
+- (void)clicNext:(BOOL)scroll {
+    
+    if(self.selectedIndex < [self.photos count])
+    {
+        // Google Analytics
+        [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Suivant" value:nil];
+        
+        [self showViewAtIndex:self.selectedIndex+1 fromParent:NO scroll:scroll];
+        if(self.selectedIndex == [self.photos count]-1)
+            self.nextButton.enabled = NO;
+        if( (!self.previousButton.enabled) && (self.selectedIndex > 0) )
+            self.previousButton.enabled = YES;
+        else if(self.selectedIndex == 0)
+            self.previousButton.enabled = NO;
+    }
+    
+}
+
 - (IBAction)clicNext {
-    [self showViewAtIndex:self.selectedIndex+1 fromParent:NO];
-    if(self.selectedIndex == [self.photos count]-1)
-        self.nextButton.enabled = NO;
-    if( (!self.previousButton.enabled) && (self.selectedIndex > 0) )
-        self.previousButton.enabled = YES;
+    [self clicNext:YES];
+}
+
+- (void)clicPrevious:(BOOL)scroll {
+    
+    if(self.selectedIndex >= 0)
+    {
+        // Google Analytics
+        [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Précédent" value:nil];
+        
+        [self showViewAtIndex:self.selectedIndex-1 fromParent:NO scroll:scroll];
+        if(self.selectedIndex == 0)
+            self.previousButton.enabled = NO;
+        if( (!self.nextButton.enabled) && (self.selectedIndex < [self.photos count]-1) )
+            self.nextButton.enabled = YES;
+        else if(self.selectedIndex == [self.photos count]-1)
+            self.nextButton.enabled = NO;
+    }
+    
 }
 
 - (IBAction)clicPrevious {
-    [self showViewAtIndex:self.selectedIndex-1 fromParent:NO];
-    if(self.selectedIndex == 0)
-        self.previousButton.enabled = NO;
-    if( (!self.nextButton.enabled) && (self.selectedIndex <= [self.photos count]) )
-        self.nextButton.enabled = YES;
+    [self clicPrevious:YES];
 }
 
 - (IBAction)clicTrash {
     
-    if(!deleteActionSheet)
+    // Delete Photo
+    if(suppressionModeActif)
     {
-        deleteActionSheet = [[UIActionSheet alloc] initWithTitle:NSLocalizedString(@"BigPhotoViewController_DeleteActionSheet_Title", nil)
-                delegate:self
-       cancelButtonTitle:NSLocalizedString(@"AlertView_Button_Cancel", nil)
-  destructiveButtonTitle:NSLocalizedString(@"BigPhotoViewController_DeleteActionSheet_Delete", nil)
-       otherButtonTitles:nil];
-        deleteActionSheet.actionSheetStyle = UIActionSheetStyleBlackTranslucent;
+        if(!deleteActionSheet)
+        {
+            deleteActionSheet = [[UIActionSheet alloc] initWithTitle:NSLocalizedString(@"BigPhotoViewController_DeleteActionSheet_Title", nil)
+                                                            delegate:self
+                                                   cancelButtonTitle:NSLocalizedString(@"AlertView_Button_Cancel", nil)
+                                              destructiveButtonTitle:NSLocalizedString(@"BigPhotoViewController_DeleteActionSheet_Delete", nil)
+                                                   otherButtonTitles:nil];
+            deleteActionSheet.actionSheetStyle = UIActionSheetStyleBlackTranslucent;
+            
+        }
+        
+        [deleteActionSheet showInView:self.view];
+    }
+    // Report Photo
+    else
+    {
+        if([MFMailComposeViewController canSendMail])
+        {
+            // URL
+            NSString *urlPhoto = ((Photos*)self.photos[self.selectedIndex]).uniqueURL;
+            
+            // Email Subject
+            NSString *emailTitle = @"Moment - Reporter Photo";
+            // Email Content
+            NSMutableString *messageBody = [NSMutableString stringWithFormat:@"<p>Bonjour,</p><p>Je souhaiterais faire enlever cette photo car :</p><p></p><br><br><p>URL de la photo : <a href=\"%@\">%@</a> </p>", urlPhoto, urlPhoto];
+            
+            if(self.moment.uniqueURL) {
+                [messageBody appendFormat:@"<p>URL De l'event : <a href=\"%@\">%@</a></p>", self.moment.uniqueURL, self.moment.titre];
+            }
+            
+            MFMailComposeViewController *mc = [[MFMailComposeViewController alloc] init];
+            mc.mailComposeDelegate = self;
+            [mc setSubject:emailTitle];
+            [mc setMessageBody:messageBody isHTML:YES];
+            [mc setToRecipients:@[kParameterContactMail]];
+            
+            // Present mail view controller on screen
+            [[VersionControl sharedInstance] presentModalViewController:mc fromRoot:self animated:YES];
+        }
+        else
+        {
+            //NSLog(@"mail composer fail");
+            
+            [[[UIAlertView alloc] initWithTitle:@"Envoi impossible"
+                                        message:@"Votre appareil ne supporte pas l'envoi d'email"
+                                       delegate:nil
+                              cancelButtonTitle:@"OK"
+                              otherButtonTitles:nil]
+             show];
+        }
         
     }
     
-    [deleteActionSheet showInView:self.view];
 }
 
 - (IBAction)clicLike {
+    
+    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    hud.labelText = NSLocalizedString(@"MBProgressHUD_Loading_updateLikeCount", nil);
+    
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Like" value:nil];
+    
     Photos *photo = self.photos[self.selectedIndex];
     
     [photo likeRequestWithEnded:^(NSInteger nbLikes) {
         [self updateLikeNumber:nbLikes];
+        [MBProgressHUD hideHUDForView:self.view animated:YES];
     }];
 }
 
 - (IBAction)clicFacebook {
-        
+    
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Partage Facebook" value:nil];
+    
     // Paramètres
     Photos *photo = self.photos[self.selectedIndex];
     UIImage *image = photo.imageOriginal;
-    NSString *initialText = [NSString stringWithFormat:@"Bon Moment @[%@] !\n", self.moment.titre];
-    NSURL *url = [NSURL URLWithString:photo.urlOriginal];
+    //NSString *initialText = [NSString stringWithFormat:@"Retrouvez toutes les photos de l'évènement %@ sur l'application Moment ! %@", self.moment.titre, photo.uniqueURL];
+    NSString *initialText = [NSString stringWithFormat:NSLocalizedString(@"Sharing_Photo", nil), self.moment.titre];
+    NSURL *url = [NSURL URLWithString:photo.uniqueURL];
     
     // iOS 6 -> Social Framework
     if ( (NSClassFromString(@"SLComposeViewController") != nil) && [SLComposeViewController isAvailableForServiceType:SLServiceTypeFacebook])
@@ -650,7 +837,8 @@ withDelegate:(PhotoViewController*)photoViewController
         [fbSheet addImage:image];
         [fbSheet addURL:url];
         
-        [self presentViewController:fbSheet animated:YES completion:nil];
+        //[self presentViewController:fbSheet animated:YES completion:nil];
+        [[VersionControl sharedInstance] presentModalViewController:fbSheet fromRoot:self animated:YES];
     }
     // iOS 5
     else
@@ -676,22 +864,31 @@ withDelegate:(PhotoViewController*)photoViewController
         [facebookViewComposer addImage:image];
         [facebookViewComposer addURL:url];
         //facebookViewComposer.completionHandler = completionHandler;
-        [self presentViewController:facebookViewComposer animated:YES completion:nil];
+        //[self presentViewController:facebookViewComposer animated:YES completion:nil];
+        [[VersionControl sharedInstance] presentModalViewController:facebookViewComposer fromRoot:self animated:YES];
     }
     
 }
 
 - (IBAction)clicTwitter {
     
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Partage Twitter" value:nil];
+    
     // Paramètres
     Photos *photo = self.photos[self.selectedIndex];
     UIImage *image = photo.imageOriginal;
-    NSMutableString *initialText = [NSMutableString stringWithFormat:@"Bon Moment @[%@] !", self.moment.titre];
-    if(self.moment.hashtag)
-        [initialText appendFormat:@" #%@\n", self.moment.hashtag];
-    else
-        [initialText appendString:@"\n"];
-    NSURL *url = [NSURL URLWithString:photo.urlOriginal];
+    
+    NSMutableString *initialText = [NSMutableString stringWithFormat:NSLocalizedString(@"Sharing_Photo", nil), self.moment.titre];
+    
+#ifdef HASHTAG_ENABLE
+    // Hashtag
+    if(self.moment.hashtag && (self.moment.hashtag.length <= (nbMaxCarac - initialText.length)))
+        [initialText appendFormat:@" #%@", self.moment.hashtag];
+#endif
+    
+    // URL
+    NSURL *url = [NSURL URLWithString:photo.uniqueURL];
     
     // iOS 6 -> Social Framework
     if( (NSClassFromString(@"SLComposeViewController") != nil) && [SLComposeViewController isAvailableForServiceType:SLServiceTypeTwitter])
@@ -702,7 +899,8 @@ withDelegate:(PhotoViewController*)photoViewController
         [tweetSheet addImage:image];
         [tweetSheet addURL:url];
         
-        [self presentViewController:tweetSheet animated:YES completion:nil];
+        //[self presentViewController:tweetSheet animated:YES completion:nil];
+        [[VersionControl sharedInstance] presentModalViewController:tweetSheet fromRoot:self animated:YES];
     }
     // iOS 5 -> Twitter Framework
     else
@@ -713,12 +911,17 @@ withDelegate:(PhotoViewController*)photoViewController
         [twitterViewComposer addImage:image];
         [twitterViewComposer addURL:url];
         
-        [self presentViewController:twitterViewComposer animated:YES completion:nil];
+        //[self presentViewController:twitterViewComposer animated:YES completion:nil];
+        [[VersionControl sharedInstance] presentModalViewController:twitterViewComposer fromRoot:self animated:YES];
     }
     
 }
 
 - (IBAction)clicDownload {
+    
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Téléchargement" value:nil];
+    
     Photos *p = self.photos[self.selectedIndex];
     UIImageWriteToSavedPhotosAlbum(p.imageOriginal, self, @selector(image:didFinishSavingWithError:contextInfo:), NULL);
 }
@@ -748,19 +951,14 @@ withDelegate:(PhotoViewController*)photoViewController
 // Index réelle (dans le tableau des photos NSArray <Photos*>
 - (NSInteger)convertIndexForDataForCurrentStyle:(NSInteger)index
 {
+    if(self.delegate.style == PhotoViewControllerStyleComplete)
+        index = index + 1;
+    
 #ifdef ACTIVE_PRINT_MODE
-    switch (self.delegate.style) {
-        case PhotoViewControllerStyleComplete:
-            if(index>=PHOTOVIEW_PRINT_BUTTON_INDEX-1)
-                return index+2;
-            return index+1;
-            break;
-            
-        case PhotoViewControllerStyleProfil:
-            return index+1;
-            break;
-    }
+    if(index>=PHOTOVIEW_PRINT_BUTTON_INDEX)
+        index = index+1;
 #endif
+    
     return index;
 }
 
@@ -787,12 +985,14 @@ withDelegate:(PhotoViewController*)photoViewController
                     int index = [self convertIndexForDataForCurrentStyle:self.selectedIndex];
                     [self.delegate.imageShowCase deleteImage:self.delegate.imageShowCase.itemsInShowCase[index] imageIndex:index];
                     
-                     NSInteger count = [self.photos count];
+                    [self clearScrollView];
+                    
+                    NSInteger count = [self.photos count];
                     NSInteger deleteIndex;
+
+                    deleteIndex = (photoViewStyle == PhotoViewControllerStyleComplete) ? count+1 : count;
 #ifdef ACTIVE_PRINT_MODE
-                    deleteIndex = (count+1>=PHOTOVIEW_PRINT_BUTTON_INDEX)?count+2 : count+1;
-#else
-                    deleteIndex = count+1;
+                    deleteIndex = (deleteIndex>=PHOTOVIEW_PRINT_BUTTON_INDEX)?deleteIndex+1 : deleteIndex;
 #endif
                     [self.delegate.imageShowCase updateItemsShowCaseWithSize:deleteIndex];
                     //[self updateBackground];
@@ -806,14 +1006,26 @@ withDelegate:(PhotoViewController*)photoViewController
                         }
                         // Scroll Right
                         else {
-                            [self clicNext];
+                            //[self clicNext];
+                            //self.delegate.sele
+                            [self showViewAtIndex:self.selectedIndex fromParent:NO];
+                            if(self.selectedIndex == [self.photos count]-1)
+                                self.nextButton.enabled = NO;
+                            if( (!self.previousButton.enabled) && (self.selectedIndex > 0) )
+                                self.previousButton.enabled = YES;
+                            else if(self.selectedIndex == 0)
+                                self.previousButton.enabled = NO;
+                            [self.delegate updateIndexesAfterDeletetion];
+
                         }
-                        
+                    
                     }
                     // Close
                     else {
                         [self clicClose];
                     }
+                    
+                    self.delegate.photos = self.photos;
                 }
                 // -- Fail
                 else {
@@ -837,24 +1049,7 @@ withDelegate:(PhotoViewController*)photoViewController
 - (FullScreenPhotoViewController*)fullScreenViewController {
     if(!_fullScreenViewController) {
         
-        NSString *titre = nil;
-        if(self.moment && self.moment.titre) {
-            titre = [NSString stringWithFormat:@"%@ %@", NSLocalizedString(@"FullScreenPhotoViewController_Titre_PhotosOf" , nil), self.moment.titre];
-        }
-        else if(self.user) {
-            if(self.user.prenom && self.user.nom) {
-                titre = [NSString stringWithFormat:@"%@ %@ %@", NSLocalizedString(@"FullScreenPhotoViewController_Titre_PhotosOf" , nil) ,self.user.prenom, self.user.nom];
-            }
-            else if(self.user.prenom || self.user.nom) {
-                if(self.user.prenom)
-                    titre = [NSString stringWithFormat:@"%@ %@", NSLocalizedString(@"FullScreenPhotoViewController_Titre_PhotosOf" , nil), self.user.prenom];
-                else
-                    titre = [NSString stringWithFormat:@"%@ %@", NSLocalizedString(@"FullScreenPhotoViewController_Titre_PhotosOf" , nil), self.user.nom];
-            }
-        }
-        else {
-            titre = NSLocalizedString(@"FullScreenPhotoViewController_TitreDefaut", nil);
-        }
+        NSString *titre = NSLocalizedString(@"FullScreenPhotoViewController_TitreDefaut", nil);
         
         _fullScreenViewController = [[FullScreenPhotoViewController alloc] initWithTitle:titre withPhotos:self.photos delegate:self];
     }
@@ -862,15 +1057,74 @@ withDelegate:(PhotoViewController*)photoViewController
 }
 
 - (void)showFullScreen {
-    NSLog(@"pop");
     
     //RotationNavigationControllerViewController *nav = [[RotationNavigationControllerViewController alloc] initWithRootViewController:self.fullScreenViewController];
     //[[[UIApplication sharedApplication] keyWindow] addSubview:nav.view];
     
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Plein écran" value:nil];
+    
     shouldAnimate = NO;
     ((RotationNavigationControllerViewController*)self.navigationController).activeRotation = YES;
+    [self.fullScreenViewController showPhoto:self.photos[self.selectedIndex]];
     [self.navigationController pushViewController:self.fullScreenViewController animated:NO];
 }
 
+#pragma mark - MFMailComposeViewControllerDelegate
+
+- (void) mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError *)error
+{
+    
+    switch (result)
+    {
+        case MFMailComposeResultCancelled:
+            //NSLog(@"Mail cancelled");
+            break;
+        case MFMailComposeResultSaved:
+            //NSLog(@"Mail saved");
+            break;
+        case MFMailComposeResultSent:
+            //NSLog(@"Mail sent");
+            break;
+        case MFMailComposeResultFailed:
+            //NSLog(@"Mail sent failure: %@", [error localizedDescription]);
+            
+            [[[UIAlertView alloc] initWithTitle:@"Erreur d'envoi"
+                                        message:[error localizedDescription]
+                                       delegate:nil
+                              cancelButtonTitle:@"OK"
+                              otherButtonTitles:nil]
+             show];
+            
+            break;
+        default:
+            break;
+    }
+    
+    // Close the Mail Interface
+    [[VersionControl sharedInstance] dismissModalViewControllerFromRoot:self animated:YES];
+}
+
+#pragma mark - UIScrollView Delegate
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView
+{        
+    if( !((int)scrollView.contentOffset.x%((int)self.photoScrollView.frame.size.width)) ) {
+        
+        if(automaticScroll) {
+            automaticScroll = NO;
+        }
+        else {
+            // Scroll Right
+            NSInteger nextIndex = (int)ceilf(scrollView.contentOffset.x/self.photoScrollView.frame.size.width);
+            if( self.selectedIndex < nextIndex )
+                [self clicNext:NO];
+            // Scroll Left
+            else if( self.selectedIndex > nextIndex )
+                [self clicPrevious:NO];
+        }
+        
+    }
+}
 
 @end

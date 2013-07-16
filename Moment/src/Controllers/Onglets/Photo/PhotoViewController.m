@@ -107,9 +107,11 @@ withRootViewController:(UIViewController *)rootViewController
         return index - 1;
         //return index;
     }
+#else
+    if(self.style == PhotoViewControllerStyleComplete)
+        return index;
+    return index - 1;
 #endif
-    
-    return index;
 }
 
 - (void)loadPhotos
@@ -123,7 +125,8 @@ withRootViewController:(UIViewController *)rootViewController
         dispatch_async(loadingQueue, ^{
             
             self.photos = photos.mutableCopy;
-            [self.imageShowCase updateItemsShowCaseWithSize:[self.photos count]+1];
+            NSInteger size = (self.style == PhotoViewControllerStyleComplete) ? [self.photos count]+1 : [self.photos count];
+            [self.imageShowCase updateItemsShowCaseWithSize:size];
             
             int i=0;
 
@@ -140,7 +143,6 @@ withRootViewController:(UIViewController *)rootViewController
                             [self.imageShowCase addImage:nil atIndex:index isPlusButton:NO isPrintButton:YES];
                         }
 #endif
-                        
                         // Index varie selon le numero de la photo et la page sur laquelle on est (Profil / Onglet)
                         index = [self convertIndexForCurrentStyle:index];
                         // Ajout photo classique
@@ -166,12 +168,37 @@ withRootViewController:(UIViewController *)rootViewController
 
 }
 
+- (void)updateIndexesAfterDeletetion
+{
+   /* NSInteger size = [self.photos count];
+    // Adapter taille
+    if(self.style == PhotoViewControllerStyleComplete)
+    {
+        size++;
+#ifdef ACTIVE_PRINT_MODE
+        if( (index >= PHOTOVIEW_PRINT_BUTTON_INDEX) {
+            size++;
+        }
+#endif
+     }
+    */
+
+    // Update des index
+    NSArray *cells = self.imageShowCase.itemsInShowCase;
+    NSInteger i = 0;
+    for(NLImageShowCaseCell *c in cells) {
+        c.index = i;
+        i++;
+    }
+    
+    
+}
+
 #pragma mark - View Life Cycle
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    // Do any additional setup after loading the view from its nib.
     
     // iPhone 5
     CGRect frame = self.view.frame;
@@ -223,6 +250,25 @@ withRootViewController:(UIViewController *)rootViewController
     [self setPhotosSelectionnesLabel:nil];
     [self setArrowWhiteView:nil];
     [super viewDidUnload];
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    [self sendGoogleAnalyticsView];
+}
+
+#pragma mark - Google Analytics
+
+- (void)sendGoogleAnalyticsView {
+    [[[GAI sharedInstance] defaultTracker] sendView:@"Vue Photo"];
+}
+
+- (void)sendGoogleAnalyticsEvent:(NSString*)action label:(NSString*)label value:(NSNumber*)value {
+    [[[GAI sharedInstance] defaultTracker]
+     sendEventWithCategory:@"Photos"
+     withAction:action
+     withLabel:label
+     withValue:value];
 }
 
 #pragma mark - Image Showcase Protocol
@@ -284,18 +330,49 @@ withRootViewController:(UIViewController *)rootViewController
     // Plus Button
     if( (self.style == PhotoViewControllerStyleComplete) && (imageShowCaseCell.index == 0) && imageShowCaseCell.isSpecial )
     {
-        // Add Picture
-        UIActionSheet *actionSheet = [[UIActionSheet alloc]
-                                      initWithTitle:NSLocalizedString(@"ActionSheet_PeekPhoto_Title", nil)
-                                      delegate:self
-                                      cancelButtonTitle:NSLocalizedString(@"ActionSheet_PeekPhoto_Button_Cancel", nil)
-                                      destructiveButtonTitle:nil
-                                      otherButtonTitles:
-                                      NSLocalizedString(@"ActionSheet_PeekPhoto_Button_PhotoLibrary", nil),
-                                      NSLocalizedString(@"ActionSheet_PeekPhoto_Button_Camera", nil),
-                                      nil];
-        actionSheet.actionSheetStyle = UIActionSheetStyleBlackTranslucent;
-        [actionSheet showInView:self.view];
+        // Si on est invité, on peux ajouter une photo
+        // User State
+        enum UserState state = self.moment.state.intValue;
+        if(state == 0) {
+            state = ([self.moment.owner.userId isEqualToNumber:[UserCoreData getCurrentUser].userId]) ? UserStateOwner : UserStateNoInvited;
+        }
+        if(
+           (
+            (
+              (self.moment.privacy.intValue == MomentPrivacyFriends)||(self.moment.privacy.intValue == MomentPrivacySecret))
+                && (state != UserStateNoInvited)
+            ) ||
+                (self.moment.privacy.intValue == MomentPrivacyOpen)
+           )
+        {
+            // Google Analytics
+            [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Ajout" value:nil];
+            
+            // Add Picture
+            UIActionSheet *actionSheet = [[UIActionSheet alloc]
+                                          initWithTitle:NSLocalizedString(@"ActionSheet_PeekPhoto_Title", nil)
+                                          delegate:self
+                                          cancelButtonTitle:NSLocalizedString(@"ActionSheet_PeekPhoto_Button_Cancel", nil)
+                                          destructiveButtonTitle:nil
+                                          otherButtonTitles:
+                                          NSLocalizedString(@"ActionSheet_PeekPhoto_Button_PhotoLibrary", nil),
+                                          NSLocalizedString(@"ActionSheet_PeekPhoto_Button_Camera", nil),
+                                          nil];
+            actionSheet.actionSheetStyle = UIActionSheetStyleBlackTranslucent;
+            [actionSheet showInView:self.view];
+        }
+        // Pas le droit d'ajouter une photo
+        else
+        {
+            [[[UIAlertView alloc]
+              initWithTitle:@"Oops !"
+              message:@"Seuls les invités ont le droit d'ajouter des photos."
+              delegate:nil
+              cancelButtonTitle:@"OK"
+              otherButtonTitles:nil]
+             show];
+        }
+        
     }
     //  Print Button
     else if( (self.style == PhotoViewControllerStyleComplete) && (imageShowCaseCell.index == PHOTOVIEW_PRINT_BUTTON_INDEX) && imageShowCaseCell.isSpecial )
@@ -319,6 +396,9 @@ withRootViewController:(UIViewController *)rootViewController
 #ifdef ACTIVE_PRINT_MODE
         if(printMode)
         {
+            // Google Analytics
+            [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Photos sélectionnées" value:@([self.printSelectedCells count])];
+            
             NSInteger index = [self convertIndexForDataForCurrentStyle:imageShowCaseCell.index];
             
             // Ajouter/Retirer Mémoire
@@ -336,17 +416,31 @@ withRootViewController:(UIViewController *)rootViewController
         else
         {
 #endif
-            // Afficher Big Photo
-            [self.bigPhotoViewController showViewAtIndex:imageShowCaseCell.index fromParent:YES];
-            //[[VersionControl sharedInstance] presentModalViewController:self.bigPhotoViewController fromRoot:self.rootViewController animated:NO];
-            self.navigationController.navigationBar.hidden = YES;
+            // Blindage
+            NSInteger i;
+            if(self.style == PhotoViewControllerStyleComplete)
+                i = imageShowCaseCell.index-1;
+            else
+                i = imageShowCaseCell.index;
             
-            if(!bigPhotoNavigationController)
-                bigPhotoNavigationController = [[RotationNavigationControllerViewController alloc] initWithRootViewController:self.bigPhotoViewController];
+            if([self.photos count] > i)
+            {
+                // Google Analytics
+                [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Photo" value:nil];
+                
+                // Afficher Big Photo
+                [self.bigPhotoViewController showViewAtIndex:imageShowCaseCell.index fromParent:YES];
+                //[[VersionControl sharedInstance] presentModalViewController:self.bigPhotoViewController fromRoot:self.rootViewController animated:NO];
+                self.navigationController.navigationBar.hidden = YES;
+                
+                if(!bigPhotoNavigationController)
+                    bigPhotoNavigationController = [[RotationNavigationControllerViewController alloc] initWithRootViewController:self.bigPhotoViewController];
+                
+                bigPhotoNavigationController.activeRotation = NO;
+                bigPhotoNavigationController.navigationBar.hidden = YES;
+                [[VersionControl sharedInstance] presentModalViewController:bigPhotoNavigationController fromRoot:self.rootViewController animated:NO];
+            }
             
-            bigPhotoNavigationController.activeRotation = NO;
-            bigPhotoNavigationController.navigationBar.hidden = YES;
-            [[VersionControl sharedInstance] presentModalViewController:bigPhotoNavigationController fromRoot:self.rootViewController animated:NO];
             
             //[self.rootViewController.timeLine.navController pushViewController:self.bigPhotoViewController animated:NO];
 #ifdef ACTIVE_PRINT_MODE
@@ -532,9 +626,16 @@ withRootViewController:(UIViewController *)rootViewController
 
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
+    // Choix de la soirce de la photo
     
     switch (buttonIndex) {
+            
+        // Albums Photo
         case 0: {
+            
+            // Google Analytics
+            [self sendGoogleAnalyticsEvent:@"Clic ActionSheet" label:@"Choix Album" value:nil];
+            
             QBImagePickerController *picker = [[QBImagePickerController alloc] init];
             picker.delegate = self;
             picker.allowsMultipleSelection = YES;
@@ -545,7 +646,12 @@ withRootViewController:(UIViewController *)rootViewController
         }
             break;
             
+        // Camera
         case 1:{
+            
+            // Google Analytics
+            [self sendGoogleAnalyticsEvent:@"Clic ActionSheet" label:@"Choix Appareil Photo" value:nil];
+            
             UIImagePickerController *picker = [[UIImagePickerController alloc] init];
             picker.delegate = self;
             picker.sourceType = UIImagePickerControllerSourceTypeCamera;
@@ -591,7 +697,7 @@ withRootViewController:(UIViewController *)rootViewController
     // ----- Evoi au Server -----
     int totalImages = [images count];
     
-    // Péload cadres des images
+    // Préload cadres des images
     NSInteger nouvelleTaille = [self.photos count] + totalImages + 1; // Anciennes + Nouvelle + PLUS_BUTTON
 #ifdef ACTIVE_PRINT_MODE
     nouvelleTaille += (nouvelleTaille > PHOTOVIEW_PRINT_BUTTON_INDEX)? 1 : 0; // Si on atteint PRINT, on ajoute
@@ -619,12 +725,12 @@ withRootViewController:(UIViewController *)rootViewController
     } withProgression:^(CGFloat progress) {
                 
         // Status Bar Progression d'une unique photo
-        if(totalImages == 1)
+        //if(totalImages == 1)
             overlayStatusBar.progress = progress;
         // Status bar envoi partiel
-        else {
-            overlayStatusBar.progress = (actualIndex + (progress/totalImages))/totalImages;
-        }
+        //else {
+            //overlayStatusBar.progress = (actualIndex + (progress/totalImages))/totalImages;
+        //}
         
     } withTransition:^(Photos *photo) {
         
@@ -643,6 +749,7 @@ withRootViewController:(UIViewController *)rootViewController
                 NSString *string = nil;
                 string = [NSString stringWithFormat:@"%@ %d/%d", NSLocalizedString(@"StatusBarOverlay_Photo_Uploading", nil), actualIndex+1, totalImages];
                 
+                overlayStatusBar.progress = 0;
                 [overlayStatusBar postMessage:string];
                 //overlayStatusBar.progress = (float)index/totalImages;
             }
@@ -655,7 +762,6 @@ withRootViewController:(UIViewController *)rootViewController
                 [scrollView scrollRectToVisible:CGRectMake(0, scrollView.contentSize.height - scrollView.frame.size.height, 320, scrollView.frame.size.height) animated:YES];
                 
             }
-            
             
             // Save photo and update view
             [self.photos addObject:photo];
@@ -670,7 +776,7 @@ withRootViewController:(UIViewController *)rootViewController
                 
                 // Augmenter taille de la scroll view de la big photo
                 CGSize size = self.bigPhotoViewController.photoScrollView.contentSize;
-                size.width += self.bigPhotoViewController.photoScrollView.frame.size.width;
+                size.width = [self.photos count]*self.bigPhotoViewController.photoScrollView.frame.size.width;
                 self.bigPhotoViewController.photoScrollView.contentSize = size;
                 
                 // Update Vue InfoMoment

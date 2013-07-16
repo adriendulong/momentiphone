@@ -29,13 +29,8 @@
             self.noResultsLabel.text = NSLocalizedString(@"VoletViewController_EmptyCell_invitationView", nil);
         else
             self.noResultsLabel.text = NSLocalizedString(@"VoletViewController_EmptyCell_notificationView", nil);
-        self.noResultsLabel.font = [[Config sharedInstance] defaultFontWithSize:15];
-        
-        // Centrer
-        frame = self.noResultsLabel.frame;
-        frame.origin.y = (height/2.0f - frame.size.height)/2.0 - 20.0f;
-        self.noResultsLabel.frame = frame;
-        
+        self.noResultsLabel.font = [[Config sharedInstance] defaultFontWithSize:14.3];
+                
     }
     return self;
 }

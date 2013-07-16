@@ -41,15 +41,7 @@
         [self setSelectionStyle:UITableViewCellSelectionStyleNone];
         
         // User
-        if(self.feed.user.prenom && self.feed.user.nom)
-            self.userLabel.text = [NSString stringWithFormat:@"%@ %@", [self.feed.user.prenom uppercaseString], [self.feed.user.nom uppercaseString]];
-        else if(self.feed.user.prenom || self.feed.user.nom)
-        {
-            if(self.feed.user.prenom)
-                self.userLabel.text = [self.feed.user.prenom uppercaseString];
-            else
-                self.userLabel.text = [self.feed.user.nom uppercaseString];
-        }
+        self.userLabel.text = self.feed.user.formatedUsername;
         self.userLabel.font = [[Config sharedInstance] defaultFontWithSize:11];
                 
         // Moment
@@ -61,13 +53,7 @@
         self.infoLabel.font = font;
         self.info2Label.font = font;
         switch (self.feed.type) {
-            
-            case FeedTypeChat: {
-                self.infoLabel.text = @"DISCUTE A PROPOS";
-                self.info2Label.text = @"DU MOMENT";
-                self.iconeView.image = [UIImage imageNamed:@"picto_feed_chat"];
-            }   break;
-                
+                            
             case FeedTypeGoing: {
                 self.infoLabel.text = @"VIENT AU";
                 self.info2Label.text = @"MOMENT";
@@ -79,13 +65,7 @@
                 self.info2Label.text = @"AU MOMENT";
                 self.iconeView.image = [UIImage imageNamed:@"picto_feed_user"];
             } break;
-                
-            case FeedTypeNewEvent: {
-                self.infoLabel.text = @"A CRÉÉ UN";
-                self.info2Label.text = @"NOUVEAU MOMENT";
-                self.iconeView.image = [UIImage imageNamed:@"picto_feed_bulle"];
-            } break;
-                
+            
             default:
                 break;
         }
@@ -103,7 +83,7 @@
             self.feed.moment.uimage = image;
         }];
         
-        // Location
+        // Moment
         if(self.feed.moment.adresse) {
             self.locationLabel.text = self.feed.moment.adresse;
             self.locationLabel.font = [[Config sharedInstance] defaultFontWithSize:12];

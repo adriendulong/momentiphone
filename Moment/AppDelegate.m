@@ -19,23 +19,26 @@
 #import "PushNotificationManager.h"
 #import "Three20/Three20.h"
 #import "FullScreenPhotoViewController.h"
+#import "Harpy.h"
+#import "iRate.h"
+#import <Crashlytics/Crashlytics.h>
 
 @implementation AppDelegate
 
 @synthesize HUD = _HUD;
 @synthesize session = _session;
 @synthesize actualViewController = _actualViewController;
-
+@synthesize tracker = _tracker;
 
 #pragma mark - Global View
 
 + (UIViewController*)actualViewController {
-    AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     return appDelegate.actualViewController;
 }
 
 + (void)updateActualViewController:(UIViewController*)viewController {
-    AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     appDelegate.actualViewController = viewController;
 }
 
@@ -60,19 +63,47 @@
 
 #pragma mark - AppDelegate
 
++ (void)initialize
+{
+    [super initialize];
+    
+    // VERSION DEV ou VERSION PROD
+    [[Config sharedInstance] setDeveloppementVersion:YES];
+    
+    /* ------------------ iRate ------------------- */
+    /*          ---> Noter l'application <--        */
+    /* -------------------------------------------- */
+    //configure iRate
+    iRate *config = [iRate sharedInstance];
+    [config setAppStoreCountry:@"FR"];
+    [config setAppStoreID:662761817];
+    config.daysUntilPrompt = 2;
+    config.usesUntilPrompt = 10;
+#ifdef DEBUG
+    config.verboseLogging = YES;
+    //config.previewMode = YES;
+#else
+    config.verboseLogging = NO;
+#endif
+    [iRate load];
+    
+}
+
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    // ----------------- Crashlytics ----------------------
+    [Crashlytics startWithAPIKey:@"d9f095a3e9cf0cb5fe5c01a68d72a9b2d4cda490"];
+    
     // ------------ Test Flight API -------------
     // !!!: Use the next line only during beta
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    [TestFlight setDeviceIdentifier:[[UIDevice currentDevice] uniqueIdentifier]];
+    //[TestFlight setDeviceIdentifier:[[UIDevice currentDevice] uniqueIdentifier]];
 #pragma clang diagnostic pop
-    [TestFlight takeOff:@"85ba03e5-22dc-45c5-9810-be2274ed75d1"];
+    [TestFlight takeOff:[Config sharedInstance].TestFlightAppToken];
     // ------------------------------------------
     
-    [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationFade];
-    
+    // ---------------- Initialisation -----------------    
     HomeViewController *homeViewController = [[HomeViewController alloc] initWithXib];
     CustomNavigationController *navigationController = [[CustomNavigationController alloc] initWithRootViewController:homeViewController];
     [navigationController.navigationBar setHidden:YES];
@@ -80,15 +111,19 @@
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     self.window.rootViewController = navigationController;
     
-    // Init autocompletion
+    // -------------- Init Autocompletion ----------------
     [HTAutocompleteTextField setDefaultAutocompleteDataSource:[TextFieldAutocompletionManager sharedInstance]];
     
+    
+    // -------------- Default Background -----------------
     // Override point for customization after application launch.
+    [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationSlide];
     self.window.backgroundColor = [[UIColor alloc] initWithPatternImage:[UIImage imageNamed:@"bg.png"]];
     self.window.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
     
     [self.window makeKeyAndVisible];
-        
+    
+    // ----------------- SDURLCache ----------------------
     //getsion du cache pour les images
     /*
     SDURLCache *URLCache = [[SDURLCache alloc] initWithMemoryCapacity:1024*1024*2 diskCapacity:1024*1024*20 diskPath:[SDURLCache defaultCachePath]];
@@ -96,7 +131,8 @@
     [NSURLCache setSharedURLCache:URLCache];
     */
         
-    // Push Notification
+    // --------------- Push Notifications ----------------
+    
     // Let the device know we want to receive push notifications
 	[[UIApplication sharedApplication] registerForRemoteNotificationTypes:
      (UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound | UIRemoteNotificationTypeAlert)];
@@ -107,7 +143,7 @@
 		NSDictionary* dictionary = [launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
 		if (dictionary != nil)
 		{
-			NSLog(@"Launched from push notification: %@", dictionary);
+			//NSLog(@"Launched from push notification: %@", dictionary);
             [[PushNotificationManager sharedInstance] receivePushNotification:dictionary updateUI:NO];
         }
 	}
@@ -115,7 +151,8 @@
     // Restore Notification Badge Number
     [[PushNotificationManager sharedInstance] setNbNotifcations:[[UIApplication sharedApplication] applicationIconBadgeNumber]];
     
-    // Facebook
+    // -------------------- Facebook ---------------------
+    
     // FBSample logic
     // See if we have a valid token for the current state.
     [FBSession openActiveSessionWithReadPermissions:[FacebookManager sharedInstance].defaultReadPermissions
@@ -134,9 +171,49 @@
         NSLog(@"Login fail");
     }*/
     
-    // Three20
+    // -------------------- Three20 ----------------------
+    //            ----> Full Screnn Plugin <----
+    // ---------------------------------------------------
     // -> FullScreen (TTPhotoViewController) URL Mapping
     [[TTURLRequestQueue mainQueue] setMaxContentLength:0];
+    
+    
+    // ------------------ Harpy Alert --------------------
+    //    ----> Vérifier version de l'application <----
+    // ---------------------------------------------------
+    
+    // Set the App ID for your app
+    [[Harpy sharedInstance] setAppID:@"662761817"];
+    
+    /* (Optional) Set the Alert Type for your app
+     By default, the Singleton is initialized to HarpyAlertTypeOption */
+    //[[Harpy sharedInstance] setAlertType:HarpyAlertTypeOption];
+    
+    // --------------- Google Analytics ------------------
+    //         ----> Initialisation du Tracker <----
+    // ---------------------------------------------------
+    // Optional: automatically send uncaught exceptions to Google Analytics.
+    [GAI sharedInstance].trackUncaughtExceptions = YES;
+    // Optional: set Google Analytics dispatch interval to e.g. 20 seconds.
+    //[GAI sharedInstance].dispatchInterval = 20; // Default = 2 min
+    // Optional: set debug to YES for extra debugging information.
+    [GAI sharedInstance].debug = NO;
+    // Create tracker instance.
+    self.tracker = [[GAI sharedInstance] trackerWithTrackingId:@"UA-36147731-1"];
+    // Si on reste plus d'1 min inactif, les évenements sont envoyés sur une nouvelle session
+    [self.tracker setSessionTimeout:60];
+    
+    // -------------------- Suppression du CoreData ----------------------
+    //    ----> Vérification que la suppression s'est bien passée <----
+    // -------------------------------------------------------------------
+    /*
+    if([[NSUserDefaults standardUserDefaults] boolForKey:kMomentsDeleteTry]) {
+        
+    }
+    if([[NSUserDefaults standardUserDefaults] boolForKey:kMomentsDeleteFail]) {
+        
+    }
+    */
         
     return YES;
 }
@@ -145,7 +222,6 @@
 {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
     // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
-    
 }
 
 - (void)applicationDidEnterBackground:(UIApplication *)application
@@ -153,38 +229,75 @@
     // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later. 
     // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
     
-    [[Config sharedInstance] saveContext];
-    
+    // Supprimer Moments inutiles
+    [MomentCoreData deleteMomentsWhileEnteringBackground];
+    // Supprimer Users inutiles
+    [UserCoreData deleteUsersWhileEnteringBackground];
 }
 
 - (void)applicationWillEnterForeground:(UIApplication *)application
 {
     // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
+    
+    // --------
+    // Mettre à jour TimeLine
+    if([self.actualViewController isKindOfClass:[TimeLineViewController class]]) {
+        TimeLineViewController *timeline = (TimeLineViewController*)self.actualViewController;
+        [timeline reloadData];
+        [timeline.rootViewController updateVolet];
+    }
+    // Mettre à jour Feed
+    else if([self.actualViewController isKindOfClass:[FeedViewController class]]) {
+        FeedViewController *feed = (FeedViewController*)self.actualViewController;
+        [feed reloadData];
+    }
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
     
+    // ------------------ Push Notifications -----------------
     // Restore Number Notification Badge Number
     [[PushNotificationManager sharedInstance] setNbNotifcations:[[UIApplication sharedApplication] applicationIconBadgeNumber]];
     
+    // ----------------------- Facebook ----------------------
     // We need to properly handle activation of the application with regards to SSO
     //  (e.g., returning from iOS 6.0 authorization dialog or from fast app switching).
     [FBSession.activeSession handleDidBecomeActive];
+    
+    // ------------------ Harpy Alert --------------------
+    //    ----> Vérifier version de l'application <----
+    // ---------------------------------------------------
+    /*
+     Perform weekly check for new version of your app
+     Useful if user returns to you app from background after extended period of time
+     Place in applicationDidBecomeActive:
+     
+     Also, performs version check on first launch.
+     */
+    [[Harpy sharedInstance] checkVersionWeekly];
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application
 {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
-    [[Config sharedInstance] saveContext];
+    
+    // Supprimer Moments inutiles
+    [MomentCoreData deleteMomentsWhileEnteringBackground];
+    // Supprimer Users inutiles
+    [UserCoreData deleteUsersWhileEnteringBackground];
+    //[[Config sharedInstance] saveContext];
+    
     // if the app is going away, we close the session object
     [FBSession.activeSession close];
-    
 }
 
 - (void)application:(UIApplication *)application didChangeStatusBarFrame:(CGRect)oldStatusBarFrame
 {
+    // Prévenir d'un changement de frame
+    // ------> Utilisé pour détecter l'apparition de la barre d'appel
+    // ------> Il faut gérer le changement de Frame pour adapter l'écran en conséquence et éviter les bugs graphiques
    NSDictionary *dict = @{@"oldFrame":[NSValue valueWithCGRect:oldStatusBarFrame],
                            @"newFrame":[NSValue valueWithCGRect:[[UIApplication sharedApplication] statusBarFrame]]
                            };
@@ -198,7 +311,7 @@
 
 - (void)application:(UIApplication*)application didReceiveRemoteNotification:(NSDictionary*)userInfo
 {
-	NSLog(@"Received notification: %@", userInfo);
+	//NSLog(@"Received notification: %@", userInfo);
     [[PushNotificationManager sharedInstance] receivePushNotification:userInfo updateUI:YES];
 }
 
@@ -208,6 +321,16 @@
 
 - (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
     [[PushNotificationManager sharedInstance] failToReceiveNotification:error];
+}
+
+#pragma mark - iRate mail
+
+- (void)iRateUserDidDeclineToRateApp {    
+    [[Config sharedInstance] feedBackRatingMailComposerWithDelegate:self root:self.window.rootViewController];
+}
+
+-(void)mailComposeController:(MFMailComposeViewController*)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError*)error {
+    [self.window.rootViewController dismissModalViewControllerAnimated:YES];
 }
 
 

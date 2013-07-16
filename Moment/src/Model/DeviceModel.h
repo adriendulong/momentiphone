@@ -13,4 +13,11 @@
 + (void)setDeviceToken:(NSString*)token;
 + (NSDictionary*)data;
 
+// Device Should Logout
++ (BOOL)deviceShouldLogout;
++ (void)setDeviceShouldLogout:(BOOL)logout;
+
+// Server
++ (void)logout;
+
 @end

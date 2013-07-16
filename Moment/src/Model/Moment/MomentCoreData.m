@@ -2,12 +2,11 @@
 //  MomentCoreData.m
 //  Moment
 //
-//  Created by Mathieu PIERAGGI on 06/05/13.
+//  Created by Mathieu PIERAGGI on 01/06/13.
 //  Copyright (c) 2013 Moment. All rights reserved.
 //
 
 #import "MomentCoreData.h"
-#import "LocalNotificationCoreData.h"
 #import "UserCoreData.h"
 
 
@@ -30,10 +29,11 @@
 @dynamic isSponso;
 @dynamic momentId;
 @dynamic nomLieu;
+@dynamic privacy;
 @dynamic state;
 @dynamic titre;
-@dynamic privacy;
-@dynamic notifications;
+@dynamic uniqueURL;
+@dynamic coverPhotoURL;
 @dynamic owner;
 
 @end

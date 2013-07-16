@@ -34,6 +34,8 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    // Google Analytics
+    self.trackedViewName = @"Ajout Event";
     
     [CustomNavigationController setBackButtonWithViewController:self];
     
@@ -78,11 +80,11 @@
 -(IBAction)clicImportFB
 {
     [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"CreationHomeViewController_importFBAlertView_Title", nil)
-            message:NSLocalizedString(@"CreationHomeViewController_importFBAlertView_Message", nil)
-                                                             delegate:self
-                                                    cancelButtonTitle:NSLocalizedString(@"AlertView_Button_NO", nil)
-                                                    otherButtonTitles:NSLocalizedString(@"AlertView_Button_YES", nil), nil]
-    show];
+                                message:NSLocalizedString(@"CreationHomeViewController_importFBAlertView_Message", nil)
+                               delegate:self
+                      cancelButtonTitle:NSLocalizedString(@"AlertView_Button_NO", nil)
+                      otherButtonTitles:NSLocalizedString(@"AlertView_Button_YES", nil), nil]
+     show];
 }
 
 #pragma mark - TextFieldDelegate

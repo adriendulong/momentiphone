@@ -11,12 +11,16 @@
 #import "MBProgressHUD.h"
 #import "TimeLineViewController.h"
 #import "ChatViewController.h"
+#import "GAI.h"
+#import <MessageUI/MessageUI.h>
+#import <MessageUI/MFMailComposeViewController.h>
 
-@interface AppDelegate : UIResponder <UIApplicationDelegate>
+@interface AppDelegate : UIResponder <UIApplicationDelegate, MFMailComposeViewControllerDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
 @property(strong, nonatomic) MBProgressHUD *HUD;
 @property (strong, nonatomic) UIViewController *actualViewController;
+@property(nonatomic, retain) id<GAITracker> tracker; // Google Analytics Tracker
 
 // In this sample the app delegate maintains a property for the current
 // active session, and the view controllers reference the session via

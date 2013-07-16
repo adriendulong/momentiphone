@@ -20,6 +20,7 @@
 
 #import "UserClass+Server.h"
 #import "FacebookManager.h"
+#import "WebModalViewController.h"
 
 @interface CreationPage1ViewController () {
     @private
@@ -43,6 +44,8 @@
 @synthesize photoProfil = _photoProfil;
 @synthesize photoProfilLabel = _photoProfilLabel;
 @synthesize confidentialiteLabel = _confidentialiteLabel;
+@synthesize cguLabel = _cguLabel;
+@synthesize sublineCGU = _sublineCGU;
 
 @synthesize nomLabel = _nomLabel;
 @synthesize prenomLabel = _prenomLabel;
@@ -68,6 +71,7 @@
 {
     // Init
     self.pickerView = [[CustomDatePicker alloc] init];
+    self.pickerView.datePicker.datePickerMode = UIDatePickerModeDate;
     // Date Max = Aujourd'hui
     self.pickerView.datePicker.maximumDate = [NSDate date];
     // Bouton Valider
@@ -83,6 +87,9 @@
     self.dateFormatter.timeZone = [NSTimeZone systemTimeZone];
     self.dateFormatter.calendar = [NSCalendar currentCalendar];
     self.dateFormatter.dateFormat = @"dd'/'MM'/'yyyy";
+    
+    // Data par défaut
+    self.pickerView.datePicker.date = [self.dateFormatter dateFromString:@"01/01/1990"];
     
     // Set InputViews
     self.birthdayTextField.inputView = self.pickerView;
@@ -107,39 +114,37 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    // Google Analytics
+    self.trackedViewName = @"Vue Inscription";
     
-    /*
-    // iPhone 5 support ==> Layout
-    if ( [[VersionControl sharedInstance] screenHeight] == 568 )
+    // iPhone 4 layout
+    if ( ![[VersionControl sharedInstance] isIphone5] )
     {
-        
-        // Resize bgBox
+        // Move & Resize Box
         CGRect frame = self.boxView.frame;
-        frame.origin.y += 30;
-        frame.size.height += 40;
+        frame.origin.y = 15;
+        frame.size.height -= 15;
         self.boxView.frame = frame;
         
         // Move TextFields
-        int margin = 4;
-        [self moveView:self.nomLabel distance:margin+2];
-        [self moveView:self.prenomLabel distance:margin+2];
-        [self moveView:self.emailLabel distance:margin+2];
-        [self moveView:self.mdpLabel distance:margin+2];
+        int margin = -2;
+        [self moveView:self.prenomLabel distance:margin];
+        [self moveView:self.nomLabel distance:margin-1];
+        [self moveView:self.emailLabel distance:margin-2];
+        [self moveView:self.mdpLabel distance:margin-3];
+        [self moveView:self.birthdayTextField distance:margin-4];
+        [self moveView:self.maleButton distance:margin-5];
+        [self moveView:self.femaleButton distance:margin-5];
         
         // Move photo
-        [self moveView:self.photoProfil distance:margin + 20];
-        [self moveView:self.photoProfilLabel distance:margin + 15];
+        [self moveView:self.photoProfil distance:margin-13];
+        [self moveView:self.photoProfilLabel distance:margin-8];
         
         // Move label
-        [self moveView:self.confidentialiteLabel distance:margin + 55];
-        
-        // Move Buttons
-        [self moveView:self.backButton distance:margin+10];
-        [self moveView:self.nextButton distance:margin+10];
-        
+        [self moveView:self.confidentialiteLabel distance:margin - 75];
+        [self moveView:self.cguLabel distance:margin - 75];
     }
-    */
-    
+        
     // Autocomplétion
     self.emailLabel.autocompleteType = TextFieldAutocompletionTypeEmail;
     self.emailLabel.autocompleteDisabled = NO;
@@ -173,9 +178,15 @@
     // Picker view
     [self initDatePicker];
     
+    // Lien CGU
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(showCGU)];
+    [self.confidentialiteLabel addGestureRecognizer:tap];
+    [self.cguLabel addGestureRecognizer:tap];
+    
     // Labels
     NSString *confidialiteLabelString = self.confidentialiteLabel.text;
     NSString *photoProfilString = self.photoProfilLabel.text;
+    NSString *cguString = self.cguLabel.text;
     
     if( [[VersionControl sharedInstance] supportIOS6] )
     {
@@ -187,6 +198,13 @@
         //[self.confidentialiteLabel setAlignment:CLabelAlignmentCenter];
         self.confidentialiteLabel.textAlignment = NSTextAlignmentCenter;
         
+        /* ---------------------- CGU LABEL ----------------------- */
+        attributedString = [[NSMutableAttributedString alloc] initWithString:cguString];
+        [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:11] range:NSMakeRange(0, 1)];
+        [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:9] range:NSMakeRange(1, [cguString length] -1 )];
+        self.cguLabel.attributedText = attributedString;
+        //[self.confidentialiteLabel setAlignment:CLabelAlignmentCenter];
+        self.cguLabel.textAlignment = NSTextAlignmentCenter;
         
         /* ----------------- PHOTO PROFIL LABEL ------------------ */
         attributedString = [[NSMutableAttributedString alloc] initWithString:photoProfilString];
@@ -205,10 +223,7 @@
         
         self.confidentialiteLabel.textColor = [UIColor whiteColor];
         self.photoProfilLabel.textColor = [UIColor whiteColor];
-        
-        [self addShadowToView:self.confidentialiteLabel];
-        [self addShadowToView:self.photoProfilLabel];
-        
+        self.cguLabel.textColor = [UIColor whiteColor];
     }
     else
     {
@@ -239,6 +254,31 @@
         [self.confidentialiteLabel.superview addSubview:tttLabel];
         self.confidentialiteLabel.hidden = YES;
         
+        /* ---------------------- CGU LABEL ----------------------- */
+        
+        tttLabel = [[TTTAttributedLabel alloc] initWithFrame:self.cguLabel.frame];
+        
+        tttLabel.textAlignment = NSTextAlignmentCenter;
+        tttLabel.textColor = [UIColor whiteColor];
+        tttLabel.lineBreakMode = self.cguLabel.lineBreakMode;
+        tttLabel.numberOfLines = self.cguLabel.numberOfLines;
+        [self addShadowToView:tttLabel];
+        
+        tttLabel.backgroundColor = [UIColor clearColor];
+        [tttLabel setText:cguString afterInheritingLabelAttributesAndConfiguringWithBlock:^NSMutableAttributedString *(NSMutableAttributedString *mutableAttributedString) {
+            
+            NSInteger taille = [cguString length];
+            
+            [cf updateTTTAttributedString:mutableAttributedString withFontSize:11 onRange:NSMakeRange(0, 1)];
+            [cf updateTTTAttributedString:mutableAttributedString withFontSize:9 onRange:NSMakeRange(1, taille-1 )];
+            
+            [cf updateTTTAttributedString:mutableAttributedString withColor:[UIColor whiteColor] onRange:NSMakeRange(0, taille)];
+            
+            return mutableAttributedString;
+        }];
+        
+        [self.cguLabel.superview addSubview:tttLabel];
+        self.cguLabel.hidden = YES;
         
         /* ----------------- PHOTO PROFIL LABEL ------------------ */
         
@@ -279,9 +319,26 @@
     }
     
     
+    // Shadows
+    [self addShadowToView:self.confidentialiteLabel];
+    [self addShadowToView:self.photoProfilLabel];
+    [self addShadowToView:self.cguLabel];
+    
+    // Subline
+    self.sublineCGU.backgroundColor = [UIColor whiteColor];
+    [self addShadowToView:self.sublineCGU];
+    
     // Medallion
     self.photoProfil.image = [UIImage imageNamed:@"picto_tete_avec_fond.png"];
     [self.photoProfil addTarget:self action:@selector(clicPhoto) forControlEvents:UIControlEventTouchUpInside];
+    
+    // TextFields Font
+    font = [[Config sharedInstance] defaultFontWithSize:13];
+    self.nomLabel.font = font;
+    self.prenomLabel.font = font;
+    self.emailLabel.font = font;
+    self.mdpLabel.font = font;
+    self.birthdayTextField.font = [[Config sharedInstance] defaultFontWithSize:11];
     
     // ------------ FACEBOOK LOGIN POPUP -------------
     fbLoginPopup = [[UIAlertView alloc] initWithTitle:@"Inscription via Facebook"
@@ -332,8 +389,7 @@
     if( ([_nomLabel.text length] > 0) &&
        ([_prenomLabel.text length] > 0) &&
        ([_emailLabel.text length] > 0) &&
-       ([_mdpLabel.text length] > 0) &&
-       ([_birthdayTextField.text length] > 0)
+       ([_mdpLabel.text length] > 0)
        )
     {
         if( ![[Config sharedInstance] isValidEmail:_emailLabel.text] )
@@ -351,7 +407,7 @@
     }
     
     [[[UIAlertView alloc] initWithTitle:@"Formulaire invalide"
-                                message:@"Veuillez remplir tous les champs du formulaire"
+                                message:@"Veuillez remplir tous les champs obligatoires du formulaire"
                                delegate:nil
                       cancelButtonTitle:@"OK"
                       otherButtonTitles:nil] 
@@ -392,15 +448,15 @@
 
 #pragma mark - UIImagePickerController Delegate
 
--(void) imagePickerController:(UIImagePickerController *)UIPicker didFinishPickingMediaWithInfo:(NSDictionary *) info
+-(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
 {
-    UIImage *image = [[Config sharedInstance] imageWithMaxSize:info[@"UIImagePickerControllerOriginalImage"] maxSize:600];
+    UIImage *image = [[Config sharedInstance] imageWithMaxSize:info[@"UIImagePickerControllerOriginalImage"] maxSize:200];
     
     self.imageProfile = image;
     self.photoProfil.image = self.imageProfile;
     _mdpLabel.returnKeyType = UIReturnKeyDone;
     
-    [[VersionControl sharedInstance] dismissModalViewControllerFromRoot:UIPicker animated:YES];
+    [[VersionControl sharedInstance] dismissModalViewControllerFromRoot:picker animated:YES];
 }
 
 #pragma mark - UIActionSheet Delegate
@@ -438,6 +494,9 @@
         // Accepter
         if(buttonIndex == 1)
         {
+            MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+            hud.labelText = NSLocalizedString(@"MBProgressHUD_Loading", nil);
+            
             [[FacebookManager sharedInstance] getCurrentUserInformationsWithEnded:^(UserClass *user) {
                 
                 if(user)
@@ -445,15 +504,25 @@
                     self.nomLabel.text = user.nom;
                     self.prenomLabel.text = user.prenom;
                     self.emailLabel.text = user.email;
+                    
+                    if(user.sex == UserSexMale) {
+                        self.maleButton.selected = YES;
+                    }
+                    else {
+                        self.femaleButton.selected = YES;
+                    }
+                    
                     if(user.imageString)
                     {
-                        [self.photoProfil setImage:nil imageString:user.imageString withSaveBlock:^(UIImage *image) {
+                        [self.photoProfil setImage:nil imageString:user.imageString withSaveBlock:^(UIImage *image_raw) {
+                            UIImage *image = [[Config sharedInstance] imageWithMaxSize:image_raw maxSize:200];
                             self.imageProfile = image;
                         }];
                     }
                     facebookId = user.facebookId;
                 }
                 
+                [MBProgressHUD hideHUDForView:self.view animated:YES];
             }];
         }
         
@@ -489,6 +558,9 @@
         
         sender.selected = !sender.selected;
     }
+    else {
+        sender.selected = !sender.selected;
+    }
 }
 
 - (IBAction)clicNext {
@@ -502,20 +574,33 @@
     if([self validateForm])
     {
         // Birthday
-        NSNumber *timeStamp = @([self.pickerView.datePicker.date timeIntervalSince1970]);
+        NSNumber *timeStamp = nil;
+        if(self.birthdayTextField.text.length > 0) {
+            timeStamp = @([self.pickerView.datePicker.date timeIntervalSince1970]);
+        }
         
         // Sexe
-        NSString *sexe = (self.maleButton.isSelected)? @"M" : @"F";
+        NSString *sexe = nil;
+        if(self.maleButton.isSelected || self.femaleButton.isSelected)
+            sexe = (self.maleButton.isSelected)? @"M" : @"F";
         
         // Params
         NSMutableDictionary *attributes = @{
         @"firstname" : _prenomLabel.text,
         @"lastname" : _nomLabel.text,
         @"email" : _emailLabel.text,
-        @"password" : _mdpLabel.text,
-        @"birth_date":timeStamp,
-        @"sex": sexe
+        @"password" : _mdpLabel.text
         }.mutableCopy;
+        
+        // Date de naissance
+        if(timeStamp) {
+            attributes[@"birth_date"] = timeStamp;
+        }
+        
+        // Sexe
+        if(sexe) {
+            attributes[@"sex"] = sexe;
+        }
         
         if(_imageProfile)
         {
@@ -579,5 +664,9 @@
     self.birthdayTextField.text = [self.dateFormatter stringFromDate:self.pickerView.datePicker.date];
 }
 
+- (void)showCGU {
+    WebModalViewController *webView = [[WebModalViewController alloc] initWithURL:[NSURL URLWithString:kAppMomentCGU]];
+    [self presentViewController:webView animated:YES completion:nil];
+}
 
 @end

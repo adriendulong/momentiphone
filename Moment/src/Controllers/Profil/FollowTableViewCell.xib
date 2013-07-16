@@ -54,6 +54,7 @@
 						<string key="NSFrame">{{0, 49}, {253, 2}}</string>
 						<reference key="NSSuperview" ref="137576750"/>
 						<reference key="NSWindow"/>
+						<reference key="NSNextKeyView"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<object class="NSColor" key="IBUIBackgroundColor">
 							<int key="NSColorSpace">1</int>
@@ -111,7 +112,7 @@
 					<object class="IBUIButton" id="641178">
 						<reference key="NSNextResponder" ref="137576750"/>
 						<int key="NSvFlags">292</int>
-						<string key="NSFrame">{{188, 8}, {59, 34}}</string>
+						<string key="NSFrame">{{188, 8}, {63, 33}}</string>
 						<reference key="NSSuperview" ref="137576750"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="359060889"/>
@@ -356,8 +357,8 @@
 		<bool key="IBDocument.PluginDeclaredDependenciesTrackSystemTargetVersion">YES</bool>
 		<int key="IBDocument.defaultPropertyAccessControl">3</int>
 		<dictionary class="NSMutableDictionary" key="IBDocument.LastKnownImageSizes">
-			<string key="btn_follow_list_down.png">{60, 34}</string>
-			<string key="btn_follow_list_up.png">{59, 34}</string>
+			<string key="btn_follow_list_down.png">{63, 33}</string>
+			<string key="btn_follow_list_up.png">{53, 33}</string>
 		</dictionary>
 		<string key="IBCocoaTouchPluginVersion">2083</string>
 	</data>

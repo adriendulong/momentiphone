@@ -12,8 +12,10 @@
 #import "UILabel+BottomAlign.h"
 #import "UserClass+Server.h"
 #import <FacebookSDK/FacebookSDK.h>
+#import "MomentClass+Server.h"
+#import "SMSComposeViewController.h"
 
-#define headerSize 100 
+#define headerSize 100
 
 enum InviteAddFontSize {
     InviteAddFontSizeSmall = 10,
@@ -26,6 +28,8 @@ enum InviteAddFontSize {
     NSString *contactSearchText;
     NSString *facebookSearchText;
     NSString *favorisSearchText;
+    UIAlertView *cancelConfirmAlertView, *successInvitedAlertView;
+    BOOL acceptReturnBackButton;
 }
 
 @end
@@ -35,6 +39,7 @@ enum InviteAddFontSize {
 @synthesize owner = _owner;
 @synthesize moment = _moment;
 @synthesize selectedFriends = _selectedFriends;
+@synthesize notifSelectedFriends = _notifSelectedFriends;
 @synthesize scrollView = _scrollView;
 @synthesize selectedOnglet = _selectedOnglet;
 
@@ -54,8 +59,6 @@ enum InviteAddFontSize {
 @synthesize validerLabel = _validerLabel;
 @synthesize nbInvitesLabel = _nbInvitesLabel;
 @synthesize phraseLabel = _phraseLabel;
-@synthesize momentLabel = _momentLabel;
-@synthesize ttMomentLabel = _ttMomentLabel;
 @synthesize ttValiderLabel = _ttValiderLabel;
 
 - (id)initWithOwner:(UserClass*)owner withMoment:(MomentClass*)moment
@@ -65,7 +68,9 @@ enum InviteAddFontSize {
         self.owner = owner;
         self.moment = moment;
         self.selectedFriends = [[NSMutableArray alloc] init];
+        self.notifSelectedFriends = [[NSMutableArray alloc] init];
         self.selectedOnglet = 0;
+        acceptReturnBackButton = NO;
     }
     return self;
 }
@@ -92,15 +97,7 @@ enum InviteAddFontSize {
     // phrase Label
     [self.phraseLabel sizeToFit];
     [self placerLabel:self.phraseLabel afterView:self.nbInvitesLabel withMarginX:margin withMarginY:-1];
-    
-    // Moment Label
-    if(self.ttMomentLabel) {
-        [self placerLabel:self.ttMomentLabel afterView:self.phraseLabel withMarginX:margin withMarginY:1];
-    }
-    else {
-        [self placerLabel:self.momentLabel afterView:self.phraseLabel withMarginX:margin withMarginY:1];
-    }
-    
+        
 }
 
 - (void)viewDidLoad
@@ -132,7 +129,7 @@ enum InviteAddFontSize {
     self.phraseLabel.textColor = [[Config sharedInstance] textColor];
     
     // Moment Label
-    [self setMomentLabelText:@"MOMENT"];
+    //[self setMomentLabelText:@"MOMENT"];
     
     // Frames
     [self updateHeaderFrames];
@@ -152,6 +149,13 @@ enum InviteAddFontSize {
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    
+    // Google Analytics
+    [[[GAI sharedInstance] defaultTracker] sendView:@"Vue Invitation"];
 }
 
 #pragma mark - Custom Label initialisation
@@ -196,6 +200,7 @@ enum InviteAddFontSize {
     }
 }
 
+/*
 - (void)setMomentLabelText:(NSString*)texteLabel
 {
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:texteLabel];
@@ -249,13 +254,19 @@ enum InviteAddFontSize {
         self.momentLabel.hidden = YES;
     }
 }
+*/
 
 #pragma mark - InviteViewController Delegate
 
-- (void)addNewSelectedFriend:(UserClass*)friend
+- (void)addNewSelectedFriend:(UserClass*)friend notif:(BOOL)notif
 {
+    if([self.selectedFriends count] == 0)
+        self.bandeauButton.backgroundColor = [UIColor grayColor];
+    
     [self.selectedFriends addObject:friend];
     [self updateSelectedFriendsLabel];
+    if(notif)
+        [self.notifSelectedFriends addObject:friend];
 }
 
 - (void)removeSelectedFriend:(UserClass*)friend
@@ -264,6 +275,12 @@ enum InviteAddFontSize {
         [self.selectedFriends removeObject:friend];
         [self updateSelectedFriendsLabel];
     }
+    if([self.notifSelectedFriends containsObject:friend]) {
+        [self.notifSelectedFriends removeObject:friend];
+    }
+    
+    if([self.selectedFriends count] == 0)
+        self.bandeauButton.backgroundColor = [UIColor clearColor];
 }
 
 - (void)updateSelectedFriendsLabel {
@@ -291,6 +308,25 @@ enum InviteAddFontSize {
     // Set Nav bar buttons
     self.navigationItem.rightBarButtonItems = @[negativeSpace, buttons];
     [self selectNavigationBarButton:self.selectedOnglet];
+    
+    
+    
+    
+    UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
+    UIImage *img = [UIImage imageNamed:@"btn-back.png"];
+    
+    button.frame = CGRectMake(0, 0, img.size.width, img.size.height);
+    
+    [button setImage:img forState:UIControlStateNormal];
+    [button setImage:img forState:UIControlStateSelected];
+    
+    [button removeTarget:self.navigationController action:@selector(popViewControllerAnimated:) forControlEvents:UIControlEventTouchUpInside];
+    [button addTarget:self action:@selector(confirmCancel) forControlEvents:UIControlEventTouchUpInside];
+    
+    UIBarButtonItem *barBackItem = [[UIBarButtonItem alloc] initWithCustomView:button];
+    
+    self.navigationItem.hidesBackButton = TRUE;
+    self.navigationItem.leftBarButtonItem = barBackItem;
 }
 
 - (void)selectNavigationBarButton:(enum InviteAddTableViewControllerStyle)rank
@@ -439,18 +475,83 @@ enum InviteAddFontSize {
         MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
         hud.labelText = NSLocalizedString(@"MBProgressHUD_Loading", nil);
         
-        [UserClass inviteNewGuest:self.selectedFriends toMoment:self.moment withEnded:^(BOOL success) {
+        [self.moment inviteNewGuest:self.selectedFriends withEnded:^(BOOL success) {
             
             [MBProgressHUD hideHUDForView:self.view animated:YES];
             
             if(success)
             {                
-                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"InviteAddTableViewController_AlertView_InviteSuccess_Title", nil)
-                                                                message:NSLocalizedString(@"InviteAddTableViewController_AlertView_InviteSuccess_Message", nil)
-                                                               delegate:self
-                                                      cancelButtonTitle:NSLocalizedString(@"AlertView_Button_OK", nil)
-                                                      otherButtonTitles:nil];
-                [alert show];
+                // Envoyer SMS d'invitation
+                BOOL smsSend = NO;
+                
+                if([MFMessageComposeViewController canSendText])
+                {
+                    // Empeche les doublons
+                    NSMutableSet *smsList = [[NSMutableSet alloc] init];
+                    for(UserClass *user in self.notifSelectedFriends)
+                    {
+                        // Envoyer qu'aux 06 ou 07 (+33 ou 0033)
+                        if(user.numeroMobile) {
+                            NSString *formattedNum = [user.numeroMobile stringByReplacingOccurrencesOfString:@" " withString:@""];
+                            
+                            if ([[Config sharedInstance] isMobilePhoneNumber:formattedNum forceValidation:YES]) {
+                                [smsList addObject:formattedNum];
+                            }
+                        }
+                        if(user.secondPhone) {
+                            NSString *formattedNum = [user.secondPhone stringByReplacingOccurrencesOfString:@" " withString:@""];
+                            
+                            if ([[Config sharedInstance] isMobilePhoneNumber:formattedNum forceValidation:YES]) {
+                                [smsList addObject:formattedNum];
+                            }
+                        }
+                    }
+                    
+                    if([smsList count] > 0)
+                    {
+                        // SMS Composer
+                        SMSComposeViewController *controller = [[SMSComposeViewController alloc] init];
+                        
+                        // Paramètres
+                        NSString *titre = self.moment.titre;
+                        NSString *url = self.moment.uniqueURL;
+                        NSString *currentUserName = [self currentUserName];
+                        
+                        // SMS body
+                        controller.body =
+                        [NSString stringWithFormat:
+                         NSLocalizedString(@"InviteAddViewController_SendSMS_Message", nil),titre, url, currentUserName];
+                        
+                        // Numéros de téléphones
+                        controller.recipients = smsList.allObjects;
+                        
+                        // Delegate
+                        controller.messageComposeDelegate = self;
+                        smsSend = YES;
+                        [self presentModalViewController:controller animated:YES];
+                    }
+                }
+                else {
+                    [TestFlight passCheckpoint:@"DEVICE CAN'T SEND SMS"];
+                }
+                
+                // Envoyer Notification d'invitations Facebook
+                if(!smsSend) {
+                    
+                    // Si il n'y a pas d'invitations Facebook
+                    if(![self sendNotifToFacebookFriends]) {
+                        
+                        acceptReturnBackButton = YES;
+                        
+                        // Informer l'utilisateur que les invitations ont été envoyées
+                        successInvitedAlertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"InviteAddTableViewController_AlertView_InviteSuccess_Title", nil)
+                                                                        message:NSLocalizedString(@"InviteAddTableViewController_AlertView_InviteSuccess_Message", nil)
+                                                                       delegate:self
+                                                              cancelButtonTitle:NSLocalizedString(@"AlertView_Button_OK", nil)
+                                                              otherButtonTitles:nil];
+                        [successInvitedAlertView show];
+                    }
+                }
                 
             }
             else
@@ -584,9 +685,8 @@ enum InviteAddFontSize {
         if([temp count] == 0)
         {
             // On vérifie si c'est un début de numéro de téléphone
-            NSString *regex = @"0[1-9]([0-9]*)";
-            NSPredicate *test = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", regex];
-            BOOL phone = [test evaluateWithObject:searchBar.text];
+            NSString *formattedNum = [searchBar.text stringByReplacingOccurrencesOfString:@" " withString:@""];
+            BOOL phone = [[Config sharedInstance] isValidPhoneNumber:formattedNum];
             
             // User attributes
             NSMutableDictionary *attr = [[NSMutableDictionary alloc] init];
@@ -618,12 +718,12 @@ enum InviteAddFontSize {
 
 #pragma mark - UIAlertView Delegate
 
-- (void)sendNotifToFacebookFriends
+- (BOOL)sendNotifToFacebookFriends
 {
     
     // Liste les id facebook
     NSMutableSet *fbId = [[NSMutableSet alloc] init];
-    for( UserClass* user in self.selectedFriends )
+    for( UserClass* user in self.notifSelectedFriends )
     {
         if(user.facebookId)
             [fbId addObject:user.facebookId];
@@ -643,7 +743,7 @@ enum InviteAddFontSize {
                                                    parameters:params
                                                       handler:^(FBWebDialogResult result, NSURL *resultURL, NSError *error) {
                                                           
-                                                          NSLog(@"HANDLER CALLED");
+                                                          //NSLog(@"HANDLER CALLED");
                                                           if (error) {
                                                               
                                                               [[[UIAlertView alloc]
@@ -663,68 +763,19 @@ enum InviteAddFontSize {
     }
     else
     {
-        // Retour à la vue info
-        [self.navigationController popViewControllerAnimated:YES];
+        // Invitations Facebook pas envoyées
+        return NO;
     }
     
-   
-}
-
-// Envoi des notifs SMS
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
-{
-    BOOL smsSend = NO;
+    // Invitations Facebook envoyées
+    return YES;
     
-	if([MFMessageComposeViewController canSendText])
-	{
-        // Empeche les doublons
-        NSMutableSet *smsList = [[NSMutableSet alloc] init];
-        for(UserClass *user in self.selectedFriends)
-        {
-            if(user.numeroMobile)
-                [smsList addObject:[user.numeroMobile stringByReplacingOccurrencesOfString:@" " withString:@""]];
-            if(user.secondPhone)
-                [smsList addObject:[user.secondPhone stringByReplacingOccurrencesOfString:@" " withString:@""]];
-        }
-        
-        if([smsList count] > 0)
-        {
-            // SMS Composer
-            MFMessageComposeViewController *controller = [[MFMessageComposeViewController alloc] init];
-            
-            // Paramètres
-            NSString *titre = self.moment.titre;
-            NSString *url = @"http://www.appmoment.fr";
-            NSString *currentUserName = [self currentUserName];
-            
-            // SMS body
-            controller.body =
-            [NSString stringWithFormat:
-             NSLocalizedString(@"InviteAddViewController_SendSMS_Message", nil),titre, url, currentUserName];
-            
-            // Numéros de téléphones
-            controller.recipients = smsList.allObjects;
-            
-            // Delegate
-            controller.messageComposeDelegate = self;
-            smsSend = YES;
-            [self presentModalViewController:controller animated:YES];
-        }
-	}
-    else {
-        [TestFlight passCheckpoint:@"DEVICE CAN'T SEND SMS"];
-    }
-    
-    if(!smsSend) {
-        [self sendNotifToFacebookFriends];
-    }
 }
 
 #pragma mark - MFMessageComposeViewController Delegate
 
 - (void)messageComposeViewController:(MFMessageComposeViewController *)controller didFinishWithResult:(MessageComposeResult)result
 {
-    
     if(result == MessageComposeResultFailed) {
         // L'envoi a échoué
         [[[UIAlertView alloc]
@@ -736,29 +787,59 @@ enum InviteAddFontSize {
          show];
     }
     
-    // Send Facebook Notif
-    [self sendNotifToFacebookFriends];
+    // Cacher Fenetre SMS
+    [self dismissModalViewControllerAnimated:YES];
     
-	[self dismissModalViewControllerAnimated:YES];
+    // Send Facebook Notif
+    if(![self sendNotifToFacebookFriends]) {
+        // Retour à la vue info
+        [self.navigationController popViewControllerAnimated:YES];
+    }
 }
 
 #pragma mark - Util
 
 - (NSString*)currentUserName {
     // Nom de l'expéditeur
-    UserClass *current = [UserCoreData getCurrentUser];
-    NSString *username = nil;
-    if(current.nom && current.prenom) {
-        username = [NSString stringWithFormat:@"%@ %@", current.prenom.uppercaseString, current.nom.uppercaseString];
+    return [[UserCoreData getCurrentUser] formatedUsernameWithStyle:UsernameStyleCapitalized];
+}
+
+#pragma mark - UIAlertView Delegate
+
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+    if (alertView == cancelConfirmAlertView) {
+        if (buttonIndex == 1) {
+            acceptReturnBackButton = YES;
+            [self clicValider];
+        } else {
+            [self.navigationController popViewControllerAnimated:YES];
+        }
+    } else if (alertView == successInvitedAlertView) {
+        if (acceptReturnBackButton)
+            [self.navigationController popViewControllerAnimated:YES];
     }
-    else if(current.nom || current.prenom) {
-        if(current.prenom)
-            username = current.prenom.uppercaseString;
+}
+
+- (void)confirmCancel
+{
+    if([self.selectedFriends count] != 0) {
+        NSString *message = [[NSString alloc] init];
+        
+        if([self.selectedFriends count] == 1 )
+            message = NSLocalizedString(@"InviteAddViewController_AlertView_BackButton_Message_One", nil);
         else
-            username = current.nom.uppercaseString;
+            message = NSLocalizedString(@"InviteAddViewController_AlertView_BackButton_Message_Several", nil);
+        
+        cancelConfirmAlertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"InviteAddViewController_AlertView_BackButton_Title", nil)
+                                                        message:message
+                                                       delegate:self
+                                              cancelButtonTitle:NSLocalizedString(@"AlertView_Button_NO", nil)
+                                              otherButtonTitles:NSLocalizedString(@"AlertView_Button_YES", nil), nil];
+        [cancelConfirmAlertView show];
+    } else {
+        [self.navigationController popViewControllerAnimated:YES];
     }
-    
-    return username ?: @"";
 }
 
 @end

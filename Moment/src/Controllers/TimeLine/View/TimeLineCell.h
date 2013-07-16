@@ -29,4 +29,6 @@
 
 - (void)willDisappear;
 
+- (void)decallerRow:(NSInteger)decallage;
+
 @end

@@ -22,7 +22,7 @@ static NSDateFormatter *smallDateFormatter = nil;
         NSString *startDate = attributes[@"startDate"];
         NSString *endDate = attributes[@"endDate"];
         NSString *startTime = attributes[@"startTime"];
-        NSString *endTime = attributes[@"entTime"];
+        NSString *endTime = attributes[@"endTime"];
         
         if(!fullDateFormatter) {
             fullDateFormatter = [[NSDateFormatter alloc] init];
@@ -72,6 +72,10 @@ static NSDateFormatter *smallDateFormatter = nil;
         if(!end)
             end = [NSDate date];
         
+        if (attributes == nil) {
+            return attributes;
+        }
+        
         NSMutableDictionary *dico = @{
                                       @"ios_mapping":@"LOCAL",
                                       @"momentId":attributes[@"id"],
@@ -114,14 +118,20 @@ static NSDateFormatter *smallDateFormatter = nil;
         if(attributes[@"user_state"])
             dico[@"state"] = attributes[@"user_state"];
         
-        if(attributes[@"isOpen"])
-            dico[@"isOpen"] = attributes[@"isOpen"];
+        if(attributes[@"isOpenInvit"])
+            dico[@"isOpenInvit"] = attributes[@"isOpenInvit"];
         
         if(attributes[@"is_sponso"])
             dico[@"isSponso"] = attributes[@"is_sponso"];
         
         if(attributes[@"privacy"])
             dico[@"privacy"] = attributes[@"privacy"];
+        
+        if(attributes[@"unique_url"])
+            dico[@"unique_url"] = attributes[@"unique_url"];
+        
+        if(attributes[@"cover_photo_url"])
+            dico[@"cover_photo_url"] = attributes[@"cover_photo_url"];
         
         return dico;
     }
@@ -178,14 +188,17 @@ static NSDateFormatter *smallDateFormatter = nil;
         if(attributes[@"state"])
             dico[@"user_state"] = attributes[@"state"];
         
-        if(attributes[@"isOpen"])
-            dico[@"isOpen"] = attributes[@"isOpen"];
+        if(attributes[@"isOpenInvit"])
+            dico[@"isOpenInvit"] = attributes[@"isOpenInvit"];
         
         if(attributes[@"isSponso"])
             dico[@"is_sponso"] = attributes[@"is_sponso"];
         
         if(attributes[@"privacy"])
             dico[@"privacy"] = attributes[@"privacy"];
+        
+        if(attributes[@"unique_url"])
+            dico[@"unique_url"] = attributes[@"unique_url"];
         
         return dico;
     }
@@ -226,9 +239,6 @@ static NSDateFormatter *smallDateFormatter = nil;
         dico[@"endTime"] = [dfHeure stringFromDate:self.dateDebut];
     }
     
-    if(self.imageString)
-        dico[@"photo_url"] = self.imageString;
-    
     if(self.titre)
         dico[@"name"] = self.titre;
     else
@@ -263,7 +273,7 @@ static NSDateFormatter *smallDateFormatter = nil;
     }
     
     if(self.imageString)
-        dico[@"photo_url"] = self.imageString;
+        dico[@"cover_photo_url"] = self.imageString;
     else if(self.dataImage)
         dico[@"photo"] = self.dataImage;
     
@@ -273,15 +283,18 @@ static NSDateFormatter *smallDateFormatter = nil;
     
     if(self.state)
         dico[@"state"] = self.state;
-    
-    if(self.isOpen)
-        dico[@"isOpen"] = self.isOpen;
-    
+        
     if(self.isSponso)
         dico[@"is_sponso"] = self.isSponso;
     
     if(self.privacy)
         dico[@"privacy"] = self.privacy;
+    
+    if(self.isOpen)
+        dico[@"isOpenInvit"] = self.isOpen;
+    
+    if(self.uniqueURL)
+        dico[@"unique_url"] = self.uniqueURL;
     
     //NSLog(@"\n--------------------------------------------------------------------------\n--------------------------------------------------------------------------\n");
     
@@ -291,6 +304,5 @@ static NSDateFormatter *smallDateFormatter = nil;
     
     return dico.copy;
 }
-
 
 @end
