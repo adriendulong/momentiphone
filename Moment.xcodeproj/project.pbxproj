@@ -293,7 +293,7 @@
 		5B6049FF16EC423400A2FACF /* PopUpFinCreationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6049FD16EC423300A2FACF /* PopUpFinCreationViewController.m */; };
 		5B604A2316EC5E9A00A2FACF /* PopUpFinCreationViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5B604A2216EC5E9600A2FACF /* PopUpFinCreationViewController.xib */; };
 		5B6516BD169F895B00092879 /* NSDate+NSDateAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6516BC169F895B00092879 /* NSDate+NSDateAdditions.m */; };
-		5B69928C172C398F00F07271 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B69928B172C398F00F07271 /* Security.framework */; };
+		5B69928C172C398F00F07271 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B69928B172C398F00F07271 /* Security.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		5B6A0FD717377674005BCB7D /* sexe_button_off.png in Resources */ = {isa = PBXBuildFile; fileRef = 5B6A0FD317377674005BCB7D /* sexe_button_off.png */; };
 		5B6A0FD817377674005BCB7D /* sexe_button_off@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5B6A0FD417377674005BCB7D /* sexe_button_off@2x.png */; };
 		5B6A0FD917377674005BCB7D /* sexe_button_on.png in Resources */ = {isa = PBXBuildFile; fileRef = 5B6A0FD517377674005BCB7D /* sexe_button_on.png */; };
@@ -339,7 +339,7 @@
 		5B6A10661738AC79005BCB7D /* Harpy.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6A10641738AC79005BCB7D /* Harpy.m */; };
 		5B6A106B1738B2DD005BCB7D /* iRate.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 5B6A10681738B2DD005BCB7D /* iRate.bundle */; };
 		5B6A106C1738B2DD005BCB7D /* iRate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6A106A1738B2DD005BCB7D /* iRate.m */; };
-		5B6A106E1738B54A005BCB7D /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6A106D1738B547005BCB7D /* StoreKit.framework */; };
+		5B6A106E1738B54A005BCB7D /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6A106D1738B547005BCB7D /* StoreKit.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		5B6C7B4216D9611F00FED9E9 /* MTStatusBarOverlay.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6C7B4116D9611F00FED9E9 /* MTStatusBarOverlay.m */; };
 		5B71DA3616C7E9E30050DC94 /* DeviceModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B71DA3516C7E9E30050DC94 /* DeviceModel.m */; };
 		5B71DA3B16C7EC570050DC94 /* OpenUDID.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B71DA3916C7EC570050DC94 /* OpenUDID.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
@@ -867,6 +867,7 @@
 		6EE322A11771A55E00375DCE /* picto_invite_past.png in Resources */ = {isa = PBXBuildFile; fileRef = 6EE3229F1771A55E00375DCE /* picto_invite_past.png */; };
 		6EE322A41771A5C800375DCE /* picto_bulle_past@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6EE322A21771A5C800375DCE /* picto_bulle_past@2x.png */; };
 		6EE322A51771A5C800375DCE /* picto_bulle_past.png in Resources */ = {isa = PBXBuildFile; fileRef = 6EE322A31771A5C800375DCE /* picto_bulle_past.png */; };
+		6EE9B16E1793F9D200C6686B /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EE9B16D1793F9D200C6686B /* libsqlite3.dylib */; settings = {ATTRIBUTES = (Weak, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -2088,6 +2089,7 @@
 		6EE3229F1771A55E00375DCE /* picto_invite_past.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = picto_invite_past.png; sourceTree = "<group>"; };
 		6EE322A21771A5C800375DCE /* picto_bulle_past@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "picto_bulle_past@2x.png"; sourceTree = "<group>"; };
 		6EE322A31771A5C800375DCE /* picto_bulle_past.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = picto_bulle_past.png; sourceTree = "<group>"; };
+		6EE9B16D1793F9D200C6686B /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -2095,6 +2097,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6EE9B16E1793F9D200C6686B /* libsqlite3.dylib in Frameworks */,
 				6EB9C53C178553A700976CFC /* AudioToolbox.framework in Frameworks */,
 				6EB9C533178553A100976CFC /* AVFoundation.framework in Frameworks */,
 				6E21188E17730FB4009931F8 /* libz.dylib in Frameworks */,
@@ -3491,6 +3494,7 @@
 		5BF02E76169C8F7400232E75 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				6EE9B16D1793F9D200C6686B /* libsqlite3.dylib */,
 				6E7DB526178E923900CEC1BD /* Crashlytics.framework */,
 				6EB9C53B178553A700976CFC /* AudioToolbox.framework */,
 				6EB9C532178553A100976CFC /* AVFoundation.framework */,

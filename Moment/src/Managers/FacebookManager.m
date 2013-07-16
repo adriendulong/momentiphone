@@ -25,6 +25,7 @@
 static NSString *kFbGraphBaseURL = @"http://graph.facebook.com/";
 
 // Permissions
+static NSString *kFbPermissionBasicInfo = @"basic_info";
 static NSString *kFbPermissionEmail = @"email";
 static NSString *kFbPermissionAboutMe = @"user_about_me";
 //static NSString *kFbPermissionUserHomeTown = @"user_hometown";
@@ -852,6 +853,157 @@ static FacebookManager *sharedInstance = nil;
     }
 }
 
+- (void)getRSVP:(MomentClass*)moment fromUser:(UserClass *)user withEnded:(void (^) (enum UserState rsvp))block
+{
+    if(!moment) {
+        if(block)
+            block(-1);
+        return;
+    }
+
+    if(moment.facebookId && user.facebookId )
+    {
+        // Ask For Permission
+        [self askForPermissions:@[kFbPermissionRsvpEvent] type:FacebookPermissionReadType withEnded:^(BOOL success) {
+            
+            // Get Permission
+            if (success) {
+                
+                // Connection
+                FBRequestConnection *connection = [[FBRequestConnection alloc] init];
+                FBRequest *request = [FBRequest requestForGraphPath:@"fql"];
+                
+                // Requete
+                NSString *query = [NSString stringWithFormat:@"SELECT rsvp_status FROM event_member WHERE eid=%@ AND uid=%@", moment.facebookId, user.facebookId];
+                [request.parameters setObject:query forKey:@"q"];
+                
+                // Completion
+                [connection addRequest:request completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
+                    if(block) {
+                        if(error) {
+                            NSLog(@"GET RSVP FB ERROR : %@", error.localizedDescription);
+                            block(-1);
+                        }
+                        else {
+                            
+                            // Result
+                            if(result[@"data"] && ([result[@"data"] count] > 0) && result[@"data"][0][@"rsvp_status"])
+                            {
+                                NSString *rsvp = result[@"data"][0][@"rsvp_status"];
+                                enum UserState state;
+                                
+                                // Identification
+                                if([rsvp isEqualToString:@"attending"]) {
+                                    state = UserStateValid;
+                                }
+                                else if([rsvp isEqualToString:@"declined"]) {
+                                    state = UserStateRefused;
+                                }
+                                else {
+                                    state = UserStateWaiting;
+                                }
+                                
+                                block(state);
+                            }else {
+                                block(-1);
+                            }
+                            
+                        }
+                    }
+                }];
+                
+                [connection start];
+            }
+            // Permission Refused Or Fail
+            else if(block) {
+                block(-1);
+            }
+        }];
+    }
+    else if(block) {
+        block(-1);
+    }
+}
+
+- (void)getAllEventMembers:(MomentClass*)moment withEnded:(void (^) (NSMutableArray *allMembers))block
+{
+    if(!moment) {
+        if(block)
+            block(nil);
+        return;
+    }
+    
+    if(moment.facebookId)
+    {
+        // Ask For Permission
+        [self askForPermissions:@[kFbPermissionRsvpEvent] type:FacebookPermissionReadType withEnded:^(BOOL success) {
+            
+            // Get Permission
+            if(success) {
+                
+                // Connection
+                FBRequestConnection *connection = [[FBRequestConnection alloc] init];
+                FBRequest *request = [FBRequest requestForGraphPath:@"fql"];
+                
+                // Requete
+                NSString *query = [NSString stringWithFormat:@"SELECT uid, rsvp_status FROM event_member WHERE eid=%@", moment.facebookId];
+                NSLog(@"query = %@",query);
+                [request.parameters setObject:query forKey:@"q"];
+                
+                // Completion
+                [connection addRequest:request completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
+                    if(block) {
+                        if(error) {
+                            NSLog(@"connection = %@",connection);
+                            NSLog(@"result = %@",result);
+                            NSLog(@"GET ALL EVENT MEMBERS FB ERROR : %@", error.localizedDescription);
+                            block(nil);
+                        }
+                        else {
+                            
+                            // Result
+                            if(result[@"data"] && ([result[@"data"] count] > 0) && result[@"data"][0][@"uid"])
+                            {
+                                
+                                NSMutableArray *allMembers = [NSMutableArray array];
+                                for (int u = 0; u < [result[@"data"] count]; u++) {
+                                    
+                                    NSString *uid = result[@"data"][u][@"uid"];
+                                    NSString *rsvp = result[@"data"][u][@"rsvp_status"];
+                                    
+                                    [self getUserInformationsWithId:uid withEnded:^(UserClass *user) {
+                                        if (user != nil) {
+                                            NSLog(@"uid = %@ | rsvp_status = %@",uid, rsvp);
+                                            NSLog(@"user = %@", user);
+                                            
+                                            [allMembers addObject:user];
+                                        }
+                                    }];                                    
+                                }
+                                NSLog(@"FBManager - allMembers = %@",allMembers);
+                                
+                                block(allMembers);
+                            } else {
+                                block(nil);
+                            }
+                            
+                        }
+                    }
+                }];
+                
+                [connection start];
+            }
+            // Permission Refused Or Fail
+            else if(block) {
+                block(nil);
+            }
+        }];
+    }
+    else if(block) {
+        block(nil);
+    }
+}
+
 - (void)updateRSVP:(enum UserState)rsvp
             moment:(MomentClass*)moment
          withEnded:(void (^) (BOOL success))block
@@ -1033,11 +1185,12 @@ static FacebookManager *sharedInstance = nil;
 
 - (NSArray*)defaultReadPermissions {
     if(!_defaultReadPermissions) {
-        _defaultReadPermissions = @[kFbPermissionEmail,
-                                kFbPermissionAboutMe,
-                                kFbPermissionFriendLists,
-                                kFbPermissionFriendLocation,
-                                kFbPermissionFriendHomeTown];
+        _defaultReadPermissions = @[kFbPermissionBasicInfo,
+                                    kFbPermissionEmail,
+                                    kFbPermissionAboutMe,
+                                    kFbPermissionFriendLists,
+                                    kFbPermissionFriendLocation,
+                                    kFbPermissionFriendHomeTown];
     }
     return _defaultReadPermissions;
 }

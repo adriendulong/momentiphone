@@ -63,6 +63,8 @@ enum FacebookPermissionType {
             moment:(MomentClass*)moment
          withEnded:(void (^) (BOOL success))block;
 - (void)getRSVP:(MomentClass*)moment withEnded:(void (^) (enum UserState rsvp))block;
+- (void)getRSVP:(MomentClass*)moment fromUser:(UserClass *)user withEnded:(void (^) (enum UserState rsvp))block;
+- (void)getAllEventMembers:(MomentClass*)moment withEnded:(void (^) (NSMutableArray *allMembers))block;
 
 // Publish
 - (void)getPublishPermissions;

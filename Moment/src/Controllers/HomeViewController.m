@@ -323,10 +323,10 @@ static UIImageView *splashScreen = nil;
         // Chargement
         
         // Si Connexion Facebook, Récupération des Events Facebook
-        NSString *fbId = [[UserCoreData getCurrentUser] facebookId];
+        /*NSString *fbId = [[UserCoreData getCurrentUser] facebookId];
         if(fbId && (fbId.intValue != 0) && [[FacebookManager sharedInstance] facebookIsConnected]) {
             [MomentClass importFacebookEventsWithEnded:nil];
-        }
+        }*/
         
         // Récupération des moments
         [MomentClass getMomentsServerWithEnded:^(BOOL success) {
