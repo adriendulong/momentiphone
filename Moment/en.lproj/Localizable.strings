@@ -375,6 +375,10 @@
 "WebModalViewController_ConnaitreMoment_Subject" = "Je te présente l'appli Moment !";
 "WebModalViewController_ConnaitreMoment_MessageBody" = "J'utilise l'appli Moment pour gérer et vivre mes évènements, tu devrais essayer ! http://www.appmoment.fr";
 
+/* ------------ AddressBookManager ---------- */
+"WebModalViewController_AuthorizationFailed_Title" = "Authorisation manquante";
+"WebModalViewController_AuthorizationFailed_Message" = "Veuillez changer les paramètres de confidentialité de l'iPhone afin d'accéder aux contacts dans Réglages > Confidentialité > Contacts";
+
 /* -------------------- Sharing Manager ------------------ */
 "Retrive_Photos_Event_Moment_Mail_Facebook" = "Retrouvez toutes les photos de l'évènement %@ sur l'application Moment !";
 "Retrive_Photos_Event_Moment_Twitter" = "Retrouvez toutes les photos de l'évènement %@ sur @appmoment !";
