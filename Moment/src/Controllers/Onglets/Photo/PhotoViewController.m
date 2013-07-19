@@ -694,7 +694,11 @@ withRootViewController:(UIViewController *)rootViewController
         [images addObject:image];
     }
     
-    // ----- Evoi au Server -----
+    // ----- Envoi au Server -----
+    
+    // Disable the idle timer
+    [[UIApplication sharedApplication] setIdleTimerDisabled:YES];
+    
     int totalImages = [images count];
     
     // Préload cadres des images
@@ -794,6 +798,8 @@ withRootViewController:(UIViewController *)rootViewController
         [overlayStatusBar postFinishMessage:NSLocalizedString(@"StatusBarOverlay_Photo_UploadEnded", nil) duration:1];
         [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackOpaque];
         
+        // Activate the idle timer
+        [[UIApplication sharedApplication] setIdleTimerDisabled:NO];
     }];
 }
 
