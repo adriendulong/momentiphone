@@ -64,7 +64,8 @@ enum FacebookPermissionType {
          withEnded:(void (^) (BOOL success))block;
 - (void)getRSVP:(MomentClass*)moment withEnded:(void (^) (enum UserState rsvp))block;
 - (void)getRSVP:(MomentClass*)moment fromUser:(UserClass *)user withEnded:(void (^) (enum UserState rsvp))block;
-- (void)getAllEventMembers:(MomentClass*)moment withEnded:(void (^) (NSMutableArray *allMembers))block;
+- (void)createUsersFromFacebookInvited:(NSArray *)invited withEnded:( void (^) (NSArray *users) )block;
+- (void)getCoverEventWithID:(NSString *)facebookId withEnded:( void (^) (NSString *pic_url) )block;
 
 // Publish
 - (void)getPublishPermissions;

@@ -455,7 +455,7 @@ static FacebookManager *sharedInstance = nil;
                          UserClass *user = [[UserClass alloc] init];
                          //user.prenom = result[@"name"];
                          user.nom = result[@"name"];
-                         user.facebookId = facebookId;
+                         user.facebookId = result[@"id"];
                          user.imageString = result[@"picture"][@"data"][@"url"];
                          
                          block(user);
@@ -648,7 +648,61 @@ static FacebookManager *sharedInstance = nil;
     [operation start];
 }
 
+- (void)createUsersFromFacebookInvited:(NSArray *)invited withEnded:( void (^) (NSArray *users) )block
+{
+    
+    NSArray *usersRaw = [invited valueForKey:@"data"];
+    NSMutableArray *users = [NSMutableArray arrayWithCapacity:usersRaw.count];
+    
+    for (NSArray *userRaw in usersRaw) {
+        UserClass *user = [[UserClass alloc] init];
+        //user.prenom = result[@"name"];
+        user.nom = [userRaw valueForKey:@"name"];
+        user.facebookId = [userRaw valueForKey:@"id"];
+        //user.email = [userRaw valueForKey:@"email"];
+        user.imageString = [[[userRaw valueForKey:@"picture"] valueForKey:@"data"] valueForKey:@"url"];
+        
+        //NSLog(@"user = %@",user);
+        
+        [users addObject:user];
+    }
+
+    block(users);
+}
+
 #pragma mark - Events
+
+- (void)getCoverEventWithID:(NSString *)facebookId withEnded:( void (^) (NSString *pic_url) )block
+{
+    if (block) {
+        // Connection
+        FBRequestConnection *connection = [[FBRequestConnection alloc] init];
+        FBRequest *request = [FBRequest requestForGraphPath:@"fql"];
+        
+        // Requete
+        NSString *query = [NSString stringWithFormat:@"SELECT pic_big FROM event WHERE eid=%@",  facebookId];
+        [request.parameters setObject:query forKey:@"q"];
+        
+        // Completion
+        [connection addRequest:request completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
+            if (block) {
+                if (error)
+                    block(nil);
+                
+                if(result[@"data"] && ([result[@"data"] count] > 0) && result[@"data"][0][@"pic_big"])
+                {
+                    NSString *pic_url = result[@"data"][0][@"pic_big"];
+                    
+                    block(pic_url);
+                }
+                else
+                    block(nil);
+            }
+        }];
+        
+        [connection start];
+    }
+}
 
 - (void)loadEvents:( void (^) (NSArray *events) )block
 {
@@ -663,7 +717,7 @@ static FacebookManager *sharedInstance = nil;
                               {
                                   // Get list events
                                   [FBRequestConnection
-                                   startWithGraphPath:@"me/events?fields=id,cover,description,is_date_only,name,owner,location,privacy,rsvp_status,start_time,end_time,admins,picture.type(large)"
+                                   startWithGraphPath:@"me/events?fields=id,cover,description,is_date_only,name,owner,location,privacy,rsvp_status,start_time,end_time,admins,picture.type(large),invited.fields(id,name,picture.width(200).height(200),email)&locale=fr_FR"
                                    completionHandler:^(FBRequestConnection *connection,
                                                        id result,
                                                        NSError *error) {
@@ -922,85 +976,6 @@ static FacebookManager *sharedInstance = nil;
     }
     else if(block) {
         block(-1);
-    }
-}
-
-- (void)getAllEventMembers:(MomentClass*)moment withEnded:(void (^) (NSMutableArray *allMembers))block
-{
-    if(!moment) {
-        if(block)
-            block(nil);
-        return;
-    }
-    
-    if(moment.facebookId)
-    {
-        // Ask For Permission
-        [self askForPermissions:@[kFbPermissionRsvpEvent] type:FacebookPermissionReadType withEnded:^(BOOL success) {
-            
-            // Get Permission
-            if(success) {
-                
-                // Connection
-                FBRequestConnection *connection = [[FBRequestConnection alloc] init];
-                FBRequest *request = [FBRequest requestForGraphPath:@"fql"];
-                
-                // Requete
-                NSString *query = [NSString stringWithFormat:@"SELECT uid, rsvp_status FROM event_member WHERE eid=%@", moment.facebookId];
-                NSLog(@"query = %@",query);
-                [request.parameters setObject:query forKey:@"q"];
-                
-                // Completion
-                [connection addRequest:request completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
-                    if(block) {
-                        if(error) {
-                            NSLog(@"connection = %@",connection);
-                            NSLog(@"result = %@",result);
-                            NSLog(@"GET ALL EVENT MEMBERS FB ERROR : %@", error.localizedDescription);
-                            block(nil);
-                        }
-                        else {
-                            
-                            // Result
-                            if(result[@"data"] && ([result[@"data"] count] > 0) && result[@"data"][0][@"uid"])
-                            {
-                                
-                                NSMutableArray *allMembers = [NSMutableArray array];
-                                for (int u = 0; u < [result[@"data"] count]; u++) {
-                                    
-                                    NSString *uid = result[@"data"][u][@"uid"];
-                                    NSString *rsvp = result[@"data"][u][@"rsvp_status"];
-                                    
-                                    [self getUserInformationsWithId:uid withEnded:^(UserClass *user) {
-                                        if (user != nil) {
-                                            NSLog(@"uid = %@ | rsvp_status = %@",uid, rsvp);
-                                            NSLog(@"user = %@", user);
-                                            
-                                            [allMembers addObject:user];
-                                        }
-                                    }];                                    
-                                }
-                                NSLog(@"FBManager - allMembers = %@",allMembers);
-                                
-                                block(allMembers);
-                            } else {
-                                block(nil);
-                            }
-                            
-                        }
-                    }
-                }];
-                
-                [connection start];
-            }
-            // Permission Refused Or Fail
-            else if(block) {
-                block(nil);
-            }
-        }];
-    }
-    else if(block) {
-        block(nil);
     }
 }
 

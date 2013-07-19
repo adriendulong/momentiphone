@@ -60,6 +60,22 @@
                      postFinishMessage:[NSString stringWithFormat:NSLocalizedString(@"StatusBarOverlay_ImportFacebookEvent", nil), nbEvent]
                      duration:2 animated:YES];
                 }
+                
+                for (MomentClass *moment in moments) {
+                    
+                    for (FacebookEvent *e in events) {
+                        
+                        if ([e.eventId isEqualToString:moment.facebookId]) {
+                            
+                            [[FacebookManager sharedInstance] createUsersFromFacebookInvited:e.invited withEnded:^(NSArray *users) {
+                                if (users != nil && users.count > 0) {
+                                    
+                                    [moment inviteNewGuest:users withEnded:nil];
+                                }
+                            }];
+                        }
+                    }
+                }
             }
             
             // Save
