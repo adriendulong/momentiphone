@@ -15,6 +15,7 @@
 #import "TutorialViewController.h"
 #import "HomeViewController.h"
 #import "WebModalViewController.h"
+#import "SMSComposeViewController.h"
 
 @interface MesReglagesViewController ()
 
@@ -26,7 +27,7 @@
 @synthesize contentView = _contentView;
 
 @synthesize followUsLabel = _followUsLabel, madeWithLoveLabel = _madeWithLoveLabel, versionLabel = _versionLabel;
-@synthesize titreAproposLabel = _titreAproposLabel, titreNotificationLabel = _titreNotificationLabel, titreProfilLabel = _titreProfilLabel;
+@synthesize titreAproposLabel = _titreAproposLabel, titreNotificationLabel = _titreNotificationLabel, titreProfilLabel = _titreProfilLabel, titreConnaitreMoment = _titreConnaitreMoment;
 @synthesize notifInvitLabel = _notifInvitLabel, notifModifLabel = _notifModifLabel, notifMessageLabel = _notifMessageLabel, notifPhotoLabel = _notifPhotoLabel;
 
 @synthesize likeButton = _likeButton;
@@ -65,6 +66,7 @@
     UIFont *font = [[Config sharedInstance] defaultFontWithSize:18];
     self.followUsLabel.font = font;
     font = [[Config sharedInstance] defaultFontWithSize:16];
+    self.titreConnaitreMoment.font = font;
     self.titreNotificationLabel.font = font;
     self.titreAproposLabel.font = font;
     self.titreProfilLabel.font = font;
@@ -92,6 +94,7 @@
     [self setFollowUsLabel:nil];
     [self setMadeWithLoveLabel:nil];
     [self setNotifInvitLabel:nil];
+    [self setTitreConnaitreMoment:nil];
     [self setTitreNotificationLabel:nil];
     [self setTitreProfilLabel:nil];
     [self setTitreAproposLabel:nil];
@@ -171,6 +174,46 @@
     }];
 }
 
+
+- (IBAction)clicConnaitreEmail {
+    if([MFMailComposeViewController canSendMail])
+    {
+        MFMailComposeViewController *mc = [[MFMailComposeViewController alloc] init];
+        mc.mailComposeDelegate = self;
+        [mc setSubject:NSLocalizedString(@"WebModalViewController_ConnaitreMoment_Subject", nil)];
+        [mc setMessageBody:NSLocalizedString(@"WebModalViewController_ConnaitreMoment_MessageBody", nil) isHTML:YES];
+        
+        // Present mail view controller on screen
+        [[VersionControl sharedInstance] presentModalViewController:mc fromRoot:self animated:YES];
+    }
+    else
+    {
+        //NSLog(@"mail composer fail");
+        
+        [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"MFMailComposeViewController_Moment_Popup_Title", nil)
+                                    message:NSLocalizedString(@"MFMailComposeViewController_Moment_Popup_Message", nil)
+                                   delegate:nil
+                          cancelButtonTitle:NSLocalizedString(@"AlertView_Button_OK", nil)
+                          otherButtonTitles:nil]
+         show];
+    }
+}
+
+- (IBAction)clicConnaitreSMS {
+    // SMS Composer
+    SMSComposeViewController *controller = [[SMSComposeViewController alloc] init];
+    
+    // SMS body
+    controller.body = NSLocalizedString(@"WebModalViewController_ConnaitreMoment_MessageBody", nil);
+    
+    // Numéros de téléphones
+    //controller.recipients = smsList.allObjects;
+    
+    // Delegate
+    controller.messageComposeDelegate = self;
+    [self presentModalViewController:controller animated:YES];
+}
+
 - (IBAction)clicTutoriel
 {
     TutorialViewController *tutorial = [[TutorialViewController alloc] initWithNibName:@"TutorialViewController" bundle:nil];
@@ -206,10 +249,10 @@
     {
         //NSLog(@"mail composer fail");
 
-        [[[UIAlertView alloc] initWithTitle:@"Envoi impossible"
-                                    message:@"Votre appareil ne supporte pas l'envoi d'email"
+        [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"MFMailComposeViewController_Moment_Popup_Title", nil)
+                                    message:NSLocalizedString(@"MFMailComposeViewController_Moment_Popup_Message", nil)
                                    delegate:nil
-                          cancelButtonTitle:@"OK"
+                          cancelButtonTitle:NSLocalizedString(@"AlertView_Button_OK", nil)
                           otherButtonTitles:nil]
          show];
     }
@@ -248,6 +291,25 @@
             [self.delegate.navigationController popToRootViewControllerAnimated:YES];
         }];
     }
+}
+
+#pragma mark - MFMessageComposeViewController Delegate
+
+- (void)messageComposeViewController:(MFMessageComposeViewController *)controller didFinishWithResult:(MessageComposeResult)result
+{
+    if(result == MessageComposeResultFailed) {
+        // L'envoi a échoué
+        [[[UIAlertView alloc]
+          initWithTitle:NSLocalizedString(@"Error_Classic", nil)
+          message:NSLocalizedString(@"InviteAddViewController_SendSMS_Fail", nil)
+          delegate:nil
+          cancelButtonTitle:NSLocalizedString(@"AlertView_Button_OK", nil)
+          otherButtonTitles: nil]
+         show];
+    }
+    
+    // Cacher Fenetre SMS
+    [self dismissModalViewControllerAnimated:YES];
 }
 
 #pragma mark - MFMailComposeViewControllerDelegate
