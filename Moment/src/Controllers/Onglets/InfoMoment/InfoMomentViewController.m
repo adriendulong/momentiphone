@@ -1695,10 +1695,10 @@ static CGFloat DescriptionBoxHeightMax = 100;
     {
         //NSLog(@"mail composer fail");
         
-        [[[UIAlertView alloc] initWithTitle:@"Envoi impossible"
-                                    message:@"Votre appareil ne supporte pas l'envoi d'email"
+        [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"MFMailComposeViewController_Moment_Popup_Title", nil)
+                                    message:NSLocalizedString(@"MFMailComposeViewController_Moment_Popup_Message", nil)
                                    delegate:nil
-                          cancelButtonTitle:@"OK"
+                          cancelButtonTitle:NSLocalizedString(@"AlertView_Button_OK", nil)
                           otherButtonTitles:nil]
          show];
     }
