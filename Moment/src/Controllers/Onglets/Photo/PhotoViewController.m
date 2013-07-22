@@ -690,8 +690,12 @@ withRootViewController:(UIViewController *)rootViewController
     }
     // Load from Camera
     else {
-        UIImage *image = [[Config sharedInstance] imageWithMaxSize:info[@"UIImagePickerControllerOriginalImage"] maxSize:PHOTO_MAX_SIZE];
-        [images addObject:image];
+        UIImage *image = info[@"UIImagePickerControllerOriginalImage"];
+        
+        UIImageWriteToSavedPhotosAlbum(image, self, @selector(image:didFinishSavingWithError:contextInfo:), nil);
+        
+        UIImage *imageCropped = [[Config sharedInstance] imageWithMaxSize:image maxSize:PHOTO_MAX_SIZE];
+        [images addObject:imageCropped];
     }
     
     // ----- Envoi au Server -----
@@ -850,6 +854,20 @@ withRootViewController:(UIViewController *)rootViewController
     return [NSString stringWithFormat:NSLocalizedString(@"MutlipleImagePickerViewController_NumberOfPhotosAndVideos", nil), numberOfPhotos, numberOfVideos];
 }
 */
+
+- (void)image:(UIImage *)image didFinishSavingWithError:(NSError *)error contextInfo:(void *)contextInfo {
+    UIAlertView *alert;
+    
+    if (error) {
+        alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error_Title", nil)
+                                           message:error.localizedDescription
+                                          delegate:nil
+                                 cancelButtonTitle:NSLocalizedString(@"AlertView_Button_OK", nil)
+                                 otherButtonTitles:nil];
+        [alert show];
+    }
+    
+}
 
 
 @end
