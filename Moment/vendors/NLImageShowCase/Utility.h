@@ -9,6 +9,6 @@
 #ifndef ImageShowcase_Utility_h
 #define ImageShowcase_Utility_h
 
-#define isRetina ([[VersionControl sharedInstance] isRetina])
+#define isRetina ([UIScreen mainScreen].scale == 2.0f)
 
 #endif

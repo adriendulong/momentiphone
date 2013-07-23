@@ -14,11 +14,11 @@
 // Delegate
 #import "QBAssetCollectionViewControllerDelegate.h"
 
-typedef enum {
+typedef NS_ENUM(NSInteger, QBImagePickerFilterType) {
     QBImagePickerFilterTypeAllAssets,
     QBImagePickerFilterTypeAllPhotos,
     QBImagePickerFilterTypeAllVideos
-} QBImagePickerFilterType;
+};
 
 @class QBImagePickerController;
 
@@ -38,7 +38,7 @@ typedef enum {
 
 @interface QBImagePickerController : UIViewController <UITableViewDataSource, UITableViewDelegate, QBAssetCollectionViewControllerDelegate>
 
-@property (nonatomic, assign) id<QBImagePickerControllerDelegate> delegate;
+@property (nonatomic, weak) id<QBImagePickerControllerDelegate> delegate;
 @property (nonatomic, assign) QBImagePickerFilterType filterType;
 @property (nonatomic, assign) BOOL showsCancelButton;
 @property (nonatomic, assign) BOOL fullScreenLayoutEnabled;
