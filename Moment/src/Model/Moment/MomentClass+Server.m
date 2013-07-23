@@ -534,6 +534,11 @@
 
 - (void)updateCurrentUserState:(enum UserState)state withEnded:(void (^) (BOOL success) )block
 {
+    [self setState:[NSNumber numberWithInt:state]];
+    
+    // Mettre à jour CoreData
+    [MomentCoreData updateMoment:self];
+    
     NSString *path = [NSString stringWithFormat:@"state/%d/%d", self.momentId.intValue, state];
     
     [[AFMomentAPIClient sharedClient] getPath:path parameters:nil encoding:AFFormURLParameterEncoding success:^(AFHTTPRequestOperation *operation, id JSON) {
@@ -833,9 +838,11 @@
                 // Photo suivante
                 else
                 {
+                    //NSData *imageData = UIImageJPEGRepresentation(array[i], 0.5);
+                    
                     // Send
                     i++;
-                    [self sendPhoto:array[i]
+                    [self sendPhoto:array[i]//[UIImage imageWithData:imageData]
                           withStart:startBlock
                     withProgression:progressBlock
                           withEnded:recursifEndBlock];
@@ -845,7 +852,9 @@
  #pragma clang diagnostic pop
             
             // Envoi de la première photo
-            [self sendPhoto:array[0]
+            //NSData *imageData = UIImageJPEGRepresentation(array[0], 0.5);
+            
+            [self sendPhoto:array[0]//[UIImage imageWithData:imageData]
                   withStart:startBlock
             withProgression:progressBlock
                   withEnded:recursifEndBlock];

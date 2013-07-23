@@ -148,6 +148,7 @@
 "MBProgressHUD_Loading_Moments" = "Chargement des moments...";
 "MBProgressHUD_Loading_Login" = "Connexion ...";
 "MBProgressHUD_Deleting" = "Suppression en cours ...";
+"MBProgressHUD_Update" = "Mise à jour ...";
 
 /* ---------------- HomeViewController ------------------ */
 // ButtonLabel
@@ -191,7 +192,12 @@
 "TimeLineViewController_Overlay_Label7" = "Recherche";
 
 /* --------------- InfoMomentViewController --------------- */
-"MBProgressHUD_Loading_updateRSVP" = "Mise à jour ...";
+"InfoMomentViewController_RSVP_Yes" = "Je serais présent au moment ...";
+"InfoMomentViewController_RSVP_No" = "Je ne serais pas présent au moment ...";
+"InfoMomentViewController_RSVP_Maybe" = "Je sais pas si je serais présent au moment ...";
+"InfoMomentViewController_RSVP_Question" = "Serez-vous présent au moment ?";
+
+"InfoMomentViewController_View_More" = "Voir plus";
 
 /* ---------------- PushNotifications ------------------ */
 // Chat
@@ -244,6 +250,11 @@
 "StatusBarOverlay_ImportFacebookEvent" = "%i évènement Facebook importé !";
 "StatusBarOverlay_ImportFacebookEvent_several" = "%i évènements Facebook importés !";
 
+"StatusBarOverlay_FacebookStatusImported" = "Statut Facebook importé";
+
+//URL copiée
+"StatusBarOverlay_URL_Paste" = "URL copiée";
+
 /* ------------ PhotoViewController ------------- */
 // Upload Photo
 "StatusBarOverlay_Photo_Uploading" = "Envoi en cours ...";
@@ -263,8 +274,6 @@
 "BigPhotoViewController_DeleteFailAlertView_Message" = "La suppression de la photo a échouée, merci de ré-essayer ultérieurement";
 // Partage
 "BigPhotoViewController_ShareActionSheet_Title" = "Partager";
-// Like Count
-"MBProgressHUD_Loading_updateLikeCount" = "Mise à jour ...";
 
 /* ------------ FullScreenPhotoViewController ------------- */
 "FullScreenPhotoViewController_TitreDefaut" = "Photos";
@@ -425,5 +434,11 @@
 "Error_Classic" = "Une erreur est surnevue";
 "Error_Server" = "Erreur Serveur, Merci de ré-essayer ulterieurement";
 "Error_Send" = "Erreur d'envoi";
+"Error_Send_Photo" = "Erreur d'envoi de la photo";
 
+/* ------------- Grammar --------------- */
+"Guest_Singular" = "invité";
+"Guest_Plural" = "invités";
 
+/* ------------- Words --------------- */
+"Words_by" = "par";

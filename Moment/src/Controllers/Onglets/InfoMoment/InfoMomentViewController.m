@@ -413,7 +413,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
     [self.avatarImage addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(clicProfile)]];
     
     // Owner Description
-    self.ownerNameLabel.text =  [NSString stringWithFormat:@"par %@ %@", self.moment.owner.prenom?:@"", self.moment.owner.nom?:@""];
+    self.ownerNameLabel.text =  [NSString stringWithFormat:@"%@ %@ %@", NSLocalizedString(@"Words_by", nil), self.moment.owner.prenom?:@"", self.moment.owner.nom?:@""];
     
 #ifdef HASHTAG_ENABLE
     if(self.moment.hashtag)
@@ -504,7 +504,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
     if(state == 0) {
         state = ([self.moment.owner.userId isEqualToNumber:self.user.userId]) ? UserStateOwner : UserStateNoInvited;
     }
-    // Cacher `rsvp si non invité
+    // Cacher rsvp si non invité
     if( !((self.moment.privacy.intValue != MomentPrivacyOpen) && (state == UserStateNoInvited)) ) {
         // Police
         self.rsvpLabel.font = [[Config sharedInstance] defaultFontWithSize:12];
@@ -517,14 +517,14 @@ static CGFloat DescriptionBoxHeightMax = 100;
             case UserStateAdmin:
             case UserStateOwner:
             case UserStateValid:
-                message = @"Je serais présent au moment ...";
+                message = NSLocalizedString(@"InfoMomentViewController_RSVP_Yes", nil);
                 self.rsvpYesButton.selected = YES;
                 self.rsvpNoButton.selected = NO;
                 self.rsvpMaybeButton.selected = NO;
                 break;
                 
             case UserStateRefused:
-                message = @"Je ne serais pas présent au moment ...";
+                message = NSLocalizedString(@"InfoMomentViewController_RSVP_No", nil);
                 self.rsvpNoButton.selected = YES;
                 self.rsvpMaybeButton.selected = NO;
                 self.rsvpYesButton.selected = NO;
@@ -532,7 +532,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
                 
             case UserStateUnknown:
             case UserStateWaiting:
-                message = @"Je sais pas si je serais présent au moment ...";
+                message = NSLocalizedString(@"InfoMomentViewController_RSVP_Maybe", nil);
                 self.rsvpMaybeButton.selected = YES;
                 self.rsvpYesButton.selected = NO;
                 self.rsvpNoButton.selected = NO;
@@ -540,7 +540,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
                 
                 // Unknown
             default:
-                message = @"Serez-vous présent au moment ?";
+                message = NSLocalizedString(@"InfoMomentViewController_RSVP_Question", nil);
                 self.rsvpMaybeButton.selected = NO;
                 self.rsvpYesButton.selected = NO;
                 self.rsvpNoButton.selected = NO;
@@ -598,7 +598,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
             if(!seeMoreButton) {
                 seeMoreButton = [[UIButton alloc] init];
                 seeMoreButton.userInteractionEnabled = YES;
-                [seeMoreButton setTitle:@"Voir plus" forState:UIControlStateNormal];
+                [seeMoreButton setTitle:NSLocalizedString(@"InfoMomentViewController_View_More", nil) forState:UIControlStateNormal];
                 [seeMoreButton setTitleColor:[Config sharedInstance].textColor forState:UIControlStateNormal];
                 seeMoreButton.titleLabel.textAlignment = [[VersionControl sharedInstance] alignment:TextAlignmentCenter];
                 seeMoreButton.titleLabel.font = [[Config sharedInstance] defaultFontWithSize:13];
@@ -853,10 +853,11 @@ static CGFloat DescriptionBoxHeightMax = 100;
     
     NSMutableString *texte = [NSMutableString stringWithFormat:@"%d", nb];
     int taille = [texte length];
-    if(nb > 1)
-        [texte appendString:@" invités"];
-    else
-        [texte appendString:@" invité"];
+    if(nb > 1) {
+        [texte appendString:[NSString stringWithFormat: @" %@", NSLocalizedString(@"Guest_Plural", nil)]];
+    } else {
+        [texte appendString:[NSString stringWithFormat: @" %@", NSLocalizedString(@"Guest_Singular", nil)]];
+    }
     
     if( [[VersionControl sharedInstance] supportIOS6] )
     {
@@ -1298,7 +1299,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
     if(state != UserStateNoInvited)
     {
         MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-        hud.labelText = NSLocalizedString(@"MBProgressHUD_Loading_updateRSVP", nil);
+        hud.labelText = NSLocalizedString(@"MBProgressHUD_Update", nil);
         
         [[FacebookManager sharedInstance] getRSVP:self.moment withEnded:^(enum UserState rsvp) {
             
@@ -1307,7 +1308,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
             if( (rsvp != -1) && (self.moment.state.intValue != rsvp)) {
                 
                 // Informer User
-                [[MTStatusBarOverlay sharedInstance] postImmediateFinishMessage:@"Status Facebook Importé" duration:1 animated:YES];
+                [[MTStatusBarOverlay sharedInstance] postImmediateFinishMessage:NSLocalizedString(@"StatusBarOverlay_FacebookStatusImported", nil) duration:1 animated:YES];
                 
                 // Update View
                 UIButton *buttonSimulation = nil;
@@ -1517,7 +1518,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
     if(self.moment.state.intValue != state) {
         
         MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-        hud.labelText = NSLocalizedString(@"MBProgressHUD_Loading_updateRSVP", nil);
+        hud.labelText = NSLocalizedString(@"MBProgressHUD_Update", nil);
         
         // User State
         enum UserState userState = self.moment.state.intValue;
@@ -1712,7 +1713,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
         UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
         pasteboard.string = self.moment.uniqueURL;
         
-        [[MTStatusBarOverlay sharedInstance] postImmediateFinishMessage:@"URL Copiée" duration:1 animated:YES];
+        [[MTStatusBarOverlay sharedInstance] postImmediateFinishMessage:NSLocalizedString(@"StatusBarOverlay_URL_Paste", nil) duration:1 animated:YES];
     }
     
     // Google Analytics
@@ -1960,10 +1961,10 @@ static CGFloat DescriptionBoxHeightMax = 100;
         case MFMailComposeResultFailed:
             //NSLog(@"Mail sent failure: %@", [error localizedDescription]);
             
-            [[[UIAlertView alloc] initWithTitle:@"Erreur d'envoi"
+            [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error_Send", nil)
                                         message:[error localizedDescription]
                                        delegate:nil
-                              cancelButtonTitle:@"OK"
+                              cancelButtonTitle:NSLocalizedString(@"AlertView_Button_OK", nil)
                               otherButtonTitles:nil]
              show];
             
