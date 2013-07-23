@@ -744,8 +744,9 @@ withRootViewController:(UIViewController *)rootViewController
         
         // Erreur d'envoi
         if(!photo) {
-            [overlayStatusBar postImmediateErrorMessage:@"Erreur d'envoi de la photo"
-                                               duration:1
+            [overlayStatusBar
+             postImmediateErrorMessage:NSLocalizedString(@"Error_Send_Photo", nil)
+                                               duration:2
                                                animated:YES];
         }
         // Success
