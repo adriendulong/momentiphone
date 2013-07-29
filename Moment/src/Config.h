@@ -50,6 +50,7 @@
 @property (strong, nonatomic) NSString *kAFBaseURLString;
 @property (strong, nonatomic) NSString *FBSessionStateChangedNotification;
 @property (strong, nonatomic) NSString *TestFlightAppToken;
+@property (strong, nonatomic) NSString *appFBNamespace;
 
 #pragma mark - CoreData
 @property (readonly, strong, nonatomic) NSManagedObjectContext *managedObjectContext;
