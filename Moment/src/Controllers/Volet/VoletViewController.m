@@ -496,6 +496,15 @@ static VoletViewController *actualVoletViewController;
         
         if ([rowIndexInVolet.indexNotifications containsObject:notif.id_notif])
             [rowIndexInVolet.indexNotifications removeObject:notif.id_notif];
+        
+        // Suppression des notifications non lues possédant le même Moment.
+        for (LocalNotification *notification in self.notifications) {
+            if ([rowIndexInVolet.indexNotifications containsObject:notification.id_notif]
+                && [notification.moment isEqual:notif.moment])
+            {
+                [rowIndexInVolet.indexNotifications removeObject:notification.id_notif];
+            }
+        }
     }
 }
 
