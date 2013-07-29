@@ -1107,43 +1107,54 @@ static FacebookManager *sharedInstance = nil;
     if(params)
     {
         // Ask For Permissions
-        [self askForPermissions:@[kFbPermissionPublishAction, kFbPermissionPublishStream] type:FacebookPermissionPublishType withEnded:^(BOOL success) {
+        [self askForPermissions:@[kFbPermissionEmail] type:FacebookPermissionReadType withEnded:^(BOOL success) {
             
             // Success
             if(success) {
-                FBRequestConnection *connection = [[FBRequestConnection alloc] init];
-                
-                // Post Request
-                
-                NSString *namespace = [[Config sharedInstance] appFBNamespace];
-                
-                //NSLog(@"graphPath = %@",[NSString stringWithFormat:@"me/%@:%@", namespace, action]);
-                //NSLog(@"params = %@",params);
-                                
-                FBRequest *request = [[FBRequest alloc]
-                                      initWithSession:[FBSession activeSession]
-                                      graphPath:[NSString stringWithFormat:@"me/%@:%@", namespace, action]
-                                      parameters:params HTTPMethod:@"POST"];
-                
-                
-                // Completion Handler
-                [connection addRequest:request completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {                    
-                    if(block) {
-                        NSLog(@"postRSVPOnWall | error = %@",error.localizedDescription);
-                        //NSLog(@"postRSVPOnWall | result = %@",result);
+                // Ask For Permissions
+                [self askForPermissions:@[kFbPermissionPublishAction, kFbPermissionPublishStream] type:FacebookPermissionPublishType withEnded:^(BOOL success) {
+                    
+                    // Success
+                    if(success) {
+                        FBRequestConnection *connection = [[FBRequestConnection alloc] init];
                         
-                        block(error == nil);
+                        // Post Request
+                        
+                        NSString *namespace = [[Config sharedInstance] appFBNamespace];
+                        
+                        //NSLog(@"graphPath = %@",[NSString stringWithFormat:@"me/%@:%@", namespace, action]);
+                        //NSLog(@"params = %@",params);
+                        
+                        FBRequest *request = [[FBRequest alloc]
+                                              initWithSession:[FBSession activeSession]
+                                              graphPath:[NSString stringWithFormat:@"me/%@:%@", namespace, action]
+                                              parameters:params HTTPMethod:@"POST"];
+                        
+                        
+                        // Completion Handler
+                        [connection addRequest:request completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
+                            if(block) {
+                                NSLog(@"postRSVPOnWall | error = %@",error.localizedDescription);
+                                //NSLog(@"postRSVPOnWall | result = %@",result);
+                                
+                                block(error == nil);
+                            }
+                        }];
+                        
+                        // Send Request
+                        [connection start];
                     }
+                    // Failure
+                    else if(block) {
+                        block(NO);
+                    }
+                    
                 }];
-                
-                // Send Request
-                [connection start];
             }
             // Failure
             else if(block) {
                 block(NO);
             }
-            
         }];
     }
 }

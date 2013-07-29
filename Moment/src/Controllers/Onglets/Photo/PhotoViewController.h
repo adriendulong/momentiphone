@@ -21,7 +21,6 @@ enum PhotoViewControllerStyle {
 #import "NLImageViewDataSource.h"
 #import "MomentCoreData+Model.h"
 #import "RootOngletsViewController.h"
-#import "QBImagePickerController.h"
 #import "ELCImagePickerController.h"
 #import "ELCAlbumPickerController.h"
 
@@ -29,7 +28,7 @@ enum PhotoViewControllerStyle {
 #import "BigPhotoViewController.h"
 #import "GAI.h"
 
-@interface PhotoViewController : UIViewController <NLImageViewDataSource, OngletViewController, QBImagePickerControllerDelegate, ELCImagePickerControllerDelegate, UIActionSheetDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate, MTStatusBarOverlayDelegate>
+@interface PhotoViewController : UIViewController <NLImageViewDataSource, OngletViewController, ELCImagePickerControllerDelegate, UIActionSheetDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate, MTStatusBarOverlayDelegate>
 
 
 @property (nonatomic, strong) UserClass *user;

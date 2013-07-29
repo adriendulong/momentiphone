@@ -9,7 +9,6 @@
 #import "TutorialViewController.h"
 #import "HomeViewController.h"
 #import "Config.h"
-#import "UIImage+Alpha.h"
 #import "VersionControl.h"
 
 #define DEGREES_TO_RADIANS(x) (M_PI * x / 180.0)

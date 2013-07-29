@@ -22,7 +22,7 @@
         _selected = NO;
     }
     
-	return self;	
+	return self;
 }
 
 - (void)toggleSelection
@@ -40,11 +40,6 @@
     }
 }
 
-- (void)dealloc 
-{    
-    [_asset release];
-    [super dealloc];
-}
 
 @end
 
