@@ -214,6 +214,8 @@
         
     }
     */
+    
+    [self deleteUploadPhotosCache];
         
     return YES;
 }

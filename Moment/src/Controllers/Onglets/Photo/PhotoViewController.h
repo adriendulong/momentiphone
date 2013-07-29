@@ -22,12 +22,14 @@ enum PhotoViewControllerStyle {
 #import "MomentCoreData+Model.h"
 #import "RootOngletsViewController.h"
 #import "QBImagePickerController.h"
+#import "ELCImagePickerController.h"
+#import "ELCAlbumPickerController.h"
 
 #import "MTStatusBarOverlay.h"
 #import "BigPhotoViewController.h"
 #import "GAI.h"
 
-@interface PhotoViewController : UIViewController <NLImageViewDataSource, OngletViewController, QBImagePickerControllerDelegate, UIActionSheetDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate, MTStatusBarOverlayDelegate>
+@interface PhotoViewController : UIViewController <NLImageViewDataSource, OngletViewController, QBImagePickerControllerDelegate, ELCImagePickerControllerDelegate, UIActionSheetDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate, MTStatusBarOverlayDelegate>
 
 
 @property (nonatomic, strong) UserClass *user;
@@ -52,6 +54,11 @@ enum PhotoViewControllerStyle {
 @property (weak, nonatomic) IBOutlet UILabel *nbPhotosToPrintLabel;
 @property (weak, nonatomic) IBOutlet UILabel *photosSelectionnesLabel;
 @property (weak, nonatomic) IBOutlet UIImageView *arrowWhiteView;
+
+@property (weak, nonatomic) UIImagePickerController *picker;
+@property (weak, nonatomic) ELCImagePickerController *imagePicker;
+
+@property (strong, nonatomic) id mediaInfo;
 
 
 // Init From Onglet

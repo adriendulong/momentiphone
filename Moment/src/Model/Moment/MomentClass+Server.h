@@ -58,12 +58,13 @@ enum TimeDirectiion {
 - (void)getPhotosWithEnded:( void (^) (NSArray* photos) )block;
 
 - (void)sendPhoto:(UIImage*)photo
-        withStart:(void (^) (UIImage *photo))startBlock
+         withPath:(NSString *)photoPath
+        withStart:(void (^) (NSString *photoPath))startBlock
   withProgression:(void (^) (CGFloat progress))progressBlock
         withEnded:(void (^) (Photos *photo))endBlock;
 
 - (void)sendArrayOfPhotos:(NSArray*)array
-                withStart:(void (^) (UIImage *photo))startBlock
+                withStart:(void (^) (NSString *photoPath))startBlock
           withProgression:(void (^) (CGFloat progress))progressBlock
            withTransition:(void (^) (Photos *photo))transitionBlock
                 withEnded:(void (^) (void))endBlock;

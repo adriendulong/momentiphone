@@ -722,7 +722,8 @@
 }
 
 - (AFJSONRequestOperation*)operationSendPhoto:(UIImage*)photo
-                                    withStart:(void (^) (UIImage *photo))startBlock
+                                     withPath:(NSString *)photoPath
+                                    withStart:(void (^) (NSString *photoPath))startBlock
                               withProgression:(void (^) (CGFloat progress))progressBlock
                                     withEnded:(void (^) (Photos *photo))endBlock
 {
@@ -757,13 +758,27 @@
         Photos *photo = [[Photos alloc] initWithAttributesFromWeb:JSON[@"success"]];
         
         // Notify Facebook Notification
-        if(self.facebookId)
+        if(self.facebookId && [FBSession activeSession].isOpen)
         {
             [[FacebookManager sharedInstance] postMessageOnEventWall:self photo:photo withEnded:^(BOOL success) {
                 if(!success) {
                     [TestFlight passCheckpoint:[NSString stringWithFormat:@"Facebook Notification Fail - Photo %d - Moment %@", photo.photoId, self.momentId]];
                 }
             }];
+        }
+        
+        NSFileManager *fileMgr = [[NSFileManager alloc] init];
+        NSError *theError = nil;
+        
+        if (theError == nil) {
+            BOOL removeSuccess = [fileMgr removeItemAtPath:photoPath error:&theError];
+            if (!removeSuccess) {
+                NSLog(@"DELETING FAILED... : %@ | Error: %@",photoPath, theError);
+            } else {
+                NSLog(@"DELETING SUCCESSFUL : %@",photoPath);
+            }
+        } else {
+            NSLog(@"DELETING FAILED... : %@ | Error: %@",photoPath, theError);
         }
         
         if(endBlock)
@@ -774,23 +789,40 @@
         //NSLog(@"Error : %@", error.localizedDescription);
         //NSLog(@"Message : %@", operation.responseString);
         
+        NSFileManager *fileMgr = [[NSFileManager alloc] init];
+        NSError *theError = nil;
+        
+        NSLog(@"Lancement de la suppression...");
+        if (theError == nil) {
+            BOOL removeSuccess = [fileMgr removeItemAtPath:photoPath error:&theError];
+            if (!removeSuccess) {
+                NSLog(@"DELETING FAILED... : %@ | Error: %@",photoPath, theError);
+            } else {
+                NSLog(@"DELETING SUCCESSFUL : %@",photoPath);
+            }
+        } else {
+            NSLog(@"DELETING FAILED... : %@ | Error: %@",photoPath, theError);
+        }
+          
         if(endBlock)
             endBlock(nil);
         
     }];
     
     if(startBlock)
-        startBlock(photo);
+        startBlock(photoPath);
     
     return operation;
 }
 
 - (void)sendPhoto:(UIImage*)photo
-        withStart:(void (^) (UIImage *photo))startBlock
+         withPath:(NSString *)photoPath
+        withStart:(void (^) (NSString *photoPath))startBlock
         withProgression:(void (^) (CGFloat progress))progressBlock
         withEnded:(void (^) (Photos *photo))endBlock
 {
     AFJSONRequestOperation *operation = [self operationSendPhoto:photo
+                                                        withPath:photoPath
                                                        withStart:startBlock
                                                  withProgression:progressBlock
                                                        withEnded:endBlock];
@@ -799,7 +831,7 @@
 }
 
 - (void)sendArrayOfPhotos:(NSArray*)array
-                withStart:(void (^) (UIImage *photo))startBlock
+                withStart:(void (^) (NSString *photoPath))startBlock
           withProgression:(void (^) (CGFloat progress))progressBlock
            withTransition:(void (^) (Photos *photo))transitionBlock
                 withEnded:(void (^) (void))endBlock
@@ -808,7 +840,7 @@
     if(array)
     {
 
-        int taille = [array count];
+        __block int taille = [array count];
         
         // Tableau non vide
         if(taille > 0)
@@ -837,12 +869,11 @@
                 }
                 // Photo suivante
                 else
-                {
-                    //NSData *imageData = UIImageJPEGRepresentation(array[i], 0.5);
-                    
+                {                    
                     // Send
                     i++;
-                    [self sendPhoto:array[i]//[UIImage imageWithData:imageData]
+                    [self sendPhoto:[UIImage imageWithContentsOfFile:array[i]]
+                           withPath:array[i]
                           withStart:startBlock
                     withProgression:progressBlock
                           withEnded:recursifEndBlock];
@@ -851,10 +882,9 @@
             } copy];
  #pragma clang diagnostic pop
             
-            // Envoi de la première photo
-            //NSData *imageData = UIImageJPEGRepresentation(array[0], 0.5);
-            
-            [self sendPhoto:array[0]//[UIImage imageWithData:imageData]
+            // Envoi de la première photo            
+            [self sendPhoto:[UIImage imageWithContentsOfFile:array[0]]
+                   withPath:array[0]
                   withStart:startBlock
             withProgression:progressBlock
                   withEnded:recursifEndBlock];

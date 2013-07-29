@@ -149,6 +149,7 @@
 "MBProgressHUD_Loading_Login" = "Connexion ...";
 "MBProgressHUD_Deleting" = "Suppression en cours ...";
 "MBProgressHUD_Update" = "Mise à jour ...";
+"MBProgressHUD_UploadPreparing" = "Préparation de l'envoi ...";
 
 /* ---------------- HomeViewController ------------------ */
 // ButtonLabel
@@ -199,6 +200,9 @@
 
 "InfoMomentViewController_View_More" = "Voir plus";
 
+"InfoMomentViewController_PopupRSVP_Title" = "Bonne nouvelle !";
+"InfoMomentViewController_PopupRSVP_Message" = "Souhaites-tu informer tes amis Facebook de ta présence à cet évènement ?";
+
 /* ---------------- PushNotifications ------------------ */
 // Chat
 "PushNotification_NewChat_AlertView_Title" = "Nouveau Message";
@@ -239,8 +243,8 @@
 
 /* ---------------- VoletSearchViewController ------------------ */
 // Empty Cell
-"VoletSearchViewController_EmptyCell_Moments" = "Aucun moment correspondant à votre recherche. Essayez en respectant bien l’accentuation !";
-"VoletSearchViewController_EmptyCell_Utilisateurs" = "Aucun utlisateur correspondant à votre recherche. Essayez en respectant bien l’accentuation !";
+"VoletSearchViewController_EmptyCell_Utilisateurs" = "Aucun moment correspondant à votre recherche. Essayez en respectant bien l’accentuation !";
+"VoletSearchViewController_EmptyCell_Moments" = "Aucun utlisateur correspondant à votre recherche. Essayez en respectant bien l’accentuation !";
 
 /* ----------- MTStatusBarOverlay ---------- */
 // Loading Failure
@@ -264,6 +268,12 @@
 // Bandeau
 "PhotoViewController_Bandeau_photosSelectionneesLabel_Singulier" = "PHOTO SELECTIONNÉE";
 "PhotoViewController_Bandeau_photosSelectionneesLabel_Pluriel" = "PHOTOS SELECTIONNÉES";
+
+"PhotoViewController_AlertView_NoPermissionAddPhoto_Title" = "Oops !";
+"PhotoViewController_AlertView_NoPermissionAddPhoto_Message" = "Seuls les invités ont le droit d'ajouter des photos.";
+
+"PhotoViewController_AlertView_UploadAlreadyInProgress_Title" = "Veuillez patienter";
+"PhotoViewController_AlertView_UploadAlreadyInProgress_Message" = "Un upload est déjà en cours ...";
 
 /* ------------ BigPhotoViewController ------------- */
 // Suppression
@@ -442,3 +452,17 @@
 
 /* ------------- Words --------------- */
 "Words_by" = "par";
+
+
+
+////////////////////////
+///////LIBRARIES////////
+////////////////////////
+
+/* ------------- ELCAlbumPickerController --------------- */
+"ELCAlbumPickerController_Albums" = "Albums";
+
+/* ------------- ELCAssetTablePicker --------------- */
+"ELCAssetTablePicker_Photo" = "Photo";
+"ELCAssetTablePicker_Photos" = "Photos";
+"ELCAssetTablePicker_Loading" = "Chargement...";
