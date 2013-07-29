@@ -85,6 +85,12 @@
             [self.tableView reloadData];
             [self.timeLine reloadData];
         }
+        // Tableau vide retourné -> Aucun Event n'a été renvoyé par Facebook
+        else if(events && [events count] == 0) {
+            [[MTStatusBarOverlay sharedInstance]
+             postFinishMessage:NSLocalizedString(@"StatusBarOverlay_ImportFacebookEvent_noResult", nil)
+             duration:2 animated:YES];
+        }
         else {
             [[MTStatusBarOverlay sharedInstance]
              postImmediateErrorMessage:NSLocalizedString(@"StatusBarOverlay_LoadingFailure", nil)

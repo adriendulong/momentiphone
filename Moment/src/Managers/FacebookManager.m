@@ -730,7 +730,7 @@ static FacebookManager *sharedInstance = nil;
                                            int taille = [webList count];
                                            if (taille == 0) {
                                                if (block)
-                                                   block(nil);
+                                                   block(@[]);
                                            } else {
                                                NSMutableArray *mutableArray = [NSMutableArray arrayWithCapacity:taille];
                                                NSMutableArray *ownerIdsArray = [NSMutableArray arrayWithCapacity:taille];
