@@ -335,5 +335,30 @@
     [self.window.rootViewController dismissModalViewControllerAnimated:YES];
 }
 
+- (void)deleteUploadPhotosCache
+{
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths objectAtIndex:0]; // Get documents folder
+    NSString *photosPath = [documentsDirectory stringByAppendingPathComponent:@"PhotosCache"];
+    
+    NSFileManager *fileMgr = [[NSFileManager alloc] init];
+    NSError *theError = nil;
+    
+    BOOL isDir;
+    BOOL exists = [fileMgr fileExistsAtPath:photosPath isDirectory:&isDir];
+    
+    if (exists) {
+        if (isDir) {            
+            if (theError == nil) {
+                BOOL removeSuccess = [fileMgr removeItemAtPath:photosPath error:&theError];
+                if (!removeSuccess) {
+                    NSLog(@"DELETING FAILED... : %@ | Error: %@",photosPath, theError);
+                }
+            } else {
+                NSLog(@"DELETING FAILED... : %@ | Error: %@",photosPath, theError);
+            }
+        }
+    }
+}
 
 @end
