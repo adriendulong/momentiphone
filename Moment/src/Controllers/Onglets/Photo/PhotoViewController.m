@@ -259,9 +259,7 @@ withRootViewController:(UIViewController *)rootViewController
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
     
-    NSLog(@"Putain ça va crasher !!");
-    
-    if ([self.imagePicker isViewLoaded]) {
+    /*if ([self.imagePicker isViewLoaded]) {
         NSLog(@"imagePicker est loaded");        
         
         [self performSelector:@selector(dismissImagePickers:) withObject:@[self.imagePicker, @YES] afterDelay:0.1];
@@ -273,7 +271,7 @@ withRootViewController:(UIViewController *)rootViewController
         [self performSelector:@selector(dismissImagePickers:) withObject:@[self.picker, @YES] afterDelay:0.1];
     }
     
-    //[self performSelector:@selector(dismissImagePickers:) withObject:@[self.imagePicker, @YES] afterDelay:0.1];
+    //[self performSelector:@selector(dismissImagePickers:) withObject:@[self.imagePicker, @YES] afterDelay:0.1];*/
 }
 
 - (void)viewDidUnload {
