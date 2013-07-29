@@ -65,7 +65,7 @@
 - (void)loadInvitations;
 
 // Change TimeLine / Feed
-- (void)selectActualitesButton;
+//- (void)selectActualitesButton;
 - (void)selectMesMomentsButton;
 - (IBAction)clicChangeTimeLine:(UIButton*)sender;
 

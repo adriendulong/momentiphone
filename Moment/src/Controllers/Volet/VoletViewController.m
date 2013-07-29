@@ -107,7 +107,7 @@ static VoletViewController *actualVoletViewController;
     UIFont *font = [[Config sharedInstance] defaultFontWithSize:15];
     self.nomUserButton.titleLabel.font = font;
     // Mes actualités
-    self.mesActualites.titleLabel.font = font;
+    //self.mesActualites.titleLabel.font = font;
     // Paramètres
     self.parametresButton.titleLabel.font = font;
     // Mes Moments
@@ -567,38 +567,38 @@ static VoletViewController *actualVoletViewController;
     [navController pushViewController:eventMissing animated:YES];
 }
 
-- (void)selectActualitesButton {
+/*- (void)selectActualitesButton {
     if(!self.mesActualites.selected) {
         self.mesActualites.selected = YES;
         self.mesMoments.selected = NO;
     }
-}
+}*/
 
 - (void)selectMesMomentsButton {
     if(!self.mesMoments.selected) {
         self.mesMoments.selected = YES;
-        self.mesActualites.selected = NO;
+        //self.mesActualites.selected = NO;
     }
 }
 
 - (IBAction)clicChangeTimeLine:(UIButton*)sender {
     
     // Identification du bouton
-    BOOL actualitesButton = (sender == self.mesActualites) && (!self.mesActualites.selected);
+    //BOOL actualitesButton = (sender == self.mesActualites) && (!self.mesActualites.selected);
     BOOL momentsButton = (sender == self.mesMoments) && (!self.mesMoments.selected);
     
     // Google Analytics
-    if(actualitesButton) {
+    /*if(actualitesButton) {
         [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Actualités" value:nil];
     }
-    else if(momentsButton) {
+    else*/ if(momentsButton) {
         [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Moments" value:nil];
     }
     
     // Change TimeLine
-    if( actualitesButton || momentsButton ) {
+    if( /*actualitesButton ||*/ momentsButton ) {
         [self.delegate showRootController:YES];
-        [self.rootTimeLine clicChangeTimeLine];
+        //[self.rootTimeLine clicChangeTimeLine];
     }
 }
 

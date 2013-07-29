@@ -377,12 +377,12 @@ shouldLoadEventsFromFacebook:(BOOL)loadEvents
     
     // Bouton clock repositionnement - Support iPhone 5
     frame = self.B2PButton.frame;
-    if(self.timeLineStyle == TimeLineStyleComplete) {
+    /*if(self.timeLineStyle == TimeLineStyleComplete) {
         frame.origin.y = self.size.height - frame.size.height - 63;
     }
-    else {
+    else {*/
         frame.origin.y = self.size.height - frame.size.height - 10;
-    }
+    //}
     self.B2PButton.frame = frame;
     
     //[self updateArrowClockToState:(self.view.frame.size.height/2.0 > rowForToday*smallCellHeight)?ClockStateUp:ClockStateDown animated:NO];

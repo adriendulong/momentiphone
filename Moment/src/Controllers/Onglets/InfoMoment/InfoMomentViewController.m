@@ -1239,7 +1239,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
     [self initMetroView];
     [self initInfoLieuView];
     [self initTopImageView];
-    [self initCagnotteView];
+    //[self initCagnotteView]; // Désactivation de la vue cagnotte - Coming soon
     [self initPartageView];
 
     /***********************************************
@@ -1598,6 +1598,12 @@ static CGFloat DescriptionBoxHeightMax = 100;
         state = UserStateRefused;
     }else {
         state = UserStateValid;
+        
+        [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"InfoMomentViewController_PopupRSVP_Title", nil)
+                                    message:NSLocalizedString(@"InfoMomentViewController_PopupRSVP_Message", nil)
+                                   delegate:self
+                          cancelButtonTitle:NSLocalizedString(@"AlertView_Button_NO", nil)
+                          otherButtonTitles:NSLocalizedString(@"AlertView_Button_YES", nil), nil] show];
     }
     
     [self changeRSVP:state];
@@ -1819,6 +1825,27 @@ static CGFloat DescriptionBoxHeightMax = 100;
     
 }
 */
+
+#pragma mark - UIAlertView Delegate
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if (buttonIndex == 1) {
+        
+        [[FacebookManager sharedInstance] getTagsFromMoment:self.moment withEnded:^(NSString *tags) {
+            NSLog(@"alertView clickedButtonAtIndex | tags = %@", tags);
+            
+            [[FacebookManager sharedInstance] postRSVPOnWall:self.moment action:@"Participe" tags:tags withEnded:^(BOOL success) {
+                if (success) {
+                    NSLog(@"postRSVPOnWall = SUCCESS");
+                } else {
+                    NSLog(@"postRSVPOnWall = FAIL");
+                }
+            }];
+        }];
+    }
+}
+
 
 #pragma mark - UIScrollView Delegate
 

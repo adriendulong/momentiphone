@@ -164,7 +164,7 @@ shouldLoadEventsFromFacebook:(BOOL)loadEvents
 
 #pragma mark - Actions
 
-- (IBAction)clicChangeTimeLine {    
+/*- (IBAction)clicChangeTimeLine {
     
     // Show Feed
     if(self.isShowingPrivateTimeLine) {
@@ -208,7 +208,7 @@ shouldLoadEventsFromFacebook:(BOOL)loadEvents
         self.isShowingPrivateTimeLine = YES;
         [self showContentViewController:self.privateTimeLine];
     }
-}
+}*/
 
 - (void)showAddEvent
 {

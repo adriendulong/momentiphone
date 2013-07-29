@@ -27,7 +27,7 @@
 #import <MessageUI/MessageUI.h>
 #import "GAI.h"
 
-@interface InfoMomentViewController : UIViewController <RNExpandingButtonBarDelegate, UIScrollViewDelegate, OngletViewController, MFMailComposeViewControllerDelegate> {
+@interface InfoMomentViewController : UIViewController <UIAlertViewDelegate, RNExpandingButtonBarDelegate, UIScrollViewDelegate, OngletViewController, MFMailComposeViewControllerDelegate> {
     
     @private
     NSInteger hauteur;
