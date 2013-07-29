@@ -10,6 +10,7 @@
 #import "AFMomentAPIClient.h"
 #import "AFJSONRequestOperation.h"
 #import "FacebookEvent.h"
+#import "MomentClass+Server.h"
 #import "UserClass+Server.h"
 #import "UserClass+Mapping.h"
 #import "Config.h"
@@ -844,6 +845,41 @@ static FacebookManager *sharedInstance = nil;
     
 }
 
+- (void)getTagsFromMoment:(MomentClass *)moment withEnded:(void (^) (NSString *tags))block
+{    
+    if (moment) {
+        [moment getInvitedUsersWithEnded:^(NSDictionary *invites) {
+            
+            if(invites) {
+                NSMutableArray *usersArray = [NSMutableArray array];
+                
+                UserClass *currentUser = [UserCoreData getCurrentUser];
+                
+                // Construction listes
+                NSMutableArray *comingList = [NSMutableArray array];
+                [comingList addObjectsFromArray:invites[@"coming"]];
+                if(invites[@"owner"])
+                    [comingList addObject:invites[@"owner"]];
+                [comingList addObjectsFromArray:invites[@"admin"]];
+                
+                for (int i = 0; i < comingList.count; i++) {
+                    UserClass *user = comingList[i][@"user"];
+                    
+                    if (user.facebookId && user.facebookId > 0) {
+                        if (![user.facebookId isEqualToString:currentUser.facebookId])
+                            [usersArray addObject:user.facebookId];
+                    }
+                }
+                
+                if (block)
+                    block([usersArray componentsJoinedByString:@","]);
+                else
+                    block(nil);
+            }
+        }];
+    }
+}
+
 #pragma mark - RSVP
 
 - (void)getRSVP:(MomentClass*)moment withEnded:(void (^) (enum UserState rsvp))block
@@ -1061,6 +1097,85 @@ static FacebookManager *sharedInstance = nil;
                   withEnded:^(BOOL success) {
         
     }];
+}
+
+- (void)postRSVPOnWall:(MomentClass*)moment
+                action:(NSString *)action
+            parameters:(NSDictionary*)params
+             withEnded:(void (^) (BOOL success))block
+{
+    if(params)
+    {
+        // Ask For Permissions
+        [self askForPermissions:@[kFbPermissionPublishAction, kFbPermissionPublishStream] type:FacebookPermissionPublishType withEnded:^(BOOL success) {
+            
+            // Success
+            if(success) {
+                FBRequestConnection *connection = [[FBRequestConnection alloc] init];
+                
+                // Post Request
+                
+                NSString *namespace = [[Config sharedInstance] appFBNamespace];
+                
+                //NSLog(@"graphPath = %@",[NSString stringWithFormat:@"me/%@:%@", namespace, action]);
+                //NSLog(@"params = %@",params);
+                                
+                FBRequest *request = [[FBRequest alloc]
+                                      initWithSession:[FBSession activeSession]
+                                      graphPath:[NSString stringWithFormat:@"me/%@:%@", namespace, action]
+                                      parameters:params HTTPMethod:@"POST"];
+                
+                
+                // Completion Handler
+                [connection addRequest:request completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {                    
+                    if(block) {
+                        NSLog(@"postRSVPOnWall | error = %@",error.localizedDescription);
+                        //NSLog(@"postRSVPOnWall | result = %@",result);
+                        
+                        block(error == nil);
+                    }
+                }];
+                
+                // Send Request
+                [connection start];
+            }
+            // Failure
+            else if(block) {
+                block(NO);
+            }
+            
+        }];
+    }
+}
+
+- (void)postRSVPOnWall:(MomentClass*)moment
+                action:(NSString *)action
+                  tags:(NSString *)tags
+             withEnded:(void (^) (BOOL success))block
+{
+    if (action) {
+        NSLog(@"postRSVPOnWall | tags = %@",tags);
+        
+        if (tags) {
+            [self postRSVPOnWall:moment action:action parameters:@{@"evenement":moment.uniqueURL,@"tags":tags} withEnded:^(BOOL success) {
+                if (success) {
+                    block(YES);
+                } else {
+                    block(NO);
+                }
+            }];
+        } else {
+            [self postRSVPOnWall:moment action:action parameters:@{@"evenement":moment.uniqueURL} withEnded:^(BOOL success) {
+                if (success) {
+                    block(YES);
+                } else {
+                    block(NO);
+                }
+            }];
+        }
+    } else {
+        block(NO);
+    }
 }
 
 - (void)postMessageOnEventWall:(MomentClass*)moment

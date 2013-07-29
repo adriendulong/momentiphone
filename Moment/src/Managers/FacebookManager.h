@@ -57,6 +57,7 @@ enum FacebookPermissionType {
 
 // Events
 - (void)getEventsWithEnded:(void (^) (NSArray* events) )block;
+- (void)getTagsFromMoment:(MomentClass *)moment withEnded:(void (^) (NSString *tags))block;
 
 // RSVP
 - (void)updateRSVP:(enum UserState)rsvp
@@ -69,6 +70,10 @@ enum FacebookPermissionType {
 
 // Publish
 - (void)getPublishPermissions;
+- (void)postRSVPOnWall:(MomentClass*)moment
+                action:(NSString *)action
+                tags:(NSString *)tags
+             withEnded:(void (^) (BOOL success))block;
 - (void)postMessageOnEventWall:(MomentClass*)moment
                        message:(NSString*)message
                      withEnded:(void (^) (BOOL success))block;
