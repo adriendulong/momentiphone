@@ -467,7 +467,7 @@
 }
 
 #pragma mark CMPopTipView
-- (void)spawnPopTipViewWithFrame:(CGRect)frame withMessage:(NSString *)message andBackgroundColor:(UIColor *)bgColor andTextColor:(UIColor *)txtColor andFontSize:(CGFloat)fontsize
+- (void)spawnPopTipViewWithFrame:(CGRect)frame withMessage:(NSString *)message andBackgroundColor:(UIColor *)bgColor andBorderColor:(UIColor *)bdColor andTextColor:(UIColor *)txtColor andFontSize:(CGFloat)fontsize
 {
     // Toggle popTipView when a standard UIButton is pressed
     if (nil == self.roundRectButtonPopTipView) {
@@ -476,7 +476,7 @@
         poptipview.backgroundColor = bgColor;
         poptipview.textFont = [[Config sharedInstance] defaultFontWithSize:fontsize];
         poptipview.textColor = txtColor;
-        poptipview.borderColor = [UIColor whiteColor];
+        poptipview.borderColor = bdColor;
         poptipview.has3DStyle = NO;
         poptipview.hasShadow = NO;
         
@@ -498,10 +498,11 @@
 - (void)showPopTipViewPhotos
 {
     [self spawnPopTipViewWithFrame:CGRectMake(183, -44, 46, 44)
-              withMessage:NSLocalizedString(@"RootOngletsViewController_PopTipViewPhotos_Message", nil)
-       andBackgroundColor:[UIColor colorWithHex:0xD28000]
-             andTextColor:[UIColor whiteColor]
-              andFontSize:12];
+                       withMessage:NSLocalizedString(@"RootOngletsViewController_PopTipViewPhotos_Message", nil)
+                andBackgroundColor:[UIColor colorWithHex:0xC1C1C1]
+                    andBorderColor:[UIColor colorWithHex:0xC1C1C1]
+                      andTextColor:[UIColor colorWithHex:0xD28000]
+                       andFontSize:12];
     
     //self.roundRectButtonPopTipView.dismissTapAnywhere = YES;
     self.poptipPhotos = YES;
@@ -509,10 +510,11 @@
 - (void)showPopTipViewChat
 {
     [self spawnPopTipViewWithFrame:CGRectMake(298, -44, 46, 44)
-              withMessage:NSLocalizedString(@"RootOngletsViewController_PopTipViewChat_Message", nil)
-       andBackgroundColor:[UIColor colorWithHex:0xD28000]
-             andTextColor:[UIColor whiteColor]
-              andFontSize:12];
+                       withMessage:NSLocalizedString(@"RootOngletsViewController_PopTipViewChat_Message", nil)
+                andBackgroundColor:[UIColor colorWithHex:0xC1C1C1]
+                    andBorderColor:[UIColor colorWithHex:0xC1C1C1]
+                      andTextColor:[UIColor colorWithHex:0xD28000]
+                       andFontSize:12];
     
     //self.roundRectButtonPopTipView.dismissTapAnywhere = YES;
     self.poptipChat = YES;

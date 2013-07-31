@@ -590,10 +590,16 @@
         // Initialization code
 		self.opaque = NO;
 		
-		cornerRadius = 10.0;
+		/*cornerRadius = 10.0;
 		topMargin = 2.0;
 		pointerSize = 12.0;
 		sidePadding = 2.0;
+        borderWidth = 1.0;*/
+        
+        cornerRadius = 5.0;
+		topMargin = 2.0;
+		pointerSize = 12.0;
+		sidePadding = 15.0;
         borderWidth = 1.0;
 		
 		self.textFont = [UIFont boldSystemFontOfSize:14.0];
