@@ -67,7 +67,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
 
 @synthesize invitesView = _invitesView, ttNbInvitesLabel = _ttNbInvitesLabel, nbInvitesLabel = _nbInvitesLabel;
 @synthesize nbInvitesRefusesLabel = _nbInvitesRefusesLabel, nbInvitesValidesLabel = _nbInvitesValidesLabel;
-@synthesize inviteButton = _inviteButton, invitesBackgroundView = _invitesBackgroundView;
+@synthesize inviteButton = _inviteButton, seeInviteButton = _seeInviteButton, invitesBackgroundView = _invitesBackgroundView;
 @synthesize valideImageView = _valideImageView, refusedImageView = _refusedImageView;
 
 @synthesize dateView = _dateView, ttDateDebutLabel = _ttDateDebutLabel, ttDateFinLabel = _ttDateFinLabel;
@@ -83,7 +83,9 @@ static CGFloat DescriptionBoxHeightMax = 100;
 
 @synthesize infoLieuView = _infoLieuView, ttInfoLieuLabel = _ttInfoLieuLabel, infoLieuLabel = _infoLieuLabel;
 
-@synthesize cagnotteView = _cagnotteView;
+@synthesize cagnotteView = _cagnotteView, suppressionView = _suppressionView;
+
+@synthesize deleteMoment = _deleteMoment;
 
 
 #pragma mark - Init
@@ -917,36 +919,9 @@ static CGFloat DescriptionBoxHeightMax = 100;
     
     if( (!self.moment.isOpen.boolValue) && (state != UserStateAdmin) && (state != UserStateOwner) )
     {
-        self.inviteButton.hidden = YES;
-        
-        // Background frame
-        CGRect frame = self.invitesBackgroundView.frame;
-        int difference = 300 - frame.size.width;
-        frame.size.width = 300;
-        frame.size.height += 20;
-        frame.origin.y -= 10;
-        self.invitesBackgroundView.frame = frame;
-        
-        // Valide frame
-        frame = self.valideImageView.frame;
-        frame.origin.x = self.invitesBackgroundView.frame.size.width - frame.size.width - 9;
-        self.valideImageView.frame = frame;
-        
-        // Label valide frame
-        frame = self.nbInvitesValidesLabel.frame;
-        frame.origin.x += difference/2.0;
-        frame.size.width = self.valideImageView.frame.origin.x - frame.origin.x - 1;
-        self.nbInvitesValidesLabel.frame = frame;
-        
-        // Refused frame
-        frame = self.refusedImageView.frame;
-        frame.origin.x += difference/2.0;
-        self.refusedImageView.frame = frame;
-        
-        // Label refused frame
-        frame = self.nbInvitesRefusesLabel.frame;
-        frame.size.width = self.refusedImageView.frame.origin.x - frame.origin.x - 1;
-        self.nbInvitesRefusesLabel.frame = frame;
+        //self.inviteButton.hidden = YES;
+        self.inviteButton.alpha = 0.6;
+        self.inviteButton.enabled = NO;
         
     }
     
@@ -958,7 +933,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
         }
         
         // Sparateur
-        separator = [[InfoMomentSeparateurView alloc] initAtPosition:(50 + 5)];
+        separator = [[InfoMomentSeparateurView alloc] initAtPosition:(65 + 5)];
         [self.invitesView addSubview:separator];
         
         // Frame
@@ -1385,6 +1360,8 @@ static CGFloat DescriptionBoxHeightMax = 100;
     [self setInviteButton:nil];
     [self setInvitesBackgroundView:nil];
     [self setValideImageView:nil];
+    [self setSeeInviteButton:nil];
+    [self setValideImageView:nil];
     [self setRefusedImageView:nil];
     [self setParallaxView:nil];
     [self setPhotosImageView:nil];
@@ -1426,6 +1403,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
             [self initTopImageView];
             [self initCagnotteView];
             [self initPartageView];
+            [self initSuppressionView];
             
             // Ramener bouton "Voir plus" au premier plan
             if(seeMoreButton)
@@ -1621,6 +1599,10 @@ static CGFloat DescriptionBoxHeightMax = 100;
     
     InviteAddViewController *inviteViewController = [[InviteAddViewController alloc] initWithOwner:self.user withMoment:self.moment];
     [self.rootViewController.navigationController pushViewController:inviteViewController animated:YES];
+}
+
+- (IBAction)clicSeeInviteButton {
+    [self clicInviteView];
 }
 
 - (void)clicInviteView {

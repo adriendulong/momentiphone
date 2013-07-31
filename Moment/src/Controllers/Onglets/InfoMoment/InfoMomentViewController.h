@@ -89,6 +89,7 @@
 @property (nonatomic, weak) IBOutlet UIButton *inviteButton;
 @property (nonatomic, weak) IBOutlet UIView *invitesBackgroundView;
 @property (nonatomic, weak) IBOutlet UIImageView *valideImageView, *refusedImageView;
+@property (weak, nonatomic) IBOutlet UIButton *seeInviteButton;
 
 /* ----- Date View ----- */
 @property (nonatomic, strong) IBOutlet UIView *dateView;
@@ -131,6 +132,7 @@
 - (id)initWithMoment:(MomentClass*)moment withRootViewController:(RootOngletsViewController*)rootViewController;
 
 - (IBAction)clicInviteButton;
+- (IBAction)clicSeeInviteButton;
 - (void)reloadData;
 - (IBAction)clicRSVPButton:(UIButton*)sender;
 

@@ -852,6 +852,9 @@
 		6EE322A41771A5C800375DCE /* picto_bulle_past@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6EE322A21771A5C800375DCE /* picto_bulle_past@2x.png */; };
 		6EE322A51771A5C800375DCE /* picto_bulle_past.png in Resources */ = {isa = PBXBuildFile; fileRef = 6EE322A31771A5C800375DCE /* picto_bulle_past.png */; };
 		6EE9B16E1793F9D200C6686B /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EE9B16D1793F9D200C6686B /* libsqlite3.dylib */; settings = {ATTRIBUTES = (Weak, ); }; };
+		6EFD9D8217A917F200495892 /* btn_see_invite.png in Resources */ = {isa = PBXBuildFile; fileRef = 6EFD9D7F17A917E400495892 /* btn_see_invite.png */; };
+		6EFD9D8317A917F200495892 /* btn_add_invite.png in Resources */ = {isa = PBXBuildFile; fileRef = 6EFD9D8017A917E900495892 /* btn_add_invite.png */; };
+		6EFD9D8417A917F200495892 /* box_invite.png in Resources */ = {isa = PBXBuildFile; fileRef = 6EFD9D8117A917ED00495892 /* box_invite.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -2048,6 +2051,9 @@
 		6EE322A21771A5C800375DCE /* picto_bulle_past@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "picto_bulle_past@2x.png"; sourceTree = "<group>"; };
 		6EE322A31771A5C800375DCE /* picto_bulle_past.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = picto_bulle_past.png; sourceTree = "<group>"; };
 		6EE9B16D1793F9D200C6686B /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
+		6EFD9D7F17A917E400495892 /* btn_see_invite.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = btn_see_invite.png; sourceTree = "<group>"; };
+		6EFD9D8017A917E900495892 /* btn_add_invite.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = btn_add_invite.png; sourceTree = "<group>"; };
+		6EFD9D8117A917ED00495892 /* box_invite.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = box_invite.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -3540,6 +3546,9 @@
 			isa = PBXGroup;
 			children = (
 				5B3B3E8A1740AB250003974B /* box_RSVP */,
+				6EFD9D7F17A917E400495892 /* btn_see_invite.png */,
+				6EFD9D8017A917E900495892 /* btn_add_invite.png */,
+				6EFD9D8117A917ED00495892 /* box_invite.png */,
 				5B96B084174A3F25003884BA /* bloc_share.png */,
 				5B96B085174A3F25003884BA /* bloc_share@2x.png */,
 				5B96B071174A3E27003884BA /* badge_link.png */,
@@ -5099,6 +5108,9 @@
 				6E326A5B17A02C1000654B90 /* ELCAssetTablePicker.xib in Resources */,
 				6E326A5C17A02C1000654B90 /* Overlay.png in Resources */,
 				6E326A5D17A02C1000654B90 /* Overlay@2x.png in Resources */,
+				6EFD9D8217A917F200495892 /* btn_see_invite.png in Resources */,
+				6EFD9D8317A917F200495892 /* btn_add_invite.png in Resources */,
+				6EFD9D8417A917F200495892 /* box_invite.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
