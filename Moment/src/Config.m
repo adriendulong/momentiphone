@@ -146,7 +146,7 @@ static Config *sharedInstance = nil;
 #pragma mark - Font
 
 - (UIFont*)defaultFontWithSize:(CGFloat)size {
-    return [UIFont fontWithName:@"Numans" size:size];
+    return [UIFont fontWithName:fontName size:size];
 }
 
 - (void)updateTTTAttributedString:(NSMutableAttributedString*)mutableString withFontSize:(CGFloat)size onRange:(NSRange)range
