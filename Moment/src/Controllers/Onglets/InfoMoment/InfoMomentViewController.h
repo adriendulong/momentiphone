@@ -127,6 +127,11 @@
 /* ------ Partage View ----- */
 @property (nonatomic, strong) IBOutlet UIView *partageView;
 
+/* ------ Suppression View ----- */
+@property (strong, nonatomic) IBOutlet UIView *suppressionView;
+@property (weak, nonatomic) IBOutlet UIButton *deleteMomentButton;
+@property (strong, nonatomic) UIAlertView *deleteMoment;
+
 
 // ------------------- METHODES ------------------------ //
 - (id)initWithMoment:(MomentClass*)moment withRootViewController:(RootOngletsViewController*)rootViewController;
@@ -146,6 +151,8 @@
 //- (IBAction)clicCoursesButton;
 - (IBAction)clicComptesButton;
 - (IBAction)clicFeedBackButton;
+
+- (IBAction)clicDeleteMoment;
 
 // Google Analytics
 - (void)sendGoogleAnalyticsView;

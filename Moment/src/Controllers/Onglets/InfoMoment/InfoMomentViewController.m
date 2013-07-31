@@ -85,7 +85,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
 
 @synthesize cagnotteView = _cagnotteView, suppressionView = _suppressionView;
 
-@synthesize deleteMoment = _deleteMoment;
+@synthesize deleteMomentButton = _deleteMomentButton, deleteMoment = _deleteMoment;
 
 
 #pragma mark - Init
@@ -1140,7 +1140,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
     }
 }
 
-- (void) initCagnotteView
+/*- (void) initCagnotteView
 {
     static InfoMomentSeparateurView *separator = nil;
     if(separator) {
@@ -1167,12 +1167,54 @@ static CGFloat DescriptionBoxHeightMax = 100;
         
         [self addSubviewAtAutomaticPosition:self.cagnotteView];
     }
-}
+}*/
 
 - (void) initPartageView
-{    
+{
+    static InfoMomentSeparateurView *separator = nil;
+    if(separator) {
+        [separator removeFromSuperview];
+    }
+    // Sparateur
+    separator = [[InfoMomentSeparateurView alloc] initAtPosition:(102)];
+    [self.partageView addSubview:separator];
+    
+    CGRect frame = self.partageView.frame;
+    frame.size.height = separator.frame.origin.y + separator.frame.size.height + 5;
+    self.partageView.frame = frame;
+    
     if(firstLoad)
         [self addSubviewAtAutomaticPosition:self.partageView];
+}
+
+- (void)initSuppressionView
+{
+    if([self.moment.owner.userId isEqualToNumber:[UserCoreData getCurrentUser].userId]) {
+
+        if(firstLoad) {
+            /*UIFont *font = [[Config sharedInstance] defaultFontWithSize:10];
+             for( UILabel *label in self.comingSoonCagnotteLabels) {
+             label.font = font;
+             }
+             
+             font = [[Config sharedInstance] defaultFontWithSize:11];
+             self.cagnotteCourseLabel.font = font;
+             self.cagnotteCagnotteLabel.font = font;
+             self.cagnotteCompteLabel.font = font;*/
+            
+            [self.deleteMomentButton setBackgroundImage:[[UIImage imageNamed:@"delete_button.png"]
+                                                   stretchableImageWithLeftCapWidth:8.0f
+                                                   topCapHeight:0.0f]
+                                         forState:UIControlStateNormal];
+            
+            [self.deleteMomentButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+            self.deleteMomentButton.titleLabel.font = [UIFont boldSystemFontOfSize:20];
+            self.deleteMomentButton.titleLabel.shadowColor = [UIColor lightGrayColor];
+            self.deleteMomentButton.titleLabel.shadowOffset = CGSizeMake(0, -1);
+            
+            [self addSubviewAtAutomaticPosition:self.suppressionView];
+        }
+    }
 }
 
 #pragma mark - View lifecycle
@@ -1216,6 +1258,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
     [self initTopImageView];
     //[self initCagnotteView]; // Désactivation de la vue cagnotte - Coming soon
     [self initPartageView];
+    [self initSuppressionView];
 
     /***********************************************
      *              Parallax View                  *
@@ -1376,6 +1419,8 @@ static CGFloat DescriptionBoxHeightMax = 100;
     [self setRsvpMaybeButton:nil];
     [self setRsvpYesButton:nil];
     [self setRsvpNoButton:nil];
+    [self setSuppressionView:nil];
+    [self setDeleteMomentButton:nil];
     [super viewDidUnload];
 }
 
@@ -1401,7 +1446,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
             [self initMetroView];
             [self initInfoLieuView];
             [self initTopImageView];
-            [self initCagnotteView];
+            //[self initCagnotteView];
             [self initPartageView];
             [self initSuppressionView];
             
@@ -1808,23 +1853,78 @@ static CGFloat DescriptionBoxHeightMax = 100;
 }
 */
 
+- (IBAction)clicDeleteMoment {
+    // AlertView de confirmation
+    self.deleteMoment = [[UIAlertView alloc]
+                         initWithTitle:NSLocalizedString(@"TimeLineViewController_DeleteMomentAlertView_Title", nil)
+                         message:NSLocalizedString(@"TimeLineViewController_DeleteMomentAlertView_Message", nil)
+                         delegate:self
+                         cancelButtonTitle:NSLocalizedString(@"AlertView_Button_NO", nil)
+                         otherButtonTitles:NSLocalizedString(@"AlertView_Button_YES", nil), nil];
+    
+    [self.deleteMoment show];
+}
+
 #pragma mark - UIAlertView Delegate
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-    if (buttonIndex == 1) {
+    if ([alertView isEqual:self.deleteMoment]) {
         
-        [[FacebookManager sharedInstance] getTagsFromMoment:self.moment withEnded:^(NSString *tags) {
-            NSLog(@"alertView clickedButtonAtIndex | tags = %@", tags);
+        // Confirmation de suppression
+        if(buttonIndex == 1)
+        {
+            MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+            hud.labelText = NSLocalizedString(@"MBProgressHUD_Deleting", nil);
             
-            [[FacebookManager sharedInstance] postRSVPOnWall:self.moment action:@"Participe" tags:tags withEnded:^(BOOL success) {
-                if (success) {
-                    NSLog(@"postRSVPOnWall = SUCCESS");
-                } else {
-                    NSLog(@"postRSVPOnWall = FAIL");
+            // Delete From Server
+            [self.moment deleteWithEnded:^(BOOL success) {
+                
+                if(success)
+                {
+                    
+                    // Delete From CoreData
+                    [MomentCoreData deleteMoment:self.moment];
+                    
+                    self.moment = nil;
+                    
+                    [MBProgressHUD hideHUDForView:self.view animated:YES];
+                    
+                    [self.rootViewController.timeLine reloadDataWithWaitUntilFinished:YES withEnded:^(BOOL success) {
+                        [self.rootViewController.navigationController popViewControllerAnimated:YES];
+                    }];
                 }
+                else
+                {
+                    [MBProgressHUD hideHUDForView:self.view animated:YES];
+                    
+                    [[[UIAlertView alloc]
+                      initWithTitle:NSLocalizedString(@"Error_Title", nil)
+                      message:NSLocalizedString(@"TimeLineViewController_DeleteMoment_Fail_Message", nil)
+                      delegate:self
+                      cancelButtonTitle:NSLocalizedString(@"AlertView_Button_OK", nil)
+                      otherButtonTitles: nil]
+                     show];
+                }
+                
             }];
-        }];
+            
+        }
+    } else {
+        if (buttonIndex == 1) {
+            
+            [[FacebookManager sharedInstance] getTagsFromMoment:self.moment withEnded:^(NSString *tags) {
+                NSLog(@"alertView clickedButtonAtIndex | tags = %@", tags);
+                
+                [[FacebookManager sharedInstance] postRSVPOnWall:self.moment action:@"Participe" tags:tags withEnded:^(BOOL success) {
+                    if (success) {
+                        NSLog(@"postRSVPOnWall = SUCCESS");
+                    } else {
+                        NSLog(@"postRSVPOnWall = FAIL");
+                    }
+                }];
+            }];
+        }
     }
 }
 
@@ -1985,6 +2085,5 @@ static CGFloat DescriptionBoxHeightMax = 100;
     // Close the Mail Interface
     [[VersionControl sharedInstance] dismissModalViewControllerFromRoot:self.rootViewController animated:YES];
 }
-
 
 @end
