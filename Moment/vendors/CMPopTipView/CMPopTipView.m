@@ -151,12 +151,14 @@
 	CGContextAddPath(c, bubblePath);
 	CGContextClip(c);
 	
-	CGFloat bubbleMiddle = (bubbleRect.origin.y+(bubbleRect.size.height/2)) / self.bounds.size.height;
+	//CGFloat bubbleMiddle = (bubbleRect.origin.y+(bubbleRect.size.height/2)) / self.bounds.size.height;
+    CGFloat bubbleMiddle = (bubbleRect.origin.y+bubbleRect.size.height) / self.bounds.size.height;
 	
 	CGGradientRef myGradient;
 	CGColorSpaceRef myColorSpace;
 	size_t locationCount = 5;
-	CGFloat locationList[] = {0.0, bubbleMiddle-0.03, bubbleMiddle, bubbleMiddle+0.03, 1.0};
+	//CGFloat locationList[] = {0.0, bubbleMiddle-0.03, bubbleMiddle, bubbleMiddle+0.03, 1.0};
+    CGFloat locationList[] = {0.0, bubbleMiddle, bubbleMiddle, bubbleMiddle, 1.0};
     
 	CGFloat colourHL = 0.0;
 	if (highlight) {

@@ -203,6 +203,10 @@
 "InfoMomentViewController_PopupRSVP_Title" = "Bonne nouvelle !";
 "InfoMomentViewController_PopupRSVP_Message" = "Souhaites-tu informer tes amis Facebook de ta présence à cet évènement ?";
 
+/* --------------- RootOngletsViewController --------------- */
+"RootOngletsViewController_PopTipViewPhotos_Message" = "Retrouvez toutes les photos de l'évènement ici.";
+"RootOngletsViewController_PopTipViewChat_Message" = "Et tout les chats sont là.";
+
 /* ---------------- PushNotifications ------------------ */
 // Chat
 "PushNotification_NewChat_AlertView_Title" = "Nouveau Message";
