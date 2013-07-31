@@ -713,6 +713,7 @@
     [[AFMomentAPIClient sharedClient] getPath:path parameters:nil encoding:AFFormURLParameterEncoding success:^(AFHTTPRequestOperation *operation, id JSON) {
                         
         if(block) {
+            //NSLog(@"JSON[@\"photos\"] = %@", JSON[@"photos"]);
             block([Photos arrayWithArrayFromWeb:JSON[@"photos"]]);
         }
         

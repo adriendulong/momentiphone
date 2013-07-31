@@ -141,6 +141,8 @@ withRootViewController:(UIViewController *)rootViewController
             int i=0;
 
             for (Photos *p in self.photos) {
+                //NSLog(@"Photos = %@", p);
+                
                 [self loadImageThumbnailWithPhoto:p withEnded:^(UIImage *image) {
                     
                     dispatch_async(dispatch_get_main_queue(), ^{
