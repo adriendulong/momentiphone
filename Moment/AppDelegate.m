@@ -223,7 +223,7 @@
     [super initialize];
     
     // VERSION DEV ou VERSION PROD
-    [[Config sharedInstance] setDeveloppementVersion:NO];
+    [[Config sharedInstance] setDeveloppementVersion:YES];
     
     /* ------------------ iRate ------------------- */
     /*          ---> Noter l'application <--        */
