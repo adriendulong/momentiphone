@@ -1202,17 +1202,19 @@ static CGFloat DescriptionBoxHeightMax = 100;
 
 - (void) initPartageView
 {
-    static InfoMomentSeparateurView *separator = nil;
-    if(separator) {
-        [separator removeFromSuperview];
+    if([self.moment.owner.userId isEqualToNumber:[UserCoreData getCurrentUser].userId]) {
+        static InfoMomentSeparateurView *separator = nil;
+        if(separator) {
+            [separator removeFromSuperview];
+        }
+        // Sparateur
+        separator = [[InfoMomentSeparateurView alloc] initAtPosition:(102)];
+        [self.partageView addSubview:separator];
+        
+        CGRect frame = self.partageView.frame;
+        frame.size.height = separator.frame.origin.y + separator.frame.size.height + 5;
+        self.partageView.frame = frame;
     }
-    // Sparateur
-    separator = [[InfoMomentSeparateurView alloc] initAtPosition:(102)];
-    [self.partageView addSubview:separator];
-    
-    CGRect frame = self.partageView.frame;
-    frame.size.height = separator.frame.origin.y + separator.frame.size.height + 5;
-    self.partageView.frame = frame;
     
     if(firstLoad)
         [self addSubviewAtAutomaticPosition:self.partageView];
