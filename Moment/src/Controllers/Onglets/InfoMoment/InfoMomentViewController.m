@@ -75,7 +75,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
 @synthesize dateDebutLabel = _dateDebutLabel, heureDebutLabel = _heureDebutLabel;
 @synthesize dateFinLabel = _dateFinLabel, heureFinLabel = _heureFinLabel;
 
-@synthesize photosView = _photosView, nbPhotosLabel = _nbPhotosLabel, photosImageView = _photosImageView;
+@synthesize photosView = _photosView, nbPhotosLabel = _nbPhotosLabel, photosImageView = _photosImageView, addPhotosView = _addPhotosView, addPhotosButton = _addPhotosButton;
 
 @synthesize badgesView = _badgesView, nbBadgesLabel = _nbBadgesLabel;
 
@@ -1023,45 +1023,76 @@ static CGFloat DescriptionBoxHeightMax = 100;
 
 - (void) initPhotosView
 {
-    static InfoMomentSeparateurView *separator = nil;
-    
-    if(separator) {
-        [separator removeFromSuperview];
-    }
-    
-    // Sparateur
-    separator = [[InfoMomentSeparateurView alloc] initAtPosition:(78 + 5)];
-    [self.photosView addSubview:separator];
-    
-    CGRect frame = self.photosView.frame;
-    frame.size.height = separator.frame.origin.y + separator.frame.size.height + 5;
-    self.photosView.frame = frame;
-    
-    //rotate label in 45 degrees
-    self.nbPhotosLabel.transform = CGAffineTransformMakeRotation( (-1)*M_PI/4 );
-    
-    // Load Photos
-    [self.moment getPhotosWithEnded:^(NSArray *photos) {
+    if (self.moment.nb_photos && [self.moment.nb_photos intValue] != 0) {
         
-        int taille = [photos count];
-        self.nbPhotosLabel.text = [NSString stringWithFormat:@"%d", taille];
-        for(int i=0; i<taille && i<5; i++) {
-            Photos *p = photos[taille - 1 - i];
-            [self.photosImageView[i] setImage:p.imageThumbnail imageString:p.urlThumbnail withSaveBlock:^(UIImage *image) {
-                p.imageThumbnail = image;
-            }];
+        static InfoMomentSeparateurView *separator = nil;
+        
+        if(separator) {
+            [separator removeFromSuperview];
         }
-    }];
-    
-    if(firstLoad) {
         
-        // Tap Gesture recognizer
-        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(clicPhotoView)];
-        [self.photosView addGestureRecognizer:tap];
+        // Sparateur
+        separator = [[InfoMomentSeparateurView alloc] initAtPosition:(83 + 5)];
+        [self.photosView addSubview:separator];
         
-        [self addSubviewAtAutomaticPosition:self.photosView];
+        CGRect frame = self.photosView.frame;
+        frame.size.height = separator.frame.origin.y + separator.frame.size.height + 5;
+        self.photosView.frame = frame;
+        
+        //rotate label in 45 degrees
+        self.nbPhotosLabel.transform = CGAffineTransformMakeRotation( (-1)*M_PI/4 );
+        
+        if (self.moment.nb_photos) {
+            self.nbPhotosLabel.text = [NSString stringWithFormat:@"%@", self.moment.nb_photos];
+        } else {
+            self.nbPhotosLabel.text = 0; //[NSString stringWithFormat:@"%i", 0];
+        }
+        
+        // Load Photos
+        [self.moment getPhotosWithEnded:^(NSArray *photos) {
+            
+            int taille = [photos count];
+            for(int i=0; i<taille && i<5; i++) {
+                Photos *p = photos[taille - 1 - i];
+                [self.photosImageView[i] setImage:p.imageThumbnail imageString:p.urlThumbnail withSaveBlock:^(UIImage *image) {
+                    p.imageThumbnail = image;
+                }];
+            }
+        }];
+        
+        if (firstLoad) {
+            // Tap Gesture recognizer
+            UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(clicPhotoView)];
+            [self.photosView addGestureRecognizer:tap];
+            
+            [self addSubviewAtAutomaticPosition:self.photosView];
+        }
+    } else {
+        
+        static InfoMomentSeparateurView *separator = nil;
+        
+        if(separator) {
+            [separator removeFromSuperview];
+        }
+        
+        // Sparateur
+        separator = [[InfoMomentSeparateurView alloc] initAtPosition:(55 + 5)];
+        [self.addPhotosView addSubview:separator];
+        
+        [self.addPhotosButton setBackgroundImage:[[UIImage imageNamed:@"add_photo_button.png"]
+                                                  stretchableImageWithLeftCapWidth:8.0f
+                                                  topCapHeight:0.0f]
+                                        forState:UIControlStateNormal];
+        
+        [self.addPhotosButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        self.addPhotosButton.titleLabel.font = [UIFont boldSystemFontOfSize:20];
+        
+        if (firstLoad) {
+            [self.addPhotosButton addTarget:self action:@selector(clicAddPhotoView) forControlEvents:UIControlEventTouchUpInside];
+            
+            [self addSubviewAtAutomaticPosition:self.addPhotosView];
+        }
     }
-        
 }
 
 - (void) initBadgesView
@@ -1247,6 +1278,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
      ***********************************************/
     [self initTitreView];
     [self initRsvpView];
+    [self initPhotosView];
     [self initDescriptionView];
     [self initMapView];
     [self initInvitesView];
@@ -1427,6 +1459,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
     [self setRsvpNoButton:nil];
     [self setSuppressionView:nil];
     [self setDeleteMomentButton:nil];
+    [self setAddPhotosView:nil];
     [super viewDidUnload];
 }
 
@@ -1443,11 +1476,11 @@ static CGFloat DescriptionBoxHeightMax = 100;
             
             [self initTitreView];
             [self initRsvpView];
+            [self initPhotosView];
             [self initDescriptionView];
             [self initMapView];
             [self initInvitesView];
             [self initDateView];
-            [self initPhotosView];
             //[self initBadgesView];
             [self initMetroView];
             [self initInfoLieuView];
@@ -1687,6 +1720,23 @@ static CGFloat DescriptionBoxHeightMax = 100;
     [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Racourcis Photos" value:nil];
     
     [self.rootViewController addAndScrollToOnglet:OngletPhoto];
+}
+
+- (void)clicAddPhotoView {
+    
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Racourcis Photos" value:nil];
+    
+    [self.rootViewController addAndScrollToOnglet:OngletPhoto];
+    
+    UIViewController *actualViewController = [AppDelegate actualViewController];
+    
+    if ([actualViewController isKindOfClass:[PhotoViewController class]]) {
+        NSLog(@"C'est le controleur photo !");
+        
+        PhotoViewController *photoviewcontroller = (PhotoViewController *)actualViewController;
+        [photoviewcontroller showPhotoActionSheet];
+    }
 }
 
 - (void)clicExpandDescriptionView

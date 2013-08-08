@@ -101,6 +101,8 @@
 /* ----- Photos View ----- */
 @property (nonatomic, strong) IBOutlet UIView *photosView;
 @property (nonatomic, weak) IBOutlet UILabel *nbPhotosLabel;
+@property (strong, nonatomic) IBOutlet UIView *addPhotosView;
+@property (weak, nonatomic) IBOutlet UIButton *addPhotosButton;
 
 /* ----- Badges View ----- */
 @property (nonatomic, strong) IBOutlet UIView *badgesView;
