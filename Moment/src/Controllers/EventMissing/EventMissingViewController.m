@@ -71,6 +71,13 @@
     return self;
 }
 
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    
+    [AppDelegate updateActualViewController:self];
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];

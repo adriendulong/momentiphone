@@ -82,6 +82,13 @@
     [self loadParametresNotifications];
 }
 
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    
+    [AppDelegate updateActualViewController:self];
+}
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];

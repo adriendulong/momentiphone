@@ -90,16 +90,23 @@ static UIImageView *splashScreen = nil;
 
 #pragma mark - View cycle life
 
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    // Actual View Controller
+    [AppDelegate updateActualViewController:self];
+}
+
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
     
-    // Actual View Controller
-    [AppDelegate updateActualViewController:self];
-    
     //on check si autologin actif et utilisateur fourni
     UserClass *currentUser = [UserCoreData getCurrentUserWithLocalOnly:YES];
     if( currentUser ){
+        
+        //NSLog(@"currentUser = %@", currentUser);
         
         // Si un cookie de connexion existe, on le charge et on logue le user
         [[AFMomentAPIClient sharedClient] checkConnexionCookieWithEnded:^{

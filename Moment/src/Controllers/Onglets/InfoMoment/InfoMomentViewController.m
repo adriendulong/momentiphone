@@ -1251,7 +1251,6 @@ static CGFloat DescriptionBoxHeightMax = 100;
     [self initMapView];
     [self initInvitesView];
     [self initDateView];
-    [self initPhotosView];
     //[self initBadgesView];
     [self initMetroView];
     [self initInfoLieuView];
@@ -1356,6 +1355,13 @@ static CGFloat DescriptionBoxHeightMax = 100;
     [super viewDidAppear:animated];
     [self reloadData];
     [self sendGoogleAnalyticsView];
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    [AppDelegate updateActualViewController:self];
 }
 
 - (void)viewDidUnload
