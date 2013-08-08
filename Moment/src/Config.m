@@ -222,7 +222,7 @@ static Config *sharedInstance = nil;
     
     UIGraphicsBeginImageContext(targetSize); // this will crop
     
-    CGRect thumbnailRect = CGRectZero;
+    CGRect thumbnailRect = CGRectMake(0,0,1,1);
     thumbnailRect.origin = thumbnailPoint;
     thumbnailRect.size.width  = scaledWidth;
     thumbnailRect.size.height = scaledHeight;
