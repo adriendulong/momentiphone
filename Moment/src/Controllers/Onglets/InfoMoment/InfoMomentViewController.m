@@ -456,7 +456,6 @@ static CGFloat DescriptionBoxHeightMax = 100;
             [attributedString setTextColor:[[Config sharedInstance] textColor] range:range];
             
             [self.titreLabel setAttributedText:attributedString];
-            self.titreLabel.textAlignment = kCTLeftTextAlignment;
         }
         else
         {
@@ -483,6 +482,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
                 return mutableAttributedString;
             }];
             
+            self.titreLabel.textAlignment = [[VersionControl sharedInstance] alignment:TextAlignmentLeft];
             [self.ttTitreLabel removeFromSuperview];
             [self.titreLabel.superview addSubview:self.ttTitreLabel];
             self.titreLabel.hidden = YES;
@@ -606,7 +606,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
                 seeMoreButton.titleLabel.font = [[Config sharedInstance] defaultFontWithSize:13];
                 [seeMoreButton addTarget:self action:@selector(clicExpandDescriptionView) forControlEvents:UIControlEventTouchUpInside];
                 [seeMoreButton sizeToFit];
-                CGSize size = CGSizeMake(self.descriptionLabel.frame.size.width - 10, seeMoreButton.frame.size.height + 5);
+                CGSize size = CGSizeMake(frame.size.width - 10, seeMoreButton.frame.size.height + 5);
                 seeMoreButton.frame = CGRectMake(seeMoreButton.frame.origin.x, seeMoreButton.frame.origin.y, size.width, size.height);
                 
                 [self.foregroundView addSubview:seeMoreButton];
@@ -617,7 +617,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
             
             // Frame
             CGPoint origin = (CGPoint){(320 - seeMoreButton.frame.size.width)/2.0,
-                                        self.rsvpView.frame.origin.y + self.rsvpView.frame.size.height + DescriptionBoxHeightMax + 35};
+                                        self.photosView.frame.origin.y + self.photosView.frame.size.height + DescriptionBoxHeightMax + 35};
             seeMoreButton.frame = CGRectMake(origin.x, origin.y, seeMoreButton.frame.size.width, seeMoreButton.frame.size.height);
         }
         else
@@ -1240,8 +1240,6 @@ static CGFloat DescriptionBoxHeightMax = 100;
             
             [self.deleteMomentButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
             self.deleteMomentButton.titleLabel.font = [UIFont boldSystemFontOfSize:20];
-            self.deleteMomentButton.titleLabel.shadowColor = [UIColor lightGrayColor];
-            self.deleteMomentButton.titleLabel.shadowOffset = CGSizeMake(0, -1);
             
             [self addSubviewAtAutomaticPosition:self.suppressionView];
         }
