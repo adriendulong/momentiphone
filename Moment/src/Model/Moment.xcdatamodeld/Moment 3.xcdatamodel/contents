@@ -24,6 +24,7 @@
         <attribute name="isOpen" optional="YES" attributeType="Boolean" syncable="YES"/>
         <attribute name="isSponso" optional="YES" attributeType="Boolean" syncable="YES"/>
         <attribute name="momentId" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <attribute name="nb_photos" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
         <attribute name="nomLieu" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="privacy" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
         <attribute name="state" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
@@ -55,7 +56,7 @@
     </entity>
     <elements>
         <element name="ChatMessageCoreData" positionX="189" positionY="74" width="128" height="105"/>
-        <element name="MomentCoreData" positionX="-216" positionY="-60" width="128" height="390"/>
+        <element name="MomentCoreData" positionX="-216" positionY="-60" width="128" height="405"/>
         <element name="UserCoreData" positionX="16" positionY="45" width="128" height="345"/>
     </elements>
 </model>
