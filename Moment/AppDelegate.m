@@ -11,6 +11,7 @@
 //#import "SDURLCache.h"
 #import "Config.h"
 #import "HomeViewController.h"
+#import "TutorialViewController.h"
 #import "MomentCoreData+Model.h"
 #import "HTAutocompleteTextField.h"
 #import "TextFieldAutocompletionManager.h"
@@ -22,6 +23,8 @@
 #import "Harpy.h"
 #import "iRate.h"
 #import <Crashlytics/Crashlytics.h>
+
+#import "MomentClass+Server.h"
 
 @implementation AppDelegate
 
@@ -42,6 +45,26 @@
     appDelegate.actualViewController = viewController;
 }
 
+/*- (UIViewController *)topViewController{
+    return [self topViewController:[UIApplication sharedApplication].keyWindow.rootViewController];
+}
+
+- (UIViewController *)topViewController:(UIViewController *)rootViewController
+{
+    if (rootViewController.presentedViewController == nil) {
+        return rootViewController;
+    }
+    
+    if ([rootViewController.presentedViewController isMemberOfClass:[UINavigationController class]]) {
+        UINavigationController *navigationController = (UINavigationController *)rootViewController.presentedViewController;
+        UIViewController *lastViewController = [[navigationController viewControllers] lastObject];
+        return [self topViewController:lastViewController];
+    }
+    
+    UIViewController *presentedViewController = (UIViewController *)rootViewController.presentedViewController;
+    return [self topViewController:presentedViewController];
+}*/
+
 #pragma mark - Facebook
 
 // The native facebook application transitions back to an authenticating application when the user
@@ -56,7 +79,139 @@
 - (BOOL)application:(UIApplication *)application
             openURL:(NSURL *)url
   sourceApplication:(NSString *)sourceApplication
-         annotation:(id)annotation {
+         annotation:(id)annotation
+{
+    NSLog(@"openURL");
+    
+    if (url) {
+        
+        // Display text
+        NSLog(@"URL - absoluteString = %@",url.absoluteString);
+        NSLog(@"URL - host = %@",url.host);
+        
+        NSLog(@"pathComponents = %@",url.host.pathComponents);
+        NSLog(@"pathComponents = %@",url.pathComponents);
+        
+        
+        NSString *host = url.host.pathComponents[0];
+        NSString *onglet = url.pathComponents[1];
+        
+        NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
+        [numberFormatter setNumberStyle:NSNumberFormatterDecimalStyle];
+        NSNumber *momentId = [numberFormatter numberFromString:host];
+        
+        
+        if (momentId) {
+            
+            [MomentClass getInfosMomentWithId:momentId.integerValue withEnded:^(NSDictionary *attributes) {
+                if (attributes) {
+                    //NSLog(@"attributes = %@",attributes);
+                    MomentClass *moment = [[MomentClass alloc] initWithAttributesFromWeb:attributes];
+                    //NSLog(@"moment = %@",moment);
+                    NSLog(@"self.actualViewController = %@", self.actualViewController);
+                    
+                    if([self.actualViewController isKindOfClass:[TimeLineViewController class]]) {
+                        TimeLineViewController *timeline = (TimeLineViewController*)self.actualViewController;
+                        
+                        if ([onglet isEqual:@"p"]) {
+                            [timeline showPhotoView:moment];
+                        } else if ([onglet isEqual:@"i"]) {
+                            [timeline showInfoMomentView:moment];
+                        } else if ([onglet isEqual:@"t"]) {
+                            [timeline showTchatView:moment];
+                        } else {
+                            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Redirection inconnue" message:@"Le scheme est incorrect." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                            [alertView show];
+                        }
+                    } else {
+                        //[self.window.rootViewController.navigationController popToRootViewControllerAnimated:NO];
+                        
+                        NSLog(@"self.actualViewController = %@",[self.actualViewController nibName]);
+                        
+                        NSArray *viewControllers = self.actualViewController.navigationController.viewControllers;
+                        
+                        NSLog(@"viewControllers = %@",viewControllers);
+                        
+                        if ([self.actualViewController.modalViewController isEqual:self]) {
+                            
+                            NSLog(@"Modal view !");
+                            
+                            if ([self.actualViewController isKindOfClass:[TutorialViewController class]]) {
+                                
+                                TutorialViewController *tutorial = (TutorialViewController*)self.actualViewController;
+                                
+                                [[UIApplication sharedApplication] setStatusBarHidden:NO];
+                                [[VersionControl sharedInstance] dismissModalViewControllerFromRoot:tutorial animated:NO];
+                                
+                                
+                                NSLog(@"self.actualViewController = %@", self.actualViewController);
+                                
+                                NSArray *viewControllers = self.actualViewController.navigationController.viewControllers;
+                                
+                                NSLog(@"viewControllers = %@",viewControllers);
+                                
+                                if (viewControllers.count > 0) {
+                                    if ([viewControllers[0] isKindOfClass:[RootTimeLineViewController class]]) {
+                                        NSLog(@"C'est bien RootTimeLineViewController !");
+                                        
+                                        RootTimeLineViewController *rootTimeline = (RootTimeLineViewController*)viewControllers[0];
+                                        
+                                        TimeLineViewController *timeline = [rootTimeline timeLineForMoment:moment];
+                                        
+                                        if ([onglet isEqual:@"p"]) {
+                                            [timeline showPhotoView:moment];
+                                        } else if ([onglet isEqual:@"i"]) {
+                                            [timeline showInfoMomentView:moment];
+                                        } else if ([onglet isEqual:@"t"]) {
+                                            [timeline showTchatView:moment];
+                                        } else {
+                                            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Redirection inconnue" message:@"Le scheme est incorrect." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                                            [alertView show];
+                                        }
+                                    }
+                                }
+                            }
+                        } else {
+                            NSLog(@"Push view !");
+                            
+                            if (viewControllers.count > 0) {
+                                if ([viewControllers[0] isKindOfClass:[RootTimeLineViewController class]]) {
+                                    NSLog(@"C'est bien RootTimeLineViewController !");
+                                    
+                                    RootTimeLineViewController *rootTimeline = (RootTimeLineViewController*)viewControllers[0];
+                                    
+                                    TimeLineViewController *timeline = [rootTimeline timeLineForMoment:moment];
+                                    
+                                    if ([onglet isEqual:@"p"]) {
+                                        [timeline showPhotoView:moment];
+                                    } else if ([onglet isEqual:@"i"]) {
+                                        [timeline showInfoMomentView:moment];
+                                    } else if ([onglet isEqual:@"t"]) {
+                                        [timeline showTchatView:moment];
+                                    } else {
+                                        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Redirection inconnue" message:@"Le scheme est incorrect." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                                        [alertView show];
+                                    }
+                                }
+                            }
+                        }
+                        //UIViewController *rootViewController = [viewControllers objectAtIndex:viewControllers.count - 2];
+                       
+                    }
+                    
+                    
+                    
+                    /*NSString *text = [url.host stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+                     UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Text" message:text delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                     [alertView show];*/
+                }
+            } waitUntilFinished:YES];
+        } else {
+            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Problème de redirection" message:@"Le premier attribut n'est pas un nombre." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+            [alertView show];
+        }
+    }
+    
     // attempt to extract a token from the url
     return [[FBSession activeSession] handleOpenURL:url];
 }
@@ -214,6 +369,31 @@
         
     }
     */
+    
+    NSLog(@"didFinishLaunching..");
+    
+    NSLog(@"UIApplicationLaunchOptionsURLKey = %@", launchOptions[@"UIApplicationLaunchOptionsURLKey"]);
+    
+    if (launchOptions[@"UIApplicationLaunchOptionsURLKey"]) {
+        
+        NSURL *url = launchOptions[@"UIApplicationLaunchOptionsURLKey"];
+        
+        
+        NSLog(@"URL - absoluteString = %@",url.absoluteString);
+        NSLog(@"URL - host = %@",url.host);
+        
+        NSLog(@"pathComponents = %@",url.host.pathComponents);
+        NSLog(@"pathComponents = %@",url.pathComponents);
+        
+        
+        
+        // Display text
+        //NSLog(@"URL - absoluteString = %@",url.absoluteString);
+        //NSLog(@"URL - host = %@",url.host);
+        //NSString *text = [url.host stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+        //UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Text" message:text delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        //[alertView show];
+    }
     
     [self deleteUploadPhotosCache];
         
