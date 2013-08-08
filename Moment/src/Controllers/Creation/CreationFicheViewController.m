@@ -81,7 +81,10 @@
     
     if([buttons count] == 2)
     {
-        UIImage *normal = nil;//, *selected = nil;
+        //UIImage *normal = nil;//, *selected = nil;
+        NSString *normal = nil;
+        UIColor *colorEnable = [UIColor colorWithHex:0xD28000];;
+        UIColor *colorDisabled = [UIColor grayColor];
         SEL action = NULL;
         BOOL secondButtonEnable = NO;
         
@@ -94,11 +97,14 @@
         if(step == 1)
         {
             // Button Next
-            normal = [UIImage imageNamed:@"topbar_arrow_down_enable.png"];
+            //normal = [UIImage imageNamed:@"topbar_arrow_down_enable.png"];
+            normal = [NSString stringWithFormat:NSLocalizedString(@"Next", nil)];
             action = @selector(clicNext);
             
             // Button Previous Disabled
             [UIView animateWithDuration:0.3 animations:^{
+                button.alpha = 0;
+                button.alpha = 1;
                 previousButton.alpha = 0;
             }];
             [previousButton setEnabled:NO];
@@ -109,6 +115,14 @@
                 secondButtonEnable = YES;
             }
             
+            //[[button subviews] makeObjectsPerformSelector:@selector(removeFromSuperview)];
+            //NSArray *subviews = [self listSubviewsOfView:button];
+            //NSLog(@"subviews = %@", subviews);
+            [self removeSubviewsOfView:button];
+            
+            
+            //[button setFrame:CGRectMake(0, 0, 70, 43)];
+            [button setFrame:CGRectMake(button.frame.origin.x, button.frame.origin.y, 70, 43)];
         }
         else
         {
@@ -116,28 +130,48 @@
                 previousButton.hidden = NO;
             
             // Button Valider
-            normal = [UIImage imageNamed:@"topbar_valider.png"];
+            //normal = [UIImage imageNamed:@"topbar_valider.png"];
+            normal = [NSString stringWithFormat:NSLocalizedString(@"Finish", nil)];
             action = @selector(clicCreate);
             
             // Button Previous Enable
             [UIView animateWithDuration:0.3 animations:^{
+                button.alpha = 1;
+                button.alpha = 0;
+                button.alpha = 1;
                 previousButton.alpha = 1;
             }];
             [previousButton setEnabled:YES];
             
             // Second Button enable
-            if( ((self.adresseLabel.text.length > 0)||(self.adresseText.length > 0)) && (self.descriptionTextView.text.length > 0) ){
+            if( ((self.adresseLabel.text.length > 0)||(self.adresseText.length > 0)) && (self.descriptionTextView.text.length > 0) ) {
                 secondButtonEnable = YES;
             }
-
+            
+            UIView *whiteLine = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 0.5, 42.5)];
+            UIView *darkGrayLine = [[UIView alloc] initWithFrame:CGRectMake(0.5, 0, 0.5, 42.5)];
+            UIView *grayLine = [[UIView alloc] initWithFrame:CGRectMake(1, 0, 0.5, 42.5)];
+            whiteLine.backgroundColor = [UIColor colorWithHex:0xFDFDFD];
+            darkGrayLine.backgroundColor = [UIColor colorWithHex:0xB8B8B8];
+            grayLine.backgroundColor = [UIColor colorWithHex:0xBBBBBB];
+            [button addSubview:whiteLine];
+            [button addSubview:darkGrayLine];
+            [button addSubview:grayLine];
+            
+            [button setFrame:CGRectMake(button.frame.origin.x, button.frame.origin.y, 85, 43)];
         }
         
         // Update
-        [button setImage:normal forState:UIControlStateNormal];
+        //[button setBackgroundColor:[UIColor cyanColor]];
+        //NSLog(@"Button Frame = %@", NSStringFromCGRect(button.frame));
+        [button.titleLabel setFont:[[Config sharedInstance] defaultFontWithSize:13]];
+        [button setTitle:normal forState:UIControlStateNormal];
+        [button setTitleColor:colorDisabled forState:UIControlStateDisabled];
+        [button setTitleColor:colorEnable forState:UIControlStateNormal];
+        [button.titleLabel setTextAlignment:NSTextAlignmentRight];
         [button removeTarget:self action:NULL forControlEvents:UIControlEventTouchUpInside];
         [button addTarget:self action:action forControlEvents:UIControlEventTouchUpInside];
         [button setEnabled:secondButtonEnable];
-        
     }
     
 }
@@ -149,6 +183,42 @@
     
     [button setEnabled:enable];
 }
+
+- (void)removeSubviewsOfView:(UIView *)view {
+    
+    // Get the subviews of the view
+    NSArray *subviews = [view subviews];
+    
+    // Return if there are no subviews
+    if (subviews.count != 0) {
+        for (UIView *subview in subviews) {
+            
+            if (![[[subview class] description] isEqualToString:@"UIButtonLabel"]) {
+                [subview removeFromSuperview];
+            }
+        }
+    }
+}
+
+/*- (NSArray *)listSubviewsOfView:(UIView *)view {
+    NSMutableArray *subviewToReturn = [NSMutableArray array];
+    
+    // Get the subviews of the view
+    NSArray *subviews = [view subviews];
+    
+    // Return if there are no subviews
+    if ([subviews count] == 0) return nil;
+    
+    for (UIView *subview in subviews) {
+        
+        [subviewToReturn addObject:subview];
+        
+        // List the subviews of subview
+        [self listSubviewsOfView:subview];
+    }
+    
+    return subviewToReturn;
+}*/
 
 - (id)initWithUser:(UserClass*)user withTimeLine:(UIViewController <TimeLineDelegate> *)timeLine
 {
@@ -203,12 +273,18 @@
     
     // Bouton Previous
     UIButton *buttonPrevious = [[UIButton alloc] initWithFrame:frameButton];
-    UIImage *arrow_up_disable = [UIImage imageNamed:@"topbar_arrow_up_disable.png"];
+    //UIImage *arrow_up_disable = [UIImage imageNamed:@"topbar_arrow_up_disable.png"];
+    //UIColor *arrow_up_disable = [UIColor darkGrayColor];
     UIImage *arrow_up_normal = [UIImage imageNamed:@"topbar_arrow_up_enable.png"];
-    [buttonPrevious setImage:arrow_up_disable forState:UIControlStateDisabled];
+    //UIColor *arrow_up_normal = [UIColor colorWithHex:0xD28000];
+    //[buttonPrevious setTitle:@"Précédent" forState:UIControlStateNormal];
+    //[buttonPrevious setImage:arrow_up_disable forState:UIControlStateDisabled];
+    //[buttonPrevious setTitleColor:arrow_up_disable forState:UIControlStateDisabled];
     [buttonPrevious setImage:arrow_up_normal forState:UIControlStateNormal];
+    //[buttonPrevious setTitleColor:arrow_up_normal forState:UIControlStateNormal];
     [buttonPrevious addTarget:self action:@selector(clicPrev) forControlEvents:UIControlEventTouchUpInside];
     buttonPrevious.hidden = YES;
+    //[buttonPrevious setBackgroundColor:[UIColor redColor]];
     UIBarButtonItem *buttonItemPrevious = [[UIBarButtonItem alloc] initWithCustomView:buttonPrevious];
     
     // 2e bouton
