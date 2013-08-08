@@ -17,23 +17,30 @@
 
 @property(strong, nonatomic) IBOutlet UIScrollView *scrollView;
 @property(strong, nonatomic) IBOutlet UIPageControl *pageControl;
-@property (strong, nonatomic) IBOutlet UIImageView *imagePageControl;
 
 @property(nonatomic) BOOL pageControlBeingUsed;
 
 @property(strong, nonatomic) NSMutableArray *images;
+@property(strong, nonatomic) UIButton *suivantPage1;
+@property(strong, nonatomic) UIButton *suivantPage2;
+@property(strong, nonatomic) UIButton *suivantPage3;
 @property(strong, nonatomic) UIButton *letsgoButton;
-
-@property (strong, nonatomic) IBOutlet UIButton *page1;
-@property (strong, nonatomic) IBOutlet UIButton *page2;
-@property (strong, nonatomic) IBOutlet UIButton *page3;
-@property (strong, nonatomic) IBOutlet UIButton *page4;
 
 @property (nonatomic, assign) NSInteger lastContentOffset;
 
 @end
 
 @implementation TutorialViewController
+
+@synthesize scrollView = _scrollView;
+@synthesize pageControl = _pageControl;
+@synthesize pageControlBeingUsed = _pageControlBeingUsed;
+@synthesize images = _images;
+@synthesize suivantPage1 = _suivantPage1;
+@synthesize suivantPage2 = _suivantPage2;
+@synthesize suivantPage3 = _suivantPage3;
+@synthesize letsgoButton = _letsgoButton;
+@synthesize lastContentOffset = _lastContentOffset;
 
 - (id)initWithXib
 {
@@ -49,13 +56,14 @@
 {
     [super viewDidAppear:animated];
     
+    [AppDelegate updateActualViewController:self];
     [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationSlide];
 }
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    CGSize screenSize = [[VersionControl sharedInstance] screenSize];
+    //CGSize screenSize = [[VersionControl sharedInstance] screenSize];
     BOOL supportIOS6 = [[VersionControl sharedInstance] supportIOS6];
     BOOL isIphone5 = [[VersionControl sharedInstance] isIphone5];
     
@@ -110,34 +118,84 @@
 	self.scrollView.contentSize = CGSizeMake(self.scrollView.frame.size.width * self.pageControl.numberOfPages, self.scrollView.frame.size.height);
     
     
+    
+    
+    [self setSuivantPage1:[UIButton buttonWithType:UIButtonTypeCustom]];
+    [self.suivantPage1 setBackgroundImage:[[UIImage imageNamed:@"add_photo_button.png"]
+                                              stretchableImageWithLeftCapWidth:8.0f
+                                              topCapHeight:0.0f]
+                                    forState:UIControlStateNormal];
+    [self.suivantPage1 setTitle:@"Suivant" forState:UIControlStateNormal];
+    [self.suivantPage1 setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    self.suivantPage1.titleLabel.font = [UIFont boldSystemFontOfSize:20];
+    [self.suivantPage1 setTag:1];
+    [self.suivantPage1 addTarget:self action:@selector(goToPage:) forControlEvents:UIControlEventTouchDown];
+    
+    
+    
+    
+    [self setSuivantPage2:[UIButton buttonWithType:UIButtonTypeCustom]];
+    [self.suivantPage2 setBackgroundImage:[[UIImage imageNamed:@"add_photo_button.png"]
+                                           stretchableImageWithLeftCapWidth:8.0f
+                                           topCapHeight:0.0f]
+                                 forState:UIControlStateNormal];
+    [self.suivantPage2 setTitle:@"Suivant" forState:UIControlStateNormal];
+    [self.suivantPage2 setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    self.suivantPage2.titleLabel.font = [UIFont boldSystemFontOfSize:20];
+    [self.suivantPage2 setTag:2];
+    [self.suivantPage2 addTarget:self action:@selector(goToPage:) forControlEvents:UIControlEventTouchDown];
+    
+    
+    
+    
+    [self setSuivantPage3:[UIButton buttonWithType:UIButtonTypeCustom]];
+    [self.suivantPage3 setBackgroundImage:[[UIImage imageNamed:@"add_photo_button.png"]
+                                           stretchableImageWithLeftCapWidth:8.0f
+                                           topCapHeight:0.0f]
+                                 forState:UIControlStateNormal];
+    [self.suivantPage3 setTitle:@"Suivant" forState:UIControlStateNormal];
+    [self.suivantPage3 setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    self.suivantPage3.titleLabel.font = [UIFont boldSystemFontOfSize:20];
+    [self.suivantPage3 setTag:3];
+    [self.suivantPage3 addTarget:self action:@selector(goToPage:) forControlEvents:UIControlEventTouchDown];
+    
+    
+    
+    
     [self setLetsgoButton:[UIButton buttonWithType:UIButtonTypeCustom]];
+    [self.letsgoButton setBackgroundImage:[[UIImage imageNamed:@"finish_tuto_button.png"]
+                                           stretchableImageWithLeftCapWidth:8.0f
+                                           topCapHeight:0.0f]
+                                 forState:UIControlStateNormal];
+    [self.letsgoButton setTitle:@"Terminer" forState:UIControlStateNormal];
+    [self.letsgoButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    self.letsgoButton.titleLabel.font = [UIFont boldSystemFontOfSize:20];
+    [self.letsgoButton setTag:1000];
     [self.letsgoButton addTarget:self action:@selector(letsGo:) forControlEvents:UIControlEventTouchDown];
     
-    int button_height_from_bottom = 0;
+    
+    /*int button_height_from_bottom = 0;
     
     if (isIphone5)
     {
         button_height_from_bottom = 125;
     } else {
-        button_height_from_bottom = 45;
-    }
+        button_height_from_bottom = 51.5;
+    }*/
+    
+    // 300 x 47
+    
+    self.suivantPage1.frame = CGRectMake((self.scrollView.frame.size.width * 1) - (self.scrollView.frame.size.width-10), self.scrollView.frame.size.height-51.5, 300.0, 47.0);
+    self.suivantPage2.frame = CGRectMake((self.scrollView.frame.size.width * 2) - (self.scrollView.frame.size.width-10), self.scrollView.frame.size.height-51.5, 300.0, 47.0);
+    self.suivantPage3.frame = CGRectMake((self.scrollView.frame.size.width * 3) - (self.scrollView.frame.size.width-10), self.scrollView.frame.size.height-51.5, 300.0, 47.0);
     
     //Position Bouton Let's Go
-    self.letsgoButton.frame = CGRectMake((self.scrollView.frame.size.width * self.pageControl.numberOfPages) - (self.scrollView.frame.size.width-82), self.scrollView.frame.size.height-button_height_from_bottom, 165.0, 34.0);
-    
-    //Position du contrôleur de page Orange
-    self.imagePageControl.center = CGPointMake(screenSize.width/2, screenSize.height-29);
-    self.page1.center = CGPointMake(64, screenSize.height-29);
-    self.page2.center = CGPointMake(129, screenSize.height-29);
-    self.page3.center = CGPointMake(196, screenSize.height-29);
-    self.page4.center = CGPointMake(262, screenSize.height-29);
+    //self.letsgoButton.frame = CGRectMake((self.scrollView.frame.size.width * self.pageControl.numberOfPages) - (self.scrollView.frame.size.width-77.5), self.scrollView.frame.size.height-button_height_from_bottom, 165.0, 34.0);
+    self.letsgoButton.frame = CGRectMake((self.scrollView.frame.size.width * self.pageControl.numberOfPages) - (self.scrollView.frame.size.width-10), self.scrollView.frame.size.height-51.5, 300.0, 47.0);
+
     
     
-    
-    
-    
-    UILabel *titlePage1 = [[UILabel alloc] initWithFrame:CGRectMake(9
-                                                                    , 12, 300, 60)];
+    UILabel *titlePage1 = [[UILabel alloc] initWithFrame:CGRectMake(9, 12, 300, 60)];
     [titlePage1 setText:NSLocalizedString(@"TutorialViewController_titlePage1", nil)];
     
     if(supportIOS6) {
@@ -945,14 +1003,11 @@
             
             [self.scrollView addSubview:tttLabel];
         }
-    }
+    }    
     
-    [self.letsgoButton setBackgroundImage:[UIImage imageNamed:@"btn_go_up"] forState:UIControlStateNormal];
-    [self.letsgoButton setBackgroundImage:[UIImage imageNamed:@"btn_go_down"] forState:UIControlStateSelected];
-    
-    [self.letsgoButton setTag:1000];
-    
-    
+    [self.scrollView addSubview:self.suivantPage1];
+    [self.scrollView addSubview:self.suivantPage2];
+    [self.scrollView addSubview:self.suivantPage3];
     [self.scrollView addSubview:self.letsgoButton];
 }
 
@@ -963,27 +1018,6 @@
 		int page = floor((self.scrollView.contentOffset.x - pageWidth / 2) / pageWidth) + 1;
         
 		self.pageControl.currentPage = page;
-        
-        [self.imagePageControl setImage:[UIImage imageNamed:[@"bar" stringByAppendingString:[@(page+1) description]]]];
-        
-        //NSLog(@"scrollViewDidScroll - Page n°%i", self.pageControl.currentPage);
-        if (![[VersionControl sharedInstance] isIphone5])
-        {
-            if (page == 3)
-            {
-                [self.imagePageControl setHidden:YES];
-                [self.page1 setHidden:YES];
-                [self.page2 setHidden:YES];
-                [self.page3 setHidden:YES];
-                [self.page4 setHidden:YES];
-            } else {
-                [self.imagePageControl setHidden:NO];
-                [self.page1 setHidden:NO];
-                [self.page2 setHidden:NO];
-                [self.page3 setHidden:NO];
-                [self.page4 setHidden:NO];
-            }
-        }
         
         self.pageControlBeingUsed = NO;
 	}
@@ -1009,7 +1043,17 @@
 	self.pageControlBeingUsed = YES;
 }
 
-- (IBAction)goToPage:(id)sender
+/*- (void)nextPage
+{
+    int nextPage = self.pageControl.currentPage+1;
+    
+    CGPoint offset = CGPointMake(nextPage * self.scrollView.frame.size.width, 0);
+    [self.scrollView setContentOffset:offset animated:YES];
+    
+    self.pageControl.currentPage = nextPage;
+}*/
+
+- (void)goToPage:(id)sender
 {
     if ([sender isKindOfClass:[UIButton class]])
     {
@@ -1018,28 +1062,8 @@
         NSInteger pageDestination = [button tag];
         CGPoint offset = CGPointMake(pageDestination * self.scrollView.frame.size.width, 0);
         [self.scrollView setContentOffset:offset animated:YES];
-        [self.imagePageControl setImage:[UIImage imageNamed:[@"bar" stringByAppendingString:[@(pageDestination+1) description]]]];
         
         self.pageControl.currentPage = pageDestination;
-        
-        //NSLog(@"goToPage - Page n°%i", pageDestination);
-        if (![[VersionControl sharedInstance] isIphone5])
-        {
-            if (pageDestination == 3)
-            {
-                [self.imagePageControl setHidden:YES];
-                [self.page1 setHidden:YES];
-                [self.page2 setHidden:YES];
-                [self.page3 setHidden:YES];
-                [self.page4 setHidden:YES];
-            } else {
-                [self.imagePageControl setHidden:NO];
-                [self.page1 setHidden:NO];
-                [self.page2 setHidden:NO];
-                [self.page3 setHidden:NO];
-                [self.page4 setHidden:NO];
-            }
-        }
         
         self.pageControlBeingUsed = YES;
     }
@@ -1068,11 +1092,6 @@
 }
 
 - (void)viewDidUnload {
-    [self setPage4:nil];
-    [self setPage3:nil];
-    [self setPage2:nil];
-    [self setPage1:nil];
-    [self setImagePageControl:nil];
     [self setScrollView:nil];
     [self setPageControl:nil];
     [super viewDidUnload];
