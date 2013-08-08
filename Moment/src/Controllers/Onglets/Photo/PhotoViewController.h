@@ -76,6 +76,7 @@ withRootViewController:(UIViewController *)rootViewController
 
 - (void)loadPhotos;
 - (void)updateIndexesAfterDeletetion;
+- (void)showPhotoActionSheet;
 
 // Google Analytics
 - (void)sendGoogleAnalyticsView;
