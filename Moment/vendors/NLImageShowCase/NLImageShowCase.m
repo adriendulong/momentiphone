@@ -181,8 +181,10 @@
             for (int i=start; i<count; i++) {
                 NLImageShowCaseCell *cell = array[i];
                 CGFloat xPos, yPos;
-                [self positonsForIndex:(i+difference) xPos:&xPos yPos:&yPos];
+                NSInteger newIndex = (i+difference);
+                [self positonsForIndex:newIndex xPos:&xPos yPos:&yPos];
                 cell.frame = CGRectMake(xPos, yPos, cell.frame.size.width, cell.frame.size.height);
+                cell.index = newIndex;
             }
             
             // Ajouter les cellules vides
