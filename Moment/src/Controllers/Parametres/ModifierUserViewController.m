@@ -670,7 +670,7 @@ enum PhotoPickerDestination {
         picker.sourceType = UIImagePickerControllerSourceTypeCamera;
     }
     
-    [[VersionControl sharedInstance] presentModalViewController:picker fromRoot:self animated:YES];
+    [self presentViewController:picker animated:YES completion:nil];
 }
 
 #pragma mark - UIImagePickerController Delegate
@@ -690,7 +690,7 @@ enum PhotoPickerDestination {
             break;
     }
     
-    [[VersionControl sharedInstance] dismissModalViewControllerFromRoot:UIPicker animated:YES];
+    [UIPicker dismissViewControllerAnimated:YES completion:nil];
 }
 
 @end

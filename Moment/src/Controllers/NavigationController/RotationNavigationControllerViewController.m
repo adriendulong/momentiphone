@@ -55,8 +55,8 @@
         [[UIApplication sharedApplication] setStatusBarOrientation:orientation animated:NO];
         
         // Correctly autoOrient the given view controller
-        [[VersionControl sharedInstance] presentModalViewController:viewController fromRoot:self animated:NO];
-        [[VersionControl sharedInstance] dismissModalViewControllerFromRoot:self animated:NO];
+        [self presentViewController:viewController animated:NO completion:nil];
+        [self dismissViewControllerAnimated:NO completion:nil];
     }
     
     [super pushViewController:viewController animated:NO];

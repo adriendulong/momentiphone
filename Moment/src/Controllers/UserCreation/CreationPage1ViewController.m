@@ -456,7 +456,7 @@
     self.photoProfil.image = self.imageProfile;
     _mdpLabel.returnKeyType = UIReturnKeyDone;
     
-    [[VersionControl sharedInstance] dismissModalViewControllerFromRoot:picker animated:YES];
+    [picker dismissViewControllerAnimated:YES completion:nil];
 }
 
 #pragma mark - UIActionSheet Delegate
@@ -480,7 +480,7 @@
     else
         picker.sourceType = UIImagePickerControllerSourceTypeCamera;
 
-    [[VersionControl sharedInstance] presentModalViewController:picker fromRoot:self animated:YES];
+    [self presentViewController:picker animated:YES completion:nil];
     
 }
 

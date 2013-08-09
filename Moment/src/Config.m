@@ -426,7 +426,7 @@ static Config *sharedInstance = nil;
         [mc setToRecipients:@[kParameterContactMail]];
         
         // Present mail view controller on screen
-        [[VersionControl sharedInstance] presentModalViewController:mc fromRoot:rootViewController animated:YES];
+        [rootViewController presentViewController:mc animated:YES completion:nil];
     }
     else
     {
@@ -458,7 +458,7 @@ static Config *sharedInstance = nil;
         [mc setToRecipients:@[kParameterContactMail]];
         
         // Present mail view controller on screen
-        [[VersionControl sharedInstance] presentModalViewController:mc fromRoot:rootViewController animated:YES];
+        [rootViewController presentViewController:mc animated:YES completion:nil];
     }
     else
     {
