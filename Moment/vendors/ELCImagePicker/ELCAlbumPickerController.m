@@ -28,7 +28,7 @@
 {
     [super viewDidLoad];
 	
-	[self.navigationItem setTitle:@"Loading..."];
+	[self.navigationItem setTitle:NSLocalizedString(@"ELCAssetTablePicker_Loading", nil)];
     
     UIBarButtonItem *cancelButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self.parent action:@selector(cancelImagePicker)];
 	[self.navigationItem setRightBarButtonItem:cancelButton];
@@ -87,7 +87,7 @@
 - (void)reloadTableView
 {
 	[self.tableView reloadData];
-	[self.navigationItem setTitle:@"Select an Album"];
+	[self.navigationItem setTitle:NSLocalizedString(@"ELCAlbumPickerController_Albums", nil)];
 }
 
 - (void)selectedAssets:(NSArray*)assets

@@ -133,6 +133,9 @@ static NSDateFormatter *smallDateFormatter = nil;
         if(attributes[@"cover_photo_url"])
             dico[@"cover_photo_url"] = attributes[@"cover_photo_url"];
         
+        if(attributes[@"nb_photos"])
+            dico[@"nb_photos"] = attributes[@"nb_photos"];
+        
         return dico;
     }
     
@@ -199,6 +202,9 @@ static NSDateFormatter *smallDateFormatter = nil;
         
         if(attributes[@"unique_url"])
             dico[@"unique_url"] = attributes[@"unique_url"];
+        
+        if(attributes[@"nb_photos"])
+            dico[@"nb_photos"] = attributes[@"nb_photos"];
         
         return dico;
     }
@@ -295,6 +301,9 @@ static NSDateFormatter *smallDateFormatter = nil;
     
     if(self.uniqueURL)
         dico[@"unique_url"] = self.uniqueURL;
+    
+    if(self.nb_photos)
+        dico[@"nb_photos"] = self.nb_photos;
     
     //NSLog(@"\n--------------------------------------------------------------------------\n--------------------------------------------------------------------------\n");
     

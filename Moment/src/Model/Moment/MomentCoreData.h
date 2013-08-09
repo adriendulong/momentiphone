@@ -35,6 +35,7 @@
 @property (nonatomic, retain) NSString * titre;
 @property (nonatomic, retain) NSString * uniqueURL;
 @property (nonatomic, retain) NSString * coverPhotoURL;
+@property (nonatomic, retain) NSNumber * nb_photos;
 @property (nonatomic, retain) UserCoreData *owner;
 
 @end

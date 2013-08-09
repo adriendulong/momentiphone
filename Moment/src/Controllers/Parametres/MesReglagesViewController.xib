@@ -85,7 +85,7 @@
 						<int key="IBUIContentMode">7</int>
 						<bool key="IBUIUserInteractionEnabled">NO</bool>
 						<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
-						<string key="IBUIText">A propos</string>
+						<string key="IBUIText">À propos</string>
 						<object class="NSColor" key="IBUITextColor" id="782087079">
 							<int key="NSColorSpace">1</int>
 							<bytes key="NSRGB">MSAwLjUgMAA</bytes>
@@ -222,7 +222,7 @@
 					<object class="IBUILabel" id="240856306">
 						<reference key="NSNextResponder" ref="70877847"/>
 						<int key="NSvFlags">292</int>
-						<string key="NSFrame">{{26, 103}, {268, 21}}</string>
+						<string key="NSFrame">{{15, 102}, {290, 22}}</string>
 						<reference key="NSSuperview" ref="70877847"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="46403169"/>
@@ -240,6 +240,7 @@
 						<nil key="IBUIHighlightedColor"/>
 						<int key="IBUIBaselineAdjustment">0</int>
 						<bool key="IBUIAdjustsLetterSpacingToFitWidth">YES</bool>
+						<int key="IBUITextAlignment">1</int>
 						<reference key="IBUIFontDescription" ref="713983981"/>
 						<reference key="IBUIFont" ref="517791518"/>
 						<bool key="IBUIAdjustsFontSizeToFit">NO</bool>
@@ -247,7 +248,7 @@
 					<object class="IBUIButton" id="46403169">
 						<reference key="NSNextResponder" ref="70877847"/>
 						<int key="NSvFlags">292</int>
-						<string key="NSFrame">{{139, 132}, {41, 41}}</string>
+						<string key="NSFrame">{{140, 132}, {41, 41}}</string>
 						<reference key="NSSuperview" ref="70877847"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="746570834"/>
@@ -293,7 +294,7 @@
 					<object class="IBUILabel" id="746570834">
 						<reference key="NSNextResponder" ref="70877847"/>
 						<int key="NSvFlags">292</int>
-						<string key="NSFrame">{{0, 199}, {320, 39}}</string>
+						<string key="NSFrame">{{0, 193}, {320, 50}}</string>
 						<reference key="NSSuperview" ref="70877847"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="379613656"/>
@@ -317,7 +318,7 @@
 					<object class="IBUILabel" id="549227156">
 						<reference key="NSNextResponder" ref="70877847"/>
 						<int key="NSvFlags">292</int>
-						<string key="NSFrame">{{25, 375}, {184, 20}}</string>
+						<string key="NSFrame">{{25, 375}, {190, 20}}</string>
 						<reference key="NSSuperview" ref="70877847"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="994045499"/>
@@ -349,7 +350,7 @@
 					<object class="IBUILabel" id="248673490">
 						<reference key="NSNextResponder" ref="70877847"/>
 						<int key="NSvFlags">292</int>
-						<string key="NSFrame">{{25, 411}, {184, 20}}</string>
+						<string key="NSFrame">{{25, 411}, {190, 20}}</string>
 						<reference key="NSSuperview" ref="70877847"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="573195389"/>
@@ -374,7 +375,7 @@
 					<object class="IBUILabel" id="223404209">
 						<reference key="NSNextResponder" ref="70877847"/>
 						<int key="NSvFlags">292</int>
-						<string key="NSFrame">{{25, 447}, {184, 20}}</string>
+						<string key="NSFrame">{{25, 447}, {190, 20}}</string>
 						<reference key="NSSuperview" ref="70877847"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="538554805"/>
@@ -399,7 +400,7 @@
 					<object class="IBUILabel" id="642642120">
 						<reference key="NSNextResponder" ref="70877847"/>
 						<int key="NSvFlags">292</int>
-						<string key="NSFrame">{{25, 483}, {184, 20}}</string>
+						<string key="NSFrame">{{25, 483}, {190, 20}}</string>
 						<reference key="NSSuperview" ref="70877847"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="247982845"/>
@@ -1301,16 +1302,13 @@
 						<int key="objectID">23</int>
 						<reference key="object" ref="70877847"/>
 						<array class="NSMutableArray" key="children">
-							<reference ref="689281852"/>
 							<reference ref="120944311"/>
 							<reference ref="51725241"/>
-							<reference ref="240856306"/>
 							<reference ref="412370543"/>
 							<reference ref="952439503"/>
 							<reference ref="966684686"/>
 							<reference ref="549227156"/>
 							<reference ref="248673490"/>
-							<reference ref="223404209"/>
 							<reference ref="642642120"/>
 							<reference ref="995559524"/>
 							<reference ref="642881681"/>
@@ -1332,6 +1330,9 @@
 							<reference ref="446838768"/>
 							<reference ref="746570834"/>
 							<reference ref="46403169"/>
+							<reference ref="240856306"/>
+							<reference ref="223404209"/>
+							<reference ref="689281852"/>
 						</array>
 						<reference key="parent" ref="0"/>
 					</object>

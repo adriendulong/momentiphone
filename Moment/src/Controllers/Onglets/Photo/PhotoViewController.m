@@ -397,18 +397,7 @@ withRootViewController:(UIViewController *)rootViewController
                 // Google Analytics
                 [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Ajout" value:nil];
                                 
-                // Add Picture
-                UIActionSheet *actionSheet = [[UIActionSheet alloc]
-                                              initWithTitle:NSLocalizedString(@"ActionSheet_PeekPhoto_Title", nil)
-                                              delegate:self
-                                              cancelButtonTitle:NSLocalizedString(@"ActionSheet_PeekPhoto_Button_Cancel", nil)
-                                              destructiveButtonTitle:nil
-                                              otherButtonTitles:
-                                              NSLocalizedString(@"ActionSheet_PeekPhoto_Button_PhotoLibrary", nil),
-                                              NSLocalizedString(@"ActionSheet_PeekPhoto_Button_Camera", nil),
-                                              nil];
-                actionSheet.actionSheetStyle = UIActionSheetStyleBlackTranslucent;
-                [actionSheet showInView:self.view];
+                [self showPhotoActionSheet];
             }
         }
         // Pas le droit d'ajouter une photo
@@ -497,6 +486,21 @@ withRootViewController:(UIViewController *)rootViewController
 #endif
         
     }
+}
+
+- (void)showPhotoActionSheet {
+    // Add Picture
+    UIActionSheet *actionSheet = [[UIActionSheet alloc]
+                                  initWithTitle:NSLocalizedString(@"ActionSheet_PeekPhoto_Title", nil)
+                                  delegate:self
+                                  cancelButtonTitle:NSLocalizedString(@"ActionSheet_PeekPhoto_Button_Cancel", nil)
+                                  destructiveButtonTitle:nil
+                                  otherButtonTitles:
+                                  NSLocalizedString(@"ActionSheet_PeekPhoto_Button_PhotoLibrary", nil),
+                                  NSLocalizedString(@"ActionSheet_PeekPhoto_Button_Camera", nil),
+                                  nil];
+    actionSheet.actionSheetStyle = UIActionSheetStyleBlackTranslucent;
+    [actionSheet showInView:self.view];
 }
 
 - (void)imageTouchLonger:(NLImageShowCase *)imageShowCase imageIndex:(NSInteger)index;

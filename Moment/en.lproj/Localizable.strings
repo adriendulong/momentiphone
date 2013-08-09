@@ -122,6 +122,8 @@
 "InviteAddViewController_AlertView_BackButton_Message_One" = "Vous avez sélectionné un invité. Voulez-vous valider cette invitation ?";
 "InviteAddViewController_AlertView_BackButton_Message_Several" = "Vous avez sélectionné plusieurs invités. Voulez-vous valider ces invitations ?";
 
+"InviteAddViewController_PopTipViewFacebook_Message" = "Invitez en un clic tous vos amis Facebook.";
+
 /* ---------------- InvitePresentsViewController ------------------ */
 // AlertView Loading Fail
 "InvitePresentsViewController_AlertView_LoadingFail_Title" = "Echec lors de la connexion";
@@ -457,6 +459,8 @@
 
 /* ------------- Words --------------- */
 "Words_by" = "par";
+"Finish" = "Terminer";
+"Next" = "Suivant";
 
 
 

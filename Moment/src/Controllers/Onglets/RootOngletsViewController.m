@@ -348,7 +348,14 @@
 
 - (void)viewWillDisappear:(BOOL)animated
 {
+    if (self.roundRectButtonPopTipView)
+    {
+        NSLog(@"roundRectButtonPopTipView activée ! On la vire...");
+        [self dismissAnyPopTipViewAnimated:YES];
+    }
+    
     [self.scrollView endEditing:YES];
+    
     [super viewWillDisappear:animated];
 }
 
@@ -478,7 +485,7 @@
         poptipview.textColor = txtColor;
         poptipview.borderColor = bdColor;
         poptipview.has3DStyle = NO;
-        poptipview.hasShadow = NO;
+        poptipview.hasShadow = YES;
         
         UIView *spawnView = [[UIView alloc] initWithFrame:frame];
         spawnView.backgroundColor = [UIColor redColor];
@@ -499,25 +506,25 @@
 {
     [self spawnPopTipViewWithFrame:CGRectMake(183, -44, 46, 44)
                        withMessage:NSLocalizedString(@"RootOngletsViewController_PopTipViewPhotos_Message", nil)
-                andBackgroundColor:[UIColor colorWithHex:0xC1C1C1]
+                andBackgroundColor:[UIColor colorWithHex:0xE7E7E7]
                     andBorderColor:[UIColor colorWithHex:0xC1C1C1]
                       andTextColor:[UIColor colorWithHex:0xD28000]
                        andFontSize:12];
     
-    //self.roundRectButtonPopTipView.dismissTapAnywhere = YES;
     self.poptipPhotos = YES;
+    [self.roundRectButtonPopTipView autoDismissAnimated:YES atTimeInterval:5];
 }
 - (void)showPopTipViewChat
 {
     [self spawnPopTipViewWithFrame:CGRectMake(298, -44, 46, 44)
                        withMessage:NSLocalizedString(@"RootOngletsViewController_PopTipViewChat_Message", nil)
-                andBackgroundColor:[UIColor colorWithHex:0xC1C1C1]
+                andBackgroundColor:[UIColor colorWithHex:0xE7E7E7]
                     andBorderColor:[UIColor colorWithHex:0xC1C1C1]
                       andTextColor:[UIColor colorWithHex:0xD28000]
                        andFontSize:12];
     
-    //self.roundRectButtonPopTipView.dismissTapAnywhere = YES;
     self.poptipChat = YES;
+    [self.roundRectButtonPopTipView autoDismissAnimated:YES atTimeInterval:5];
 }
 
 - (void)dismissPopTipViewPhotosAnimated:(BOOL)animated
@@ -532,19 +539,23 @@
 
 - (void)dismissPopTipViewChatAnimated:(BOOL)animated
 {
-    [self.roundRectButtonPopTipView dismissAnimated:animated];
-    self.roundRectButtonPopTipView = nil;
-    
-    self.poptipChat = NO;
+    if (self.roundRectButtonPopTipView) {
+        [self.roundRectButtonPopTipView dismissAnimated:animated];
+        self.roundRectButtonPopTipView = nil;
+        
+        self.poptipChat = NO;
+    }
 }
 
 - (void)dismissAnyPopTipViewAnimated:(BOOL)animated
 {
-    [self.roundRectButtonPopTipView dismissAnimated:animated];
-    self.roundRectButtonPopTipView = nil;
-    
-    self.poptipPhotos = NO;
-    self.poptipChat = NO;
+    if (self.roundRectButtonPopTipView) {
+        [self.roundRectButtonPopTipView dismissAnimated:animated];
+        self.roundRectButtonPopTipView = nil;
+        
+        self.poptipPhotos = NO;
+        self.poptipChat = NO;
+    }
 }
 
 #pragma mark CMPopTipViewDelegate methods

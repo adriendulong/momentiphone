@@ -35,5 +35,6 @@
 @dynamic uniqueURL;
 @dynamic coverPhotoURL;
 @dynamic owner;
+@dynamic nb_photos;
 
 @end

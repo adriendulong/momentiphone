@@ -36,7 +36,7 @@ enum TimeDirectiion {
 + (void)getInfosMomentWithId:(NSInteger)momentId withEnded:(void (^) (NSDictionary* attributes) )block;
 + (void)getMomentsServerWithEnded:(void (^)(BOOL success))block waitUntilFinished:(BOOL)waitUntilFinished;
 + (void)getMomentsServerWithEnded:(void (^)(BOOL success))block;
-+ (void) getMomentsServerAfterDateOfMoment:(MomentClass*)moment
++ (void)getMomentsServerAfterDateOfMoment:(MomentClass*)moment
                              timeDirection:(enum TimeDirectiion)timeDirection
                                       user:(UserClass*)user
                                  withEnded:(void (^) (NSArray* moments))block;

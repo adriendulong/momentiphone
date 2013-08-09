@@ -42,7 +42,6 @@ enum OngletRank {
 @property (nonatomic, weak) IBOutlet UIScrollView *scrollView;
 @property (nonatomic) BOOL shouldShowInviteViewController;
 
-@property (nonatomic, strong) NSMutableArray *visiblePopTipViews;
 @property (nonatomic, strong) CMPopTipView *roundRectButtonPopTipView;
 
 @property (nonatomic) BOOL poptipPhotos, poptipChat;

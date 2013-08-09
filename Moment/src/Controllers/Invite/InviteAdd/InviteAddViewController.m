@@ -61,6 +61,9 @@ enum InviteAddFontSize {
 @synthesize phraseLabel = _phraseLabel;
 @synthesize ttValiderLabel = _ttValiderLabel;
 
+@synthesize roundRectButtonPopTipView = _roundRectButtonPopTipView;
+@synthesize poptipFacebook = _poptipFacebook;
+
 - (id)initWithOwner:(UserClass*)owner withMoment:(MomentClass*)moment
 {
     self = [super initWithNibName:@"InviteAddViewController" bundle:nil];
@@ -143,6 +146,31 @@ enum InviteAddFontSize {
     self.facebookLoaded = NO;
     self.favorisLoaded = NO;
     
+    
+    
+    
+    
+    //Premier lancement de l'application
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    BOOL hasRunOncePopTipOnInviteAdd = [defaults boolForKey:@"hasRunOncePopTipOnInviteAdd"];
+    
+    if (!hasRunOncePopTipOnInviteAdd)
+    {
+        [self showPopTipViewFacebook];
+        [self hasRunOncePopTipOnInviteAdd];
+    }
+}
+
+- (void)hasRunOncePopTipOnInviteAdd
+{
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    BOOL hasRunOncePopTipOnMoment = [defaults boolForKey:@"hasRunOncePopTipOnInviteAdd"];
+    
+    if (!hasRunOncePopTipOnMoment)
+    {
+        [defaults setBool:YES forKey:@"hasRunOncePopTipOnInviteAdd"];
+    }
+    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 - (void)didReceiveMemoryWarning
@@ -156,6 +184,16 @@ enum InviteAddFontSize {
     
     // Google Analytics
     [[[GAI sharedInstance] defaultTracker] sendView:@"Vue Invitation"];
+}
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+    if (self.roundRectButtonPopTipView && self.poptipFacebook)
+    {
+        [self dismissPopTipViewFacebookAnimated:YES];
+    }
+    
+    [super viewWillDisappear:animated];
 }
 
 #pragma mark - Custom Label initialisation
@@ -325,7 +363,7 @@ enum InviteAddFontSize {
     
     UIBarButtonItem *barBackItem = [[UIBarButtonItem alloc] initWithCustomView:button];
     
-    self.navigationItem.hidesBackButton = TRUE;
+    self.navigationItem.hidesBackButton = YES;
     self.navigationItem.leftBarButtonItem = barBackItem;
 }
 
@@ -462,6 +500,11 @@ enum InviteAddFontSize {
 }
 
 - (IBAction)clicNavigationBarButtonFacebook {
+    
+    if (self.poptipFacebook) {
+        [self dismissPopTipViewFacebookAnimated:YES];
+    }
+    
     [self addAndScrollToOnglet:InviteAddTableViewControllerFacebookStyle];
 }
 
@@ -839,6 +882,66 @@ enum InviteAddFontSize {
         [cancelConfirmAlertView show];
     } else {
         [self.navigationController popViewControllerAnimated:YES];
+    }
+}
+
+#pragma mark CMPopTipView
+- (void)spawnPopTipViewWithFrame:(CGRect)frame withMessage:(NSString *)message andBackgroundColor:(UIColor *)bgColor andBorderColor:(UIColor *)bdColor andTextColor:(UIColor *)txtColor andFontSize:(CGFloat)fontsize
+{
+    // Toggle popTipView when a standard UIButton is pressed
+    if (nil == self.roundRectButtonPopTipView) {
+        CMPopTipView *poptipview = [[CMPopTipView alloc] initWithMessage:message];
+        poptipview.delegate = self;
+        poptipview.backgroundColor = bgColor;
+        poptipview.textFont = [[Config sharedInstance] defaultFontWithSize:fontsize];
+        poptipview.textColor = txtColor;
+        poptipview.borderColor = bdColor;
+        poptipview.has3DStyle = NO;
+        poptipview.hasShadow = NO;
+        
+        UIView *spawnView = [[UIView alloc] initWithFrame:frame];
+        spawnView.backgroundColor = [UIColor redColor];
+        
+        [self.view addSubview:spawnView];
+        
+        self.roundRectButtonPopTipView = poptipview;
+        
+        [self.roundRectButtonPopTipView presentPointingAtView:spawnView inView:self.view animated:YES];
+    }
+    else {
+        // Dismiss
+        [self dismissPopTipViewFacebookAnimated:YES];
+    }
+}
+
+- (void)showPopTipViewFacebook
+{
+    [self spawnPopTipViewWithFrame:CGRectMake(229, -44, 46, 44)
+                       withMessage:NSLocalizedString(@"InviteAddViewController_PopTipViewFacebook_Message", nil)
+                andBackgroundColor:[UIColor colorWithHex:0x2D4486]
+                    andBorderColor:[UIColor colorWithHex:0x2D4486]
+                      andTextColor:[UIColor whiteColor]
+                       andFontSize:12];
+    
+    self.poptipFacebook = YES;
+    [self.roundRectButtonPopTipView autoDismissAnimated:YES atTimeInterval:7];
+}
+
+- (void)dismissPopTipViewFacebookAnimated:(BOOL)animated
+{
+    if (self.roundRectButtonPopTipView) {
+        [self.roundRectButtonPopTipView dismissAnimated:YES];
+        self.roundRectButtonPopTipView = nil;
+        
+        self.poptipFacebook = NO;
+    }
+}
+
+#pragma mark CMPopTipViewDelegate methods
+- (void)popTipViewWasDismissedByUser:(CMPopTipView *)popTipView
+{
+    if (self.poptipFacebook) {
+        [self dismissPopTipViewFacebookAnimated:YES];
     }
 }
 

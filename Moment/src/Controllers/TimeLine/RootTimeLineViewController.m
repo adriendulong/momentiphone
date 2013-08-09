@@ -98,6 +98,7 @@ shouldLoadEventsFromFacebook:(BOOL)loadEvents
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    [AppDelegate updateActualViewController:self];
     
     // Préload Volet
     [[VoletViewController volet] loadNotifications];

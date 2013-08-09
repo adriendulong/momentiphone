@@ -37,6 +37,7 @@
 @property (nonatomic, strong) NSNumber *privacy;
 @property (nonatomic, strong) NSString *uniqueURL;
 @property (nonatomic, strong) NSString *coverPhotoURL;
+@property (nonatomic, strong) NSNumber * nb_photos;
 
 // Init
 - (void)setupWithAttributes:(NSDictionary*)attributes;

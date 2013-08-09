@@ -104,20 +104,20 @@
 		
 		CGPathAddArcToPoint(bubblePath, NULL,
 							bubbleRect.origin.x+bubbleRect.size.width, bubbleRect.origin.y,
-							bubbleRect.origin.x+bubbleRect.size.width, bubbleRect.origin.y+cornerRadius,
-							cornerRadius);
+							bubbleRect.origin.x+bubbleRect.size.width, bubbleRect.origin.y+0,
+							0);
 		CGPathAddArcToPoint(bubblePath, NULL,
 							bubbleRect.origin.x+bubbleRect.size.width, bubbleRect.origin.y+bubbleRect.size.height,
-							bubbleRect.origin.x+bubbleRect.size.width-cornerRadius, bubbleRect.origin.y+bubbleRect.size.height,
-							cornerRadius);
+							bubbleRect.origin.x+bubbleRect.size.width-0, bubbleRect.origin.y+bubbleRect.size.height,
+							0);
 		CGPathAddArcToPoint(bubblePath, NULL,
 							bubbleRect.origin.x, bubbleRect.origin.y+bubbleRect.size.height,
-							bubbleRect.origin.x, bubbleRect.origin.y+bubbleRect.size.height-cornerRadius,
-							cornerRadius);
+							bubbleRect.origin.x, bubbleRect.origin.y+bubbleRect.size.height-0,
+							0);
 		CGPathAddArcToPoint(bubblePath, NULL,
 							bubbleRect.origin.x, bubbleRect.origin.y,
-							bubbleRect.origin.x+cornerRadius, bubbleRect.origin.y,
-							cornerRadius);
+							bubbleRect.origin.x+0, bubbleRect.origin.y,
+							0);
 		CGPathAddLineToPoint(bubblePath, NULL, targetPoint.x+sidePadding-pointerSize, targetPoint.y+pointerSize);
 	}
 	else {
@@ -126,20 +126,20 @@
 		
 		CGPathAddArcToPoint(bubblePath, NULL,
 							bubbleRect.origin.x, bubbleRect.origin.y+bubbleRect.size.height,
-							bubbleRect.origin.x, bubbleRect.origin.y+bubbleRect.size.height-cornerRadius,
-							cornerRadius);
+							bubbleRect.origin.x, bubbleRect.origin.y+bubbleRect.size.height-0,
+							0);
 		CGPathAddArcToPoint(bubblePath, NULL,
 							bubbleRect.origin.x, bubbleRect.origin.y,
-							bubbleRect.origin.x+cornerRadius, bubbleRect.origin.y,
-							cornerRadius);
+							bubbleRect.origin.x+0, bubbleRect.origin.y,
+							0);
 		CGPathAddArcToPoint(bubblePath, NULL,
 							bubbleRect.origin.x+bubbleRect.size.width, bubbleRect.origin.y,
-							bubbleRect.origin.x+bubbleRect.size.width, bubbleRect.origin.y+cornerRadius,
-							cornerRadius);
+							bubbleRect.origin.x+bubbleRect.size.width, bubbleRect.origin.y+0,
+							0);
 		CGPathAddArcToPoint(bubblePath, NULL,
 							bubbleRect.origin.x+bubbleRect.size.width, bubbleRect.origin.y+bubbleRect.size.height,
-							bubbleRect.origin.x+bubbleRect.size.width-cornerRadius, bubbleRect.origin.y+bubbleRect.size.height,
-							cornerRadius);
+							bubbleRect.origin.x+bubbleRect.size.width-0, bubbleRect.origin.y+bubbleRect.size.height,
+							0);
 		CGPathAddLineToPoint(bubblePath, NULL, targetPoint.x+sidePadding+pointerSize, targetPoint.y-pointerSize);
 	}
     
@@ -596,10 +596,10 @@
 		sidePadding = 2.0;
         borderWidth = 1.0;*/
         
-        cornerRadius = 5.0;
+        cornerRadius = 7.0;
 		topMargin = 2.0;
 		pointerSize = 12.0;
-		sidePadding = 15.0;
+		sidePadding = 2.0;
         borderWidth = 1.0;
 		
 		self.textFont = [UIFont boldSystemFontOfSize:14.0];

@@ -51,7 +51,7 @@
 {
     UILabel *titleView = (UILabel *)viewController.navigationItem.titleView;
     if (!titleView) {
-        titleView = [[UILabel alloc] initWithFrame:CGRectZero];
+        titleView = [[UILabel alloc] initWithFrame:CGRectMake(0,0,1,1)];
         titleView.backgroundColor = [UIColor clearColor];
         
         if(title.length > 20)
@@ -75,7 +75,7 @@
     UIImageView *titleView = (UIImageView*)viewController.navigationItem.titleView;
     if(!titleView)
     {
-        titleView = [[UIImageView alloc] initWithFrame:CGRectZero ];
+        titleView = [[UIImageView alloc] initWithFrame:CGRectMake(0,0,1,1) ];
         titleView.backgroundColor = [UIColor clearColor];
         
         viewController.navigationItem.titleView = titleView;

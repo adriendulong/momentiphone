@@ -92,7 +92,7 @@
                                               animated:NO];
             }
             
-            [self.navigationItem setTitle:self.singleSelection ? @"Pick Photo" : @"Pick Photos"];
+            [self.navigationItem setTitle:self.singleSelection ? NSLocalizedString(@"ELCAssetTablePicker_Photo", nil) : NSLocalizedString(@"ELCAssetTablePicker_Photos", nil)];
         });
         
     }
