@@ -468,7 +468,7 @@ withRootViewController:(UIViewController *)rootViewController
                 
                 // Afficher Big Photo
                 [self.bigPhotoViewController showViewAtIndex:imageShowCaseCell.index fromParent:YES];
-                //[[VersionControl sharedInstance] presentModalViewController:self.bigPhotoViewController fromRoot:self.rootViewController animated:NO];
+                //[self.rootViewController presentViewController:self.bigPhotoViewController animated:NO completion:nil];
                 self.navigationController.navigationBar.hidden = YES;
                 
                 if(!bigPhotoNavigationController)
@@ -476,7 +476,7 @@ withRootViewController:(UIViewController *)rootViewController
                 
                 bigPhotoNavigationController.activeRotation = NO;
                 bigPhotoNavigationController.navigationBar.hidden = YES;
-                [[VersionControl sharedInstance] presentModalViewController:bigPhotoNavigationController fromRoot:self.rootViewController animated:NO];
+                [self.rootViewController presentViewController:bigPhotoNavigationController animated:NO completion:nil];
             }
             
             
@@ -777,12 +777,12 @@ withRootViewController:(UIViewController *)rootViewController
 
 - (void)getImagePickers:(NSArray *)parameters
 {
-    [[VersionControl sharedInstance] presentModalViewController:parameters[0] fromRoot:parameters[1] animated:parameters[2]];
+    [parameters[1] presentViewController:parameters[0] animated:parameters[2] completion:nil];
 }
 
 - (void)dismissImagePickers:(NSArray *)parameters
 {
-    [[VersionControl sharedInstance] dismissModalViewControllerFromRoot:parameters[0] animated:parameters[1]];
+    [parameters[0] dismissViewControllerAnimated:YES completion:parameters[1]];
     
     if ([self.picker isEqual:parameters[0]]) {
         //NSLog(@"C'était un picker normal.");

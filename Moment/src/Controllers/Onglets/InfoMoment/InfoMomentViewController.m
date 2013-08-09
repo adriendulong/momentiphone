@@ -1779,7 +1779,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
         [mc setMessageBody:messageBody isHTML:YES];
         
         // Present mail view controller on screen
-        [[VersionControl sharedInstance] presentModalViewController:mc fromRoot:self.rootViewController animated:YES];
+        [self.rootViewController presentViewController:mc animated:YES completion:nil];;
     }
     else
     {
@@ -1827,8 +1827,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
         if(self.moment.uniqueURL)
             [fbSheet addURL:[NSURL URLWithString:self.moment.uniqueURL]];
         
-        //[self presentViewController:fbSheet animated:YES completion:nil];
-        [[VersionControl sharedInstance] presentModalViewController:fbSheet fromRoot:self animated:YES];
+        [self presentViewController:fbSheet animated:YES completion:nil];
     }
     // iOS 5
     else
@@ -1854,8 +1853,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
         if(self.moment.uniqueURL)
             [facebookViewComposer addURL:[NSURL URLWithString:self.moment.uniqueURL]];
         //facebookViewComposer.completionHandler = completionHandler;
-        //[self presentViewController:facebookViewComposer animated:YES completion:nil];
-        [[VersionControl sharedInstance] presentModalViewController:facebookViewComposer fromRoot:self animated:YES];
+        [self presentViewController:facebookViewComposer animated:YES completion:nil];
     }
     
 }
@@ -1881,8 +1879,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
         //if(self.moment.uniqueURL)
             [tweetSheet addURL:[NSURL URLWithString:self.moment.uniqueURL]];
         
-        //[self presentViewController:tweetSheet animated:YES completion:nil];
-        [[VersionControl sharedInstance] presentModalViewController:tweetSheet fromRoot:self animated:YES];
+        [self presentViewController:tweetSheet animated:YES completion:nil];
     }
     // iOS 5 -> Twitter Framework
     else
@@ -1893,8 +1890,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
         //if(self.moment.uniqueURL)
             [twitterViewComposer addURL:[NSURL URLWithString:self.moment.uniqueURL]];
         
-        //[self presentViewController:twitterViewComposer animated:YES completion:nil];
-        [[VersionControl sharedInstance] presentModalViewController:twitterViewComposer fromRoot:self animated:YES];
+        [self presentViewController:twitterViewComposer animated:YES completion:nil];
     }
     
 }
@@ -2139,7 +2135,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
     }
     
     // Close the Mail Interface
-    [[VersionControl sharedInstance] dismissModalViewControllerFromRoot:self.rootViewController animated:YES];
+    [self.rootViewController dismissViewControllerAnimated:YES completion:nil];
 }
 
 @end

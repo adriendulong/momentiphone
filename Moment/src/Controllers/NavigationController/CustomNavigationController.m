@@ -16,7 +16,7 @@
 
 - (id) initWithRootViewController:(UIViewController *)rootViewController{
     self = [super initWithRootViewController:rootViewController];
-    if( self ){
+    if( self ) {
         
         //[self setValue:[[PrettyNavigationBar alloc] init] forKeyPath:@"navigationBar"];
         
@@ -32,6 +32,8 @@
         navBar.bottomLineColor = [UIColor colorWithHex:0xeef0f4];
         navBar.tintColor = [UIColor colorWithHex:0xfdfdfd];
          */
+        
+        rootViewController.navigationItem.hidesBackButton = YES;
         
         if ([self.navigationBar respondsToSelector:@selector(setBackgroundImage:forBarMetrics:)] ) {
             UIImage *image = [UIImage imageNamed:@"topbar-bg.png"];
@@ -98,7 +100,7 @@
     
     UIBarButtonItem *barBackItem = [[UIBarButtonItem alloc] initWithCustomView:button];
     
-    viewController.navigationItem.hidesBackButton = TRUE;
+    viewController.navigationItem.hidesBackButton = YES;
     viewController.navigationItem.leftBarButtonItem = barBackItem;
 }
 

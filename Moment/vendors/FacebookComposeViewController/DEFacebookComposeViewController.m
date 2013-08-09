@@ -751,7 +751,7 @@ enum {
                 self.completionHandler(DEFacebookComposeViewControllerResultDone);
             }
             else {
-                [self dismissModalViewControllerAnimated:YES];
+                [self dismissViewControllerAnimated:YES completion:nil];
             }
 
 //            NSLog(@"   ok");
@@ -769,7 +769,7 @@ enum {
         self.completionHandler(DEFacebookComposeViewControllerResultCancelled);
     }
     else {
-        [self dismissModalViewControllerAnimated:YES];
+        [self dismissViewControllerAnimated:YES completion:nil];
     }
 }
 
@@ -787,7 +787,7 @@ enum {
     // This gets called if there's an error sending the tweet.
 {
     if (alertView.tag == DEFacebookComposeViewControllerNoAccountsAlert) {
-        [self dismissModalViewControllerAnimated:YES];
+        [self dismissViewControllerAnimated:YES completion:nil];
     }
     else if (alertView.tag == DEFacebookComposeViewControllerCannotSendAlert) {
         if (buttonIndex == 1) {

@@ -191,7 +191,7 @@
         [mc setMessageBody:NSLocalizedString(@"WebModalViewController_ConnaitreMoment_MessageBody", nil) isHTML:YES];
         
         // Present mail view controller on screen
-        [[VersionControl sharedInstance] presentModalViewController:mc fromRoot:self animated:YES];
+        [self presentViewController:mc animated:YES completion:nil];
     }
     else
     {
@@ -218,7 +218,7 @@
     
     // Delegate
     controller.messageComposeDelegate = self;
-    [self presentModalViewController:controller animated:YES];
+    [self presentViewController:controller animated:YES completion:nil];
 }
 
 - (IBAction)clicTutoriel
@@ -250,7 +250,7 @@
         [mc setToRecipients:@[kParameterContactMail]];
         
         // Present mail view controller on screen
-        [[VersionControl sharedInstance] presentModalViewController:mc fromRoot:self animated:YES];
+        [self presentViewController:mc animated:YES completion:nil];
     }
     else
     {
@@ -316,7 +316,7 @@
     }
     
     // Cacher Fenetre SMS
-    [self dismissModalViewControllerAnimated:YES];
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 #pragma mark - MFMailComposeViewControllerDelegate
@@ -351,7 +351,7 @@
     }
     
     // Close the Mail Interface
-    [[VersionControl sharedInstance] dismissModalViewControllerFromRoot:self animated:YES];
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 #pragma mark - Parametres Notifications

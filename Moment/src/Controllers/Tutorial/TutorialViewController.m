@@ -1081,7 +1081,7 @@
             
             //[self showHomeViewAnimated:YES];
             [[UIApplication sharedApplication] setStatusBarHidden:NO];
-            [self dismissModalViewControllerAnimated:YES];
+            [self dismissViewControllerAnimated:YES completion:nil];
         }
     }
 }

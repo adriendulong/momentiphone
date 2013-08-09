@@ -141,7 +141,7 @@
                                 TutorialViewController *tutorial = (TutorialViewController*)self.actualViewController;
                                 
                                 [[UIApplication sharedApplication] setStatusBarHidden:NO];
-                                [[VersionControl sharedInstance] dismissModalViewControllerFromRoot:tutorial animated:NO];
+                                [tutorial dismissViewControllerAnimated:NO completion:nil];
                                 
                                 
                                 NSLog(@"self.actualViewController = %@", self.actualViewController);
@@ -512,7 +512,7 @@
 }
 
 -(void)mailComposeController:(MFMailComposeViewController*)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError*)error {
-    [self.window.rootViewController dismissModalViewControllerAnimated:YES];
+    [self.window.rootViewController dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (void)deleteUploadPhotosCache

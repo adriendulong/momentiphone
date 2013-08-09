@@ -1109,7 +1109,7 @@
     self.coverView.contentMode = UIViewContentModeScaleAspectFill;
     self.coverView.image = image;
     
-    [[VersionControl sharedInstance] dismissModalViewControllerFromRoot:UIPicker animated:YES];
+    [UIPicker dismissViewControllerAnimated:YES completion:nil];
 }
 
 #pragma mark - UIActionSheet
@@ -1130,7 +1130,7 @@
         picker.sourceType = UIImagePickerControllerSourceTypeCamera;
     }
     
-    [[VersionControl sharedInstance] presentModalViewController:picker fromRoot:self animated:YES];
+    [self presentViewController:picker animated:YES completion:nil];
 }
 
 #pragma mark - Getters & Setters

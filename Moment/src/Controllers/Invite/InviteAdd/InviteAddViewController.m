@@ -571,7 +571,7 @@ enum InviteAddFontSize {
                         // Delegate
                         controller.messageComposeDelegate = self;
                         smsSend = YES;
-                        [self presentModalViewController:controller animated:YES];
+                        [self presentViewController:controller animated:YES completion:nil];
                     }
                 }
                 else {
@@ -831,7 +831,7 @@ enum InviteAddFontSize {
     }
     
     // Cacher Fenetre SMS
-    [self dismissModalViewControllerAnimated:YES];
+    [self dismissViewControllerAnimated:YES completion:nil];
     
     // Send Facebook Notif
     if(![self sendNotifToFacebookFriends]) {

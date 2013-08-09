@@ -30,10 +30,6 @@ enum TextAlignment {
 - (BOOL)isRetina;
 - (BOOL)isIphone5;
 
-// Present / Dismiss View Controller
-- (void)dismissModalViewControllerFromRoot:(UIViewController*)root animated:(BOOL)animated;
-- (void)presentModalViewController:(UIViewController*)modal fromRoot:(UIViewController*)root animated:(BOOL)animated;
-
 // Custom Label Support
 @property (nonatomic, readonly) BOOL supportIOS6;
 

@@ -328,7 +328,7 @@
         [mc setToRecipients:@[kParameterContactMail]];
         
         // Present mail view controller on screen
-        [[VersionControl sharedInstance] presentModalViewController:mc fromRoot:self animated:YES];
+        [self presentViewController:mc animated:YES completion:nil];
     }
     else
     {
@@ -375,7 +375,7 @@
     }
     
     // Close the Mail Interface
-    [[VersionControl sharedInstance] dismissModalViewControllerFromRoot:self animated:YES];
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (void)showPhoneNumbersAlertViewType:(NSString *)phone_type {
