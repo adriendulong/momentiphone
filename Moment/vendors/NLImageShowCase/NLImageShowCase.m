@@ -157,18 +157,49 @@
     return showCaseCell;
 }
 
-// Retourne tableau d'origine avec des cellules par défaut à la fin
-- (NSMutableArray*)itemsInShowCaseWithSize:(NSInteger)size
+// Retourne tableau d'origine avec des cellules par défaut |||||||| à la fin |||||||| ou au début
+- (NSMutableArray*)itemsInShowCaseWithSize:(NSInteger)size atStart:(BOOL)atStart
 {
     NSInteger count = [self.itemsInShowCase count];
     if(size > count)
     {
         NSMutableArray *array = itemsInShowCase.mutableCopy;
         
-        for(int i=count; i<size; i++) {
-            NLImageShowCaseCell *cell = [self emptyCellAtIndex:i];
-            [array addObject:cell];
-            [_scrollView addSubview:cell];
+        // Ajout en tête
+        if(atStart)
+        {
+            NSInteger start, end, difference = (size - count);
+            if(self.photoViewControllerStyle == PhotoViewControllerStyleComplete) {
+                start = 1;
+            }
+            else {
+                start = 0;
+            }
+            end = difference + start;
+            
+            // Décaller les cellules
+            for (int i=start; i<count; i++) {
+                NLImageShowCaseCell *cell = array[i];
+                CGFloat xPos, yPos;
+                [self positonsForIndex:(i+difference) xPos:&xPos yPos:&yPos];
+                cell.frame = CGRectMake(xPos, yPos, cell.frame.size.width, cell.frame.size.height);
+            }
+            
+            // Ajouter les cellules vides
+            for (int i=start; i<end; i++) {
+                NLImageShowCaseCell *cell = [self emptyCellAtIndex:i];
+                [array insertObject:cell atIndex:i];
+                [_scrollView addSubview:cell];
+            }
+        }
+        // Ajout en queue
+        else
+        {
+            for(int i=count; i<size; i++) {
+                NLImageShowCaseCell *cell = [self emptyCellAtIndex:i];
+                [array addObject:cell];
+                [_scrollView addSubview:cell];
+            }
         }
         
         return array;
@@ -176,8 +207,13 @@
     return self.itemsInShowCase;
 }
 
-// Update la liste des photos avec des cellules par défaut et/ou le bouton print (et augmente la taille de la scrollview)
-- (void)updateItemsShowCaseWithSize:(NSInteger)size
+// Retourne tableau d'origine avec des cellules par défaut |||||||| à la fin
+- (NSMutableArray*)itemsInShowCaseWithSize:(NSInteger)size
+{
+    return [self itemsInShowCaseWithSize:size atStart:NO];
+}
+
+- (void)updateItemsShowCaseWithSize:(NSInteger)size atStart:(BOOL)atStart
 {
     int taille = [self.itemsInShowCase count];
     // Si il y a des cellules à ajouter
@@ -193,11 +229,32 @@
 #endif
         
         // Array avec cellules preload
-        NSArray *newArray = [self itemsInShowCaseWithSize:size];
+        NSArray *newArray = [self itemsInShowCaseWithSize:size atStart:atStart];
         
         // Augmenter taille du tableau
-        for(int i=taille; i<size; i++) {
-            [self.itemsInShowCase addObject:[NSNull null]];
+        // Au début
+        if(atStart)
+        {
+            NSInteger count = [self.itemsInShowCase count];
+            NSInteger start, end, difference = (size - count);
+            if(self.photoViewControllerStyle == PhotoViewControllerStyleComplete) {
+                start = 1;
+            }
+            else {
+                start = 0;
+            }
+            end = difference + start;
+            
+            for (int i=start; i<end; i++) {
+                [self.itemsInShowCase insertObject:[NSNull null] atIndex:start];
+            }
+        }
+        // A la fin
+        else
+        {
+            for(int i=taille; i<size; i++) {
+                [self.itemsInShowCase addObject:[NSNull null]];
+            }
         }
         
         // Remplacer avec cellules par défaut
@@ -218,6 +275,12 @@
             _scrollView.contentSize =  CGSizeMake(self.bounds.size.width,contentHeight);
         }
     }
+}
+
+// Update la liste des photos avec des cellules par défaut et/ou le bouton print (et augmente la taille de la scrollview)
+- (void)updateItemsShowCaseWithSize:(NSInteger)size
+{
+    [self updateItemsShowCaseWithSize:size atStart:NO];
 }
 
 // Index réelle (dans le tableau des photos NSArray <Photos*>
