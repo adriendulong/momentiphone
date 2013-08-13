@@ -782,7 +782,7 @@ withRootViewController:(UIViewController *)rootViewController
 
 - (void)dismissImagePickers:(NSArray *)parameters
 {
-    [parameters[0] dismissViewControllerAnimated:YES completion:parameters[1]];
+    [parameters[0] dismissViewControllerAnimated:parameters[1] completion:nil];
     
     if ([self.picker isEqual:parameters[0]]) {
         //NSLog(@"C'était un picker normal.");
