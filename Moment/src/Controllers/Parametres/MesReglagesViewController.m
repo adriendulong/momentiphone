@@ -82,6 +82,13 @@
     [self loadParametresNotifications];
 }
 
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    
+    [AppDelegate updateActualViewController:self];
+}
+
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];

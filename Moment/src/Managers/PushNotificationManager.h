@@ -22,7 +22,7 @@
 - (BOOL)pushNotificationEnabled;
 - (void)pushNotificationDisabledAlertView;
 - (void)saveDeviceToken:(NSData*)deviceToken;
-- (void)receivePushNotification:(NSDictionary*)attributes updateUI:(BOOL)updateUI;
+- (void)receivePushNotification:(NSDictionary*)attributes withApplicationState:(UIApplicationState)state updateUI:(BOOL)updateUI;
 - (void)failToReceiveNotification:(NSError*)error;
 
 // Notifcation number

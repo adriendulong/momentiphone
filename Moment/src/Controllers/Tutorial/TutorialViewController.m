@@ -56,7 +56,6 @@
 {
     [super viewDidAppear:animated];
     
-    [AppDelegate updateActualViewController:self];
     [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationSlide];
 }
 

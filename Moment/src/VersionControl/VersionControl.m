@@ -86,5 +86,4 @@ static VersionControl *sharedInstance = nil;
     return [[image resizableImageWithCapInsets:edge] stretchableImageWithLeftCapWidth:capWidth topCapHeight:capHeight];
 }
 
-
 @end

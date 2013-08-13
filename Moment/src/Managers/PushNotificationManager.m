@@ -12,11 +12,12 @@
 #import "VoletViewController.h"
 #import "Config.h"
 #import "RowIndexInVolet.h"
+#import "RedirectionManager.h"
 
 #import "MTStatusBarOverlay.h"
 
 @implementation PushNotificationManager {
-    @private
+@private
     MomentClass *actualMoment;
     SEL chatNotifAction;
     SEL photoNotifAction;
@@ -70,30 +71,33 @@ static PushNotificationManager *sharedInstance = nil;
     [DeviceModel setDeviceToken:stringFormat];
 }
 
-- (void)receivePushNotification:(NSDictionary*)attributes updateUI:(BOOL)updateUI
+- (void)receivePushNotification:(NSDictionary*)attributes withApplicationState:(UIApplicationState)state updateUI:(BOOL)updateUI
 {
     //NSLog(@"Push Notification : %@", attributes);
     
     NSDictionary *aps = attributes[@"aps"];
     enum NotificationType pushType = [attributes[@"type_id"] intValue];
     NSNumber *momentId = attributes[@"id_moment"];
-        
+    
     // Update Badge Number
     RowIndexInVolet *rowIndexInVolet = [RowIndexInVolet sharedManager];
     [[PushNotificationManager sharedInstance] setNbNotifcations:[aps[@"badge"] intValue]+[rowIndexInVolet.indexNotifications count]];
     
     // Update volet
     [[VoletViewController volet] loadNotifications];
-     
+    
     switch (pushType) {
-        case NotificationTypeNewChat:
+        case NotificationTypeNewChat: {
             [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationNewChat
                                                                 object:@{
-                                                                        @"momentId":momentId,
-                                                                        @"message":aps[@"alert"],
-                                                                        @"chatId":attributes[@"chat_id"]
-                                                                        }
+             @"momentId":momentId,
+             @"message":aps[@"alert"],
+             @"chatId":attributes[@"chat_id"]
+             }
              ];
+            
+            [[RedirectionManager sharedInstance] sendRedirectionToMomentWithId:momentId withType:NotificationTypeNewChat andWithApplicationState:state];
+        }
             break;
             
         case NotificationTypeInvitation:
@@ -111,9 +115,11 @@ static PushNotificationManager *sharedInstance = nil;
         case NotificationTypeNewPhoto: {
             [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationNewPhoto
                                                                 object:@{
-                                                                         @"momentId":momentId
-                                                                         }
+             @"momentId":momentId
+             }
              ];
+            
+            [[RedirectionManager sharedInstance] sendRedirectionToMomentWithId:momentId withType:NotificationTypeNewPhoto andWithApplicationState:state];
         } break;
             
         case NotificationTypeFollowRequest:
@@ -127,7 +133,7 @@ static PushNotificationManager *sharedInstance = nil;
              postImmediateFinishMessage:NSLocalizedString(@"StatusBarOverlay_PushNotification_NewFollower", nil)
              duration:1 animated:YES];
             break;
-        
+            
         default:
             [[[UIAlertView alloc] initWithTitle:@"Moment"
                                         message:aps[@"alert"]
@@ -211,6 +217,14 @@ static PushNotificationManager *sharedInstance = nil;
 #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
                 [self performSelector:(*selector)];
 #pragma clang diagnostic pop
+            } else {
+                
+                if (alertView == self.chatAlertView) {
+                    [self sendRedirectionToMomentWithId:actualMoment.momentId withType:NotificationTypeNewChat];
+                } else if (alertView == self.photoAlertView) {
+                    [self sendRedirectionToMomentWithId:actualMoment.momentId withType:NotificationTypeNewPhoto];
+                }
+                
             }
             *selector = nil;
         }
@@ -220,6 +234,7 @@ static PushNotificationManager *sharedInstance = nil;
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
+    
     // Nouveau message chat
     [self performSelector:(&chatNotifAction)
                 alertView:alertView
@@ -250,7 +265,7 @@ static PushNotificationManager *sharedInstance = nil;
         case OngletPhoto:
             [timeLine showPhotoView:actualMoment];
             break;
-        
+            
         case OngletChat:
             [timeLine showTchatView:actualMoment];
             break;
@@ -281,10 +296,10 @@ static PushNotificationManager *sharedInstance = nil;
 - (void)alertViewWithChatMessage:(NSString*)message {
     
     self.chatAlertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"PushNotification_NewChat_AlertView_Title", nil)
-                                message:message
-                               delegate:self
-                      cancelButtonTitle:NSLocalizedString(@"AlertView_Button_Cancel", nil)
-                    otherButtonTitles:NSLocalizedString(@"AlertView_Button_OK", nil), nil];
+                                                    message:message
+                                                   delegate:self
+                                          cancelButtonTitle:NSLocalizedString(@"AlertView_Button_Cancel", nil)
+                                          otherButtonTitles:NSLocalizedString(@"AlertView_Button_OK", nil), nil];
     
     [self.chatAlertView show];
 }
@@ -314,8 +329,8 @@ static PushNotificationManager *sharedInstance = nil;
             // Reload Chat
             [chatViewController loadMessagesForPage:1 atPosition:ChatViewControllerMessagePositionBottom
                                           withEnded:^{
-                // Bloc nécessaire pour ne pas afficher le loader de rechargement
-            }];
+                                              // Bloc nécessaire pour ne pas afficher le loader de rechargement
+                                          }];
         }
         
     }
@@ -324,33 +339,39 @@ static PushNotificationManager *sharedInstance = nil;
         
         UIViewController <OngletViewController> *momentViewController = (UIViewController <OngletViewController> *)actualViewController;
         
+        chatNotifAction = nil;
+        
         // Si c'est le même moment
-        if(actualMoment.momentId == momentViewController.moment.momentId) {
+        if([actualMoment.momentId isEqualToNumber:momentViewController.moment.momentId]) {
             chatNotifAction = @selector(chatActionScrollToChat);
-            [self alertViewWithChatMessage:message];
-        }
-        /*
-        // C'est un autre moment
-        else {
-            chatNotifAction = @selector(chatActionPopToTimeLineAndOpenNewMoment);
         }
         
         [self alertViewWithChatMessage:message];
+        /*
+         // C'est un autre moment
+         else {
+         chatNotifAction = @selector(chatActionPopToTimeLineAndOpenNewMoment);
+         }
+         
+         [self alertViewWithChatMessage:message];
          */
+    } else {
+        chatNotifAction = nil;
+        [self alertViewWithChatMessage:message];
     }
     /*
-    // On est sur la timeLine
-    else if([actualViewController isMemberOfClass:[TimeLineViewController class]]) {
-        chatNotifAction = @selector(chatActionOpenNewMoment);
-        [self alertViewWithChatMessage:message];
-    }
-    // On est sur le feed
-    else if([actualViewController isMemberOfClass:[FeedViewController class]]) {
-        FeedViewController *feed = (FeedViewController*)actualViewController;
-        [feed.rootViewController clicChangeTimeLine];
-        photoNotifAction = @selector(chatActionOpenNewMoment);
-        [self alertViewWithChatMessage:message];
-    }
+     // On est sur la timeLine
+     else if([actualViewController isMemberOfClass:[TimeLineViewController class]]) {
+     chatNotifAction = @selector(chatActionOpenNewMoment);
+     [self alertViewWithChatMessage:message];
+     }
+     // On est sur le feed
+     else if([actualViewController isMemberOfClass:[FeedViewController class]]) {
+     FeedViewController *feed = (FeedViewController*)actualViewController;
+     [feed.rootViewController clicChangeTimeLine];
+     photoNotifAction = @selector(chatActionOpenNewMoment);
+     [self alertViewWithChatMessage:message];
+     }
      */
     
 }
@@ -367,15 +388,22 @@ static PushNotificationManager *sharedInstance = nil;
     [self actionPopToTimeLineAndOpenNewMoment:OngletChat];
 }
 
+- (void)sendRedirectionToMomentWithId:(NSNumber *)momentId withType:(int)type
+{
+    NSLog(@"momentId = %@",momentId);
+    NSLog(@"type = %i",type);
+    [[RedirectionManager sharedInstance] sendRedirectionToMomentWithId:momentId withType:type andWithApplicationState:-1];
+}
+
 #pragma mark - Photo
 
 - (void)alertViewPhotoWithMessage:(NSString*)message {
     
     self.photoAlertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"PushNotification_NewPhoto_AlertView_Title", nil)
-                                                    message:message
-                                                   delegate:self
-                                          cancelButtonTitle:NSLocalizedString(@"AlertView_Button_Cancel", nil)
-                                          otherButtonTitles:NSLocalizedString(@"AlertView_Button_OK", nil), nil];
+                                                     message:message
+                                                    delegate:self
+                                           cancelButtonTitle:NSLocalizedString(@"AlertView_Button_Cancel", nil)
+                                           otherButtonTitles:NSLocalizedString(@"AlertView_Button_OK", nil), nil];
     
     [self.photoAlertView show];
 }
@@ -412,35 +440,38 @@ static PushNotificationManager *sharedInstance = nil;
         
         UIViewController <OngletViewController> *momentViewController = (UIViewController <OngletViewController> *)actualViewController;
         
+        photoNotifAction = nil;
+        
         // Si c'est le même moment
         if([actualMoment.momentId isEqualToNumber:momentViewController.moment.momentId]) {
             photoNotifAction = @selector(photoActionScrollToPhoto);
-            [self alertViewPhotoWithMessage:message];
         }
+        
+        [self alertViewPhotoWithMessage:message];
         // C'est un autre moment
         /*
-        else {
-            photoNotifAction = @selector(photoActionPopToTimeLineAndOpenNewMoment);
-        }
+         else {
+         photoNotifAction = @selector(photoActionPopToTimeLineAndOpenNewMoment);
+         }
          */
         
         //[self alertViewPhotoWithMessage:message];
     }
     /*
-    // On est sur la timeLine
-    else if([actualViewController isMemberOfClass:[TimeLineViewController class]]) {
-        photoNotifAction = @selector(photoActionOpenNewMoment);
-        [self alertViewPhotoWithMessage:message];
-    }
-    // On est sur le feed
-    else if([actualViewController isMemberOfClass:[FeedViewController class]]) {
-        FeedViewController *feed = (FeedViewController*)actualViewController;
-        [feed.rootViewController clicChangeTimeLine];
-        photoNotifAction = @selector(photoActionOpenNewMoment);
-        [self alertViewPhotoWithMessage:message];
-    }
+     // On est sur la timeLine
+     else if([actualViewController isMemberOfClass:[TimeLineViewController class]]) {
+     photoNotifAction = @selector(photoActionOpenNewMoment);
+     [self alertViewPhotoWithMessage:message];
+     }
+     // On est sur le feed
+     else if([actualViewController isMemberOfClass:[FeedViewController class]]) {
+     FeedViewController *feed = (FeedViewController*)actualViewController;
+     [feed.rootViewController clicChangeTimeLine];
+     photoNotifAction = @selector(photoActionOpenNewMoment);
+     [self alertViewPhotoWithMessage:message];
+     }
      */
-        
+    
 }
 - (void)photoActionScrollToPhoto {
     [self actionScrollToOnglet:OngletPhoto];

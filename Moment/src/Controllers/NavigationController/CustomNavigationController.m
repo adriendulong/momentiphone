@@ -16,7 +16,7 @@
 
 - (id) initWithRootViewController:(UIViewController *)rootViewController{
     self = [super initWithRootViewController:rootViewController];
-    if( self ){
+    if( self ) {
         
         //[self setValue:[[PrettyNavigationBar alloc] init] forKeyPath:@"navigationBar"];
         
@@ -33,11 +33,13 @@
         navBar.tintColor = [UIColor colorWithHex:0xfdfdfd];
          */
         
+        rootViewController.navigationItem.hidesBackButton = YES;
+        
         if ([self.navigationBar respondsToSelector:@selector(setBackgroundImage:forBarMetrics:)] ) {
             UIImage *image = [UIImage imageNamed:@"topbar-bg.png"];
             [self.navigationBar setBackgroundImage:image forBarMetrics:UIBarMetricsDefault];
         }
-                
+        
         self.view.backgroundColor = [[UIColor alloc] initWithPatternImage:[UIImage imageNamed:@"bg.png"]];
         self.view.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
     }
@@ -98,7 +100,7 @@
     
     UIBarButtonItem *barBackItem = [[UIBarButtonItem alloc] initWithCustomView:button];
     
-    viewController.navigationItem.hidesBackButton = TRUE;
+    viewController.navigationItem.hidesBackButton = YES;
     viewController.navigationItem.leftBarButtonItem = barBackItem;
 }
 
@@ -116,7 +118,7 @@
 }
 
 + (void) setRightBarButtonWithImage:(UIImage*)image withTarget:(id)target withAction:(SEL)action withViewController:(UIViewController*)viewController
-{   
+{
     UIButton *button = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, image.size.width, image.size.height)];
     [button setImage:image forState:UIControlStateNormal];
     //[button setImage:image forState:UIControlStateHighlighted];
@@ -131,7 +133,7 @@
 #pragma mark - Rotation
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
-{    
+{
     if (interfaceOrientation == UIInterfaceOrientationPortrait) {
         return YES;
     }

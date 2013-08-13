@@ -214,6 +214,8 @@
                 [self addOngletView:self.chatViewController.view rank:onglet];
             [AppDelegate updateActualViewController:self.chatViewController];
             [self.chatViewController sendGoogleAnalyticsView];
+            
+            [self.chatViewController reloadData];
             break;
     }
     
@@ -349,10 +351,7 @@
 - (void)viewWillDisappear:(BOOL)animated
 {
     if (self.roundRectButtonPopTipView)
-    {
-        NSLog(@"roundRectButtonPopTipView activée ! On la vire...");
         [self dismissAnyPopTipViewAnimated:YES];
-    }
     
     [self.scrollView endEditing:YES];
     

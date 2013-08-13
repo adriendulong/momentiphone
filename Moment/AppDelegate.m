@@ -18,6 +18,7 @@
 #import "FacebookManager.h"
 #import "DeviceModel.h"
 #import "PushNotificationManager.h"
+#import "RedirectionManager.h"
 #import "Three20/Three20.h"
 #import "FullScreenPhotoViewController.h"
 #import "Harpy.h"
@@ -81,136 +82,7 @@
   sourceApplication:(NSString *)sourceApplication
          annotation:(id)annotation
 {
-    NSLog(@"openURL");
-    
-    if (url) {
-        
-        // Display text
-        NSLog(@"URL - absoluteString = %@",url.absoluteString);
-        NSLog(@"URL - host = %@",url.host);
-        
-        NSLog(@"pathComponents = %@",url.host.pathComponents);
-        NSLog(@"pathComponents = %@",url.pathComponents);
-        
-        
-        NSString *host = url.host.pathComponents[0];
-        NSString *onglet = url.pathComponents[1];
-        
-        NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
-        [numberFormatter setNumberStyle:NSNumberFormatterDecimalStyle];
-        NSNumber *momentId = [numberFormatter numberFromString:host];
-        
-        
-        if (momentId) {
-            
-            [MomentClass getInfosMomentWithId:momentId.integerValue withEnded:^(NSDictionary *attributes) {
-                if (attributes) {
-                    //NSLog(@"attributes = %@",attributes);
-                    MomentClass *moment = [[MomentClass alloc] initWithAttributesFromWeb:attributes];
-                    //NSLog(@"moment = %@",moment);
-                    NSLog(@"self.actualViewController = %@", self.actualViewController);
-                    
-                    if([self.actualViewController isKindOfClass:[TimeLineViewController class]]) {
-                        TimeLineViewController *timeline = (TimeLineViewController*)self.actualViewController;
-                        
-                        if ([onglet isEqual:@"p"]) {
-                            [timeline showPhotoView:moment];
-                        } else if ([onglet isEqual:@"i"]) {
-                            [timeline showInfoMomentView:moment];
-                        } else if ([onglet isEqual:@"t"]) {
-                            [timeline showTchatView:moment];
-                        } else {
-                            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Redirection inconnue" message:@"Le scheme est incorrect." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-                            [alertView show];
-                        }
-                    } else {
-                        //[self.window.rootViewController.navigationController popToRootViewControllerAnimated:NO];
-                        
-                        NSLog(@"self.actualViewController = %@",[self.actualViewController nibName]);
-                        
-                        NSArray *viewControllers = self.actualViewController.navigationController.viewControllers;
-                        
-                        NSLog(@"viewControllers = %@",viewControllers);
-                        
-                        if ([self.actualViewController.modalViewController isEqual:self]) {
-                            
-                            NSLog(@"Modal view !");
-                            
-                            if ([self.actualViewController isKindOfClass:[TutorialViewController class]]) {
-                                
-                                TutorialViewController *tutorial = (TutorialViewController*)self.actualViewController;
-                                
-                                [[UIApplication sharedApplication] setStatusBarHidden:NO];
-                                [tutorial dismissViewControllerAnimated:NO completion:nil];
-                                
-                                
-                                NSLog(@"self.actualViewController = %@", self.actualViewController);
-                                
-                                NSArray *viewControllers = self.actualViewController.navigationController.viewControllers;
-                                
-                                NSLog(@"viewControllers = %@",viewControllers);
-                                
-                                if (viewControllers.count > 0) {
-                                    if ([viewControllers[0] isKindOfClass:[RootTimeLineViewController class]]) {
-                                        NSLog(@"C'est bien RootTimeLineViewController !");
-                                        
-                                        RootTimeLineViewController *rootTimeline = (RootTimeLineViewController*)viewControllers[0];
-                                        
-                                        TimeLineViewController *timeline = [rootTimeline timeLineForMoment:moment];
-                                        
-                                        if ([onglet isEqual:@"p"]) {
-                                            [timeline showPhotoView:moment];
-                                        } else if ([onglet isEqual:@"i"]) {
-                                            [timeline showInfoMomentView:moment];
-                                        } else if ([onglet isEqual:@"t"]) {
-                                            [timeline showTchatView:moment];
-                                        } else {
-                                            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Redirection inconnue" message:@"Le scheme est incorrect." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-                                            [alertView show];
-                                        }
-                                    }
-                                }
-                            }
-                        } else {
-                            NSLog(@"Push view !");
-                            
-                            if (viewControllers.count > 0) {
-                                if ([viewControllers[0] isKindOfClass:[RootTimeLineViewController class]]) {
-                                    NSLog(@"C'est bien RootTimeLineViewController !");
-                                    
-                                    RootTimeLineViewController *rootTimeline = (RootTimeLineViewController*)viewControllers[0];
-                                    
-                                    TimeLineViewController *timeline = [rootTimeline timeLineForMoment:moment];
-                                    
-                                    if ([onglet isEqual:@"p"]) {
-                                        [timeline showPhotoView:moment];
-                                    } else if ([onglet isEqual:@"i"]) {
-                                        [timeline showInfoMomentView:moment];
-                                    } else if ([onglet isEqual:@"t"]) {
-                                        [timeline showTchatView:moment];
-                                    } else {
-                                        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Redirection inconnue" message:@"Le scheme est incorrect." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-                                        [alertView show];
-                                    }
-                                }
-                            }
-                        }
-                        //UIViewController *rootViewController = [viewControllers objectAtIndex:viewControllers.count - 2];
-                       
-                    }
-                    
-                    
-                    
-                    /*NSString *text = [url.host stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-                     UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Text" message:text delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-                     [alertView show];*/
-                }
-            } waitUntilFinished:YES];
-        } else {
-            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Problème de redirection" message:@"Le premier attribut n'est pas un nombre." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-            [alertView show];
-        }
-    }
+    [self redirectSchemeFromURL:url withApplicationState:application.applicationState];
     
     // attempt to extract a token from the url
     return [[FBSession activeSession] handleOpenURL:url];
@@ -299,7 +171,7 @@
 		if (dictionary != nil)
 		{
 			//NSLog(@"Launched from push notification: %@", dictionary);
-            [[PushNotificationManager sharedInstance] receivePushNotification:dictionary updateUI:NO];
+            [[PushNotificationManager sharedInstance] receivePushNotification:dictionary withApplicationState:application.applicationState updateUI:NO];
         }
 	}
     
@@ -376,23 +248,9 @@
     
     if (launchOptions[@"UIApplicationLaunchOptionsURLKey"]) {
         
-        NSURL *url = launchOptions[@"UIApplicationLaunchOptionsURLKey"];
+        NSURL *url = launchOptions[@"UIApplicationLaunchOptionsURLKey"];        
         
-        
-        NSLog(@"URL - absoluteString = %@",url.absoluteString);
-        NSLog(@"URL - host = %@",url.host);
-        
-        NSLog(@"pathComponents = %@",url.host.pathComponents);
-        NSLog(@"pathComponents = %@",url.pathComponents);
-        
-        
-        
-        // Display text
-        //NSLog(@"URL - absoluteString = %@",url.absoluteString);
-        //NSLog(@"URL - host = %@",url.host);
-        //NSString *text = [url.host stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-        //UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Text" message:text delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-        //[alertView show];
+        [self redirectSchemeFromURL:url withApplicationState:application.applicationState];
     }
     
     [self deleteUploadPhotosCache];
@@ -494,7 +352,7 @@
 - (void)application:(UIApplication*)application didReceiveRemoteNotification:(NSDictionary*)userInfo
 {
 	//NSLog(@"Received notification: %@", userInfo);
-    [[PushNotificationManager sharedInstance] receivePushNotification:userInfo updateUI:YES];
+    [[PushNotificationManager sharedInstance] receivePushNotification:userInfo withApplicationState:application.applicationState updateUI:YES];
 }
 
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
@@ -537,6 +395,43 @@
             } else {
                 NSLog(@"DELETING FAILED... : %@ | Error: %@",photosPath, theError);
             }
+        }
+    }
+}
+
+- (void)redirectSchemeFromURL:(NSURL *)url withApplicationState:(UIApplicationState)state
+{
+    if (url) {
+        
+        NSString *host = url.host.pathComponents[0];
+        NSString *onglet = url.pathComponents[1];
+        
+        NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
+        [numberFormatter setNumberStyle:NSNumberFormatterDecimalStyle];
+        NSNumber *momentId = [numberFormatter numberFromString:host];
+        
+        
+        if (momentId) {
+            enum SchemeType type;
+            
+            if ([onglet isEqual:@"p"]) {
+                type = SchemeTypePhoto;
+            } else if ([onglet isEqual:@"c"]) {
+                type = SchemeTypeChat;
+            } else if ([onglet isEqual:@"i"]) {
+                type = SchemeTypeInfo;
+            } else {
+                type = nil;
+                
+                UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Redirection inconnue" message:@"Le scheme est incorrect." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                [alertView show];
+            }
+            
+            if (type)
+                [[RedirectionManager sharedInstance] sendRedirectionToMomentWithId:momentId withType:type andWithApplicationState:state];
+        } else {
+            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Problème de redirection" message:@"Le premier attribut n'est pas un nombre." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+            [alertView show];
         }
     }
 }
