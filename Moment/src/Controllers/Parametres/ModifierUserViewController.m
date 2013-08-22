@@ -675,14 +675,14 @@ enum PhotoPickerDestination {
 
 #pragma mark - UIImagePickerController Delegate
 
--(void) imagePickerController:(UIImagePickerController *)UIPicker didFinishPickingMediaWithInfo:(NSDictionary *) info
+-(void)imagePickerController:(UIImagePickerController *)UIPicker didFinishPickingMediaWithInfo:(NSDictionary *) info
 {
     UIImage *image = info[@"UIImagePickerControllerOriginalImage"];
     
     switch (imagePickerDestination) {
         case PhotoPickerDestinationProfilPicture:
             self.profilePictureImage = [[Config sharedInstance] imageWithMaxSize:image maxSize:200];
-            self.medallion.image = image;
+            self.medallion.image = [[Config sharedInstance] imageWithMaxSize:image maxSize:200];
             break;
             
         case PhotoPickerDestinationCover:
