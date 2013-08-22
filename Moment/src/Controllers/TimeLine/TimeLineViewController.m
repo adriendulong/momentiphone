@@ -1578,7 +1578,7 @@ shouldLoadEventsFromFacebook:(BOOL)loadEvents
 }
 
 - (void)showTutorialOverlayWithFrame:(CGRect)frame {
-    UIImage *image_overlay;
+    UIImage *image_overlay = [[UIImage alloc] init];
     self.overlay = [[UIImageView alloc] initWithFrame:frame];
     
     if ([[VersionControl sharedInstance] isIphone5]) {
