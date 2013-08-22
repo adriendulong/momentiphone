@@ -65,8 +65,10 @@ MAX([UIApplication sharedApplication].statusBarFrame.size.width, [UIApplication 
 
 //#define kStatusBarBackgroundColorActivity [UIColor colorWithHex:0x102247]
 //#define kStatusBarBackgroundColorFinished [UIColor colorWithHex:0x0f5b05]
-#define kStatusBarBackgroundColorActivity [UIColor colorWithHex:0xD28000]
-#define kStatusBarBackgroundColorFinished [UIColor colorWithHex:0xD28000]
+/*#define kStatusBarBackgroundColorActivity [UIColor colorWithHex:0xD28000]
+#define kStatusBarBackgroundColorFinished [UIColor colorWithHex:0xD28000]*/
+#define kStatusBarBackgroundColorActivity [UIColor colorWithHex:0xff9a04]
+#define kStatusBarBackgroundColorFinished [UIColor colorWithHex:0xff9a04]
 #define kStatusBarBackgroundColorError [UIColor colorWithHex:0x850c0c]
 
 ///////////////////////////////////////////////////////

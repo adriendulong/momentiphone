@@ -75,7 +75,7 @@ enum InviteAddTTLabel {
         // Set Nom
         self.nomText = [user.nom uppercaseString];;
         self.prenomText = [user.prenom uppercaseString];
-        [self setNomLabelTextWithColor:[[Config sharedInstance] textColor] ];
+        [self setNomLabelTextWithColor:[Config sharedInstance].textColor];
         
         // Téléphone & Email
         self.phoneText = user.numeroMobile;
@@ -84,7 +84,7 @@ enum InviteAddTTLabel {
         // Set Adresse
 #warning Pas d'adresse
         self.adresseText = nil;
-        [self setAdresseLabelTextWithColor:[[Config sharedInstance] textColor]];
+        [self setAdresseLabelTextWithColor:[Config sharedInstance].textColor];
         
         // Admin
         adminAuthorisation = adminAccess;

@@ -27,7 +27,7 @@
 @synthesize contentView = _contentView;
 
 @synthesize followUsLabel = _followUsLabel, madeWithLoveLabel = _madeWithLoveLabel, versionLabel = _versionLabel;
-@synthesize titreAproposLabel = _titreAproposLabel, titreNotificationLabel = _titreNotificationLabel, titreProfilLabel = _titreProfilLabel, titreConnaitreMoment = _titreConnaitreMoment;
+@synthesize titreAproposLabel = _titreAproposLabel, titreNotificationLabel = _titreNotificationLabel, titreProfilLabel = _titreProfilLabel, titreConnaitreMoment = _titreConnaitreMoment, titreFeedbackLabel = _titreFeedbackLabel;
 @synthesize notifInvitLabel = _notifInvitLabel, notifModifLabel = _notifModifLabel, notifMessageLabel = _notifMessageLabel, notifPhotoLabel = _notifPhotoLabel;
 
 @synthesize likeButton = _likeButton;
@@ -70,6 +70,7 @@
     self.titreNotificationLabel.font = font;
     self.titreAproposLabel.font = font;
     self.titreProfilLabel.font = font;
+    self.titreFeedbackLabel.font = font;
     font = [[Config sharedInstance] defaultFontWithSize:15];
     self.madeWithLoveLabel.font = font;
     self.versionLabel.font = font;
@@ -78,6 +79,14 @@
     self.notifModifLabel.font = font;
     self.notifPhotoLabel.font = font;
     self.notifInvitLabel.font = font;
+    
+    // Colors
+    UIColor *momentOrange = [Config sharedInstance].orangeColor;
+    self.titreConnaitreMoment.textColor = momentOrange;
+    self.titreNotificationLabel.textColor = momentOrange;
+    self.titreAproposLabel.textColor = momentOrange;
+    self.titreProfilLabel.textColor = momentOrange;
+    self.titreFeedbackLabel.textColor = momentOrange;
     
     [self loadParametresNotifications];
 }
@@ -125,6 +134,7 @@
     [self setNotifModifButtonPush:nil];
     [self setNotifModifButtonEmail:nil];
     [self setLikeButton:nil];
+    [self setTitreFeedbackLabel:nil];
     [super viewDidUnload];
 }
 

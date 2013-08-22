@@ -946,7 +946,7 @@ shouldLoadEventsFromFacebook:(BOOL)loadEvents
         [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:18 ] range:range];
         range = NSMakeRange(1, taille-1);
         [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:14] range:range];
-        [attributedString setTextColor:[[Config sharedInstance] textColor]];
+        [attributedString setTextColor:[Config sharedInstance].textColor];
         
         [self.nomMomentLabel setAttributedText:attributedString];
         self.nomMomentLabel.textAlignment = kCTLeftTextAlignment;
@@ -1004,7 +1004,7 @@ shouldLoadEventsFromFacebook:(BOOL)loadEvents
         [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:16] range:range];
         range = NSMakeRange(5, taille-5);
         [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:12] range:range];
-        [attributedString setTextColor:[[Config sharedInstance] orangeColor]];
+        [attributedString setTextColor:[Config sharedInstance].orangeColor];
         
         [self.nomOwnerLabel setAttributedText:attributedString];
         self.nomOwnerLabel.textAlignment = kCTLeftTextAlignment;
@@ -1097,7 +1097,7 @@ shouldLoadEventsFromFacebook:(BOOL)loadEvents
             [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:15] range:range];
         }
         
-        [attributedString setTextColor:[[Config sharedInstance] textColor]];
+        [attributedString setTextColor:[Config sharedInstance].textColor];
         
         [self.fullDateLabel setAttributedText:attributedString];
         self.fullDateLabel.textAlignment = NSTextAlignmentRight;

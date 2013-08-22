@@ -589,7 +589,7 @@ enum ProfilOnglet {
 - (void)setHeadFollowButtonState:(enum FollowButtonState)newState
 {
     BOOL selected = (newState != FollowButtonStateNotFollowed);
-    self.headFollowLabel.textColor = selected ? [UIColor colorWithHex:0x50504f] : [[Config sharedInstance] orangeColor];
+    self.headFollowLabel.textColor = selected ? [UIColor colorWithHex:0x50504f] : [Config sharedInstance].orangeColor;
     [self.headFollowButton setSelected:selected];
     
     switch (newState) {

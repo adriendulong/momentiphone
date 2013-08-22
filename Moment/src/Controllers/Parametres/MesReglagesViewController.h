@@ -27,6 +27,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *titreNotificationLabel;
 @property (weak, nonatomic) IBOutlet UILabel *titreProfilLabel;
 @property (weak, nonatomic) IBOutlet UILabel *titreAproposLabel;
+@property (weak, nonatomic) IBOutlet UILabel *titreFeedbackLabel;
 
 // Notifications Labels
 @property (weak, nonatomic) IBOutlet UILabel *notifInvitLabel;

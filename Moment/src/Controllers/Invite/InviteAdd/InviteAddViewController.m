@@ -123,13 +123,13 @@ enum InviteAddFontSize {
     
     // nb Invités
     self.nbInvitesLabel.font = [[Config sharedInstance] defaultFontWithSize:15];
-    self.nbInvitesLabel.textColor = [[Config sharedInstance] orangeColor];
+    self.nbInvitesLabel.textColor = [Config sharedInstance].orangeColor;
     [self updateSelectedFriendsLabel];
     
     // Phrase
     self.phraseLabel.text = NSLocalizedString(@"InviteAddViewController_phraseLabel", nil);
     self.phraseLabel.font = [[Config sharedInstance] defaultFontWithSize:InviteAddFontSizeSmall];
-    self.phraseLabel.textColor = [[Config sharedInstance] textColor];
+    self.phraseLabel.textColor = [Config sharedInstance].textColor;
     
     // Moment Label
     //[self setMomentLabelText:@"MOMENT"];
@@ -211,7 +211,7 @@ enum InviteAddFontSize {
         [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:InviteAddFontSizeBig] range:range];
         range = NSMakeRange(1, taille-1);
         [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:InviteAddFontSizeSmall] range:range];
-        [attributedString setTextColor:[[Config sharedInstance] textColor] ];
+        [attributedString setTextColor:[Config sharedInstance].textColor];
         
         [self.validerLabel setAttributedText:attributedString];
         self.validerLabel.textAlignment = kCTLeftTextAlignment;
@@ -253,14 +253,14 @@ enum InviteAddFontSize {
         
         NSRange range = NSMakeRange(0, 1);
         [attributedString setFont:smallFont range:range];
-        [attributedString setTextColor:[[Config sharedInstance] textColor] ];
+        [attributedString setTextColor:[Config sharedInstance].textColor];
         range = NSMakeRange(1, 1);
         [attributedString setFont:bigFont range:range];
-        [attributedString setTextColor:[[Config sharedInstance] orangeColor] range:range];
+        [attributedString setTextColor:[Config sharedInstance].orangeColor range:range];
         
         range = NSMakeRange(2, taille-2);
         [attributedString setFont:smallFont range:range];
-        [attributedString setTextColor:[[Config sharedInstance] textColor] range:range];
+        [attributedString setTextColor:[Config sharedInstance].textColor range:range];
         
         [self.momentLabel setAttributedText:attributedString];
         self.momentLabel.textAlignment = kCTTextAlignmentLeft;

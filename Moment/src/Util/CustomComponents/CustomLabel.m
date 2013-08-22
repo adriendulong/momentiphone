@@ -33,8 +33,8 @@
         UIFont *smallFont = [[Config sharedInstance] defaultFontWithSize:fontSize];
         UIFont *bigFont = [[Config sharedInstance] defaultFontWithSize:fontSize+1];
         
-        UIColor *orangeColor = [[Config sharedInstance] orangeColor];
-        UIColor *textColor = [[Config sharedInstance] textColor];
+        UIColor *orangeColor = [Config sharedInstance].orangeColor;
+        UIColor *textColor = [Config sharedInstance].textColor;
         
         NSMutableAttributedString *string = [[NSMutableAttributedString alloc] initWithString:text];
         
@@ -102,7 +102,7 @@
         
         /*
          self.text = text;
-         self.textColor = [[Config sharedInstance] textColor];
+         self.textColor = [Config sharedInstance].textColor;
          self.font = [[Config sharedInstance] defaultFontWithSize:fontSize];
          */
     }
