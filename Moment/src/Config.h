@@ -72,6 +72,13 @@
 - (UIImage*)scaleAndCropImage:(UIImage*)sourceImage forSize:(CGSize)targetSize;
 - (UIImage*)imageWithMaxSize:(UIImage*)image maxSize:(CGFloat)maxImageSize;
 
+#pragma mark - Create UIImage programmatically
+- (UIImage *)imageFromText:(NSString *)text withColor:(UIColor *)color andFont:(UIFont *)font;
+
+#pragma mark - Create NSString directly with font
+- (NSString *)createStylizedStringFromString:(NSString *)string withFont:(UIFont *)font andColor:(UIColor *)color fromRect:(CGRect)rect;
+- (UIFont *)boldFontFromFont:(UIFont *)font;
+
 #pragma mark - Regex Validation
 - (BOOL)isNumeric:(NSString*)s;
 - (NSString*)formatedPhoneNumber:(NSString*)phoneNumber;

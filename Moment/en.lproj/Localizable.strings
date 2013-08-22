@@ -460,6 +460,7 @@
 /* ------------- Words --------------- */
 "Words_by" = "par";
 "Finish" = "Terminer";
+"Back" = "Précédent";
 "Next" = "Suivant";
 
 

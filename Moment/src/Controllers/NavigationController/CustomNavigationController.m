@@ -7,6 +7,7 @@
 //
 
 #import "CustomNavigationController.h"
+#import "Config.h"
 
 @interface CustomNavigationController ()
 
@@ -99,6 +100,57 @@
     [button addTarget:viewController.navigationController action:@selector(popViewControllerAnimated:) forControlEvents:UIControlEventTouchUpInside];
     
     UIBarButtonItem *barBackItem = [[UIBarButtonItem alloc] initWithCustomView:button];
+    
+    viewController.navigationItem.hidesBackButton = YES;
+    viewController.navigationItem.leftBarButtonItem = barBackItem;
+}
+
++ (void)setBackButtonWithImage:(UIImage *)img withViewController:(UIViewController *)viewController withSelector:(SEL)selector andWithTarget:(id)target
+{
+    UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
+    
+    button.frame = CGRectMake(0, 0, 80, 44);
+    //button.backgroundColor = [UIColor orangeColor];
+    
+    [button setImage:img forState:UIControlStateNormal];
+    [button setImage:img forState:UIControlStateSelected];
+    [button setImageEdgeInsets:UIEdgeInsetsMake(0, 0, 0, 58)];
+    
+    //[button addTarget:viewController.navigationController action:@selector(popViewControllerAnimated:) forControlEvents:UIControlEventTouchUpInside];
+    
+    if (target) {
+        [button addTarget:target action:selector forControlEvents:UIControlEventTouchUpInside];
+    } else {
+        [button addTarget:viewController.navigationController action:selector forControlEvents:UIControlEventTouchUpInside];
+    }
+    
+    UIBarButtonItem *barBackItem = [[UIBarButtonItem alloc] initWithCustomView:button];
+    
+    viewController.navigationItem.hidesBackButton = YES;
+    viewController.navigationItem.leftBarButtonItem = barBackItem;
+}
+
++ (void)setBackButtonWithTitle:(NSString *)title andColor:(UIColor *)color andFont:(UIFont *)font withViewController:(UIViewController *)viewController withSelector:(SEL)selector andWithTarget:(id)target
+{
+    UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
+    //UIImage *img = [UIImage imageNamed:@"btn-back-trans.png"];
+    UIImage *img = [[Config sharedInstance] imageFromText:title withColor:color andFont:font];
+    
+    button.frame = CGRectMake(0, 0, img.size.width, img.size.height);
+    
+    [button setImage:img forState:UIControlStateNormal];
+    [button setImage:img forState:UIControlStateSelected];
+    
+    //[button addTarget:viewController.navigationController action:@selector(popViewControllerAnimated:) forControlEvents:UIControlEventTouchUpInside];
+    
+    if (target) {
+        [button addTarget:target action:selector forControlEvents:UIControlEventTouchUpInside];
+    } else {
+        [button addTarget:viewController.navigationController action:selector forControlEvents:UIControlEventTouchUpInside];
+    }
+    
+    UIBarButtonItem *barBackItem = [[UIBarButtonItem alloc] initWithCustomView:button];
+    [barBackItem setTitle:title];
     
     viewController.navigationItem.hidesBackButton = YES;
     viewController.navigationItem.leftBarButtonItem = barBackItem;
