@@ -7,6 +7,8 @@
 //
 
 #import "WebModalViewController.h"
+#import "CustomToolbar.h"
+#import "Config.h"
 
 @interface WebModalViewController ()
 
@@ -48,12 +50,19 @@
 
 - (void)loadUIToolBar
 {
-    UIBarButtonItem *closeView = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"WebModalViewController_Toolbar_CloseButton", nil) style:UIBarButtonItemStyleBordered target:self action:@selector(closeView)];
+    UIImage *buttonTitle = [[Config sharedInstance] imageFromText:@"Fermer" withColor:[Config sharedInstance].orangeColor andFont:[[Config sharedInstance] defaultFontWithSize:20]];
+
+    UIButton *button = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, buttonTitle.size.width, buttonTitle.size.height)];
+    [button setImage:buttonTitle forState:UIControlStateNormal];
+    [button setImage:buttonTitle forState:UIControlStateSelected];
+    [button addTarget:self action:@selector(closeView) forControlEvents:UIControlEventTouchUpInside];
     
-    UIToolbar *toolbar = [[UIToolbar alloc] init];
+    UIBarButtonItem *closeButton = [[UIBarButtonItem alloc] initWithCustomView:button];
+    
+    CustomToolbar *toolbar = [[CustomToolbar alloc] init];
     toolbar.frame = CGRectMake(0, 0, self.view.frame.size.width, 44);
     NSMutableArray *items = [[NSMutableArray alloc] init];
-    [items addObject:closeView];
+    [items addObject:closeButton];
     [toolbar setItems:items animated:NO];
     [self.view addSubview:toolbar];
 }
