@@ -84,7 +84,7 @@
         //UIImage *normal = nil;//, *selected = nil;
         NSString *normal = nil;
         UIColor *colorEnable = [Config sharedInstance].orangeColor;
-        UIColor *colorDisabled = [UIColor grayColor];
+        UIColor *colorDisabled = [Config sharedInstance].textColor;
         SEL action = NULL;
         BOOL secondButtonEnable = NO;
         
@@ -271,7 +271,7 @@
     //[CustomNavigationController setBackButtonWithViewController:self];
     
     //[CustomNavigationController setBackButtonWithTitle:[NSString stringWithFormat:@"  %@", NSLocalizedString(@"Back", nil)] andColor:[UIColor grayColor] andFont:[[Config sharedInstance] defaultFontWithSize:16] withViewController:self withSelector:@selector(popViewControllerAnimated:) andWithTarget:nil];
-    [CustomNavigationController setBackButtonWithImage:[UIImage imageNamed:@"previous_chevron.png"] withViewController:self withSelector:@selector(popViewControllerAnimated:) andWithTarget:nil];
+    [CustomNavigationController setBackButtonWithImage:[UIImage imageNamed:@"Navigation-Left.png"] withViewController:self withSelector:@selector(popViewControllerAnimated:) andWithTarget:nil];
     
     CGRect frameButton = CGRectMake(0,0,43,43);
     
@@ -709,7 +709,7 @@
     [self updateNavBarForStep:self.currentStep];
     
     //[CustomNavigationController setBackButtonWithTitle:[NSString stringWithFormat:@"  %@", NSLocalizedString(@"Back", nil)] andColor:[UIColor grayColor] andFont:[[Config sharedInstance] defaultFontWithSize:16] withViewController:self withSelector:@selector(clicPrev) andWithTarget:self];
-    [CustomNavigationController setBackButtonWithImage:[UIImage imageNamed:@"previous_chevron.png"] withViewController:self withSelector:@selector(clicPrev) andWithTarget:self];
+    [CustomNavigationController setBackButtonWithImage:[UIImage imageNamed:@"Navigation-Left.png"] withViewController:self withSelector:@selector(clicPrev) andWithTarget:self];
 }
 
 - (void)clicPrev
@@ -726,7 +726,7 @@
     
     if (self.currentStep == 1) {
         //[CustomNavigationController setBackButtonWithTitle:[NSString stringWithFormat:@"  %@", NSLocalizedString(@"Back", nil)] andColor:[UIColor grayColor] andFont:[[Config sharedInstance] defaultFontWithSize:16] withViewController:self withSelector:@selector(popViewControllerAnimated:) andWithTarget:nil];
-        [CustomNavigationController setBackButtonWithImage:[UIImage imageNamed:@"previous_chevron.png"] withViewController:self withSelector:@selector(popViewControllerAnimated:) andWithTarget:nil];
+        [CustomNavigationController setBackButtonWithImage:[UIImage imageNamed:@"Navigation-Left.png"] withViewController:self withSelector:@selector(popViewControllerAnimated:) andWithTarget:nil];
     }
 }
 

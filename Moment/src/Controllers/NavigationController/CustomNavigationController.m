@@ -114,7 +114,7 @@
     
     [button setImage:img forState:UIControlStateNormal];
     [button setImage:img forState:UIControlStateSelected];
-    [button setImageEdgeInsets:UIEdgeInsetsMake(0, 0, 0, 58)];
+    [button setImageEdgeInsets:UIEdgeInsetsMake(0, 0, 0, 45)];
     
     //[button addTarget:viewController.navigationController action:@selector(popViewControllerAnimated:) forControlEvents:UIControlEventTouchUpInside];
     
