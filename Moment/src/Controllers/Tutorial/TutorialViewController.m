@@ -73,30 +73,27 @@
     //[self.letsgoButton setHidden:YES];
     
     [self setImages:[NSMutableArray array]];
+    
+    
+    NSArray *backgrounds = [NSMutableArray arrayWithCapacity:4];
 	
-    if (isIphone5)
-    {
-        //NSLog(@"iPhone 5");
-        //NSArray *colors = [NSArray arrayWithObjects:[UIColor redColor], [UIColor greenColor], [UIColor blueColor], nil];
-        NSArray *images5 = [NSArray arrayWithObjects:
-                            [UIImage imageNamed:@"walkthoughtv2_iphone5_part1"],
-                            [UIImage imageNamed:@"walkthoughtv2_iphone5_part2"],
-                            [UIImage imageNamed:@"walkthoughtv2_iphone5_part3"],
-                            [UIImage imageNamed:@"walkthoughtv2_iphone5_part4"],
+    if (isIphone5) {
+        backgrounds = [NSArray arrayWithObjects:
+                            [UIImage imageNamed:@"background_page1-568h"],
+                            [UIImage imageNamed:@"background_page2-568h"],
+                            [UIImage imageNamed:@"background_page3-568h"],
+                            [UIImage imageNamed:@"background_page4-568h"],
                             nil];
-        
-        [self.images setArray:images5];
     } else {
-        //NSLog(@"iPhone 4/4S or 3GS");
-        NSArray *images4S = [NSArray arrayWithObjects:
-                             [UIImage imageNamed:@"walkthoughtv2_iphone4_part1"],
-                             [UIImage imageNamed:@"walkthoughtv2_iphone4_part2"],
-                             [UIImage imageNamed:@"walkthoughtv2_iphone4_part3"],
-                             [UIImage imageNamed:@"walkthoughtv2_iphone4_part4"],
+        backgrounds = [NSArray arrayWithObjects:
+                             [UIImage imageNamed:@"background_page1"],
+                             [UIImage imageNamed:@"background_page2"],
+                             [UIImage imageNamed:@"background_page3"],
+                             [UIImage imageNamed:@"background_page4"],
                              nil];
-        
-        [self.images setArray:images4S];
-    }    
+    }
+    [self.images setArray:backgrounds];
+    
     
     self.scrollView.frame = [[UIScreen mainScreen] bounds];
     
