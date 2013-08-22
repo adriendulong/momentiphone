@@ -880,7 +880,8 @@ withRootViewController:(UIViewController *)rootViewController
             // Resize Image
             //[images addObject:[[Config sharedInstance] imageWithMaxSize:attributes[@"UIImagePickerControllerOriginalImage"] maxSize:PHOTO_MAX_SIZE]];
             
-            NSData *imageData = UIImagePNGRepresentation([[Config sharedInstance] imageWithMaxSize:attributes[@"UIImagePickerControllerOriginalImage"] maxSize:PHOTO_MAX_SIZE]);
+            //NSData *imageData = UIImagePNGRepresentation([[Config sharedInstance] imageWithMaxSize:attributes[@"UIImagePickerControllerOriginalImage"] maxSize:PHOTO_MAX_SIZE]);
+            NSData *imageData = UIImageJPEGRepresentation([[Config sharedInstance] imageWithMaxSize:attributes[@"UIImagePickerControllerOriginalImage"] maxSize:PHOTO_MAX_SIZE], 0.8);
             
             NSString *imageName = [NSString stringWithFormat:@"Photo_%f.png",[[NSDate date] timeIntervalSince1970]];
             
@@ -897,11 +898,11 @@ withRootViewController:(UIViewController *)rootViewController
     }
     // Load from Camera
     else {
-        
-        UIImageWriteToSavedPhotosAlbum(mediaInfoArray[@"UIImagePickerControllerOriginalImage"], nil, nil, nil);
+
+    UIImageWriteToSavedPhotosAlbum(mediaInfoArray[@"UIImagePickerControllerOriginalImage"], nil, nil, nil);
         
         // Get your image.
-        NSData *imageData = UIImagePNGRepresentation([[Config sharedInstance] imageWithMaxSize:mediaInfoArray[@"UIImagePickerControllerOriginalImage"] maxSize:PHOTO_MAX_SIZE]);
+        NSData *imageData = UIImageJPEGRepresentation([[Config sharedInstance] imageWithMaxSize:mediaInfoArray[@"UIImagePickerControllerOriginalImage"] maxSize:PHOTO_MAX_SIZE], 0.8);
         
         NSString *imageName = [NSString stringWithFormat:@"Camera_%f.png",[[NSDate date] timeIntervalSince1970]];
         

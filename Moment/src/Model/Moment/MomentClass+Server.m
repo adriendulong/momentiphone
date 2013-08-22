@@ -737,7 +737,8 @@
     
     NSData *file = nil;
     if(photo) {
-        file = UIImagePNGRepresentation(photo);
+        //file = UIImagePNGRepresentation(photo);
+        file = UIImageJPEGRepresentation(photo, 1.0);
     }
     
     NSMutableURLRequest *request = [[AFMomentAPIClient sharedClient] multipartFormRequestWithMethod:@"POST" path:path parameters:nil constructingBodyWithBlock: ^(id <AFMultipartFormData>formData) {
@@ -752,7 +753,9 @@
     AFJSONRequestOperation *operation = [[AFJSONRequestOperation alloc] initWithRequest:request];
     if(progressBlock) {
         [operation setUploadProgressBlock:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite) {
-            CGFloat progression = (CGFloat)totalBytesWritten/totalBytesExpectedToWrite;
+            CGFloat progression = (CGFloat)totalBytesWritten/(CGFloat)totalBytesExpectedToWrite;
+            //NSLog(@"Taille: %f Mb",(CGFloat)totalBytesExpectedToWrite/1000000);
+            //NSLog(@"progression: %i%%", (int)roundf(progression*100.0));
             progressBlock(progression);
         }];
     }
