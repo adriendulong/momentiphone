@@ -1022,6 +1022,7 @@ withDelegate:(PhotoViewController*)photoViewController
                     }
                     
                     self.delegate.photos = self.photos;
+                    [self.delegate.rootViewController.infoMomentViewController reloadData];
                 }
                 // -- Fail
                 else {
