@@ -32,7 +32,7 @@
 - (void)addNotificationObservers;
 - (void)removeNotifications;
 
-- (void)alertViewWithChatMessage:(NSString*)message;
+- (void)alertViewChatWithMessage:(NSString*)message;
 
 
 @end

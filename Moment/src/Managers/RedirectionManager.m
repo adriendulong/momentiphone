@@ -30,15 +30,13 @@ static RedirectionManager *sharedInstance = nil;
     if (state != UIApplicationStateActive || state == -1) {
         UIViewController *actualView = [AppDelegate actualViewController];
         
-        NSLog(@"state = %i",state);
-        NSLog(@"actualViewController = %@",actualView);
-        
         [MomentClass getInfosMomentWithId:momentId.integerValue withEnded:^(NSDictionary *attributes) {
             if (attributes) {
-                //NSLog(@"attributes = %@",attributes);
                 MomentClass *moment = [[MomentClass alloc] initWithAttributesFromWeb:attributes];
                 
-                if ([actualView isKindOfClass:[InfoMomentViewController class]]) {
+                if ([actualView isKindOfClass:[InfoMomentViewController class]] ||
+                    [actualView isKindOfClass:[PhotoViewController class]] ||
+                    [actualView isKindOfClass:[ChatViewController class]] ) {
                     
                     InfoMomentViewController *infoMoment = (InfoMomentViewController *)actualView;
                     
@@ -61,74 +59,13 @@ static RedirectionManager *sharedInstance = nil;
                                 break;
                                 
                             default:
+                                [infoMoment.rootViewController addAndScrollToOnglet:OngletInfoMoment];
                                 break;
                         }
-                    } else {
-                        [self simpleRedirectionFromActualView:infoMoment withType:type andMoment:moment];
                     }
-                    
-                } else if ([actualView isKindOfClass:[ChatViewController class]]) {
-                    
-                    ChatViewController *chatMoment = (ChatViewController *)actualView;
-                    
-                    if ([chatMoment.moment isEqual:moment]) {
-                        switch (type) {
-                                
-                            case NotificationTypeNewPhoto:
-                            case SchemeTypePhoto:
-                                [chatMoment.rootViewController addAndScrollToOnglet:OngletPhoto];
-                                break;
-                                
-                            case NotificationTypeModification:
-                            case SchemeTypeInfo:
-                                [chatMoment.rootViewController addAndScrollToOnglet:OngletInfoMoment];
-                                break;
-                                
-                            case NotificationTypeNewChat:
-                            case SchemeTypeChat:
-                                [chatMoment.rootViewController addAndScrollToOnglet:OngletChat];
-                                break;
-                                
-                            default:
-                                break;
-                        }
-                    } else {
-                        [self simpleRedirectionFromActualView:chatMoment withType:type andMoment:moment];
-                    }
-                    
-                } else if ([actualView isKindOfClass:[PhotoViewController class]]) {
-                    
-                    PhotoViewController *photoMoment = (PhotoViewController *)actualView;
-                    
-                    if ([photoMoment.moment isEqual:moment]) {
-                        switch (type) {
-                                
-                            case NotificationTypeNewPhoto:
-                            case SchemeTypePhoto:
-                                [photoMoment.rootViewController addAndScrollToOnglet:OngletPhoto];
-                                break;
-                                
-                            case NotificationTypeModification:
-                            case SchemeTypeInfo:
-                                [photoMoment.rootViewController addAndScrollToOnglet:OngletInfoMoment];
-                                break;
-                                
-                            case NotificationTypeNewChat:
-                            case SchemeTypeChat:
-                                [photoMoment.rootViewController addAndScrollToOnglet:OngletChat];
-                                break;
-                                
-                            default:
-                                break;
-                        }
-                    } else {
-                        [self simpleRedirectionFromActualView:photoMoment withType:type andMoment:moment];
-                    }
-                    
                 } else {
-                    [self simpleRedirectionFromActualView:actualView withType:type andMoment:moment];
+                    [self pushToCorrectControllerFrom:actualView withType:type andMoment:moment];
                 }
-                
             }
         } waitUntilFinished:YES];
     }
@@ -177,6 +114,7 @@ static RedirectionManager *sharedInstance = nil;
                 break;
                 
             default:
+                [timeline showInfoMomentView:moment];
                 break;
         }
     } else {
