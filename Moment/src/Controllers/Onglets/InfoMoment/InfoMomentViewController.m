@@ -31,6 +31,8 @@
 #import "MomentClass+Server.h"
 #import "UserClass+Server.h"
 
+#import "UIView+viewRecursion.h"
+
 // Font Sizes
 enum InfoMomentFontSize {
     InfoMomentFontSizeBig = 18,
@@ -87,6 +89,8 @@ static CGFloat DescriptionBoxHeightMax = 100;
 
 @synthesize deleteMomentButton = _deleteMomentButton, deleteMoment = _deleteMoment;
 
+@synthesize nb_photos_in_moment = _nb_photos_in_moment;
+
 
 #pragma mark - Init
 
@@ -96,6 +100,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
     if(self) {
         
         self.moment = moment;
+        self.nb_photos_in_moment = moment.nb_photos;
         self.user = [UserCoreData getCurrentUser];
         self.rootViewController = rootViewController;
         
@@ -194,7 +199,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
         taille = taille + 1 + [numero length] + 3;
         [attributedString setFont:smallFont range:NSMakeRange(taille, [mois length]-1)];
         
-        [attributedString setTextColor:[[Config sharedInstance] textColor] ];
+        [attributedString setTextColor:[Config sharedInstance].textColor ];
         
         return attributedString;
     }
@@ -292,7 +297,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
     [attributedString setFont:bigFont range:NSMakeRange([heure length]+1, [minutes length] )];
     
         
-    [attributedString setTextColor:[[Config sharedInstance] textColor] ];
+    [attributedString setTextColor:[Config sharedInstance].textColor ];
 
     
     return attributedString;
@@ -450,10 +455,10 @@ static CGFloat DescriptionBoxHeightMax = 100;
             // Attributs du label
             NSRange range = NSMakeRange(0, 1);
             [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:InfoMomentFontSizeBig] range:range];
-            [attributedString setTextColor:[[Config sharedInstance] orangeColor] range:range];
+            [attributedString setTextColor:[Config sharedInstance].orangeColor range:range];
             range = NSMakeRange(1, [attributedString length]-1);
             [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:InfoMomentFontSizeMedium] range:range];
-            [attributedString setTextColor:[[Config sharedInstance] textColor] range:range];
+            [attributedString setTextColor:[Config sharedInstance].textColor range:range];
             
             [self.titreLabel setAttributedText:attributedString];
         }
@@ -578,7 +583,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
         self.descriptionLabel.text = self.moment.descriptionString;
         UIFont *font = [[Config sharedInstance] defaultFontWithSize:InfoMomentFontSizeLittle];
         self.descriptionLabel.font = font;
-        self.descriptionLabel.textColor = [[Config sharedInstance] textColor];
+        self.descriptionLabel.textColor = [Config sharedInstance].textColor;
         CGSize maxSize = CGSizeMake(self.descriptionLabel.frame.size.width, 9999);
         CGSize expectedSize = [self.moment.descriptionString sizeWithFont:font constrainedToSize:maxSize lineBreakMode:self.descriptionLabel.lineBreakMode];
         CGRect frame = self.descriptionLabel.frame;
@@ -746,7 +751,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
                 NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:self.moment.adresse];
                 
                 // Couleur
-                [attributedString setTextColor:[[Config sharedInstance] textColor]];
+                [attributedString setTextColor:[Config sharedInstance].textColor];
                 
                 // 1er Lettre
                 [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:InfoMomentFontSizeMedium] range:NSMakeRange(0, 1)];
@@ -791,7 +796,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
                 /*
                  self.adresseLabel.text = adresse;
                  self.adresseLabel.textAlignment = NSTextAlignmentCenter;
-                 self.adresseLabel.textColor = [[Config sharedInstance] textColor];
+                 self.adresseLabel.textColor = [Config sharedInstance].textColor;
                  self.adresseLabel.font = [[Config sharedInstance] defaultFontWithSize:InfoMomentFontSizeMedium];
                  */
             }
@@ -806,7 +811,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
         // ---- Nom Lieu ----
         if([self.moment.nomLieu length] > 0)
         {
-            self.nomLieuLabel.textColor = [[Config sharedInstance] textColor];
+            self.nomLieuLabel.textColor = [Config sharedInstance].textColor;
             self.nomLieuLabel.text = [self.moment.nomLieu uppercaseString];
             self.nomLieuLabel.font = [[Config sharedInstance] defaultFontWithSize:InfoMomentFontSizeMedium];
             self.nomLieuLabel.alpha = 0.7;
@@ -850,7 +855,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
     // Attributed string
     int nb = self.moment.guests_number.intValue;
     
-    UIColor *color = [[Config sharedInstance] textColor];
+    UIColor *color = [Config sharedInstance].textColor;
     UIFont *smallFont = [[Config sharedInstance] defaultFontWithSize:InfoMomentFontSizeLittle];
     
     NSMutableString *texte = [NSMutableString stringWithFormat:@"%d", nb];
@@ -1023,75 +1028,107 @@ static CGFloat DescriptionBoxHeightMax = 100;
 
 - (void) initPhotosView
 {
-    if (self.moment.nb_photos && [self.moment.nb_photos intValue] != 0) {
-        
-        static InfoMomentSeparateurView *separator = nil;
-        
-        if(separator) {
-            [separator removeFromSuperview];
-        }
-        
-        // Sparateur
-        separator = [[InfoMomentSeparateurView alloc] initAtPosition:(83 + 5)];
-        [self.photosView addSubview:separator];
-        
-        CGRect frame = self.photosView.frame;
-        frame.size.height = separator.frame.origin.y + separator.frame.size.height + 5;
-        self.photosView.frame = frame;
-        
-        //rotate label in 45 degrees
-        self.nbPhotosLabel.transform = CGAffineTransformMakeRotation( (-1)*M_PI/4 );
-        
-        if (self.moment.nb_photos) {
-            self.nbPhotosLabel.text = [NSString stringWithFormat:@"%@", self.moment.nb_photos];
-        } else {
-            self.nbPhotosLabel.text = 0; //[NSString stringWithFormat:@"%i", 0];
-        }
-        
-        // Load Photos
-        [self.moment getPhotosWithEnded:^(NSArray *photos) {
-            
-            int taille = [photos count];
-            for(int i=0; i<taille && i<5; i++) {
-                Photos *p = photos[taille - 1 - i];
-                [self.photosImageView[i] setImage:p.imageThumbnail imageString:p.urlThumbnail withSaveBlock:^(UIImage *image) {
-                    p.imageThumbnail = image;
-                }];
-            }
-        }];
-        
-        if (firstLoad) {
-            // Tap Gesture recognizer
-            UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(clicPhotoView)];
-            [self.photosView addGestureRecognizer:tap];
-            
-            [self addSubviewAtAutomaticPosition:self.photosView];
-        }
+    [self initAddPhotosView];
+    
+    NSLog(@"initPhotosView | self.nb_photos_in_moment = %@", self.nb_photos_in_moment);
+    
+    NSLog(@"On lance la vue avec les miniatures.");
+    
+    static InfoMomentSeparateurView *separator = nil;
+    
+    if(separator) {
+        [separator removeFromSuperview];
+    }
+    
+    // Sparateur
+    separator = [[InfoMomentSeparateurView alloc] initAtPosition:(83 + 5)];
+    [self.photosView addSubview:separator];
+    
+    CGRect frame = self.photosView.frame;
+    frame.size.height = separator.frame.origin.y + separator.frame.size.height + 5;
+    self.photosView.frame = frame;
+    
+    //rotate label in 45 degrees
+    self.nbPhotosLabel.transform = CGAffineTransformMakeRotation( (-1)*M_PI/4 );
+    
+    if (self.nb_photos_in_moment) {
+        self.nbPhotosLabel.text = [NSString stringWithFormat:@"%@", self.nb_photos_in_moment];
     } else {
+        self.nbPhotosLabel.text = 0; //[NSString stringWithFormat:@"%i", 0];
+    }
+    
+    // Load Photos
+    [self.moment getPhotosWithEnded:^(NSArray *photos) {
         
-        static InfoMomentSeparateurView *separator = nil;
+        //NSLog(@"photos = %@", photos);
         
-        if(separator) {
-            [separator removeFromSuperview];
+        int taille = [photos count];
+        for(int i=0; i<taille && i<5; i++) {
+            Photos *p = photos[taille - 1 - i];
+            [self.photosImageView[i] setImage:p.imageThumbnail imageString:p.urlThumbnail withSaveBlock:^(UIImage *image) {
+                p.imageThumbnail = image;
+            }];
+        }
+    }];
+    
+    if (firstLoad) {
+        // Tap Gesture recognizer
+        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(clicPhotoView)];
+        [self.photosView addGestureRecognizer:tap];
+        
+        [self addSubviewAtAutomaticPosition:self.photosView];
+    }
+    
+    if (self.nb_photos_in_moment && [self.nb_photos_in_moment intValue] != 0)
+    {
+        for (UIView *v in [self.photosView allSubViews])
+        {
+            if (![v isKindOfClass:[InfoMomentSeparateurView class]]) {
+                v.hidden = NO;
+            }
         }
         
-        // Sparateur
-        separator = [[InfoMomentSeparateurView alloc] initAtPosition:(55 + 5)];
-        [self.addPhotosView addSubview:separator];
-        
-        [self.addPhotosButton setBackgroundImage:[[UIImage imageNamed:@"add_photo_button.png"]
-                                                  stretchableImageWithLeftCapWidth:8.0f
-                                                  topCapHeight:0.0f]
-                                        forState:UIControlStateNormal];
-        
-        [self.addPhotosButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-        self.addPhotosButton.titleLabel.font = [UIFont boldSystemFontOfSize:20];
-        
-        if (firstLoad) {
-            [self.addPhotosButton addTarget:self action:@selector(clicAddPhotoView) forControlEvents:UIControlEventTouchUpInside];
-            
-            [self addSubviewAtAutomaticPosition:self.addPhotosView];
+        self.addPhotosButton.hidden = YES;
+    }
+    else
+    {
+        for (UIView *v in [self.photosView allSubViews])
+        {
+            if (![v isKindOfClass:[InfoMomentSeparateurView class]]) {
+                v.hidden = YES;
+            }
         }
+        
+        self.addPhotosButton.hidden = NO;
+    }
+}
+
+- (void)initAddPhotosView
+{
+    NSLog(@"On lance la vue avec le bouton d'ajout.");
+    
+    /*static InfoMomentSeparateurView *separator = nil;
+    
+    if(separator) {
+        [separator removeFromSuperview];
+    }
+    
+    // Sparateur
+    separator = [[InfoMomentSeparateurView alloc] initAtPosition:(55 + 5)];
+    [self.addPhotosView addSubview:separator];*/
+    
+    [self.addPhotosButton setBackgroundImage:[[UIImage imageNamed:@"add_photo_button.png"]
+                                              stretchableImageWithLeftCapWidth:8.0f
+                                              topCapHeight:0.0f]
+                                    forState:UIControlStateNormal];
+    
+    [self.addPhotosButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    self.addPhotosButton.titleLabel.font = [UIFont boldSystemFontOfSize:20];
+    
+    if (firstLoad) {
+        [self.addPhotosButton addTarget:self action:@selector(clicAddPhotoView) forControlEvents:UIControlEventTouchUpInside];
+        
+        //[self.photosView addSubview:self.addPhotosView];
     }
 }
 
@@ -1123,7 +1160,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
     if(self.moment.infoMetro)
     {
         [self.metroLabel setFont:[[Config sharedInstance] defaultFontWithSize:InfoMomentFontSizeMedium] ];
-        [self.metroLabel setTextColor:[[Config sharedInstance] textColor] ];
+        [self.metroLabel setTextColor:[Config sharedInstance].textColor ];
         //[self.metroLabel setFontSize:InfoMomentFontSizeMedium];
         self.metroLabel.text = self.moment.infoMetro;
         
@@ -1150,7 +1187,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
     if(self.moment.infoLieu)
     {
         [self.infoLieuLabel setFont:[[Config sharedInstance] defaultFontWithSize:InfoMomentFontSizeMedium] ];
-        [self.infoLieuLabel setTextColor:[[Config sharedInstance] textColor] ];
+        [self.infoLieuLabel setTextColor:[Config sharedInstance].textColor ];
         //[self.infoLieuLabel setFontSize:InfoMomentFontSizeMedium];
         self.infoLieuLabel.text = self.moment.infoLieu;
         
@@ -1474,6 +1511,10 @@ static CGFloat DescriptionBoxHeightMax = 100;
             self.momentImageView.image = nil;
             self.momentImageView.imageString = nil;
             
+            self.nb_photos_in_moment = self.moment.nb_photos;
+            
+            NSLog(@"Nouveau nombre de photo = %@", self.nb_photos_in_moment);
+            
             [self initTitreView];
             [self initRsvpView];
             [self initPhotosView];
@@ -1731,9 +1772,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
     
     UIViewController *actualViewController = [AppDelegate actualViewController];
     
-    if ([actualViewController isKindOfClass:[PhotoViewController class]]) {
-        NSLog(@"C'est le controleur photo !");
-        
+    if ([actualViewController isKindOfClass:[PhotoViewController class]]) {        
         PhotoViewController *photoviewcontroller = (PhotoViewController *)actualViewController;
         [photoviewcontroller showPhotoActionSheet];
     }

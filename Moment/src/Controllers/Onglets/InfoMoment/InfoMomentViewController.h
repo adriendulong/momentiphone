@@ -134,6 +134,8 @@
 @property (weak, nonatomic) IBOutlet UIButton *deleteMomentButton;
 @property (strong, nonatomic) UIAlertView *deleteMoment;
 
+@property (strong, nonatomic) NSNumber *nb_photos_in_moment;
+
 
 // ------------------- METHODES ------------------------ //
 - (id)initWithMoment:(MomentClass*)moment withRootViewController:(RootOngletsViewController*)rootViewController;
