@@ -804,6 +804,9 @@
 		6E326A5C17A02C1000654B90 /* Overlay.png in Resources */ = {isa = PBXBuildFile; fileRef = 6E326A5217A02C1000654B90 /* Overlay.png */; };
 		6E326A5D17A02C1000654B90 /* Overlay@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6E326A5317A02C1000654B90 /* Overlay@2x.png */; };
 		6E4D6EE8177850D60043B095 /* RowIndexInVolet.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4D6EE7177850D60043B095 /* RowIndexInVolet.m */; };
+		6E56481917C6114E003D95C4 /* tuto_overlay@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6E56481617C6114E003D95C4 /* tuto_overlay@2x.png */; };
+		6E56481A17C6114E003D95C4 /* tuto_overlay_iphone4@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6E56481717C6114E003D95C4 /* tuto_overlay_iphone4@2x.png */; };
+		6E56481B17C6114E003D95C4 /* tuto_overlay_iphone4.png in Resources */ = {isa = PBXBuildFile; fileRef = 6E56481817C6114E003D95C4 /* tuto_overlay_iphone4.png */; };
 		6E5F42511784675300A93335 /* picto_croix_rouge.png in Resources */ = {isa = PBXBuildFile; fileRef = 6E5F424F1784675300A93335 /* picto_croix_rouge.png */; };
 		6E5F42521784675300A93335 /* picto_croix_rouge@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6E5F42501784675300A93335 /* picto_croix_rouge@2x.png */; };
 		6E7DB527178E923900CEC1BD /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E7DB526178E923900CEC1BD /* Crashlytics.framework */; };
@@ -812,9 +815,6 @@
 		6E80BEC41765CCF400E6041F /* ModifierUserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E80BEC01765CCF400E6041F /* ModifierUserViewController.m */; };
 		6E80BEC51765CCF400E6041F /* ModifierUserViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6E80BEC11765CCF400E6041F /* ModifierUserViewController.xib */; };
 		6E9CA19A17ABB9A30018F0C2 /* CMPopTipView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E68B37B17A6A6E300AA6932 /* CMPopTipView.m */; };
-		6EA7D58017BA835000266F68 /* tuto_overlay@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6EA7D57C17BA835000266F68 /* tuto_overlay@2x.png */; };
-		6EA7D58117BA835000266F68 /* tuto_overlay_iphone4.png in Resources */ = {isa = PBXBuildFile; fileRef = 6EA7D57D17BA835000266F68 /* tuto_overlay_iphone4.png */; };
-		6EA7D58217BA835000266F68 /* tuto_overlay_iphone4@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6EA7D57E17BA835000266F68 /* tuto_overlay_iphone4@2x.png */; };
 		6EAF1FE717AA988C008A6DAD /* finish_tuto_button.png in Resources */ = {isa = PBXBuildFile; fileRef = 6EAF1FE617AA988C008A6DAD /* finish_tuto_button.png */; };
 		6EB9C533178553A100976CFC /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EB9C532178553A100976CFC /* AVFoundation.framework */; };
 		6EB9C53C178553A700976CFC /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EB9C53B178553A700976CFC /* AudioToolbox.framework */; };
@@ -1992,6 +1992,9 @@
 		6E326A5317A02C1000654B90 /* Overlay@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Overlay@2x.png"; sourceTree = "<group>"; };
 		6E4D6EE6177850D60043B095 /* RowIndexInVolet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RowIndexInVolet.h; sourceTree = "<group>"; };
 		6E4D6EE7177850D60043B095 /* RowIndexInVolet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RowIndexInVolet.m; sourceTree = "<group>"; };
+		6E56481617C6114E003D95C4 /* tuto_overlay@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "tuto_overlay@2x.png"; sourceTree = "<group>"; };
+		6E56481717C6114E003D95C4 /* tuto_overlay_iphone4@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "tuto_overlay_iphone4@2x.png"; sourceTree = "<group>"; };
+		6E56481817C6114E003D95C4 /* tuto_overlay_iphone4.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = tuto_overlay_iphone4.png; sourceTree = "<group>"; };
 		6E5F424E17842F3F00A93335 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		6E5F424F1784675300A93335 /* picto_croix_rouge.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = picto_croix_rouge.png; sourceTree = "<group>"; };
 		6E5F42501784675300A93335 /* picto_croix_rouge@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "picto_croix_rouge@2x.png"; sourceTree = "<group>"; };
@@ -2004,9 +2007,6 @@
 		6E80BEBF1765CCF400E6041F /* ModifierUserViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModifierUserViewController.h; sourceTree = "<group>"; };
 		6E80BEC01765CCF400E6041F /* ModifierUserViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ModifierUserViewController.m; sourceTree = "<group>"; };
 		6E80BEC11765CCF400E6041F /* ModifierUserViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ModifierUserViewController.xib; sourceTree = "<group>"; };
-		6EA7D57C17BA835000266F68 /* tuto_overlay@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "tuto_overlay@2x.png"; sourceTree = "<group>"; };
-		6EA7D57D17BA835000266F68 /* tuto_overlay_iphone4.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = tuto_overlay_iphone4.png; sourceTree = "<group>"; };
-		6EA7D57E17BA835000266F68 /* tuto_overlay_iphone4@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "tuto_overlay_iphone4@2x.png"; sourceTree = "<group>"; };
 		6EAF1FE617AA988C008A6DAD /* finish_tuto_button.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = finish_tuto_button.png; sourceTree = "<group>"; };
 		6EB9C532178553A100976CFC /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		6EB9C53B178553A700976CFC /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
@@ -4226,9 +4226,9 @@
 		6EA7D57A17BA835000266F68 /* Overlay */ = {
 			isa = PBXGroup;
 			children = (
-				6EA7D57C17BA835000266F68 /* tuto_overlay@2x.png */,
-				6EA7D57D17BA835000266F68 /* tuto_overlay_iphone4.png */,
-				6EA7D57E17BA835000266F68 /* tuto_overlay_iphone4@2x.png */,
+				6E56481617C6114E003D95C4 /* tuto_overlay@2x.png */,
+				6E56481717C6114E003D95C4 /* tuto_overlay_iphone4@2x.png */,
+				6E56481817C6114E003D95C4 /* tuto_overlay_iphone4.png */,
 			);
 			path = Overlay;
 			sourceTree = "<group>";
@@ -5046,9 +5046,6 @@
 				6E0A3EB717BA6F3400660A87 /* background_page4-568h@2x.png in Resources */,
 				6E0A3EB817BA6F3400660A87 /* background_page4.png in Resources */,
 				6E0A3EB917BA6F3400660A87 /* background_page4@2x.png in Resources */,
-				6EA7D58017BA835000266F68 /* tuto_overlay@2x.png in Resources */,
-				6EA7D58117BA835000266F68 /* tuto_overlay_iphone4.png in Resources */,
-				6EA7D58217BA835000266F68 /* tuto_overlay_iphone4@2x.png in Resources */,
 				6E18CD5617C3BE3E00B4A5ED /* search_loupe@2x.png in Resources */,
 				6E18CD5717C3BE3E00B4A5ED /* search_loupe.png in Resources */,
 				6EF6C2AB17C3D3C90069F79C /* searchbar_moment.png in Resources */,
@@ -5057,6 +5054,9 @@
 				6EC4275017C4B30500FCC84F /* search_loupe_black@2x.png in Resources */,
 				6EC4276B17C51FE900FCC84F /* previous_chevron.png in Resources */,
 				6EC4276D17C51FEE00FCC84F /* previous_chevron@2x.png in Resources */,
+				6E56481917C6114E003D95C4 /* tuto_overlay@2x.png in Resources */,
+				6E56481A17C6114E003D95C4 /* tuto_overlay_iphone4@2x.png in Resources */,
+				6E56481B17C6114E003D95C4 /* tuto_overlay_iphone4.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

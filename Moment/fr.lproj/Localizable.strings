@@ -190,9 +190,8 @@
 "TimeLineViewController_Overlay_Label2" = "notifications, profil,...";
 "TimeLineViewController_Overlay_Label3" = "Crée un moment ou";
 "TimeLineViewController_Overlay_Label4" = "importe tes events Facebook !";
-"TimeLineViewController_Overlay_Label5" = "Consulte l'activité évènementielle";
-"TimeLineViewController_Overlay_Label6" = "de tes proches !";
-"TimeLineViewController_Overlay_Label7" = "Recherche";
+/*"TimeLineViewController_Overlay_Label5" = "Consulte l'activité évènementielle";
+"TimeLineViewController_Overlay_Label6" = "de tes proches !";*/
 
 /* --------------- InfoMomentViewController --------------- */
 "InfoMomentViewController_RSVP_Yes" = "Je serais présent au moment ...";

@@ -1637,7 +1637,7 @@ shouldLoadEventsFromFacebook:(BOOL)loadEvents
     
     
     
-    if ([[VersionControl sharedInstance] isIphone5]) {
+    /*if ([[VersionControl sharedInstance] isIphone5]) {
         UILabel *overlay_label3_1 = [[UILabel alloc] initWithFrame:CGRectMake(10, 380, 260, 30)];
         UILabel *overlay_label3_2 = [[UILabel alloc] initWithFrame:CGRectMake(10, 400, 260, 30)];
         [overlay_label3_1 setBackgroundColor:[UIColor clearColor]];
@@ -1673,7 +1673,7 @@ shouldLoadEventsFromFacebook:(BOOL)loadEvents
         
         [self.overlay addSubview:overlay_label3_1];
         [self.overlay addSubview:overlay_label3_2];
-    }
+    }*/
 }
 
 - (void)hideTutorialOverlay {
