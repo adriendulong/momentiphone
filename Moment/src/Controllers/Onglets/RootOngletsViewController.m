@@ -215,7 +215,11 @@
             [AppDelegate updateActualViewController:self.chatViewController];
             [self.chatViewController sendGoogleAnalyticsView];
             
-            [self.chatViewController reloadData];
+            // Reload Chat
+            [self.chatViewController loadMessagesForPage:1 atPosition:ChatViewControllerMessagePositionBottom
+                                          withEnded:^{
+                                              // Bloc nécessaire pour ne pas afficher le loader de rechargement
+                                          }];
             break;
     }
     

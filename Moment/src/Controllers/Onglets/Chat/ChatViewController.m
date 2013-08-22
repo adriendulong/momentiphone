@@ -73,8 +73,6 @@
 {
     [super viewDidLoad];
     
-    [self reloadData];
-    
     // iPhone 5 Support    
     // View frame
     CGRect frame = self.view.frame;
