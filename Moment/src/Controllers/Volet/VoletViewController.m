@@ -154,6 +154,8 @@ static VoletViewController *actualVoletViewController;
     tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(clicNotifications)];
     [self.nbNotificationsView addGestureRecognizer:tap];
     
+    [self.searchTextField setPlaceholder:NSLocalizedString(@"VoletSearchViewController_Placeholder_Search", nil)];
+    
     [self reloadUsername];
     [self designNbNotificationsViews];
     

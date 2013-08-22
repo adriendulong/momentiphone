@@ -24,7 +24,7 @@
         mT = self.paddingTop;
     
     if( self.paddingLeft == 0)
-        mL = 20;
+        mL = 25;
     else
         mL = self.paddingLeft;
     
@@ -40,7 +40,7 @@
     
     self.font = [[Config sharedInstance] defaultFontWithSize:14];
     
-    UIImage *image = [UIImage imageNamed:@"vollet_search_bar"];
+    /*UIImage *image = [UIImage imageNamed:@"searchbar_moment.png"];
     
     //image = [image resizableImageWithCapInsets:UIEdgeInsetsMake(0, 7, 0, 5)];
     
@@ -48,14 +48,19 @@
     
     image = [image stretchableImageWithLeftCapWidth:40 topCapHeight:2];
     
-    /*
+    /\*
      image = [image resizableImageWithCapInsets:UIEdgeInsetsMake(0, 7, 0, 5)];
      image = [image stretchableImageWithLeftCapWidth:7 topCapHeight:7];
-     */
+     *\/
     
-    self.background = image;
+    self.background = image;*/
     
     [super drawRect:rect];
+}
+
+- (void)drawPlaceholderInRect:(CGRect)rect {
+    [[UIColor colorWithHex:0x646464] setFill];
+    [[self placeholder] drawInRect:rect withFont:[[Config sharedInstance] defaultFontWithSize:14]];
 }
 
 @end
