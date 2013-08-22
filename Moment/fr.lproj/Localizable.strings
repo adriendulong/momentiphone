@@ -343,6 +343,9 @@
 "CreationPage2ViewController_Invalide_Title" = "Numéro invalide";
 "CreationPage2ViewController_Invalide_Message" = "Veuillez rentrez un numéro de téléphone valide";
 
+/* ------------ CreationFicheViewController ------------- */
+"CreationFicheViewController_ChangeCover" = "Changer l'image";
+
 /* ------------ ProfilViewController ------------- */
 // Buttons
 "ProfilViewController_FollowLabel" = "Abos";

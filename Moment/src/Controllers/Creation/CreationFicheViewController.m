@@ -464,6 +464,7 @@
     [self setLabelText:self.startDateLabel text:self.startDateLabel.text minFontSize:minSize maxFontSize:maxSize color:color];
     [self setLabelText:self.endDateLabel text:self.endDateLabel.text minFontSize:minSize maxFontSize:maxSize color:color];
     
+    self.changerCoverButton.titleLabel.text = NSLocalizedString(@"CreationFicheViewController_ChangeCover", nil);
     self.changerCoverButton.titleLabel.font = [[Config sharedInstance] defaultFontWithSize:13];
     self.changerCoverButton.titleLabel.textColor = [Config sharedInstance].orangeColor;
 }

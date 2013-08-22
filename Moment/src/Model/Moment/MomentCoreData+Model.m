@@ -262,7 +262,7 @@
 }
 
 - (void)setDataImageWithUIImage:(UIImage *)image {
-    self.dataImage = UIImagePNGRepresentation(image);
+    self.dataImage = UIImageJPEGRepresentation(image, 0.8);
 }
 
 #pragma mark - Get moment

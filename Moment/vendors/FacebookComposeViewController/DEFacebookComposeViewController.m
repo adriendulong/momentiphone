@@ -699,7 +699,7 @@ enum {
     }
     
     if ([self.images count] > 0) {
-        [d setObject:UIImagePNGRepresentation([self.images lastObject]) forKey:@"source"];
+        [d setObject:UIImageJPEGRepresentation([self.images lastObject], 0.8) forKey:@"source"];
         graphPath = @"me/photos";
     }
     

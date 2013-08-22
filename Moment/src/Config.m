@@ -384,7 +384,7 @@ static Config *sharedInstance = nil;
 
 - (void)saveNewCoverImage:(UIImage *)image {
     
-    NSData *data = UIImagePNGRepresentation(image);    
+    NSData *data = UIImageJPEGRepresentation(image, 0.8);
     NSString *fullPath = [self coverImageFullPath];
     
     // Delete previous cover if it exist

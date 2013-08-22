@@ -74,7 +74,7 @@
 //        if (image.size.width * image.size.height > (300*300)) {
 //          image = [image transformWidth:300 height:(image.size.height/image.size.width)*300.0
 //                         rotate:NO];
-//          NSData* data = UIImagePNGRepresentation(image);
+//          NSData* data = UIImageJPEGRepresentation(image, 0.8);
 //          [[TTURLCache sharedCache] storeData:data forURL:request.URL];
 //        }
         [[TTURLCache sharedCache] storeImage:image forURL:request.urlPath];

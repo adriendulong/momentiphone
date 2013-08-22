@@ -33,7 +33,7 @@
         {
             // Conversion si nécessaire
             if([attributes[@"dataImage"] isKindOfClass:[UIImage class]]) {
-                file = UIImagePNGRepresentation(attributes[@"dataImage"]);
+                file = UIImageJPEGRepresentation(attributes[@"dataImage"], 0.8);
             }
             else if([attributes[@"dataImage"] isKindOfClass:[NSData class]]) {
                 file = attributes[@"dataImage"];
@@ -620,7 +620,7 @@
         
         // Conversion si nécessaire
         if([params[@"photo"] isKindOfClass:[UIImage class]]) {
-            file = UIImagePNGRepresentation(params[@"photo"]);
+            file = UIImageJPEGRepresentation(params[@"photo"], 0.8);
         }
         else if([params[@"photo"] isKindOfClass:[NSData class]]) {
             file = params[@"photo"];
@@ -737,7 +737,6 @@
     
     NSData *file = nil;
     if(photo) {
-        //file = UIImagePNGRepresentation(photo);
         file = UIImageJPEGRepresentation(photo, 1.0);
     }
     

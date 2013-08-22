@@ -605,7 +605,7 @@
         if(_imageProfile)
         {
             // Ajout de la photo à la requete
-            attributes[@"photo"] = UIImagePNGRepresentation(_imageProfile);
+            attributes[@"photo"] = UIImageJPEGRepresentation(_imageProfile, 0.8);
         }
         
         if(facebookId)
