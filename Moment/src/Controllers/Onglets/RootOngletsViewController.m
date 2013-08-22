@@ -49,7 +49,7 @@
             {
                 [MomentClass getInfosMomentWithId:self.moment.momentId.intValue withEnded:^(NSDictionary *attributes) {
                     
-                    if (attributes != nil) {
+                    if (attributes) {
                         self.moment = [[MomentClass alloc] initWithAttributesFromWeb:attributes];
                         self.photoViewController.moment = self.moment;
                         self.infoMomentViewController.moment = self.moment;

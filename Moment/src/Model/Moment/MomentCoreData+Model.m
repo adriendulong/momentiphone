@@ -315,8 +315,10 @@
     
     // Sinon récupère informations depuis le server
     [MomentClass getInfosMomentWithId:moment.momentId.intValue withEnded:^(NSDictionary *attributes) {
-        [moment setupWithAttributes:attributes];
-        [[Config sharedInstance] saveContext];
+        if (attributes) {
+            [moment setupWithAttributes:attributes];
+            [[Config sharedInstance] saveContext];
+        }
     } waitUntilFinished:YES];
     
     return moment;
