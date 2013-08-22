@@ -507,7 +507,7 @@
                        withMessage:NSLocalizedString(@"RootOngletsViewController_PopTipViewPhotos_Message", nil)
                 andBackgroundColor:[UIColor colorWithHex:0xE7E7E7]
                     andBorderColor:[UIColor colorWithHex:0xC1C1C1]
-                      andTextColor:[UIColor colorWithHex:0xD28000]
+                      andTextColor:[Config sharedInstance].orangeColor
                        andFontSize:12];
     
     self.poptipPhotos = YES;
@@ -519,7 +519,7 @@
                        withMessage:NSLocalizedString(@"RootOngletsViewController_PopTipViewChat_Message", nil)
                 andBackgroundColor:[UIColor colorWithHex:0xE7E7E7]
                     andBorderColor:[UIColor colorWithHex:0xC1C1C1]
-                      andTextColor:[UIColor colorWithHex:0xD28000]
+                      andTextColor:[Config sharedInstance].orangeColor
                        andFontSize:12];
     
     self.poptipChat = YES;
