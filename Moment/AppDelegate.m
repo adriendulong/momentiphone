@@ -82,7 +82,7 @@
   sourceApplication:(NSString *)sourceApplication
          annotation:(id)annotation
 {
-    [self redirectSchemeFromURL:url withApplicationState:application.applicationState];
+    [[RedirectionManager sharedInstance] redirectSchemeFromURL:url withApplicationState:application.applicationState];
     
     // attempt to extract a token from the url
     return [[FBSession activeSession] handleOpenURL:url];
@@ -242,16 +242,11 @@
     }
     */
     
-    NSLog(@"didFinishLaunching..");
+    /*NSURL *url = launchOptions[@"UIApplicationLaunchOptionsURLKey"];
     
-    NSLog(@"UIApplicationLaunchOptionsURLKey = %@", launchOptions[@"UIApplicationLaunchOptionsURLKey"]);
-    
-    if (launchOptions[@"UIApplicationLaunchOptionsURLKey"]) {
-        
-        NSURL *url = launchOptions[@"UIApplicationLaunchOptionsURLKey"];        
-        
-        [self redirectSchemeFromURL:url withApplicationState:application.applicationState];
-    }
+    if (url) {
+        [[RedirectionManager sharedInstance] redirectSchemeFromURL:url withApplicationState:application.applicationState];
+    }*/
     
     [self deleteUploadPhotosCache];
         
@@ -395,43 +390,6 @@
             } else {
                 NSLog(@"DELETING FAILED... : %@ | Error: %@",photosPath, theError);
             }
-        }
-    }
-}
-
-- (void)redirectSchemeFromURL:(NSURL *)url withApplicationState:(UIApplicationState)state
-{
-    if (url) {
-        
-        NSString *host = url.host.pathComponents[0];
-        NSString *onglet = url.pathComponents[1];
-        
-        NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
-        [numberFormatter setNumberStyle:NSNumberFormatterDecimalStyle];
-        NSNumber *momentId = [numberFormatter numberFromString:host];
-        
-        
-        if (momentId) {
-            enum SchemeType type;
-            
-            if ([onglet isEqual:@"p"]) {
-                type = SchemeTypePhoto;
-            } else if ([onglet isEqual:@"c"]) {
-                type = SchemeTypeChat;
-            } else if ([onglet isEqual:@"i"]) {
-                type = SchemeTypeInfo;
-            } else {
-                type = nil;
-                
-                UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Redirection inconnue" message:@"Le scheme est incorrect." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-                [alertView show];
-            }
-            
-            if (type)
-                [[RedirectionManager sharedInstance] sendRedirectionToMomentWithId:momentId withType:type andWithApplicationState:state];
-        } else {
-            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Problème de redirection" message:@"Le premier attribut n'est pas un nombre." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-            [alertView show];
         }
     }
 }

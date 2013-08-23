@@ -20,10 +20,16 @@ enum SchemeType {
 
 @property (nonatomic) enum SchemeType type;
 
-// Singleton
+#pragma mark - Singleton
 + (RedirectionManager *)sharedInstance;
 
+#pragma mark - Parse URL
+- (void)redirectSchemeFromURL:(NSURL *)url withApplicationState:(UIApplicationState)state;
+
+#pragma mark Receive Redirection
 - (void)sendRedirectionToMomentWithId:(NSNumber *)momentId withType:(int)type andWithApplicationState:(UIApplicationState)state;
+
+#pragma mark Perform Redirection
 - (void)pushToCorrectControllerFrom:(UIViewController *)actualView withType:(int)type andMoment:(MomentClass *)moment;
 
 @end

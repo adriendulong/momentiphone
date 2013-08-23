@@ -9,11 +9,11 @@
 #import "RedirectionManager.h"
 #import "RootOngletsViewController.h"
 #import "MomentClass+Server.h"
+#import "HomeViewController.h"
 
 @implementation RedirectionManager
 
 #pragma mark - Singleton
-
 static RedirectionManager *sharedInstance = nil;
 
 + (RedirectionManager *)sharedInstance {
@@ -21,6 +21,45 @@ static RedirectionManager *sharedInstance = nil;
         sharedInstance = [[super alloc] init];
     }
     return sharedInstance;
+}
+
+#pragma mark - Parse URL
+- (void)redirectSchemeFromURL:(NSURL *)url withApplicationState:(UIApplicationState)state
+{
+    
+    if (url && url.absoluteString.length > 0) {
+        
+        NSString *host = url.host.pathComponents[0];
+        NSString *onglet = url.pathComponents[1];
+        
+        NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
+        [numberFormatter setNumberStyle:NSNumberFormatterDecimalStyle];
+        NSNumber *momentId = [numberFormatter numberFromString:host];
+        
+        
+        if (momentId) {
+            enum SchemeType type;
+            
+            if ([onglet isEqual:@"p"]) {
+                type = SchemeTypePhoto;
+            } else if ([onglet isEqual:@"c"]) {
+                type = SchemeTypeChat;
+            } else if ([onglet isEqual:@"i"]) {
+                type = SchemeTypeInfo;
+            } else {
+                type = nil;
+                
+                UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Redirection inconnue" message:@"Le scheme est incorrect." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                [alertView show];
+            }
+            
+            if (type)
+                [self sendRedirectionToMomentWithId:momentId withType:type andWithApplicationState:state];
+        } else {
+            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Problème de redirection" message:@"Le premier attribut n'est pas un nombre." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+            [alertView show];
+        }
+    }
 }
 
 #pragma mark Receive Redirection
@@ -72,7 +111,6 @@ static RedirectionManager *sharedInstance = nil;
 }
 
 #pragma mark Perform Redirection
-
 - (void)simpleRedirectionFromActualView:(UIViewController *)actualView withType:(int)type andMoment:(MomentClass *)moment
 {
     if (actualView.modalViewController != nil) {
@@ -89,36 +127,42 @@ static RedirectionManager *sharedInstance = nil;
 {
     [actualView.navigationController popToRootViewControllerAnimated:NO];
     
-    NSLog(@"pushToCorrectControllerFrom | actualViewController = %@",actualView);
-    
     if ([actualView isKindOfClass:[RootTimeLineViewController class]]) {
+        [self pushFromRootTimeLineControllerWithActualView:actualView withType:type andMoment:moment];
+    } else if ([actualView isKindOfClass:[HomeViewController class]]) {
         
-        RootTimeLineViewController *rootTimeline = (RootTimeLineViewController*)actualView;
-        TimeLineViewController *timeline = [rootTimeline timeLineForMoment:moment];
+        actualView = [AppDelegate actualViewController];
         
-        switch (type) {
-                
-            case NotificationTypeNewPhoto:
-            case SchemeTypePhoto:
-                [timeline showPhotoView:moment];
-                break;
-                
-            case NotificationTypeModification:
-            case SchemeTypeInfo:
-                [timeline showInfoMomentView:moment];
-                break;
-                
-            case NotificationTypeNewChat:
-            case SchemeTypeChat:
-                [timeline showTchatView:moment];
-                break;
-                
-            default:
-                [timeline showInfoMomentView:moment];
-                break;
+        if ([actualView isKindOfClass:[RootTimeLineViewController class]]) {            
+            [self pushFromRootTimeLineControllerWithActualView:actualView withType:type andMoment:moment];
         }
-    } else {
-        NSLog(@"actualViewController = %@",actualView);
+    }
+}
+
+- (void)pushFromRootTimeLineControllerWithActualView:(UIViewController *)actualView withType:(int)type andMoment:(MomentClass *)moment
+{
+    RootTimeLineViewController *rootTimeline = (RootTimeLineViewController *)actualView;
+    
+    switch (type) {
+            
+        case NotificationTypeNewPhoto:
+        case SchemeTypePhoto:
+            [[rootTimeline timeLineForMoment:moment] showPhotoView:moment];
+            break;
+            
+        case NotificationTypeModification:
+        case SchemeTypeInfo:
+            [[rootTimeline timeLineForMoment:moment] showInfoMomentView:moment];
+            break;
+            
+        case NotificationTypeNewChat:
+        case SchemeTypeChat:
+            [[rootTimeline timeLineForMoment:moment] showTchatView:moment];
+            break;
+            
+        default:
+            [[rootTimeline timeLineForMoment:moment] showInfoMomentView:moment];
+            break;
     }
 }
 
