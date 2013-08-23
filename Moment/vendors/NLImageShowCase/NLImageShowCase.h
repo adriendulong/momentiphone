@@ -57,6 +57,7 @@
 @property (nonatomic, strong) NSMutableArray* itemsInShowCase;
 @property (nonatomic, readwrite) BOOL deleteMode;
 @property (nonatomic, strong) UIScrollView *scrollView;
+- (void)updateItemsShowCaseWithSize:(NSInteger)size atStart:(BOOL)atStart;
 - (void)updateItemsShowCaseWithSize:(NSInteger)size;
 - (BOOL)addImage:(UIImage*)image atIndex:(NSInteger)index isPlusButton:(BOOL)plusButton isPrintButton:(BOOL)printButton;
 - (id)setDataSource:(id<NLImageViewDataSource>)dataSource;

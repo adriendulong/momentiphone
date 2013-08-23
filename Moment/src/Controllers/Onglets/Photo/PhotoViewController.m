@@ -950,11 +950,16 @@ withRootViewController:(UIViewController *)rootViewController
     NSInteger nouvelleTaille = [self.photos count] + totalImages + 1; // Anciennes + Nouvelle + PLUS_BUTTON
 #ifdef ACTIVE_PRINT_MODE
     nouvelleTaille += (nouvelleTaille > PHOTOVIEW_PRINT_BUTTON_INDEX)? 1 : 0; // Si on atteint PRINT, on ajoute
-#endif
-    [self.imageShowCase updateItemsShowCaseWithSize:nouvelleTaille];
+#endif    
+    
+    // Il faut forcer l'appel dans le Thread Principal pour que l'UI puisse être modifié
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.imageShowCase updateItemsShowCaseWithSize:nouvelleTaille atStart:YES];
+    });
     
     overlayStatusBar.progress = 0;
     __block NSInteger actualIndex = 0;
+    __block NSInteger actualIndexForViewManipulation = 0;
     
     dismissUploadPreparingHUD = YES;
     
@@ -1014,32 +1019,29 @@ withRootViewController:(UIViewController *)rootViewController
                 
                 overlayStatusBar.progress = 0;
                 [overlayStatusBar postMessage:string];
-                //overlayStatusBar.progress = (float)index/totalImages;
             }
+            
+            // Incrémentation de l'index
+            actualIndexForViewManipulation++;
             
             // Si on est sur la page de chargement de photo
             UIViewController *actualViewController = [AppDelegate actualViewController];
             if(actualViewController == self) {
-                // Scroll to bottom
+                // Scroll to top
                 UIScrollView *scrollView = self.imageShowCase.scrollView;
-                [scrollView scrollRectToVisible:CGRectMake(0, scrollView.contentSize.height - scrollView.frame.size.height, 320, scrollView.frame.size.height) animated:YES];
+                [scrollView scrollRectToVisible:CGRectMake(0, 0, 320, scrollView.frame.size.height) animated:YES];
                 
             }
             
             // Save photo and update view
-            //NSLog(@"Save photo and update view");
-            [self.photos addObject:photo];
-            
+            [self.photos insertObject:photo atIndex:(actualIndexForViewManipulation-1)];
             
             //NSLog(@"loadImageThumbnailWithPhoto starting...");
             [self loadImageThumbnailWithPhoto:photo withEnded:^(UIImage *image) {
                 
-                NSInteger index = [self.photos count];
-                index = [self convertIndexForCurrentStyle:index];
+                NSInteger index = [self convertIndexForCurrentStyle:actualIndexForViewManipulation];
                 
                 if (image) {
-                    //NSLog(@"loadImageThumbnailWithPhoto | L'image n°%i existe.",index);
-                    
                     // Update Photo View
                     [self.imageShowCase addImage:image atIndex:index isPlusButton:NO isPrintButton:NO];
                     
@@ -1047,19 +1049,10 @@ withRootViewController:(UIViewController *)rootViewController
                     CGSize size = self.bigPhotoViewController.photoScrollView.contentSize;
                     size.width = [self.photos count]*self.bigPhotoViewController.photoScrollView.frame.size.width;
                     self.bigPhotoViewController.photoScrollView.contentSize = size;
-                    
-                    // Update Vue InfoMoment
-                    //NSLog(@"On reload la vue...");
-                    //[self.rootViewController.infoMomentViewController reloadData];
-                    
+                                        
                     // Update BigPhoto Background
-                    //NSLog(@"On reload le updateBackground de bigPhotoViewController...");
                     [self.bigPhotoViewController updateBackground];
-                    
-                    //NSLog(@"On a normalement fini cette image...");
-                }/* else {
-                    NSLog(@"L'image n°%i n'existe pas...",index);
-                }*/
+                }
             }];
             
             //NSLog(@"On reload la vue...");
