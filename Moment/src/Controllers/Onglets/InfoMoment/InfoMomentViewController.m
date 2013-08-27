@@ -1030,10 +1030,6 @@ static CGFloat DescriptionBoxHeightMax = 100;
 {
     [self initAddPhotosView];
     
-    NSLog(@"initPhotosView | self.nb_photos_in_moment = %@", self.nb_photos_in_moment);
-    
-    NSLog(@"On lance la vue avec les miniatures.");
-    
     static InfoMomentSeparateurView *separator = nil;
     
     if(separator) {
@@ -1104,19 +1100,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
 }
 
 - (void)initAddPhotosView
-{
-    NSLog(@"On lance la vue avec le bouton d'ajout.");
-    
-    /*static InfoMomentSeparateurView *separator = nil;
-    
-    if(separator) {
-        [separator removeFromSuperview];
-    }
-    
-    // Sparateur
-    separator = [[InfoMomentSeparateurView alloc] initAtPosition:(55 + 5)];
-    [self.addPhotosView addSubview:separator];*/
-    
+{    
     [self.addPhotosButton setBackgroundImage:[[UIImage imageNamed:@"add_photo_button.png"]
                                               stretchableImageWithLeftCapWidth:8.0f
                                               topCapHeight:0.0f]
@@ -1127,8 +1111,6 @@ static CGFloat DescriptionBoxHeightMax = 100;
     
     if (firstLoad) {
         [self.addPhotosButton addTarget:self action:@selector(clicAddPhotoView) forControlEvents:UIControlEventTouchUpInside];
-        
-        //[self.photosView addSubview:self.addPhotosView];
     }
 }
 
@@ -1262,15 +1244,6 @@ static CGFloat DescriptionBoxHeightMax = 100;
     if([self.moment.owner.userId isEqualToNumber:[UserCoreData getCurrentUser].userId]) {
 
         if(firstLoad) {
-            /*UIFont *font = [[Config sharedInstance] defaultFontWithSize:10];
-             for( UILabel *label in self.comingSoonCagnotteLabels) {
-             label.font = font;
-             }
-             
-             font = [[Config sharedInstance] defaultFontWithSize:11];
-             self.cagnotteCourseLabel.font = font;
-             self.cagnotteCagnotteLabel.font = font;
-             self.cagnotteCompteLabel.font = font;*/
             
             [self.deleteMomentButton setBackgroundImage:[[UIImage imageNamed:@"delete_button.png"]
                                                    stretchableImageWithLeftCapWidth:8.0f
@@ -1512,8 +1485,6 @@ static CGFloat DescriptionBoxHeightMax = 100;
             self.momentImageView.imageString = nil;
             
             self.nb_photos_in_moment = self.moment.nb_photos;
-            
-            NSLog(@"Nouveau nombre de photo = %@", self.nb_photos_in_moment);
             
             [self initTitreView];
             [self initRsvpView];
