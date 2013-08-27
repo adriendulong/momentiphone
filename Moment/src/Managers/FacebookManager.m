@@ -40,7 +40,7 @@ static NSString *kFbPermissionUserEvents = @"user_events";
 static NSString *kFbPermissionRsvpEvent = @"rsvp_event";
 static NSString *kFbPermissionPublishAction = @"publish_actions";
 static NSString *kFbPermissionPublishStream = @"publish_stream";
-static NSString *kFbPermissionPhotoUpload = @"photo_upload";
+//static NSString *kFbPermissionPhotoUpload = @"photo_upload";
 
 
 #pragma mark - Singleton
@@ -128,7 +128,7 @@ static FacebookManager *sharedInstance = nil;
                 [self sessionStateChanged:session state:status error:error];
                 
                 if(error) {
-                    //NSLog(@"Facebook Login Error : %@", error.localizedDescription);
+                    NSLog(@"Facebook Login Error : %@", error.localizedDescription);
                     if(block)
                         block(NO);
                 }
@@ -242,7 +242,7 @@ static FacebookManager *sharedInstance = nil;
 {
     
     // Ask only for knew permissions
-    NSMutableArray *newPermissions = [[NSMutableArray alloc] init];
+    NSMutableArray *newPermissions = [NSMutableArray array];
     for( NSString *perm in permisions)
     {
         if( [FBSession.activeSession.permissions indexOfObject:perm] == NSNotFound ) {
@@ -291,7 +291,10 @@ static FacebookManager *sharedInstance = nil;
 }
 
 - (void)askForPermissions:(NSArray*)permisions type:(enum FacebookPermissionType)type withEnded:( void (^) (BOOL success) )block
-{    
+{
+    
+    //NSLog(@"permissions = %@", permisions);
+    
     if ( !FBSession.activeSession.isOpen ) {
         [self loginWithPermissions:permisions type:type withEnded:block];
     }
@@ -308,7 +311,7 @@ static FacebookManager *sharedInstance = nil;
     if(block)
     {
         // Ask Permissions for Events
-        [self askForPermissions:@[] type:FacebookPermissionReadType withEnded:^(BOOL success) {
+        [self askForPermissions:@[kFbPermissionBasicInfo] type:FacebookPermissionReadType withEnded:^(BOOL success) {
             
             // Permissions Obtenue
             if(success)
@@ -435,7 +438,7 @@ static FacebookManager *sharedInstance = nil;
     if(block)
     {
         // Ask Permissions for Events
-        [self askForPermissions:@[] type:FacebookPermissionReadType withEnded:^(BOOL success) {
+        [self askForPermissions:@[kFbPermissionBasicInfo] type:FacebookPermissionReadType withEnded:^(BOOL success) {
             
             // Permissions Obtenue
             if(success)
@@ -561,11 +564,11 @@ static FacebookManager *sharedInstance = nil;
     [self updateCurrentUserFacebookIdOnServer:^(BOOL success) {
         
         // Ask For Permissions
-        [self askForPermissions:@[kFbPermissionEmail] type:FacebookPermissionReadType withEnded:^(BOOL success) {
+        [self askForPermissions:@[kFbPermissionBasicInfo] type:FacebookPermissionReadType withEnded:^(BOOL success) {
             
             if (success) {
                 // Permissions
-                [self askForPermissions:@[kFbPermissionFriendAboutMe ,kFbPermissionFriendHomeTown, kFbPermissionFriendLocation]
+                [self askForPermissions:[self defaultReadPermissions]
                                    type:FacebookPermissionReadType
                               withEnded:^(BOOL success) {
                                   
@@ -716,11 +719,11 @@ static FacebookManager *sharedInstance = nil;
     if(block)
     {
         // Ask For Permissions
-        [self askForPermissions:@[kFbPermissionEmail] type:FacebookPermissionReadType withEnded:^(BOOL success) {
+        [self askForPermissions:@[kFbPermissionBasicInfo] type:FacebookPermissionReadType withEnded:^(BOOL success) {
             
             if (success) {
                 // Ask Permissions for Events
-                [self askForPermissions:@[kFbPermissionUserEvents] type:FacebookPermissionReadType
+                [self askForPermissions:[self defaultReadPermissions] type:FacebookPermissionReadType
                               withEnded:^(BOOL success) {
                                   
                                   // Permissions Obtenue
@@ -966,11 +969,11 @@ static FacebookManager *sharedInstance = nil;
     if(moment.facebookId && user.facebookId )
     {
         // Ask For Permissions
-        [self askForPermissions:@[kFbPermissionEmail] type:FacebookPermissionReadType withEnded:^(BOOL success) {
+        [self askForPermissions:@[kFbPermissionBasicInfo] type:FacebookPermissionReadType withEnded:^(BOOL success) {
             
             if (success) {
                 // Ask For Permission
-                [self askForPermissions:@[kFbPermissionRsvpEvent] type:FacebookPermissionReadType withEnded:^(BOOL success) {
+                [self askForPermissions:[self defaultReadPermissions] type:FacebookPermissionReadType withEnded:^(BOOL success) {
                     
                     // Get Permission
                     if (success) {
@@ -1065,11 +1068,11 @@ static FacebookManager *sharedInstance = nil;
         if(path)
         {
             // Ask For Permissions
-            [self askForPermissions:@[kFbPermissionEmail] type:FacebookPermissionReadType withEnded:^(BOOL success) {
+            [self askForPermissions:@[kFbPermissionBasicInfo] type:FacebookPermissionReadType withEnded:^(BOOL success) {
                 
                 if (success) {
                     // Ask For Permission
-                    [self askForPermissions:@[kFbPermissionRsvpEvent] type:FacebookPermissionPublishType withEnded:^(BOOL success) {
+                    [self askForPermissions:[self defaultPublishPermissions] type:FacebookPermissionPublishType withEnded:^(BOOL success) {
                         
                         // Get Permission
                         if(success) {
@@ -1117,10 +1120,10 @@ static FacebookManager *sharedInstance = nil;
 - (void)getPublishPermissions
 {
     // Ask For Permissions
-    [self askForPermissions:@[kFbPermissionEmail] type:FacebookPermissionReadType withEnded:^(BOOL success) {
+    [self askForPermissions:@[kFbPermissionBasicInfo] type:FacebookPermissionReadType withEnded:^(BOOL success) {
         
         if (success) {
-            [self askForPermissions:@[kFbPermissionPublishAction, kFbPermissionPublishStream, kFbPermissionPhotoUpload, kFbPermissionRsvpEvent]
+            [self askForPermissions:[self defaultPublishPermissions]
                                type:FacebookPermissionPublishType
                           withEnded:^(BOOL success) {
                               
@@ -1137,12 +1140,12 @@ static FacebookManager *sharedInstance = nil;
     if(params)
     {
         // Ask For Permissions
-        [self askForPermissions:@[kFbPermissionEmail] type:FacebookPermissionReadType withEnded:^(BOOL success) {
+        [self askForPermissions:@[kFbPermissionBasicInfo] type:FacebookPermissionReadType withEnded:^(BOOL success) {
             
             // Success
             if(success) {
                 // Ask For Permissions
-                [self askForPermissions:@[kFbPermissionPublishAction, kFbPermissionPublishStream] type:FacebookPermissionPublishType withEnded:^(BOOL success) {
+                [self askForPermissions:[self defaultPublishPermissions] type:FacebookPermissionPublishType withEnded:^(BOOL success) {
                     
                     // Success
                     if(success) {
@@ -1226,11 +1229,11 @@ static FacebookManager *sharedInstance = nil;
     if(moment.facebookId && params)
     {
         // Ask For Permissions
-        [self askForPermissions:@[kFbPermissionEmail] type:FacebookPermissionReadType withEnded:^(BOOL success) {
+        [self askForPermissions:@[kFbPermissionBasicInfo] type:FacebookPermissionReadType withEnded:^(BOOL success) {
             
             if (success) {
                 // Ask For Permissions
-                [self askForPermissions:@[kFbPermissionPublishAction, kFbPermissionPublishStream] type:FacebookPermissionPublishType withEnded:^(BOOL success) {
+                [self askForPermissions:[self defaultPublishPermissions] type:FacebookPermissionPublishType withEnded:^(BOOL success) {
                     
                     // Success
                     if(success) {
@@ -1325,16 +1328,20 @@ static FacebookManager *sharedInstance = nil;
         _defaultReadPermissions = @[kFbPermissionBasicInfo,
                                     kFbPermissionEmail,
                                     kFbPermissionAboutMe,
+                                    kFbPermissionUserEvents,
                                     kFbPermissionFriendLists,
-                                    kFbPermissionFriendLocation,
-                                    kFbPermissionFriendHomeTown];
+                                    kFbPermissionFriendAboutMe,
+                                    kFbPermissionFriendHomeTown,
+                                    kFbPermissionFriendLocation];
     }
     return _defaultReadPermissions;
 }
 
 - (NSArray*)defaultPublishPermissions {
     if(!_defaultPublishPermissions) {
-        _defaultPublishPermissions = @[kFbPermissionPublishAction];
+        _defaultPublishPermissions = @[kFbPermissionRsvpEvent,
+                                       kFbPermissionPublishAction,
+                                       kFbPermissionPublishStream];
     }
     return _defaultPublishPermissions;
 }
