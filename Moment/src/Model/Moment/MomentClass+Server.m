@@ -239,7 +239,7 @@
                     if(block)
                         block(nil, nil);
                 }
-                else if([events count] == 0) {
+                else if(events.count == 0) {
                     if(block)
                         block(events, nil);
                 }
@@ -294,7 +294,7 @@
                              
                              
                              // ----- Ajouter en tant qu'invité aux moments déjà existant -> Requete de création ----
-                             i = 0;
+                             __block int j = 0;
                              [MomentClass createMultipleMomentsFromLocalToServerWithMoments:moments_exist
                                                                              withTransition:
                               ^(MomentClass *moment) {
@@ -310,10 +310,10 @@
                                       if(moment)
                                       {
                                           // Update moments with server attributes
-                                          [moments_exist replaceObjectAtIndex:i withObject:moment];
+                                          [moments_exist replaceObjectAtIndex:j withObject:moment];
                                       }
                                   }
-                                  i++;
+                                  j++;
                                   
                               } withEnded:^{
                                   
