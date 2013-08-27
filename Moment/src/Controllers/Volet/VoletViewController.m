@@ -29,6 +29,7 @@ static VoletViewController *actualVoletViewController;
     @private
     BOOL isEmpty;
     BOOL isShowingInvitations;
+    BOOL alreadyPushSearchView;
     int nbNewInvitations;
     int nbNewNotifications;
     int nbNewNotificationsShowing;
@@ -69,6 +70,7 @@ static VoletViewController *actualVoletViewController;
         self.rootTimeLine = rootTimeLine;
         isEmpty = YES;
         isShowingInvitations = NO;
+        alreadyPushSearchView = NO;
         self.notifications = [NSMutableArray array];
         self.invitations = [NSMutableArray array];
         nbNewInvitations = nbNewNotifications = 0;
@@ -680,15 +682,17 @@ static VoletViewController *actualVoletViewController;
 
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
 {
-    // Google Analytics
-    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Recherche" value:nil];
-    
-    CATransition *transition = [CATransition animation];
-    transition.duration = 0.3f;
-    transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
-    transition.type = kCATransitionFade;
-    [self.delegate.navigationController.view.layer addAnimation:transition forKey:@"VoletSearchAnimation"];
-    [self.delegate.navigationController pushViewController:self.searchViewController animated:NO];
+    if (!alreadyPushSearchView) {
+        // Google Analytics
+        [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Recherche" value:nil];
+        
+        CATransition *transition = [CATransition animation];
+        transition.duration = 0.3f;
+        transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+        transition.type = kCATransitionFade;
+        [self.delegate.navigationController.view.layer addAnimation:transition forKey:@"VoletSearchAnimation"];
+        [self.delegate.navigationController pushViewController:self.searchViewController animated:NO];
+    }
         
     return NO;
 }
