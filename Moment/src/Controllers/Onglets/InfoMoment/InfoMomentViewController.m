@@ -417,7 +417,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
     }
     else
         self.avatarImage.image = cropped;
-    [self.avatarImage addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(clicProfile)]];
+    //[self.avatarImage addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(clicProfile)]];
     
     // Owner Description
     self.ownerNameLabel.text =  [NSString stringWithFormat:@"%@ %@ %@", NSLocalizedString(@"Words_by", nil), self.moment.owner.prenom?:@"", self.moment.owner.nom?:@""];
@@ -553,6 +553,10 @@ static CGFloat DescriptionBoxHeightMax = 100;
                 self.rsvpNoButton.selected = NO;
                 break;
         }
+        
+        // Change le bouton dans la top view
+        expandingBarState = state;
+        expandingBarNeedUpdate = YES;
         
         // Text
         self.rsvpLabel.text = message;
