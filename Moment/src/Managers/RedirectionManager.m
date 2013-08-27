@@ -105,6 +105,9 @@ static RedirectionManager *sharedInstance = nil;
                 } else {
                     [self pushToCorrectControllerFrom:actualView withType:type andMoment:moment];
                 }
+            } else {
+                UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Problème de redirection" message:@"Cet évènement n'existe pas." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                [alertView show];
             }
         } waitUntilFinished:YES];
     }

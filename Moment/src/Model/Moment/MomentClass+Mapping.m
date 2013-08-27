@@ -76,6 +76,10 @@ static NSDateFormatter *smallDateFormatter = nil;
             return attributes;
         }
         
+        if (!attributes[@"id"] || !attributes[@"name"]) {
+            return nil;
+        }
+        
         NSMutableDictionary *dico = @{
                                       @"ios_mapping":@"LOCAL",
                                       @"momentId":attributes[@"id"],
