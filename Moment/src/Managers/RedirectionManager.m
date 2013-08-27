@@ -27,14 +27,14 @@ static RedirectionManager *sharedInstance = nil;
 - (void)redirectSchemeFromURL:(NSURL *)url withApplicationState:(UIApplicationState)state
 {
     
-    if (url && url.absoluteString.length > 0) {
+    if (url && url.absoluteString.length > 0 && url.pathComponents[1]) {
         
-        NSString *host = url.host.pathComponents[0];
+        NSString *momentString = url.host;
         NSString *onglet = url.pathComponents[1];
         
         NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
         [numberFormatter setNumberStyle:NSNumberFormatterDecimalStyle];
-        NSNumber *momentId = [numberFormatter numberFromString:host];
+        NSNumber *momentId = [numberFormatter numberFromString:momentString];
         
         
         if (momentId) {

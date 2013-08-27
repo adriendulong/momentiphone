@@ -100,6 +100,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
     if(self) {
         
         self.moment = moment;
+        //NSLog(@"momentId = %@",self.moment.momentId);
         self.nb_photos_in_moment = moment.nb_photos;
         self.user = [UserCoreData getCurrentUser];
         self.rootViewController = rootViewController;
