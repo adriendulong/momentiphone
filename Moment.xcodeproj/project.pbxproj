@@ -5429,7 +5429,6 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(SRCROOT)/TestFlightSDK1",
 					"\"$(SRCROOT)/GoogleAnalyticsiOS_2.0beta4\"",
 					"\"$(SRCROOT)/TestFlightSDK2.0.0\"",
 				);
@@ -5449,8 +5448,8 @@
 		5BF02E93169C8F7500232E75 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)\"",
@@ -5467,7 +5466,6 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(SRCROOT)/TestFlightSDK1",
 					"\"$(SRCROOT)/GoogleAnalyticsiOS_2.0beta4\"",
 					"\"$(SRCROOT)/TestFlightSDK2.0.0\"",
 				);

@@ -22,7 +22,7 @@
 		</dict>
 	</dict>
 	<key>CFBundleIdentifier</key>
-	<string>com.devappmoment.${PRODUCT_NAME:rfc1034identifier}</string>
+	<string>com.appMoment.${PRODUCT_NAME:rfc1034identifier}</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
@@ -45,7 +45,7 @@
 			<key>CFBundleURLIconFile</key>
 			<string>Icon</string>
 			<key>CFBundleURLName</key>
-			<string>com.devappmoment.Moment</string>
+			<string>com.appMoment.Moment</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>moment</string>
@@ -55,9 +55,9 @@
 	<key>CFBundleVersion</key>
 	<string>1.2</string>
 	<key>FacebookAppID</key>
-	<string>539966336039230</string>
+	<string>445031162214877</string>
 	<key>FacebookDisplayName</key>
-	<string>DevAppMoment</string>
+	<string>Moment</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UIAppFonts</key>
