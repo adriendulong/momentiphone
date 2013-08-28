@@ -1985,7 +1985,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
         if (buttonIndex == 1) {
             
             [[FacebookManager sharedInstance] getTagsFromMoment:self.moment withEnded:^(NSString *tags) {
-                NSLog(@"alertView clickedButtonAtIndex | tags = %@", tags);
+                //NSLog(@"alertView clickedButtonAtIndex | tags = %@", tags);
                 
                 [[FacebookManager sharedInstance] postRSVPOnWall:self.moment action:@"Participe" tags:tags withEnded:^(BOOL success) {
                     if (success) {

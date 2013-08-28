@@ -914,6 +914,8 @@ static FacebookManager *sharedInstance = nil;
     if (moment) {
         [moment getInvitedUsersWithEnded:^(NSDictionary *invites) {
             
+            //NSLog(@"invites = %@",invites);
+            
             if(invites) {
                 NSMutableArray *usersArray = [NSMutableArray array];
                 
@@ -922,6 +924,9 @@ static FacebookManager *sharedInstance = nil;
                 // Construction listes
                 NSMutableArray *comingList = [NSMutableArray array];
                 [comingList addObjectsFromArray:invites[@"coming"]];
+                [comingList addObjectsFromArray:invites[@"maybe"]];
+                [comingList addObjectsFromArray:invites[@"unknown"]];
+                
                 if(invites[@"owner"])
                     [comingList addObject:invites[@"owner"]];
                 [comingList addObjectsFromArray:invites[@"admin"]];
@@ -1216,7 +1221,7 @@ static FacebookManager *sharedInstance = nil;
                         // Completion Handler
                         [connection addRequest:request completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
                             if(block) {
-                                NSLog(@"postRSVPOnWall | error = %@",error.localizedDescription);
+                                //NSLog(@"postRSVPOnWall | error = %@",error.localizedDescription);
                                 //NSLog(@"postRSVPOnWall | result = %@",result);
                                 
                                 block(error == nil);
@@ -1247,7 +1252,7 @@ static FacebookManager *sharedInstance = nil;
              withEnded:(void (^) (BOOL success))block
 {
     if (action) {
-        NSLog(@"postRSVPOnWall | tags = %@",tags);
+        //NSLog(@"postRSVPOnWall | tags = %@",tags);
         
         if (tags) {
             [self postRSVPOnWall:moment action:action parameters:@{@"evenement":moment.uniqueURL,@"tags":tags} withEnded:^(BOOL success) {
