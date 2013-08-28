@@ -20,7 +20,7 @@
 "TutorialViewController_downloadPhotoPage2" = "Téléchargez toutes les photos\ndirectement sur votre téléphone !";
 
 // PAGE 3
-"TutorialViewController_titlePage3" = "PRÉPAREZ ET DISCUTEZ AVEC TOUS VOS PROCHES DANS LE CHAT DE L'ÉVÈNEMENT.";
+"TutorialViewController_titlePage3" = "PRÉPAREZ ET DISCUTEZ AVEC TOUS VOS PROCHES DANS LE TCHAT DE L'ÉVÈNEMENT.";
 "TutorialViewController_message1Page3" = "C'EST QUOI LE CODE DE LA PORTE ?";
 "TutorialViewController_dateMessage1Page3" = "Nico F. 3 août 2013";
 "TutorialViewController_hourMessage1Page3" = "19:47";
@@ -139,7 +139,7 @@
 
 /* ---------------- ChatViewController ------------------ */
 // Empty Cell
-"ChatViewController_EmptyCell_label" = "Aucun message pour le moment, alors allez y, lancez vous ! Une blague, une info, un scoop, ce chat est fait pour ça.";
+"ChatViewController_EmptyCell_label" = "Aucun message pour le moment, alors allez y, lancez vous ! Une blague, une info, un scoop, ce tchat est fait pour ça.";
 // SendBoxView
 "ChatViewController_SendBoxView_placeHolder" = "Tapez votre message ici !";
 // Infinite Scroll
@@ -191,7 +191,7 @@
 "TimeLineViewController_Overlay_Label3" = "Crée un moment ou";
 "TimeLineViewController_Overlay_Label4" = "importe tes events Facebook !";
 /*"TimeLineViewController_Overlay_Label5" = "Consulte l'activité évènementielle";
-"TimeLineViewController_Overlay_Label6" = "de tes proches !";*/
+ "TimeLineViewController_Overlay_Label6" = "de tes proches !";*/
 
 /* --------------- InfoMomentViewController --------------- */
 "InfoMomentViewController_RSVP_Yes" = "Je serais présent au moment ...";
@@ -206,7 +206,7 @@
 
 /* --------------- RootOngletsViewController --------------- */
 "RootOngletsViewController_PopTipViewPhotos_Message" = "Retrouvez toutes les photos de l'évènement ici.";
-"RootOngletsViewController_PopTipViewChat_Message" = "Et tout les chats sont là.";
+"RootOngletsViewController_PopTipViewChat_Message" = "Et tous les tchats sont là.";
 
 /* ---------------- PushNotifications ------------------ */
 // Chat
@@ -236,7 +236,7 @@
 "VoletViewController_Section_Notifications" = "NOTIFICATIONS";
 
 // Search
-"VoletSearchViewController_Placeholder_Search" = "Search";
+"VoletSearchViewController_Placeholder_Search" = "Rechercher";
 
 /* ---------------- VoletViewController ------------------ */
 
@@ -280,6 +280,9 @@
 
 "PhotoViewController_AlertView_UploadAlreadyInProgress_Title" = "Veuillez patienter";
 "PhotoViewController_AlertView_UploadAlreadyInProgress_Message" = "Un upload est déjà en cours ...";
+
+"PhotoViewController_AlertView_PhotoLoading_Title" = "Veuillez patienter";
+"PhotoViewController_AlertView_PhotoLoading_Message" = "Les photos sont en cours de chargement ...";
 
 /* ------------ BigPhotoViewController ------------- */
 // Suppression
