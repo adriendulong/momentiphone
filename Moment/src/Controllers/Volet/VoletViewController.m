@@ -29,7 +29,6 @@ static VoletViewController *actualVoletViewController;
     @private
     BOOL isEmpty;
     BOOL isShowingInvitations;
-    BOOL alreadyPushSearchView;
     int nbNewInvitations;
     int nbNewNotifications;
     int nbNewNotificationsShowing;
@@ -57,6 +56,7 @@ static VoletViewController *actualVoletViewController;
 
 @synthesize searchTextField = _searchTextField;
 @synthesize searchViewController = _searchViewController;
+@synthesize alreadyPushSearchView = _alreadyPushSearchView;
 
 + (VoletViewController*)volet {
     return actualVoletViewController;
@@ -70,7 +70,7 @@ static VoletViewController *actualVoletViewController;
         self.rootTimeLine = rootTimeLine;
         isEmpty = YES;
         isShowingInvitations = NO;
-        alreadyPushSearchView = NO;
+        self.alreadyPushSearchView = NO;
         self.notifications = [NSMutableArray array];
         self.invitations = [NSMutableArray array];
         nbNewInvitations = nbNewNotifications = 0;
@@ -682,8 +682,8 @@ static VoletViewController *actualVoletViewController;
 
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
 {
-    if (!alreadyPushSearchView) {
-        alreadyPushSearchView = YES;
+    if (!self.alreadyPushSearchView) {
+        self.alreadyPushSearchView = YES;
         
         // Google Analytics
         [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Recherche" value:nil];
