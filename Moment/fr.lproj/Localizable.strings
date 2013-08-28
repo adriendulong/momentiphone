@@ -153,6 +153,8 @@
 "MBProgressHUD_Deleting" = "Suppression en cours ...";
 "MBProgressHUD_Update" = "Mise à jour ...";
 "MBProgressHUD_UploadPreparing" = "Préparation de l'envoi ...";
+"MBProgressHUD_Finish" = "Terminé";
+"MBProgressHUD_Failure" = "Échec";
 
 /* ---------------- HomeViewController ------------------ */
 // ButtonLabel

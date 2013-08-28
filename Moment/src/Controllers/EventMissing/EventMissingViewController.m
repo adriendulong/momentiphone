@@ -615,7 +615,22 @@
         // Accepter
         if(buttonIndex == 1)
         {
-            [[FacebookManager sharedInstance] updateCurrentUserFacebookIdOnServer:nil];
+            [[FacebookManager sharedInstance] updateCurrentUserFacebookIdOnServer:^(BOOL success) {
+                
+                MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+                hud.mode = MBProgressHUDModeCustomView;
+                
+                if (success) {
+                    //hud.labelText = NSLocalizedString(@"MBProgressHUD_Reoading_Moments", nil);
+                    hud.customView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"37x-Checkmark.png"]];
+                    hud.labelText = NSLocalizedString(@"MBProgressHUD_Finish", nil);
+                } else {
+                    hud.customView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"37x-Cross.png"]];
+                    hud.labelText = NSLocalizedString(@"MBProgressHUD_Failure", nil);
+                }
+                
+                [hud hide:YES afterDelay:2];
+            }];
         }
         
     }
