@@ -148,6 +148,7 @@
 /* ---------------- MBProgressHUD ------------------ */
 "MBProgressHUD_Loading" = "Chargement...";
 "MBProgressHUD_Loading_Moments" = "Chargement des moments...";
+"MBProgressHUD_Reoading_Moments" = "Rechargement des moments...";
 "MBProgressHUD_Loading_Login" = "Connexion ...";
 "MBProgressHUD_Deleting" = "Suppression en cours ...";
 "MBProgressHUD_Update" = "Mise à jour ...";

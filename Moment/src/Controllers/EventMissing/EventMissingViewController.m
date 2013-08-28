@@ -66,10 +66,53 @@
     if(self) {
         self.delegate = delegate;
         
-        [CustomNavigationController setBackButtonWithViewController:self];
+        [self initNavigationBar];
     }
     return self;
 }
+
+#pragma mark - NavigationBar
+
+- (void)initNavigationBar
+{
+    [CustomNavigationController setBackButtonWithViewController:self];
+    
+    UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
+    UIImage *img = [UIImage imageNamed:@"btn-back.png"];
+    
+    button.frame = CGRectMake(0, 0, img.size.width, img.size.height);
+    
+    [button setImage:img forState:UIControlStateNormal];
+    [button setImage:img forState:UIControlStateSelected];
+    
+    [button removeTarget:self.navigationController action:@selector(popViewControllerAnimated:) forControlEvents:UIControlEventTouchUpInside];
+    [button addTarget:self action:@selector(confirmBack) forControlEvents:UIControlEventTouchUpInside];
+    
+    UIBarButtonItem *barBackItem = [[UIBarButtonItem alloc] initWithCustomView:button];
+    
+    self.navigationItem.hidesBackButton = YES;
+    self.navigationItem.leftBarButtonItem = barBackItem;
+}
+
+- (void)confirmBack
+{
+    [self.navigationController popToRootViewControllerAnimated:YES];
+    
+    UIViewController *actualView = [AppDelegate actualViewController];
+    
+    if ([actualView isKindOfClass:[RootTimeLineViewController class]]) {
+        RootTimeLineViewController *rootTimeline = (RootTimeLineViewController *)actualView;
+        
+        MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:rootTimeline.view animated:YES];
+        hud.labelText = NSLocalizedString(@"MBProgressHUD_Reoading_Moments", nil);
+        
+        [rootTimeline.privateTimeLine reloadDataWithWaitUntilFinished:YES withEnded:^(BOOL success) {
+            [MBProgressHUD hideHUDForView:rootTimeline.view animated:YES];
+        }];
+    }
+}
+
+#pragma mark - View manager
 
 - (void)viewWillAppear:(BOOL)animated
 {
