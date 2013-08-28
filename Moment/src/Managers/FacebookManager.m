@@ -128,7 +128,7 @@ static FacebookManager *sharedInstance = nil;
                 [self sessionStateChanged:session state:status error:error];
                 
                 if(error) {
-                    NSLog(@"Facebook Login Error : %@", error.localizedDescription);
+                    //NSLog(@"Facebook Login Error : %@", error.localizedDescription);
                     if(block)
                         block(NO);
                 }
@@ -373,12 +373,16 @@ static FacebookManager *sharedInstance = nil;
                          NSLog(@"Connection = %@", connection);
                           */
                          
-                         [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error_Title", nil)
+                         /*[[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error_Title", nil)
                                                      message:[error localizedDescription]
                                                     delegate:nil
                                            cancelButtonTitle:nil
                                            otherButtonTitles:NSLocalizedString(@"OK", nil), nil]
-                          show];
+                          show];*/
+                         
+                         /*[[MTStatusBarOverlay sharedInstance] postImmediateErrorMessage:@"Erreur Facebook"
+                                                                                duration:2.0
+                                                                                animated:YES];*/
                          
                          if (block) {
                              block(nil);
@@ -389,12 +393,17 @@ static FacebookManager *sharedInstance = nil;
             }
             // Permission refusée
             else {
-                [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error_Title", nil)
+                /*[[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error_Title", nil)
                                             message:@"Erreur lors de l'obtention des permissions"
                                            delegate:nil
                                   cancelButtonTitle:nil
                                   otherButtonTitles:NSLocalizedString(@"OK", nil), nil]
-                 show];
+                 show];*/
+                
+                
+                /*[[MTStatusBarOverlay sharedInstance] postImmediateErrorMessage:@"Permissions Facebook refusées"
+                                                                      duration:2.0
+                                                                      animated:YES];*/
             }
             
         }];
@@ -502,12 +511,16 @@ static FacebookManager *sharedInstance = nil;
                          NSLog(@"Connection = %@", connection);
                           */
                          
-                         [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error_Title", nil)
+                         /*[[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error_Title", nil)
                                                      message:[error localizedDescription]
                                                     delegate:nil
                                            cancelButtonTitle:nil
                                            otherButtonTitles:NSLocalizedString(@"OK", nil), nil]
-                          show];
+                          show];*/
+                         
+                         /*[[MTStatusBarOverlay sharedInstance] postImmediateErrorMessage:@"Erreur Facebook"
+                                                                               duration:2.0
+                                                                               animated:YES];*/
                          
                          if (block) {
                              block(nil);
@@ -518,12 +531,16 @@ static FacebookManager *sharedInstance = nil;
             }
             // Permission refusée
             else {
-                [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error_Title", nil)
+                /*[[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error_Title", nil)
                                             message:@"Erreur lors de l'obtention des permissions"
                                            delegate:nil
                                   cancelButtonTitle:nil
                                   otherButtonTitles:NSLocalizedString(@"OK", nil), nil]
-                 show];
+                 show];*/
+                
+                /*[[MTStatusBarOverlay sharedInstance] postImmediateErrorMessage:@"Permissions Facebook refusées"
+                                                                      duration:2.0
+                                                                      animated:YES];*/
             }
             
         }];
@@ -864,6 +881,10 @@ static FacebookManager *sharedInstance = nil;
                                        otherButtonTitles:NSLocalizedString(@"OK", nil), nil]
                                        show];
                                        */
+                                      
+                                      /*[[MTStatusBarOverlay sharedInstance] postImmediateErrorMessage:@"Permissions Facebook refusées"
+                                                                                            duration:2.0
+                                                                                            animated:YES];*/
                                   }
                                   
                               }];
@@ -1451,12 +1472,14 @@ static FacebookManager *sharedInstance = nil;
             // Autre Erreur
             default:
                 
-                alertView = [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"Error: %@",
+                /*alertView = [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"Error: %@",
                                                                 [FacebookManager FBErrorCodeDescription:error.code]]
                                                        message:error.localizedDescription
                                                       delegate:nil
                                              cancelButtonTitle:NSLocalizedString(@"AlertView_Button_OK", nil)
-                                             otherButtonTitles:nil];
+                                             otherButtonTitles:nil];*/
+                NSLog(@"%@ : %@", [NSString stringWithFormat:@"Error: %@",
+                                   [FacebookManager FBErrorCodeDescription:error.code]], error.localizedDescription);
                 
                 break;
         }
