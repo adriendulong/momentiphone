@@ -24,7 +24,7 @@ enum SchemeType {
 + (RedirectionManager *)sharedInstance;
 
 #pragma mark - Parse URL
-- (void)redirectSchemeFromURL:(NSURL *)url withApplicationState:(UIApplicationState)state;
+- (BOOL)handleOpenURL:(NSURL *)url withApplicationState:(UIApplicationState)state;
 
 #pragma mark Receive Redirection
 - (void)sendRedirectionToMomentWithId:(NSNumber *)momentId withType:(int)type andWithApplicationState:(UIApplicationState)state;

@@ -24,7 +24,7 @@ static RedirectionManager *sharedInstance = nil;
 }
 
 #pragma mark - Parse URL
-- (void)redirectSchemeFromURL:(NSURL *)url withApplicationState:(UIApplicationState)state
+- (BOOL)handleOpenURL:(NSURL *)url withApplicationState:(UIApplicationState)state
 {
     
     if (url && url.absoluteString.length > 0 && url.pathComponents[1]) {
@@ -51,14 +51,23 @@ static RedirectionManager *sharedInstance = nil;
                 
                 UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Redirection inconnue" message:@"Le scheme est incorrect." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
                 [alertView show];
+                
+                return NO;
             }
             
-            if (type)
+            if (type) {
                 [self sendRedirectionToMomentWithId:momentId withType:type andWithApplicationState:state];
+                
+                return YES;
+            }
         } else {
             UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Problème de redirection" message:@"Le premier attribut n'est pas un nombre." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
             [alertView show];
+            
+            return NO;
         }
+    } else {
+        return NO;
     }
 }
 

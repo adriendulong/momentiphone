@@ -82,10 +82,13 @@
   sourceApplication:(NSString *)sourceApplication
          annotation:(id)annotation
 {
-    [[RedirectionManager sharedInstance] redirectSchemeFromURL:url withApplicationState:application.applicationState];
     
-    // attempt to extract a token from the url
-    return [[FBSession activeSession] handleOpenURL:url];
+    if ([sourceApplication isEqualToString:@"com.facebook.Facebook"]) {
+        // attempt to extract a token from the url
+        return [[FBSession activeSession] handleOpenURL:url];
+    } else {
+        return [[RedirectionManager sharedInstance] handleOpenURL:url withApplicationState:application.applicationState];
+    }
 }
 
 #pragma mark - AppDelegate
