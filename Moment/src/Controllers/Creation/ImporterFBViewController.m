@@ -47,7 +47,10 @@
         
         if (events && moments) {
             
-            int nbEvent = [events count];
+            //NSLog(@"events = %i", events.count);
+            //NSLog(@"moments = %i", moments.count);
+            
+            int nbEvent = events.count;
             
             if (nbEvent > 0) {
                 
@@ -69,8 +72,12 @@
                             
                             [[FacebookManager sharedInstance] createUsersFromFacebookInvited:e.invited withEnded:^(NSArray *users) {
                                 if (users != nil && users.count > 0) {
+                                    //NSLog(@"Nb users = %i",users.count);
                                     
-                                    [moment inviteNewGuest:users withEnded:nil];
+                                    NSArray *truncate_users = [users subarrayWithRange:NSMakeRange(0, 500)];
+                                    //NSLog(@"Nb truncate users = %i",truncate_users.count);
+                                    
+                                    [moment inviteNewGuest:truncate_users withEnded:nil];
                                 }
                             }];
                         }
@@ -86,7 +93,7 @@
             [self.timeLine reloadData];
         }
         // Tableau vide retourné -> Aucun Event n'a été renvoyé par Facebook
-        else if(events && [events count] == 0) {
+        else if(events && events.count == 0) {
             [[MTStatusBarOverlay sharedInstance]
              postFinishMessage:NSLocalizedString(@"StatusBarOverlay_ImportFacebookEvent_noResult", nil)
              duration:2 animated:YES];
@@ -94,7 +101,7 @@
         else {
             [[MTStatusBarOverlay sharedInstance]
              postImmediateErrorMessage:NSLocalizedString(@"StatusBarOverlay_LoadingFailure", nil)
-             duration:1 animated:YES];
+             duration:2 animated:YES];
         }
         
         [MBProgressHUD hideHUDForView:self.view animated:YES];

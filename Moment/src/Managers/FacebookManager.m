@@ -767,6 +767,8 @@ static FacebookManager *sharedInstance = nil;
         [self askForPermissions:@[kFbPermissionBasicInfo] type:FacebookPermissionReadType withEnded:^(BOOL success) {
             
             if (success) {
+                //NSLog(@"askForPermissions - Basic - YES");
+                
                 // Ask Permissions for Events
                 [self askForPermissions:[self defaultReadPermissions] type:FacebookPermissionReadType
                               withEnded:^(BOOL success) {
@@ -774,9 +776,11 @@ static FacebookManager *sharedInstance = nil;
                                   // Permissions Obtenue
                                   if(success)
                                   {
+                                      //NSLog(@"askForPermissions - defaultReadPermissions - YES");
+                                      
                                       // Get list events
                                       [FBRequestConnection
-                                       startWithGraphPath:@"me/events?fields=id,cover,description,is_date_only,name,owner,location,privacy,rsvp_status,start_time,end_time,admins,picture.type(large),invited.fields(id,name,picture.width(200).height(200),email)&locale=fr_FR"
+                                       startWithGraphPath:@"me/events?fields=id,cover,description,is_date_only,name,owner,location,privacy,rsvp_status,start_time,end_time,admins,picture.type(large),invited.fields(id,name,picture.width(200).height(200))&locale=fr_FR"
                                        completionHandler:^(FBRequestConnection *connection,
                                                            id result,
                                                            NSError *error) {
@@ -785,7 +789,7 @@ static FacebookManager *sharedInstance = nil;
                                                
                                                NSArray *webList = [result[@"data"] mutableCopy];
                                                
-                                               int taille = [webList count];
+                                               int taille = webList.count;
                                                if (taille == 0) {
                                                    if (block)
                                                        block(@[]);
