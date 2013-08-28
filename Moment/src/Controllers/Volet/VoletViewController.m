@@ -683,6 +683,8 @@ static VoletViewController *actualVoletViewController;
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
 {
     if (!alreadyPushSearchView) {
+        alreadyPushSearchView = YES;
+        
         // Google Analytics
         [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Recherche" value:nil];
         
