@@ -187,15 +187,35 @@ static FacebookManager *sharedInstance = nil;
 }
 
 - (void)loginReadPermissionsWithEnded:( void (^) (BOOL success) )block {
-    [self loginWithPermissions:nil type:FacebookPermissionReadType withEnded:block];
+    NSArray *perms = [self defaultReadPermissions];
+    
+    [self loginWithPermissions:perms type:FacebookPermissionReadType withEnded:^(BOOL success) {
+        if (success) {
+            if (block) {
+                block(YES);
+            }
+        } else {
+            [self loginWithPermissions:perms type:FacebookPermissionReadType withEnded:block];
+        }
+    }];
 }
 
 - (void)loginPublishPermissionsWithEnded:( void (^) (BOOL success) )block {
-    [self loginWithPermissions:nil type:FacebookPermissionPublishType withEnded:block];
+    NSArray *perms = [self defaultPublishPermissions];
+    
+    [self loginWithPermissions:perms type:FacebookPermissionPublishType withEnded:^(BOOL success) {
+        if (success) {
+            if (block) {
+                block(YES);
+            }
+        } else {
+            [self loginWithPermissions:perms type:FacebookPermissionPublishType withEnded:block];
+        }
+    }];
 }
 
 - (void)logout
-{    
+{
     if ( [self facebookIsConnected] || FBSession.activeSession.isOpen) {
         // if a user logs out explicitly, we delete any cached token information, and next
         // time they run the applicaiton they will be presented with log in UX again; most
@@ -296,7 +316,15 @@ static FacebookManager *sharedInstance = nil;
     //NSLog(@"permissions = %@", permisions);
     
     if ( !FBSession.activeSession.isOpen ) {
-        [self loginWithPermissions:permisions type:type withEnded:block];
+        [self loginWithPermissions:permisions type:type withEnded:^(BOOL success) {
+            if (success) {
+                if (block) {
+                    block(YES);
+                }
+            } else {
+                [self loginWithPermissions:permisions type:type withEnded:block];
+            }
+        }];
     }
     else {
         [self loadPermissions:permisions type:type withEnded:block];
