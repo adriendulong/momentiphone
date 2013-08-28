@@ -191,7 +191,7 @@
 "TimeLineViewController_Overlay_Label3" = "Crée un moment ou";
 "TimeLineViewController_Overlay_Label4" = "importe tes events Facebook !";
 /*"TimeLineViewController_Overlay_Label5" = "Consulte l'activité évènementielle";
-"TimeLineViewController_Overlay_Label6" = "de tes proches !";*/
+ "TimeLineViewController_Overlay_Label6" = "de tes proches !";*/
 
 /* --------------- InfoMomentViewController --------------- */
 "InfoMomentViewController_RSVP_Yes" = "Je serais présent au moment ...";
@@ -202,7 +202,7 @@
 "InfoMomentViewController_View_More" = "Voir plus";
 
 "InfoMomentViewController_PopupRSVP_Title" = "Bonne nouvelle !";
-"InfoMomentViewController_PopupRSVP_Message" = "Souhaites-tu informer tes amis Facebook de ta présence à cet évènement ?";
+"InfoMomentViewController_PopupRSVP_Message" = "Souhaites-tu informer tes amis de ta présence à cet évènement ?";
 
 /* --------------- RootOngletsViewController --------------- */
 "RootOngletsViewController_PopTipViewPhotos_Message" = "Retrouvez toutes les photos de l'évènement ici.";
