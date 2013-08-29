@@ -632,12 +632,19 @@ static UIImageView *splashScreen = nil;
 {
     // Centrer view même quand le clavier monte
     // (Sur écran non iPhone 5)
-    //if( (![[VersionControl sharedInstance] isIphone5]) && ([_loginTextField isFirstResponder]) ) {
-    if( (![[VersionControl sharedInstance] isIphone5]) || [_loginTextField isFirstResponder] || [_passwordTextField isFirstResponder] ) {
-        
+    
+    int pointsToMove = 0;
+    
+    if ([[VersionControl sharedInstance] isIphone5]) {
+        pointsToMove = -100;
+    } else {
+        pointsToMove = -115;
+    }
+    
+    if ( [_loginTextField isFirstResponder] || [_passwordTextField isFirstResponder] ) {
         
         [UIView animateWithDuration:0.2 animations:^{
-            [scrollView scrollRectToVisible:CGRectMake(0, -125, scrollView.contentSize.width, scrollView.contentSize.height) animated:NO];
+            [scrollView scrollRectToVisible:CGRectMake(0, pointsToMove, scrollView.contentSize.width, scrollView.contentSize.height) animated:NO];
         }];
     }
 }
