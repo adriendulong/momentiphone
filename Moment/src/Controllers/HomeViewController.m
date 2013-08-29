@@ -9,6 +9,7 @@
 #import "HomeViewController.h"
 
 #import "Config.h"
+#import "VersionControl.h"
 #import "AFMomentAPIClient.h"
 #import "TextFieldAutocompletionManager.h"
 #import "PushNotificationManager.h"
@@ -26,6 +27,7 @@
 
 #import "CreationPage2ViewController.h"
 #import "MTStatusBarOverlay.h"
+#import "MBProgressHUD.h"
 #import "DeviceModel.h"
 
 #import "TutorialViewController.h"

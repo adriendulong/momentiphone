@@ -16,6 +16,7 @@
 #import "MomentClass+Server.h"
 #import "VersionControl.h"
 #import "FacebookManager.h"
+#import "MBProgressHUD.h"
 
 #define bigCellHeight 195
 #define smallCellHeight 130
