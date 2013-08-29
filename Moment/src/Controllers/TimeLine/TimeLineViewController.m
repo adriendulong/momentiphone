@@ -1702,11 +1702,14 @@ shouldLoadEventsFromFacebook:(BOOL)loadEvents
     MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
     hud.labelText = NSLocalizedString(@"MBProgressHUD_Loading_FBEvents", nil);
     
+    __block int pass = 0;
+    
     [MomentClass importFacebookEventsWithEnded:^(NSArray *events, NSArray *moments) {
+        pass++;
         
         if (events && moments) {
             
-            int nbEvent = [events count];
+            int nbEvent = events.count;
             
             if (nbEvent > 0) {
                 
@@ -1726,9 +1729,10 @@ shouldLoadEventsFromFacebook:(BOOL)loadEvents
             }
         }
         else {
-            [[MTStatusBarOverlay sharedInstance]
-             postImmediateErrorMessage:NSLocalizedString(@"StatusBarOverlay_LoadingFailure", nil)
-             duration:2 animated:YES];
+            if (pass > 1) {
+                [[MTStatusBarOverlay sharedInstance] postImmediateErrorMessage:NSLocalizedString(@"StatusBarOverlay_LoadingFailure", nil)
+                 duration:2 animated:YES];
+            }
         }
         
         [MBProgressHUD hideHUDForView:self.view animated:YES];
