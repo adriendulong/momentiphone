@@ -641,7 +641,9 @@ static FacebookManager *sharedInstance = nil;
                                            NSLog(@"Request = %@", connection.urlRequest);
                                            NSLog(@"Connection = %@", connection);
                                            */
-                                          if(block) block(nil);
+                                          if(block) {
+                                              block(nil);
+                                          }
                                       }
                                       
                                   }];
@@ -1295,38 +1297,99 @@ static FacebookManager *sharedInstance = nil;
                     
                     // Success
                     if(success) {
-                        FBRequestConnection *connection = [[FBRequestConnection alloc] init];
-                        
-                        // Post Request
-                        /*
-                         FBRequest *request = [[FBRequest alloc] initWithSession:[FBSession activeSession] graphPath:@"454455871307842/feed" parameters:params HTTPMethod:@"POST"];
-                         */
-                        
-                        FBRequest *request = [[FBRequest alloc]
-                                              initWithSession:[FBSession activeSession]
-                                              graphPath:[NSString stringWithFormat:@"%@/feed", moment.facebookId]
-                                              parameters:params HTTPMethod:@"POST"];
-                        
-                        
-                        // Completion Handler
-                        [connection addRequest:request completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
-                            if(block) {
-                                block(error == nil);
+                        [self performPostMessageOnWall:moment parameters:params withEnded:^(BOOL success) {
+                            if (block) {
+                                block(success);
                             }
                         }];
-                        
-                        // Send Request
-                        [connection start];
+                    } else {
+                        [self askForPermissions:[self defaultPublishPermissions] type:FacebookPermissionPublishType withEnded:^(BOOL success) {
+                            
+                            // Success
+                            if(success) {
+                                [self performPostMessageOnWall:moment parameters:params withEnded:^(BOOL success) {
+                                    if (block) {
+                                        block(success);
+                                    }
+                                }];
+                            } else {
+                                if(block) {
+                                    block(NO);
+                                }
+                            }
+                        }];
                     }
-                    // Failure
-                    else if(block) {
-                        block(NO);
-                    }
+                }];
+            } else {
+                [self askForPermissions:@[kFbPermissionBasicInfo] type:FacebookPermissionReadType withEnded:^(BOOL success) {
                     
+                    if (success) {
+                        // Ask For Permissions
+                        [self askForPermissions:[self defaultPublishPermissions] type:FacebookPermissionPublishType withEnded:^(BOOL success) {
+                            
+                            // Success
+                            if(success) {
+                                [self performPostMessageOnWall:moment parameters:params withEnded:^(BOOL success) {
+                                    if (block) {
+                                        block(success);
+                                    }
+                                }];
+                            } else {
+                                [self askForPermissions:[self defaultPublishPermissions] type:FacebookPermissionPublishType withEnded:^(BOOL success) {
+                                    
+                                    // Success
+                                    if(success) {
+                                        [self performPostMessageOnWall:moment parameters:params withEnded:^(BOOL success) {
+                                            if (block) {
+                                                block(success);
+                                            }
+                                        }];
+                                    } else {
+                                        if(block) {
+                                            block(NO);
+                                        }
+                                    }
+                                }];
+                            }
+                        }];
+                    } else {
+                        if(block) {
+                            block(NO);
+                        }
+                    }
                 }];
             }
         }];
     }
+}
+
+- (void)performPostMessageOnWall:(MomentClass*)moment
+                      parameters:(NSDictionary*)params
+                       withEnded:(void (^) (BOOL success))block
+{
+    
+    FBRequestConnection *connection = [[FBRequestConnection alloc] init];
+    
+    // Post Request
+    /*
+     FBRequest *request = [[FBRequest alloc] initWithSession:[FBSession activeSession] graphPath:@"454455871307842/feed" parameters:params HTTPMethod:@"POST"];
+     */
+    
+    FBRequest *request = [[FBRequest alloc]
+                          initWithSession:[FBSession activeSession]
+                          graphPath:[NSString stringWithFormat:@"%@/feed", moment.facebookId]
+                          parameters:params HTTPMethod:@"POST"];
+    
+    
+    // Completion Handler
+    [connection addRequest:request completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
+        if(block) {
+            block(error == nil);
+        }
+    }];
+    
+    // Send Request
+    [connection start];
 }
 
 - (void)postMessageOnEventWall:(MomentClass*)moment

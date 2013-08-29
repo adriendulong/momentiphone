@@ -766,7 +766,7 @@
         Photos *photo = [[Photos alloc] initWithAttributesFromWeb:JSON[@"success"]];
         
         // Notify Facebook Notification
-        if(self.facebookId && [FBSession activeSession].isOpen)
+        if(self.facebookId)
         {
             [[FacebookManager sharedInstance] postMessageOnEventWall:self photo:photo withEnded:^(BOOL success) {
                 if(!success) {
