@@ -933,7 +933,7 @@
     NSString *path = [NSString stringWithFormat:@"newguests/%d", self.momentId.intValue];
     
     // Mapping
-    NSMutableArray *params = [[NSMutableArray alloc] initWithCapacity:[users count]];
+    NSMutableArray *params = [NSMutableArray arrayWithCapacity:users.count];
     for( UserClass *u in users) {
         [params addObject:[u mappingToWeb]];
     }
