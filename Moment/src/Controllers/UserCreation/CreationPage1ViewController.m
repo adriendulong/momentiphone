@@ -458,9 +458,8 @@
         
         // Rénitialise date min
         if(!birthdayIsFull) {
-            self.pickerView.datePicker.date = [NSDate date];
             self.pickerView.datePicker.maximumDate = [NSDate date];
-            [self.birthdayTextField setText:[self.dateFormatter stringFromDate:[NSDate date]]];
+            [self.birthdayTextField setText:[self.dateFormatter stringFromDate:self.pickerView.datePicker.date]];
         }
     }
 }
