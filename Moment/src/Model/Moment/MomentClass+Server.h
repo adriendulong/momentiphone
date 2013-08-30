@@ -36,7 +36,7 @@ enum TimeDirectiion {
 + (void)getInfosMomentWithId:(NSInteger)momentId withEnded:(void (^) (NSDictionary* attributes) )block;
 + (void)getMomentsServerWithEnded:(void (^)(BOOL success))block waitUntilFinished:(BOOL)waitUntilFinished;
 + (void)getMomentsServerWithEnded:(void (^)(BOOL success))block;
-+ (void) getMomentsServerAfterDateOfMoment:(MomentClass*)moment
++ (void)getMomentsServerAfterDateOfMoment:(MomentClass*)moment
                              timeDirection:(enum TimeDirectiion)timeDirection
                                       user:(UserClass*)user
                                  withEnded:(void (^) (NSArray* moments))block;
@@ -58,12 +58,13 @@ enum TimeDirectiion {
 - (void)getPhotosWithEnded:( void (^) (NSArray* photos) )block;
 
 - (void)sendPhoto:(UIImage*)photo
-        withStart:(void (^) (UIImage *photo))startBlock
+         withPath:(NSString *)photoPath
+        withStart:(void (^) (NSString *photoPath))startBlock
   withProgression:(void (^) (CGFloat progress))progressBlock
         withEnded:(void (^) (Photos *photo))endBlock;
 
 - (void)sendArrayOfPhotos:(NSArray*)array
-                withStart:(void (^) (UIImage *photo))startBlock
+                withStart:(void (^) (NSString *photoPath))startBlock
           withProgression:(void (^) (CGFloat progress))progressBlock
            withTransition:(void (^) (Photos *photo))transitionBlock
                 withEnded:(void (^) (void))endBlock;

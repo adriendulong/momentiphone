@@ -10,6 +10,7 @@
 #import "AFMomentAPIClient.h"
 #import "AFJSONRequestOperation.h"
 #import "FacebookEvent.h"
+#import "MomentClass+Server.h"
 #import "UserClass+Server.h"
 #import "UserClass+Mapping.h"
 #import "Config.h"
@@ -25,6 +26,7 @@
 static NSString *kFbGraphBaseURL = @"http://graph.facebook.com/";
 
 // Permissions
+static NSString *kFbPermissionBasicInfo = @"basic_info";
 static NSString *kFbPermissionEmail = @"email";
 static NSString *kFbPermissionAboutMe = @"user_about_me";
 //static NSString *kFbPermissionUserHomeTown = @"user_hometown";
@@ -38,7 +40,7 @@ static NSString *kFbPermissionUserEvents = @"user_events";
 static NSString *kFbPermissionRsvpEvent = @"rsvp_event";
 static NSString *kFbPermissionPublishAction = @"publish_actions";
 static NSString *kFbPermissionPublishStream = @"publish_stream";
-static NSString *kFbPermissionPhotoUpload = @"photo_upload";
+//static NSString *kFbPermissionPhotoUpload = @"photo_upload";
 
 
 #pragma mark - Singleton
@@ -185,15 +187,35 @@ static FacebookManager *sharedInstance = nil;
 }
 
 - (void)loginReadPermissionsWithEnded:( void (^) (BOOL success) )block {
-    [self loginWithPermissions:nil type:FacebookPermissionReadType withEnded:block];
+    NSArray *perms = [self defaultReadPermissions];
+    
+    [self loginWithPermissions:perms type:FacebookPermissionReadType withEnded:^(BOOL success) {
+        if (success) {
+            if (block) {
+                block(YES);
+            }
+        } else {
+            [self loginWithPermissions:perms type:FacebookPermissionReadType withEnded:block];
+        }
+    }];
 }
 
 - (void)loginPublishPermissionsWithEnded:( void (^) (BOOL success) )block {
-    [self loginWithPermissions:nil type:FacebookPermissionPublishType withEnded:block];
+    NSArray *perms = [self defaultPublishPermissions];
+    
+    [self loginWithPermissions:perms type:FacebookPermissionPublishType withEnded:^(BOOL success) {
+        if (success) {
+            if (block) {
+                block(YES);
+            }
+        } else {
+            [self loginWithPermissions:perms type:FacebookPermissionPublishType withEnded:block];
+        }
+    }];
 }
 
 - (void)logout
-{    
+{
     if ( [self facebookIsConnected] || FBSession.activeSession.isOpen) {
         // if a user logs out explicitly, we delete any cached token information, and next
         // time they run the applicaiton they will be presented with log in UX again; most
@@ -240,7 +262,7 @@ static FacebookManager *sharedInstance = nil;
 {
     
     // Ask only for knew permissions
-    NSMutableArray *newPermissions = [[NSMutableArray alloc] init];
+    NSMutableArray *newPermissions = [NSMutableArray array];
     for( NSString *perm in permisions)
     {
         if( [FBSession.activeSession.permissions indexOfObject:perm] == NSNotFound ) {
@@ -289,9 +311,20 @@ static FacebookManager *sharedInstance = nil;
 }
 
 - (void)askForPermissions:(NSArray*)permisions type:(enum FacebookPermissionType)type withEnded:( void (^) (BOOL success) )block
-{    
+{
+    
+    //NSLog(@"permissions = %@", permisions);
+    
     if ( !FBSession.activeSession.isOpen ) {
-        [self loginWithPermissions:permisions type:type withEnded:block];
+        [self loginWithPermissions:permisions type:type withEnded:^(BOOL success) {
+            if (success) {
+                if (block) {
+                    block(YES);
+                }
+            } else {
+                [self loginWithPermissions:permisions type:type withEnded:block];
+            }
+        }];
     }
     else {
         [self loadPermissions:permisions type:type withEnded:block];
@@ -306,7 +339,7 @@ static FacebookManager *sharedInstance = nil;
     if(block)
     {
         // Ask Permissions for Events
-        [self askForPermissions:@[] type:FacebookPermissionReadType withEnded:^(BOOL success) {
+        [self askForPermissions:@[kFbPermissionBasicInfo] type:FacebookPermissionReadType withEnded:^(BOOL success) {
             
             // Permissions Obtenue
             if(success)
@@ -340,12 +373,16 @@ static FacebookManager *sharedInstance = nil;
                          NSLog(@"Connection = %@", connection);
                           */
                          
-                         [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error_Title", nil)
+                         /*[[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error_Title", nil)
                                                      message:[error localizedDescription]
                                                     delegate:nil
                                            cancelButtonTitle:nil
                                            otherButtonTitles:NSLocalizedString(@"OK", nil), nil]
-                          show];
+                          show];*/
+                         
+                         /*[[MTStatusBarOverlay sharedInstance] postImmediateErrorMessage:@"Erreur Facebook"
+                                                                                duration:2.0
+                                                                                animated:YES];*/
                          
                          if (block) {
                              block(nil);
@@ -356,12 +393,17 @@ static FacebookManager *sharedInstance = nil;
             }
             // Permission refusée
             else {
-                [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error_Title", nil)
+                /*[[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error_Title", nil)
                                             message:@"Erreur lors de l'obtention des permissions"
                                            delegate:nil
                                   cancelButtonTitle:nil
                                   otherButtonTitles:NSLocalizedString(@"OK", nil), nil]
-                 show];
+                 show];*/
+                
+                
+                /*[[MTStatusBarOverlay sharedInstance] postImmediateErrorMessage:@"Permissions Facebook refusées"
+                                                                      duration:2.0
+                                                                      animated:YES];*/
             }
             
         }];
@@ -433,12 +475,12 @@ static FacebookManager *sharedInstance = nil;
     if(block)
     {
         // Ask Permissions for Events
-        [self askForPermissions:@[] type:FacebookPermissionReadType withEnded:^(BOOL success) {
+        [self askForPermissions:@[kFbPermissionBasicInfo] type:FacebookPermissionReadType withEnded:^(BOOL success) {
             
             // Permissions Obtenue
             if(success)
             {
-                NSString *path = [NSString stringWithFormat:@"%@?fields=name,picture.height(600).width(600)", facebookId];
+                NSString *path = [NSString stringWithFormat:@"%@?fields=name,picture.height(400).width(400)", facebookId];
                 
                 //NSLog(@"path = %@", path);
                 
@@ -454,7 +496,7 @@ static FacebookManager *sharedInstance = nil;
                          UserClass *user = [[UserClass alloc] init];
                          //user.prenom = result[@"name"];
                          user.nom = result[@"name"];
-                         user.facebookId = facebookId;
+                         user.facebookId = result[@"id"];
                          user.imageString = result[@"picture"][@"data"][@"url"];
                          
                          block(user);
@@ -469,12 +511,16 @@ static FacebookManager *sharedInstance = nil;
                          NSLog(@"Connection = %@", connection);
                           */
                          
-                         [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error_Title", nil)
+                         /*[[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error_Title", nil)
                                                      message:[error localizedDescription]
                                                     delegate:nil
                                            cancelButtonTitle:nil
                                            otherButtonTitles:NSLocalizedString(@"OK", nil), nil]
-                          show];
+                          show];*/
+                         
+                         /*[[MTStatusBarOverlay sharedInstance] postImmediateErrorMessage:@"Erreur Facebook"
+                                                                               duration:2.0
+                                                                               animated:YES];*/
                          
                          if (block) {
                              block(nil);
@@ -485,12 +531,16 @@ static FacebookManager *sharedInstance = nil;
             }
             // Permission refusée
             else {
-                [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error_Title", nil)
+                /*[[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error_Title", nil)
                                             message:@"Erreur lors de l'obtention des permissions"
                                            delegate:nil
                                   cancelButtonTitle:nil
                                   otherButtonTitles:NSLocalizedString(@"OK", nil), nil]
-                 show];
+                 show];*/
+                
+                /*[[MTStatusBarOverlay sharedInstance] postImmediateErrorMessage:@"Permissions Facebook refusées"
+                                                                      duration:2.0
+                                                                      animated:YES];*/
             }
             
         }];
@@ -558,40 +608,48 @@ static FacebookManager *sharedInstance = nil;
     // Update Facebook Id
     [self updateCurrentUserFacebookIdOnServer:^(BOOL success) {
         
-        // Permissions
-        [self askForPermissions:@[kFbPermissionFriendAboutMe ,kFbPermissionFriendHomeTown, kFbPermissionFriendLocation]
-                           type:FacebookPermissionReadType
-                      withEnded:^(BOOL success) {
-                          
-                          FBRequest* friendsRequest = [FBRequest requestForMyFriends];
-                          friendsRequest.session = [FBSession activeSession];
-                          
-                          [friendsRequest startWithCompletionHandler: ^(FBRequestConnection *connection,
-                                                                        NSDictionary* result,
-                                                                        NSError *error) {
-                              if(!error) {
-                                  NSArray* friends = result[@"data"];
+        // Ask For Permissions
+        [self askForPermissions:@[kFbPermissionBasicInfo] type:FacebookPermissionReadType withEnded:^(BOOL success) {
+            
+            if (success) {
+                // Permissions
+                [self askForPermissions:[self defaultReadPermissions]
+                                   type:FacebookPermissionReadType
+                              withEnded:^(BOOL success) {
                                   
-                                  if(block) {
+                                  FBRequest* friendsRequest = [FBRequest requestForMyFriends];
+                                  friendsRequest.session = [FBSession activeSession];
+                                  
+                                  [friendsRequest startWithCompletionHandler: ^(FBRequestConnection *connection,
+                                                                                NSDictionary* result,
+                                                                                NSError *error) {
+                                      if(!error) {
+                                          NSArray* friends = result[@"data"];
+                                          
+                                          if(block) {
+                                              
+                                              NSArray *users = [UserClass arrayOfUsersWithArrayOfAttributesFromLocal:[self mappingArrayToLocalFromFacebook:friends]];
+                                              
+                                              block(users);
+                                          }
+                                      }
+                                      else {
+                                          /*
+                                           NSLog(@"Facebook Get Friends Error : %@", error.localizedDescription);
+                                           NSLog(@"Response = %@", connection.urlResponse);
+                                           NSLog(@"Headers = %@", connection.urlResponse.allHeaderFields);
+                                           NSLog(@"Request = %@", connection.urlRequest);
+                                           NSLog(@"Connection = %@", connection);
+                                           */
+                                          if(block) {
+                                              block(nil);
+                                          }
+                                      }
                                       
-                                      NSArray *users = [UserClass arrayOfUsersWithArrayOfAttributesFromLocal:[self mappingArrayToLocalFromFacebook:friends]];
-                                      
-                                      block(users);
-                                  }
-                              }
-                              else {
-                                  /*
-                                  NSLog(@"Facebook Get Friends Error : %@", error.localizedDescription);
-                                  NSLog(@"Response = %@", connection.urlResponse);
-                                  NSLog(@"Headers = %@", connection.urlResponse.allHeaderFields);
-                                  NSLog(@"Request = %@", connection.urlRequest);
-                                  NSLog(@"Connection = %@", connection);
-                                   */
-                                  if(block) block(nil);
-                              }
-                              
-                          }];
-                      }];
+                                  }];
+                              }];
+            }
+        }];
         
     }];
 }
@@ -647,131 +705,199 @@ static FacebookManager *sharedInstance = nil;
     [operation start];
 }
 
+- (void)createUsersFromFacebookInvited:(NSArray *)invited withEnded:( void (^) (NSArray *users) )block
+{
+    
+    NSArray *usersRaw = [invited valueForKey:@"data"];
+    NSMutableArray *users = [NSMutableArray arrayWithCapacity:usersRaw.count];
+    
+    for (NSArray *userRaw in usersRaw) {
+        UserClass *user = [[UserClass alloc] init];
+        //user.prenom = result[@"name"];
+        user.nom = [userRaw valueForKey:@"name"];
+        user.facebookId = [userRaw valueForKey:@"id"];
+        //user.email = [userRaw valueForKey:@"email"];
+        user.imageString = [[[userRaw valueForKey:@"picture"] valueForKey:@"data"] valueForKey:@"url"];
+        
+        //NSLog(@"user = %@",user);
+        
+        [users addObject:user];
+    }
+
+    block(users);
+}
+
 #pragma mark - Events
+
+- (void)getCoverEventWithID:(NSString *)facebookId withEnded:( void (^) (NSString *pic_url) )block
+{
+    if (block) {
+        // Connection
+        FBRequestConnection *connection = [[FBRequestConnection alloc] init];
+        FBRequest *request = [FBRequest requestForGraphPath:@"fql"];
+        
+        // Requete
+        NSString *query = [NSString stringWithFormat:@"SELECT pic_big FROM event WHERE eid=%@",  facebookId];
+        [request.parameters setObject:query forKey:@"q"];
+        
+        // Completion
+        [connection addRequest:request completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
+            if (block) {
+                if (error)
+                    block(nil);
+                
+                if(result[@"data"] && ([result[@"data"] count] > 0) && result[@"data"][0][@"pic_big"])
+                {
+                    NSString *pic_url = result[@"data"][0][@"pic_big"];
+                    
+                    block(pic_url);
+                }
+                else
+                    block(nil);
+            }
+        }];
+        
+        [connection start];
+    }
+}
 
 - (void)loadEvents:( void (^) (NSArray *events) )block
 {
     if(block)
     {
-        // Ask Permissions for Events
-        [self askForPermissions:@[kFbPermissionUserEvents] type:FacebookPermissionReadType
-                          withEnded:^(BOOL success) {
-                              
-                              // Permissions Obtenue
-                              if(success)
-                              {
-                                  // Get list events
-                                  [FBRequestConnection
-                                   startWithGraphPath:@"me/events?fields=id,cover,description,is_date_only,name,owner,location,privacy,rsvp_status,start_time,end_time,admins,picture.type(large)"
-                                   completionHandler:^(FBRequestConnection *connection,
-                                                       id result,
-                                                       NSError *error) {
-                                       
-                                       if (!error) {
+        // Ask For Permissions
+        [self askForPermissions:@[kFbPermissionBasicInfo] type:FacebookPermissionReadType withEnded:^(BOOL success) {
+            
+            if (success) {
+                //NSLog(@"askForPermissions - Basic - YES");
+                
+                // Ask Permissions for Events
+                [self askForPermissions:[self defaultReadPermissions] type:FacebookPermissionReadType
+                              withEnded:^(BOOL success) {
+                                  
+                                  // Permissions Obtenue
+                                  if(success)
+                                  {
+                                      //NSLog(@"askForPermissions - defaultReadPermissions - YES");
+                                      
+                                      // Get list events
+                                      [FBRequestConnection
+                                       startWithGraphPath:@"me/events?fields=id,cover,description,is_date_only,name,owner,location,privacy,rsvp_status,start_time,end_time,admins,picture.type(large),invited.fields(id,name,picture.width(200).height(200)).limit(500)&locale=fr_FR"
+                                       completionHandler:^(FBRequestConnection *connection,
+                                                           id result,
+                                                           NSError *error) {
                                            
-                                           NSArray *webList = [result[@"data"] mutableCopy];
-                                           
-                                           int taille = [webList count];
-                                           if (taille == 0) {
-                                               if (block)
-                                                   block(nil);
-                                           } else {
-                                               NSMutableArray *mutableArray = [NSMutableArray arrayWithCapacity:taille];
-                                               NSMutableArray *ownerIdsArray = [NSMutableArray arrayWithCapacity:taille];
+                                           if (!error) {
                                                
+                                               NSArray *webList = [result[@"data"] mutableCopy];
                                                
-                                               __block int i = 0;
-                                               for (NSDictionary *attr in webList)
-                                               {
-                                                   // Owner attributes
-                                                   NSDictionary *owner = @{@"facebookId":attr[@"owner"][@"id"]};
+                                               int taille = webList.count;
+                                               if (taille == 0) {
+                                                   if (block)
+                                                       block(@[]);
+                                               } else {
+                                                   NSMutableArray *mutableArray = [NSMutableArray arrayWithCapacity:taille];
+                                                   NSMutableArray *ownerIdsArray = [NSMutableArray arrayWithCapacity:taille];
                                                    
-                                                   [UserClass getUsersWhoAreOnMoment:@[owner] withEnded:^(NSArray *usersOnMoment) {
+                                                   
+                                                   __block int i = 0;
+                                                   for (NSDictionary *attr in webList)
+                                                   {
+                                                       // Owner attributes
+                                                       NSDictionary *owner = @{@"facebookId":attr[@"owner"][@"id"]};
                                                        
-                                                       //  ------> Create Event
-                                                       FacebookEvent *event = [[FacebookEvent alloc] initWithAttributes:attr];
-                                                       // Save Event
-                                                       [mutableArray addObject:event];
-                                                       // Save Owner ID
-                                                       [ownerIdsArray addObject:[NSString stringWithFormat:@"%@", attr[@"owner"][@"id"]]];
-                                                       
-                                                       
-                                                       //  ------> User is on Moment
-                                                       if([usersOnMoment count] == 1) {
-                                                           event.ownerAttributes = usersOnMoment[0];
-                                                       }
-                                                       
-                                                       // ************** >Last event < *************
-                                                       if(i == taille-1) {
+                                                       [UserClass getUsersWhoAreOnMoment:@[owner] withEnded:^(NSArray *usersOnMoment) {
+                                                           
+                                                           //  ------> Create Event
+                                                           FacebookEvent *event = [[FacebookEvent alloc] initWithAttributes:attr];
+                                                           // Save Event
+                                                           [mutableArray addObject:event];
+                                                           // Save Owner ID
+                                                           [ownerIdsArray addObject:[NSString stringWithFormat:@"%@", attr[@"owner"][@"id"]]];
                                                            
                                                            
-                                                           ///////////////////////////////////////////////////////////////////////
-                                                           // --------- Récupérer Owners informations depuis Server Facebook -----
-                                                           ///////////////////////////////////////////////////////////////////////
-                                                           [FacebookEvent arrayWithArrayOfEvents:mutableArray withArrayOfOwnerId:ownerIdsArray withEnded:^(NSArray *events) {
+                                                           //  ------> User is on Moment
+                                                           if([usersOnMoment count] == 1) {
+                                                               event.ownerAttributes = usersOnMoment[0];
+                                                           }
+                                                           
+                                                           // ************** >Last event < *************
+                                                           if(i == taille-1) {
                                                                
                                                                
-                                                               //NSLog(@"events = %@", events);
-                                                               
-                                                               NSMutableArray *finalArray = events.mutableCopy;
-                                                               
-                                                               // Sort By Date
-                                                               [finalArray sortUsingComparator:^NSComparisonResult(FacebookEvent *obj1, FacebookEvent *obj2) {
-                                                                   return [obj1.startTime compare:obj2.startTime];
+                                                               ///////////////////////////////////////////////////////////////////////
+                                                               // --------- Récupérer Owners informations depuis Server Facebook -----
+                                                               ///////////////////////////////////////////////////////////////////////
+                                                               [FacebookEvent arrayWithArrayOfEvents:mutableArray withArrayOfOwnerId:ownerIdsArray withEnded:^(NSArray *events) {
+                                                                   
+                                                                   
+                                                                   //NSLog(@"events = %@", events);
+                                                                   
+                                                                   NSMutableArray *finalArray = events.mutableCopy;
+                                                                   
+                                                                   // Sort By Date
+                                                                   [finalArray sortUsingComparator:^NSComparisonResult(FacebookEvent *obj1, FacebookEvent *obj2) {
+                                                                       return [obj1.startTime compare:obj2.startTime];
+                                                                   }];
+                                                                   
+                                                                   // Final block
+                                                                   block(finalArray);
+                                                                   
                                                                }];
                                                                
-                                                               // Final block
-                                                               block(finalArray);
-                                                               
-                                                           }];
+                                                           }
                                                            
-                                                       }
-                                                       
-                                                       i++;
-                                                   }];
+                                                           i++;
+                                                       }];
+                                                   }
                                                }
                                            }
-                                       }
-                                       else{
-                                           /*
-                                           NSLog(@"Facebook Load Events Error : %@", error.localizedDescription);
-                                           NSLog(@"Response = %@", connection.urlResponse);
-                                           NSLog(@"Headers = %@", connection.urlResponse.allHeaderFields);
-                                           NSLog(@"Request = %@", connection.urlRequest);
-                                           NSLog(@"Connection = %@", connection);
-                                            */
-                                           
-                                           /*
-                                            [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error", nil)
-                                            message:[error localizedDescription]
-                                            delegate:nil
-                                            cancelButtonTitle:nil
-                                            otherButtonTitles:NSLocalizedString(@"OK", nil), nil]
-                                            show];
-                                            */
-                                           
-                                           if (block) {
-                                               block(nil);
+                                           else{
+                                               /*
+                                                NSLog(@"Facebook Load Events Error : %@", error.localizedDescription);
+                                                NSLog(@"Response = %@", connection.urlResponse);
+                                                NSLog(@"Headers = %@", connection.urlResponse.allHeaderFields);
+                                                NSLog(@"Request = %@", connection.urlRequest);
+                                                NSLog(@"Connection = %@", connection);
+                                                */
+                                               
+                                               /*
+                                                [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error", nil)
+                                                message:[error localizedDescription]
+                                                delegate:nil
+                                                cancelButtonTitle:nil
+                                                otherButtonTitles:NSLocalizedString(@"OK", nil), nil]
+                                                show];
+                                                */
+                                               
+                                               if (block) {
+                                                   block(nil);
+                                               }
                                            }
-                                       }
-                                   }];
+                                       }];
+                                      
+                                  }
+                                  // Permission refusée
+                                  else {
+                                      /*
+                                       [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error", nil)
+                                       message:@"Erreur lors de l'obtention des permissions"
+                                       delegate:nil
+                                       cancelButtonTitle:nil
+                                       otherButtonTitles:NSLocalizedString(@"OK", nil), nil]
+                                       show];
+                                       */
+                                      
+                                      /*[[MTStatusBarOverlay sharedInstance] postImmediateErrorMessage:@"Permissions Facebook refusées"
+                                                                                            duration:2.0
+                                                                                            animated:YES];*/
+                                  }
                                   
-                              }
-                              // Permission refusée
-                              else {
-                                  /*
-                                   [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error", nil)
-                                   message:@"Erreur lors de l'obtention des permissions"
-                                   delegate:nil
-                                   cancelButtonTitle:nil
-                                   otherButtonTitles:NSLocalizedString(@"OK", nil), nil]
-                                   show];
-                                   */
-                              }
-                              
-                          }];
+                              }];
+            }
+        }];
         
-        }
+    }
 }
 
 - (void)getEventsWithEnded:(void (^) (NSArray* events) )block
@@ -787,6 +913,46 @@ static FacebookManager *sharedInstance = nil;
         [self loadEvents:block];
     }
     
+}
+
+- (void)getTagsFromMoment:(MomentClass *)moment withEnded:(void (^) (NSString *tags))block
+{    
+    if (moment) {
+        [moment getInvitedUsersWithEnded:^(NSDictionary *invites) {
+            
+            //NSLog(@"invites = %@",invites);
+            
+            if(invites) {
+                NSMutableArray *usersArray = [NSMutableArray array];
+                
+                UserClass *currentUser = [UserCoreData getCurrentUser];
+                
+                // Construction listes
+                NSMutableArray *comingList = [NSMutableArray array];
+                [comingList addObjectsFromArray:invites[@"coming"]];
+                [comingList addObjectsFromArray:invites[@"maybe"]];
+                [comingList addObjectsFromArray:invites[@"unknown"]];
+                
+                if(invites[@"owner"])
+                    [comingList addObject:invites[@"owner"]];
+                [comingList addObjectsFromArray:invites[@"admin"]];
+                
+                for (int i = 0; i < comingList.count; i++) {
+                    UserClass *user = comingList[i][@"user"];
+                    
+                    if (user.facebookId && user.facebookId > 0) {
+                        if (![user.facebookId isEqualToString:currentUser.facebookId])
+                            [usersArray addObject:user.facebookId];
+                    }
+                }
+                
+                if (block)
+                    block([usersArray componentsJoinedByString:@","]);
+                else
+                    block(nil);
+            }
+        }];
+    }
 }
 
 #pragma mark - RSVP
@@ -852,6 +1018,84 @@ static FacebookManager *sharedInstance = nil;
     }
 }
 
+- (void)getRSVP:(MomentClass*)moment fromUser:(UserClass *)user withEnded:(void (^) (enum UserState rsvp))block
+{
+    if(!moment) {
+        if(block)
+            block(-1);
+        return;
+    }
+
+    if(moment.facebookId && user.facebookId )
+    {
+        // Ask For Permissions
+        [self askForPermissions:@[kFbPermissionBasicInfo] type:FacebookPermissionReadType withEnded:^(BOOL success) {
+            
+            if (success) {
+                // Ask For Permission
+                [self askForPermissions:[self defaultReadPermissions] type:FacebookPermissionReadType withEnded:^(BOOL success) {
+                    
+                    // Get Permission
+                    if (success) {
+                        
+                        // Connection
+                        FBRequestConnection *connection = [[FBRequestConnection alloc] init];
+                        FBRequest *request = [FBRequest requestForGraphPath:@"fql"];
+                        
+                        // Requete
+                        NSString *query = [NSString stringWithFormat:@"SELECT rsvp_status FROM event_member WHERE eid=%@ AND uid=%@", moment.facebookId, user.facebookId];
+                        [request.parameters setObject:query forKey:@"q"];
+                        
+                        // Completion
+                        [connection addRequest:request completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
+                            if(block) {
+                                if(error) {
+                                    NSLog(@"GET RSVP FB ERROR : %@", error.localizedDescription);
+                                    block(-1);
+                                }
+                                else {
+                                    
+                                    // Result
+                                    if(result[@"data"] && ([result[@"data"] count] > 0) && result[@"data"][0][@"rsvp_status"])
+                                    {
+                                        NSString *rsvp = result[@"data"][0][@"rsvp_status"];
+                                        enum UserState state;
+                                        
+                                        // Identification
+                                        if([rsvp isEqualToString:@"attending"]) {
+                                            state = UserStateValid;
+                                        }
+                                        else if([rsvp isEqualToString:@"declined"]) {
+                                            state = UserStateRefused;
+                                        }
+                                        else {
+                                            state = UserStateWaiting;
+                                        }
+                                        
+                                        block(state);
+                                    }else {
+                                        block(-1);
+                                    }
+                                    
+                                }
+                            }
+                        }];
+                        
+                        [connection start];
+                    }
+                    // Permission Refused Or Fail
+                    else if(block) {
+                        block(-1);
+                    }
+                }];
+            }
+        }];
+    }
+    else if(block) {
+        block(-1);
+    }
+}
+
 - (void)updateRSVP:(enum UserState)rsvp
             moment:(MomentClass*)moment
          withEnded:(void (^) (BOOL success))block
@@ -883,42 +1127,48 @@ static FacebookManager *sharedInstance = nil;
         
         if(path)
         {
-            // Ask For Permission
-            [self askForPermissions:@[kFbPermissionRsvpEvent] type:FacebookPermissionPublishType withEnded:^(BOOL success) {
+            // Ask For Permissions
+            [self askForPermissions:@[kFbPermissionBasicInfo] type:FacebookPermissionReadType withEnded:^(BOOL success) {
                 
-                // Get Permission
-                if(success) {
-                    
-                    // Request Config
-                    NSString *fullPath = [NSString stringWithFormat:@"%@/%@", moment.facebookId, path];
-                    FBRequestConnection *connection = [[FBRequestConnection alloc] init];
-                    FBRequest *request = [[FBRequest alloc]
-                                          initWithSession:[FBSession activeSession]
-                                          graphPath:fullPath
-                                          parameters:nil
-                                          HTTPMethod:@"POST"];
-                    
-                    // Comptetion Handler
-                    [connection addRequest:request completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
-                        if(block) {
+                if (success) {
+                    // Ask For Permission
+                    [self askForPermissions:[self defaultPublishPermissions] type:FacebookPermissionPublishType withEnded:^(BOOL success) {
+                        
+                        // Get Permission
+                        if(success) {
                             
-                            if(error) {
-                                //NSLog(@"RSVP FB ERROR : %@", error.localizedDescription);
-                                [TestFlight passCheckpoint:[NSString stringWithFormat:@"FAIL TO CHANGE FB RSVP : Moment %@ - RSVP : %@", moment.facebookId, path]];
-                            }
+                            // Request Config
+                            NSString *fullPath = [NSString stringWithFormat:@"%@/%@", moment.facebookId, path];
+                            FBRequestConnection *connection = [[FBRequestConnection alloc] init];
+                            FBRequest *request = [[FBRequest alloc]
+                                                  initWithSession:[FBSession activeSession]
+                                                  graphPath:fullPath
+                                                  parameters:nil
+                                                  HTTPMethod:@"POST"];
                             
-                            block(error == nil);
+                            // Comptetion Handler
+                            [connection addRequest:request completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
+                                if(block) {
+                                    
+                                    if(error) {
+                                        //NSLog(@"RSVP FB ERROR : %@", error.localizedDescription);
+                                        [TestFlight passCheckpoint:[NSString stringWithFormat:@"FAIL TO CHANGE FB RSVP : Moment %@ - RSVP : %@", moment.facebookId, path]];
+                                    }
+                                    
+                                    block(error == nil);
+                                }
+                            }];
+                            
+                            // Launch Request
+                            [connection start];
                         }
+                        // Permission Refused Or Fail
+                        else if(block) {
+                            block(NO);
+                        }
+                        
                     }];
-                    
-                    // Launch Request
-                    [connection start];
                 }
-                // Permission Refused Or Fail
-                else if(block) {
-                    block(NO);
-                }
-                
             }];
         }
         
@@ -929,11 +1179,107 @@ static FacebookManager *sharedInstance = nil;
 
 - (void)getPublishPermissions
 {
-    [self askForPermissions:@[kFbPermissionPublishAction, kFbPermissionPublishStream, kFbPermissionPhotoUpload, kFbPermissionRsvpEvent]
-                       type:FacebookPermissionPublishType
-                  withEnded:^(BOOL success) {
+    // Ask For Permissions
+    [self askForPermissions:@[kFbPermissionBasicInfo] type:FacebookPermissionReadType withEnded:^(BOOL success) {
         
+        if (success) {
+            [self askForPermissions:[self defaultPublishPermissions]
+                               type:FacebookPermissionPublishType
+                          withEnded:^(BOOL success) {
+                              
+                          }];
+        }
     }];
+}
+
+- (void)postRSVPOnWall:(MomentClass*)moment
+                action:(NSString *)action
+            parameters:(NSDictionary*)params
+             withEnded:(void (^) (BOOL success))block
+{
+    if(params)
+    {
+        // Ask For Permissions
+        [self askForPermissions:@[kFbPermissionBasicInfo] type:FacebookPermissionReadType withEnded:^(BOOL success) {
+            
+            // Success
+            if(success) {
+                // Ask For Permissions
+                [self askForPermissions:[self defaultPublishPermissions] type:FacebookPermissionPublishType withEnded:^(BOOL success) {
+                    
+                    // Success
+                    if(success) {
+                        FBRequestConnection *connection = [[FBRequestConnection alloc] init];
+                        
+                        // Post Request
+                        
+                        NSString *namespace = [[Config sharedInstance] appFBNamespace];
+                        
+                        //NSLog(@"graphPath = %@",[NSString stringWithFormat:@"me/%@:%@", namespace, action]);
+                        //NSLog(@"params = %@",params);
+                        
+                        FBRequest *request = [[FBRequest alloc]
+                                              initWithSession:[FBSession activeSession]
+                                              graphPath:[NSString stringWithFormat:@"me/%@:%@", namespace, action]
+                                              parameters:params HTTPMethod:@"POST"];
+                        
+                        
+                        // Completion Handler
+                        [connection addRequest:request completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
+                            if(block) {
+                                //NSLog(@"postRSVPOnWall | error = %@",error.localizedDescription);
+                                //NSLog(@"postRSVPOnWall | result = %@",result);
+                                
+                                block(error == nil);
+                            }
+                        }];
+                        
+                        // Send Request
+                        [connection start];
+                    }
+                    // Failure
+                    else if(block) {
+                        block(NO);
+                    }
+                    
+                }];
+            }
+            // Failure
+            else if(block) {
+                block(NO);
+            }
+        }];
+    }
+}
+
+- (void)postRSVPOnWall:(MomentClass*)moment
+                action:(NSString *)action
+                  tags:(NSString *)tags
+             withEnded:(void (^) (BOOL success))block
+{
+    if (action) {
+        //NSLog(@"postRSVPOnWall | tags = %@",tags);
+        
+        if (tags) {
+            [self postRSVPOnWall:moment action:action parameters:@{@"evenement":moment.uniqueURL,@"tags":tags} withEnded:^(BOOL success) {
+                if (success) {
+                    block(YES);
+                } else {
+                    block(NO);
+                }
+            }];
+        } else {
+            [self postRSVPOnWall:moment action:action parameters:@{@"evenement":moment.uniqueURL} withEnded:^(BOOL success) {
+                if (success) {
+                    block(YES);
+                } else {
+                    block(NO);
+                }
+            }];
+        }
+    } else {
+        block(NO);
+    }
 }
 
 - (void)postMessageOnEventWall:(MomentClass*)moment
@@ -943,40 +1289,107 @@ static FacebookManager *sharedInstance = nil;
     if(moment.facebookId && params)
     {
         // Ask For Permissions
-        [self askForPermissions:@[kFbPermissionPublishAction, kFbPermissionPublishStream] type:FacebookPermissionPublishType withEnded:^(BOOL success) {
+        [self askForPermissions:@[kFbPermissionBasicInfo] type:FacebookPermissionReadType withEnded:^(BOOL success) {
             
-            // Success
-            if(success) {
-                FBRequestConnection *connection = [[FBRequestConnection alloc] init];
-                                
-                // Post Request
-                /*
-                FBRequest *request = [[FBRequest alloc] initWithSession:[FBSession activeSession] graphPath:@"454455871307842/feed" parameters:params HTTPMethod:@"POST"];
-                */
-                
-                FBRequest *request = [[FBRequest alloc]
-                                      initWithSession:[FBSession activeSession]
-                                      graphPath:[NSString stringWithFormat:@"%@/feed", moment.facebookId]
-                                      parameters:params HTTPMethod:@"POST"];
-                
-                
-                // Completion Handler
-                [connection addRequest:request completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
-                    if(block) {
-                        block(error == nil);
+            if (success) {
+                // Ask For Permissions
+                [self askForPermissions:[self defaultPublishPermissions] type:FacebookPermissionPublishType withEnded:^(BOOL success) {
+                    
+                    // Success
+                    if(success) {
+                        [self performPostMessageOnWall:moment parameters:params withEnded:^(BOOL success) {
+                            if (block) {
+                                block(success);
+                            }
+                        }];
+                    } else {
+                        [self askForPermissions:[self defaultPublishPermissions] type:FacebookPermissionPublishType withEnded:^(BOOL success) {
+                            
+                            // Success
+                            if(success) {
+                                [self performPostMessageOnWall:moment parameters:params withEnded:^(BOOL success) {
+                                    if (block) {
+                                        block(success);
+                                    }
+                                }];
+                            } else {
+                                if(block) {
+                                    block(NO);
+                                }
+                            }
+                        }];
                     }
                 }];
-                
-                // Send Request
-                [connection start];
+            } else {
+                [self askForPermissions:@[kFbPermissionBasicInfo] type:FacebookPermissionReadType withEnded:^(BOOL success) {
+                    
+                    if (success) {
+                        // Ask For Permissions
+                        [self askForPermissions:[self defaultPublishPermissions] type:FacebookPermissionPublishType withEnded:^(BOOL success) {
+                            
+                            // Success
+                            if(success) {
+                                [self performPostMessageOnWall:moment parameters:params withEnded:^(BOOL success) {
+                                    if (block) {
+                                        block(success);
+                                    }
+                                }];
+                            } else {
+                                [self askForPermissions:[self defaultPublishPermissions] type:FacebookPermissionPublishType withEnded:^(BOOL success) {
+                                    
+                                    // Success
+                                    if(success) {
+                                        [self performPostMessageOnWall:moment parameters:params withEnded:^(BOOL success) {
+                                            if (block) {
+                                                block(success);
+                                            }
+                                        }];
+                                    } else {
+                                        if(block) {
+                                            block(NO);
+                                        }
+                                    }
+                                }];
+                            }
+                        }];
+                    } else {
+                        if(block) {
+                            block(NO);
+                        }
+                    }
+                }];
             }
-            // Failure
-            else if(block) {
-                block(NO);
-            }
-            
         }];
     }
+}
+
+- (void)performPostMessageOnWall:(MomentClass*)moment
+                      parameters:(NSDictionary*)params
+                       withEnded:(void (^) (BOOL success))block
+{
+    
+    FBRequestConnection *connection = [[FBRequestConnection alloc] init];
+    
+    // Post Request
+    /*
+     FBRequest *request = [[FBRequest alloc] initWithSession:[FBSession activeSession] graphPath:@"454455871307842/feed" parameters:params HTTPMethod:@"POST"];
+     */
+    
+    FBRequest *request = [[FBRequest alloc]
+                          initWithSession:[FBSession activeSession]
+                          graphPath:[NSString stringWithFormat:@"%@/feed", moment.facebookId]
+                          parameters:params HTTPMethod:@"POST"];
+    
+    
+    // Completion Handler
+    [connection addRequest:request completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
+        if(block) {
+            block(error == nil);
+        }
+    }];
+    
+    // Send Request
+    [connection start];
 }
 
 - (void)postMessageOnEventWall:(MomentClass*)moment
@@ -1033,18 +1446,23 @@ static FacebookManager *sharedInstance = nil;
 
 - (NSArray*)defaultReadPermissions {
     if(!_defaultReadPermissions) {
-        _defaultReadPermissions = @[kFbPermissionEmail,
-                                kFbPermissionAboutMe,
-                                kFbPermissionFriendLists,
-                                kFbPermissionFriendLocation,
-                                kFbPermissionFriendHomeTown];
+        _defaultReadPermissions = @[kFbPermissionBasicInfo,
+                                    kFbPermissionEmail,
+                                    kFbPermissionAboutMe,
+                                    kFbPermissionUserEvents,
+                                    kFbPermissionFriendLists,
+                                    kFbPermissionFriendAboutMe,
+                                    kFbPermissionFriendHomeTown,
+                                    kFbPermissionFriendLocation];
     }
     return _defaultReadPermissions;
 }
 
 - (NSArray*)defaultPublishPermissions {
     if(!_defaultPublishPermissions) {
-        _defaultPublishPermissions = @[kFbPermissionPublishAction];
+        _defaultPublishPermissions = @[kFbPermissionRsvpEvent,
+                                       kFbPermissionPublishAction,
+                                       kFbPermissionPublishStream];
     }
     return _defaultPublishPermissions;
 }
@@ -1126,12 +1544,14 @@ static FacebookManager *sharedInstance = nil;
             // Autre Erreur
             default:
                 
-                alertView = [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"Error: %@",
+                /*alertView = [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"Error: %@",
                                                                 [FacebookManager FBErrorCodeDescription:error.code]]
                                                        message:error.localizedDescription
                                                       delegate:nil
                                              cancelButtonTitle:NSLocalizedString(@"AlertView_Button_OK", nil)
-                                             otherButtonTitles:nil];
+                                             otherButtonTitles:nil];*/
+                NSLog(@"%@ : %@", [NSString stringWithFormat:@"Error: %@",
+                                   [FacebookManager FBErrorCodeDescription:error.code]], error.localizedDescription);
                 
                 break;
         }

@@ -32,7 +32,7 @@ withNavigationController:(UINavigationController*)navController
 shouldReloadMoments:(BOOL)reloadMoments
   shouldLoadEventsFromFacebook:(BOOL)loadEvents;
 
-- (IBAction)clicChangeTimeLine;
+//- (IBAction)clicChangeTimeLine;
 - (void)showAddEvent;
 - (TimeLineViewController*)timeLineForMoment:(MomentClass*)moment;
 - (void)updateVolet;

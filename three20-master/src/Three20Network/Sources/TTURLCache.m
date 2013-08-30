@@ -562,7 +562,7 @@ static NSMutableDictionary* gNamedCaches = nil;
   NSString* URL = [self createUniqueTemporaryURL];
   [self storeImage:image forURL:URL force:YES];
 
-  NSData* data = UIImagePNGRepresentation(image);
+  NSData* data = UIImageJPEGRepresentation(image, 0.8);
   [self storeData:data forURL:URL];
   return URL;
 }

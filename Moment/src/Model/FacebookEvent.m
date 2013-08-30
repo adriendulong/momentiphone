@@ -36,6 +36,7 @@ static NSDateFormatter *dateFormatter = nil;
 @synthesize ownerAttributes = _ownerAttributes;
 @synthesize owner = _owner;
 @synthesize isAlreadyOnMoment;
+@synthesize invited = _invited;
 
 + (enum UserState)mappRSVP:(NSString*)rsvp
 {
@@ -100,13 +101,39 @@ static NSDateFormatter *dateFormatter = nil;
         self.venue = attributes[@"venue"];
         self.rsvp_status = [FacebookEvent mappRSVP:attributes[@"rsvp_status"]];
         self.isAlreadyOnMoment = NO;
+        self.invited = attributes[@"invited"];
         
         // Cover Picture
         if(attributes[@"cover"]) {
             self.pictureString = attributes[@"cover"][@"source"];
         }
          else if(attributes[@"picture"]) {
-             self.pictureString = attributes[@"picture"][@"data"][@"url"];
+             
+             NSString *path = attributes[@"picture"][@"data"][@"url"];
+             NSURL *url = [NSURL URLWithString:path];
+             NSData *data = [NSData dataWithContentsOfURL:url];
+             UIImage *img = [[UIImage alloc] initWithData:data];
+             CGSize size = img.size;
+             
+             //NSLog(@"size = %@",NSStringFromCGSize(size));
+             
+             if (size.height == 50 && size.width == 50) {
+                 
+                 [[FacebookManager sharedInstance] getCoverEventWithID:_eventId withEnded:^(NSString *pic_url) {
+                     while ([pic_url isEqualToString:nil]) {
+                         // If A job is finished, a flag should be set. and the flag can be a exit condition of this while loop
+                         
+                         // This executes another run loop.
+                         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantFuture]];
+                     }
+                     
+                     //NSLog(@"pic_url = %@", pic_url);
+                     
+                     self.pictureString = pic_url;
+                 }];
+             } else {
+                 self.pictureString = attributes[@"picture"][@"data"][@"url"];
+             }
          }
         
         // Current User ID
@@ -204,7 +231,7 @@ static NSDateFormatter *dateFormatter = nil;
 }
 
 - (NSString*)description {
-    return [NSString stringWithFormat:@"FACEBOOK EVENT %@ :\n{\nNOM : %@\nADRESSE : %@\nRSVP : %d\nOWNER:\n{\n %@ \n}\n-----------\n", self.eventId, self.name, self.location, self.rsvp_status, self.owner];
+    return [NSString stringWithFormat:@"FACEBOOK EVENT %@ :\n{\nNOM : %@\nADRESSE : %@\nRSVP : %d\nOWNER:\n{\n %@ \n}\nINVITED:\n{\n %@ \n}\n-----------\n", self.eventId, self.name, self.location, self.rsvp_status, self.owner, self.invited];
 }
 
 

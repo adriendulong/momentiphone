@@ -670,19 +670,19 @@ enum PhotoPickerDestination {
         picker.sourceType = UIImagePickerControllerSourceTypeCamera;
     }
     
-    [[VersionControl sharedInstance] presentModalViewController:picker fromRoot:self animated:YES];
+    [self presentViewController:picker animated:YES completion:nil];
 }
 
 #pragma mark - UIImagePickerController Delegate
 
--(void) imagePickerController:(UIImagePickerController *)UIPicker didFinishPickingMediaWithInfo:(NSDictionary *) info
+-(void)imagePickerController:(UIImagePickerController *)UIPicker didFinishPickingMediaWithInfo:(NSDictionary *) info
 {
     UIImage *image = info[@"UIImagePickerControllerOriginalImage"];
     
     switch (imagePickerDestination) {
         case PhotoPickerDestinationProfilPicture:
             self.profilePictureImage = [[Config sharedInstance] imageWithMaxSize:image maxSize:200];
-            self.medallion.image = image;
+            self.medallion.image = [[Config sharedInstance] imageWithMaxSize:image maxSize:200];
             break;
             
         case PhotoPickerDestinationCover:
@@ -690,7 +690,7 @@ enum PhotoPickerDestination {
             break;
     }
     
-    [[VersionControl sharedInstance] dismissModalViewControllerFromRoot:UIPicker animated:YES];
+    [UIPicker dismissViewControllerAnimated:YES completion:nil];
 }
 
 @end

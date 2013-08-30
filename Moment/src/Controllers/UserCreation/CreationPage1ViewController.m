@@ -445,6 +445,24 @@
     return YES;
 }
 
+-(void)textFieldDidBeginEditing:(UITextField *)textField {
+    BOOL birthdayIsFull = self.birthdayTextField.text.length > 0;
+    
+    if( textField == self.birthdayTextField ) {
+        
+        [self.pickerView setButtonStyle:CustomDatePickerButtonStyleDone];
+        
+        if(birthdayIsFull) {
+            self.pickerView.datePicker.maximumDate = [NSDate date];
+        }
+        
+        // Rénitialise date min
+        if(!birthdayIsFull) {
+            self.pickerView.datePicker.maximumDate = [NSDate date];
+            [self.birthdayTextField setText:[self.dateFormatter stringFromDate:self.pickerView.datePicker.date]];
+        }
+    }
+}
 
 #pragma mark - UIImagePickerController Delegate
 
@@ -456,7 +474,7 @@
     self.photoProfil.image = self.imageProfile;
     _mdpLabel.returnKeyType = UIReturnKeyDone;
     
-    [[VersionControl sharedInstance] dismissModalViewControllerFromRoot:picker animated:YES];
+    [picker dismissViewControllerAnimated:YES completion:nil];
 }
 
 #pragma mark - UIActionSheet Delegate
@@ -480,7 +498,7 @@
     else
         picker.sourceType = UIImagePickerControllerSourceTypeCamera;
 
-    [[VersionControl sharedInstance] presentModalViewController:picker fromRoot:self animated:YES];
+    [self presentViewController:picker animated:YES completion:nil];
     
 }
 
@@ -605,7 +623,7 @@
         if(_imageProfile)
         {
             // Ajout de la photo à la requete
-            attributes[@"photo"] = UIImagePNGRepresentation(_imageProfile);
+            attributes[@"photo"] = UIImageJPEGRepresentation(_imageProfile, 0.8);
         }
         
         if(facebookId)

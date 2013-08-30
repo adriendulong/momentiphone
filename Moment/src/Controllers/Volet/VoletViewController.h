@@ -47,6 +47,7 @@
 // Search
 @property (weak, nonatomic) IBOutlet CustomSearchVolletTextField *searchTextField;
 @property (nonatomic, strong) VoletSearchViewController *searchViewController;
+@property (nonatomic) BOOL *alreadyPushSearchView;
 
 // ----
 + (VoletViewController*)volet;
@@ -65,7 +66,7 @@
 - (void)loadInvitations;
 
 // Change TimeLine / Feed
-- (void)selectActualitesButton;
+//- (void)selectActualitesButton;
 - (void)selectMesMomentsButton;
 - (IBAction)clicChangeTimeLine:(UIButton*)sender;
 

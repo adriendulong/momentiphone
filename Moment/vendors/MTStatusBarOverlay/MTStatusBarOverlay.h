@@ -78,7 +78,7 @@ typedef enum MTMessageType {
  a detail-view that shows additional information. You can show a history of all the previous
  messages for free by setting historyEnabled to YES
  */
-@interface MTStatusBarOverlay : UIWindow <UITableViewDataSource> 
+@interface MTStatusBarOverlay : UIWindow <UITableViewDataSource>
 
 // the view that holds all the components of the overlay (except for the detailView)
 @property (nonatomic, strong) UIView *backgroundView;
@@ -116,8 +116,7 @@ typedef enum MTMessageType {
 @property (nonatomic, copy) NSString *detailText;
 // the delegate of the overlay
 @property (nonatomic, unsafe_unretained) id<MTStatusBarOverlayDelegate> delegate;
-
-
+@property(nonatomic, strong) UIColor *customTextColor;
 //===========================================================
 #pragma mark -
 #pragma mark Class Methods

@@ -57,6 +57,7 @@
 						<string key="NSFrameSize">{320, 548}</string>
 						<reference key="NSSuperview" ref="191373211"/>
 						<reference key="NSWindow"/>
+						<reference key="NSNextKeyView"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<object class="NSColor" key="IBUIBackgroundColor">
 							<int key="NSColorSpace">1</int>
@@ -124,7 +125,7 @@
 								<string key="NSFrame">{{261, 0}, {36, 36}}</string>
 								<reference key="NSSuperview" ref="897371294"/>
 								<reference key="NSWindow"/>
-								<reference key="NSNextKeyView" ref="817400745"/>
+								<reference key="NSNextKeyView" ref="699498316"/>
 								<string key="NSReuseIdentifierKey">_NS:9</string>
 								<bool key="IBUIOpaque">NO</bool>
 								<int key="IBUIContentMode">1</int>
@@ -326,6 +327,7 @@
 								<string key="NSFrame">{{236, 15}, {41, 41}}</string>
 								<reference key="NSSuperview" ref="817400745"/>
 								<reference key="NSWindow"/>
+								<reference key="NSNextKeyView"/>
 								<string key="NSReuseIdentifierKey">_NS:9</string>
 								<bool key="IBUIOpaque">NO</bool>
 								<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
@@ -405,7 +407,7 @@
 								<string key="NSFrame">{{25, 20}, {270, 270}}</string>
 								<reference key="NSSuperview" ref="66683005"/>
 								<reference key="NSWindow"/>
-								<reference key="NSNextKeyView" ref="116909875"/>
+								<reference key="NSNextKeyView" ref="242367820"/>
 								<string key="NSReuseIdentifierKey">_NS:9</string>
 								<bool key="IBUIClipsSubviews">YES</bool>
 								<bool key="IBUIMultipleTouchEnabled">YES</bool>
@@ -480,7 +482,7 @@
 						<string key="NSFrame">{{233, 305}, {23, 21}}</string>
 						<reference key="NSSuperview" ref="238102646"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView" ref="242367820"/>
+						<reference key="NSNextKeyView" ref="116909875"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<bool key="IBUIOpaque">NO</bool>
 						<bool key="IBUIClipsSubviews">YES</bool>
@@ -501,7 +503,7 @@
 						<string key="NSFrame">{{254, 301}, {30, 30}}</string>
 						<reference key="NSSuperview" ref="238102646"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView" ref="699498316"/>
+						<reference key="NSNextKeyView" ref="817400745"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<int key="IBUIContentMode">1</int>
 						<bool key="IBUIUserInteractionEnabled">NO</bool>

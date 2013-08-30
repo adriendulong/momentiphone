@@ -10,7 +10,7 @@
 #import <MessageUI/MessageUI.h>
 #import "GAITrackedViewController.h"
 
-@interface MesReglagesViewController : GAITrackedViewController <MFMailComposeViewControllerDelegate, UIAlertViewDelegate>
+@interface MesReglagesViewController : GAITrackedViewController <MFMailComposeViewControllerDelegate, MFMessageComposeViewControllerDelegate, UIAlertViewDelegate>
 
 // --- Properties ---
 
@@ -23,9 +23,11 @@
 @property (weak, nonatomic) IBOutlet UILabel *versionLabel;
 
 // Labels Titres
+@property (weak, nonatomic) IBOutlet UILabel *titreConnaitreMoment;
 @property (weak, nonatomic) IBOutlet UILabel *titreNotificationLabel;
 @property (weak, nonatomic) IBOutlet UILabel *titreProfilLabel;
 @property (weak, nonatomic) IBOutlet UILabel *titreAproposLabel;
+@property (weak, nonatomic) IBOutlet UILabel *titreFeedbackLabel;
 
 // Notifications Labels
 @property (weak, nonatomic) IBOutlet UILabel *notifInvitLabel;
@@ -52,6 +54,8 @@
 
 - (IBAction)clicFollowFacebook;
 - (IBAction)clicFollowTwitter;
+- (IBAction)clicConnaitreEmail;
+- (IBAction)clicConnaitreSMS;
 - (IBAction)clicLikeBadge;
 - (IBAction)clicTutoriel;
 - (IBAction)clicEditProfil;

@@ -69,8 +69,8 @@ enum InviteAddTTLabel {
         self.adresseText = nil;
         
         // Update view
-        [self setNomLabelTextWithColor:[[Config sharedInstance] textColor] ];
-        [self setAdresseLabelTextWithColor:[[Config sharedInstance] textColor]];
+        [self setNomLabelTextWithColor:[Config sharedInstance].textColor ];
+        [self setAdresseLabelTextWithColor:[Config sharedInstance].textColor];
         
         // Set image
         self.medallion.borderWidth = 3.0;

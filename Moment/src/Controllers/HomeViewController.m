@@ -9,6 +9,7 @@
 #import "HomeViewController.h"
 
 #import "Config.h"
+#import "VersionControl.h"
 #import "AFMomentAPIClient.h"
 #import "TextFieldAutocompletionManager.h"
 #import "PushNotificationManager.h"
@@ -26,6 +27,7 @@
 
 #import "CreationPage2ViewController.h"
 #import "MTStatusBarOverlay.h"
+#import "MBProgressHUD.h"
 #import "DeviceModel.h"
 
 #import "TutorialViewController.h"
@@ -90,16 +92,23 @@ static UIImageView *splashScreen = nil;
 
 #pragma mark - View cycle life
 
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    // Actual View Controller
+    [AppDelegate updateActualViewController:self];
+}
+
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
     
-    // Actual View Controller
-    [AppDelegate updateActualViewController:self];
-    
     //on check si autologin actif et utilisateur fourni
     UserClass *currentUser = [UserCoreData getCurrentUserWithLocalOnly:YES];
     if( currentUser ){
+        
+        //NSLog(@"currentUser = %@", currentUser);
         
         // Si un cookie de connexion existe, on le charge et on logue le user
         [[AFMomentAPIClient sharedClient] checkConnexionCookieWithEnded:^{
@@ -323,10 +332,10 @@ static UIImageView *splashScreen = nil;
         // Chargement
         
         // Si Connexion Facebook, Récupération des Events Facebook
-        NSString *fbId = [[UserCoreData getCurrentUser] facebookId];
+        /*NSString *fbId = [[UserCoreData getCurrentUser] facebookId];
         if(fbId && (fbId.intValue != 0) && [[FacebookManager sharedInstance] facebookIsConnected]) {
             [MomentClass importFacebookEventsWithEnded:nil];
-        }
+        }*/
         
         // Récupération des moments
         [MomentClass getMomentsServerWithEnded:^(BOOL success) {
@@ -625,12 +634,19 @@ static UIImageView *splashScreen = nil;
 {
     // Centrer view même quand le clavier monte
     // (Sur écran non iPhone 5)
-    //if( (![[VersionControl sharedInstance] isIphone5]) && ([_loginTextField isFirstResponder]) ) {
-    if( (![[VersionControl sharedInstance] isIphone5]) || [_loginTextField isFirstResponder] || [_passwordTextField isFirstResponder] ) {
-        
+    
+    int pointsToMove = 0;
+    
+    if ([[VersionControl sharedInstance] isIphone5]) {
+        pointsToMove = -100;
+    } else {
+        pointsToMove = -115;
+    }
+    
+    if ( [_loginTextField isFirstResponder] || [_passwordTextField isFirstResponder] ) {
         
         [UIView animateWithDuration:0.2 animations:^{
-            [scrollView scrollRectToVisible:CGRectMake(0, -125, scrollView.contentSize.width, scrollView.contentSize.height) animated:NO];
+            [scrollView scrollRectToVisible:CGRectMake(0, pointsToMove, scrollView.contentSize.width, scrollView.contentSize.height) animated:NO];
         }];
     }
 }

@@ -16,6 +16,7 @@
 #import "MomentClass+Server.h"
 #import "VersionControl.h"
 #import "FacebookManager.h"
+#import "MBProgressHUD.h"
 
 #define bigCellHeight 195
 #define smallCellHeight 130
@@ -377,12 +378,12 @@ shouldLoadEventsFromFacebook:(BOOL)loadEvents
     
     // Bouton clock repositionnement - Support iPhone 5
     frame = self.B2PButton.frame;
-    if(self.timeLineStyle == TimeLineStyleComplete) {
+    /*if(self.timeLineStyle == TimeLineStyleComplete) {
         frame.origin.y = self.size.height - frame.size.height - 63;
     }
-    else {
+    else {*/
         frame.origin.y = self.size.height - frame.size.height - 10;
-    }
+    //}
     self.B2PButton.frame = frame;
     
     //[self updateArrowClockToState:(self.view.frame.size.height/2.0 > rowForToday*smallCellHeight)?ClockStateUp:ClockStateDown animated:NO];
@@ -946,7 +947,7 @@ shouldLoadEventsFromFacebook:(BOOL)loadEvents
         [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:18 ] range:range];
         range = NSMakeRange(1, taille-1);
         [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:14] range:range];
-        [attributedString setTextColor:[[Config sharedInstance] textColor]];
+        [attributedString setTextColor:[Config sharedInstance].textColor];
         
         [self.nomMomentLabel setAttributedText:attributedString];
         self.nomMomentLabel.textAlignment = kCTLeftTextAlignment;
@@ -1004,7 +1005,7 @@ shouldLoadEventsFromFacebook:(BOOL)loadEvents
         [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:16] range:range];
         range = NSMakeRange(5, taille-5);
         [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:12] range:range];
-        [attributedString setTextColor:[[Config sharedInstance] orangeColor]];
+        [attributedString setTextColor:[Config sharedInstance].orangeColor];
         
         [self.nomOwnerLabel setAttributedText:attributedString];
         self.nomOwnerLabel.textAlignment = kCTLeftTextAlignment;
@@ -1097,7 +1098,7 @@ shouldLoadEventsFromFacebook:(BOOL)loadEvents
             [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:15] range:range];
         }
         
-        [attributedString setTextColor:[[Config sharedInstance] textColor]];
+        [attributedString setTextColor:[Config sharedInstance].textColor];
         
         [self.fullDateLabel setAttributedText:attributedString];
         self.fullDateLabel.textAlignment = NSTextAlignmentRight;
@@ -1578,7 +1579,7 @@ shouldLoadEventsFromFacebook:(BOOL)loadEvents
 }
 
 - (void)showTutorialOverlayWithFrame:(CGRect)frame {
-    UIImage *image_overlay;
+    UIImage *image_overlay = [[UIImage alloc] init];
     self.overlay = [[UIImageView alloc] initWithFrame:frame];
     
     if ([[VersionControl sharedInstance] isIphone5]) {
@@ -1637,7 +1638,7 @@ shouldLoadEventsFromFacebook:(BOOL)loadEvents
     
     
     
-    if ([[VersionControl sharedInstance] isIphone5]) {
+    /*if ([[VersionControl sharedInstance] isIphone5]) {
         UILabel *overlay_label3_1 = [[UILabel alloc] initWithFrame:CGRectMake(10, 380, 260, 30)];
         UILabel *overlay_label3_2 = [[UILabel alloc] initWithFrame:CGRectMake(10, 400, 260, 30)];
         [overlay_label3_1 setBackgroundColor:[UIColor clearColor]];
@@ -1673,7 +1674,7 @@ shouldLoadEventsFromFacebook:(BOOL)loadEvents
         
         [self.overlay addSubview:overlay_label3_1];
         [self.overlay addSubview:overlay_label3_2];
-    }
+    }*/
 }
 
 - (void)hideTutorialOverlay {
@@ -1702,11 +1703,14 @@ shouldLoadEventsFromFacebook:(BOOL)loadEvents
     MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
     hud.labelText = NSLocalizedString(@"MBProgressHUD_Loading_FBEvents", nil);
     
+    __block int pass = 0;
+    
     [MomentClass importFacebookEventsWithEnded:^(NSArray *events, NSArray *moments) {
+        pass++;
         
         if (events && moments) {
             
-            int nbEvent = [events count];
+            int nbEvent = events.count;
             
             if (nbEvent > 0) {
                 
@@ -1726,9 +1730,10 @@ shouldLoadEventsFromFacebook:(BOOL)loadEvents
             }
         }
         else {
-            [[MTStatusBarOverlay sharedInstance]
-             postImmediateErrorMessage:NSLocalizedString(@"StatusBarOverlay_LoadingFailure", nil)
-             duration:2 animated:YES];
+            if (pass > 1) {
+                [[MTStatusBarOverlay sharedInstance] postImmediateErrorMessage:NSLocalizedString(@"StatusBarOverlay_LoadingFailure", nil)
+                 duration:2 animated:YES];
+            }
         }
         
         [MBProgressHUD hideHUDForView:self.view animated:YES];

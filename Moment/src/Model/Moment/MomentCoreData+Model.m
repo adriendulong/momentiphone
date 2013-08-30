@@ -44,6 +44,7 @@
     self.isSponso = moment.isSponso;
     self.owner = [UserCoreData requestUserAsCoreDataWithUser:moment.owner];
     self.uniqueURL = moment.uniqueURL;
+    self.nb_photos = moment.nb_photos;
 }
 
 - (void)setupWithAttributes:(NSDictionary*)attributes
@@ -110,6 +111,9 @@
     
     if(attributes[@"unique_url"])
         self.uniqueURL = attributes[@"unique_url"];
+    
+    if(attributes[@"nb_photos"])
+        self.nb_photos = attributes[@"nb_photos"];
 }
 
 #pragma mark - Persist
@@ -191,6 +195,7 @@
     moment.owner = [self.owner localCopy];
     moment.privacy = self.privacy;
     moment.uniqueURL = self.uniqueURL;
+    moment.nb_photos = self.nb_photos;
     //moment.notifications = self.notifications;
     
     return moment;
@@ -257,7 +262,7 @@
 }
 
 - (void)setDataImageWithUIImage:(UIImage *)image {
-    self.dataImage = UIImagePNGRepresentation(image);
+    self.dataImage = UIImageJPEGRepresentation(image, 0.8);
 }
 
 #pragma mark - Get moment
@@ -310,8 +315,10 @@
     
     // Sinon récupère informations depuis le server
     [MomentClass getInfosMomentWithId:moment.momentId.intValue withEnded:^(NSDictionary *attributes) {
-        [moment setupWithAttributes:attributes];
-        [[Config sharedInstance] saveContext];
+        if (attributes) {
+            [moment setupWithAttributes:attributes];
+            [[Config sharedInstance] saveContext];
+        }
     } waitUntilFinished:YES];
     
     return moment;
@@ -567,7 +574,7 @@
 
 -(NSString*)description
 {
-    return [NSString stringWithFormat:@"{ moment id = %@ - titre = %@ - description = %@ - infoLieu = %@ - hastag = %@ - image = %@ - imageString = %@ - facebookId = %@\n}", self.momentId, self.titre, self.descriptionString, self.infoLieu, self.hashtag, self.uimage, self.imageString, self.facebookId];
+    return [NSString stringWithFormat:@"{ moment id = %@ - titre = %@ - description = %@ - infoLieu = %@ - hastag = %@ - image = %@ - imageString = %@ - facebookId = %@ - nb_photos = %@\n}", self.momentId, self.titre, self.descriptionString, self.infoLieu, self.hashtag, self.uimage, self.imageString, self.facebookId, self.nb_photos];
 }
 
 @end

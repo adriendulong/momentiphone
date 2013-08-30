@@ -79,9 +79,12 @@
 {
     NSArray *buttons = self.navigationItem.rightBarButtonItems;
     
-    if([buttons count] == 2)
+    if([buttons count] == 1)
     {
-        UIImage *normal = nil;//, *selected = nil;
+        //UIImage *normal = nil;//, *selected = nil;
+        NSString *normal = nil;
+        UIColor *colorEnable = [Config sharedInstance].orangeColor;
+        UIColor *colorDisabled = [Config sharedInstance].textColor;
         SEL action = NULL;
         BOOL secondButtonEnable = NO;
         
@@ -89,19 +92,22 @@
         UIButton *button = (UIButton*)[buttons[0] customView];
         
         // Previous Button
-        UIButton *previousButton = (UIButton*)[buttons[1] customView];
+        //UIButton *previousButton = (UIButton*)[buttons[1] customView];
                 
         if(step == 1)
         {
             // Button Next
-            normal = [UIImage imageNamed:@"topbar_arrow_down_enable.png"];
+            //normal = [UIImage imageNamed:@"topbar_arrow_down_enable.png"];
+            normal = [NSString stringWithFormat:NSLocalizedString(@"Next", nil)];
             action = @selector(clicNext);
             
             // Button Previous Disabled
-            [UIView animateWithDuration:0.3 animations:^{
+            /*[UIView animateWithDuration:0.3 animations:^{
+                button.alpha = 0;
+                button.alpha = 1;
                 previousButton.alpha = 0;
             }];
-            [previousButton setEnabled:NO];
+            [previousButton setEnabled:NO];*/
             
             // Second Button enable
             if( ((self.startDateTextField.text.length > 0) && (self.endDateTextField.text.length > 0)) ||
@@ -109,35 +115,63 @@
                 secondButtonEnable = YES;
             }
             
+            //[[button subviews] makeObjectsPerformSelector:@selector(removeFromSuperview)];
+            //NSArray *subviews = [self listSubviewsOfView:button];
+            //NSLog(@"subviews = %@", subviews);
+            [self removeSubviewsOfView:button];
+            
+            
+            //[button setFrame:CGRectMake(0, 0, 70, 43)];
+            [button setFrame:CGRectMake(button.frame.origin.x, button.frame.origin.y, 90, 43)];
         }
         else
         {
-            if(previousButton.hidden)
-                previousButton.hidden = NO;
+            /*if(previousButton.hidden)
+                previousButton.hidden = NO;*/
             
             // Button Valider
-            normal = [UIImage imageNamed:@"topbar_valider.png"];
+            //normal = [UIImage imageNamed:@"topbar_valider.png"];
+            normal = [NSString stringWithFormat:NSLocalizedString(@"Finish", nil)];
             action = @selector(clicCreate);
             
             // Button Previous Enable
-            [UIView animateWithDuration:0.3 animations:^{
+            /*[UIView animateWithDuration:0.3 animations:^{
+                button.alpha = 1;
+                button.alpha = 0;
+                button.alpha = 1;
                 previousButton.alpha = 1;
             }];
-            [previousButton setEnabled:YES];
+            [previousButton setEnabled:YES];*/
             
             // Second Button enable
-            if( ((self.adresseLabel.text.length > 0)||(self.adresseText.length > 0)) && (self.descriptionTextView.text.length > 0) ){
+            if( ((self.adresseLabel.text.length > 0)||(self.adresseText.length > 0)) && (self.descriptionTextView.text.length > 0) ) {
                 secondButtonEnable = YES;
             }
-
+            
+            /*UIView *whiteLine = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 0.5, 42.5)];
+            UIView *darkGrayLine = [[UIView alloc] initWithFrame:CGRectMake(0.5, 0, 0.5, 42.5)];
+            UIView *grayLine = [[UIView alloc] initWithFrame:CGRectMake(1, 0, 0.5, 42.5)];
+            whiteLine.backgroundColor = [UIColor colorWithHex:0xFDFDFD];
+            darkGrayLine.backgroundColor = [UIColor colorWithHex:0xB8B8B8];
+            grayLine.backgroundColor = [UIColor colorWithHex:0xBBBBBB];
+            [button addSubview:whiteLine];
+            [button addSubview:darkGrayLine];
+            [button addSubview:grayLine];
+            
+            [button setFrame:CGRectMake(button.frame.origin.x, button.frame.origin.y, 85, 43)];*/
         }
         
         // Update
-        [button setImage:normal forState:UIControlStateNormal];
+        //[button setBackgroundColor:[UIColor cyanColor]];
+        //NSLog(@"Button Frame = %@", NSStringFromCGRect(button.frame));
+        [button.titleLabel setFont:[[Config sharedInstance] defaultFontWithSize:16]];
+        [button setTitle:normal forState:UIControlStateNormal];
+        [button setTitleColor:colorDisabled forState:UIControlStateDisabled];
+        [button setTitleColor:colorEnable forState:UIControlStateNormal];
+        [button.titleLabel setTextAlignment:NSTextAlignmentRight];
         [button removeTarget:self action:NULL forControlEvents:UIControlEventTouchUpInside];
         [button addTarget:self action:action forControlEvents:UIControlEventTouchUpInside];
         [button setEnabled:secondButtonEnable];
-        
     }
     
 }
@@ -149,6 +183,42 @@
     
     [button setEnabled:enable];
 }
+
+- (void)removeSubviewsOfView:(UIView *)view {
+    
+    // Get the subviews of the view
+    NSArray *subviews = [view subviews];
+    
+    // Return if there are no subviews
+    if (subviews.count != 0) {
+        for (UIView *subview in subviews) {
+            
+            if (![[[subview class] description] isEqualToString:@"UIButtonLabel"]) {
+                [subview removeFromSuperview];
+            }
+        }
+    }
+}
+
+/*- (NSArray *)listSubviewsOfView:(UIView *)view {
+    NSMutableArray *subviewToReturn = [NSMutableArray array];
+    
+    // Get the subviews of the view
+    NSArray *subviews = [view subviews];
+    
+    // Return if there are no subviews
+    if ([subviews count] == 0) return nil;
+    
+    for (UIView *subview in subviews) {
+        
+        [subviewToReturn addObject:subview];
+        
+        // List the subviews of subview
+        [self listSubviewsOfView:subview];
+    }
+    
+    return subviewToReturn;
+}*/
 
 - (id)initWithUser:(UserClass*)user withTimeLine:(UIViewController <TimeLineDelegate> *)timeLine
 {
@@ -198,25 +268,35 @@
 
 - (void)initNavigationBar
 {
-    [CustomNavigationController setBackButtonWithViewController:self];
+    //[CustomNavigationController setBackButtonWithViewController:self];
+    
+    //[CustomNavigationController setBackButtonWithTitle:[NSString stringWithFormat:@"  %@", NSLocalizedString(@"Back", nil)] andColor:[UIColor grayColor] andFont:[[Config sharedInstance] defaultFontWithSize:16] withViewController:self withSelector:@selector(popViewControllerAnimated:) andWithTarget:nil];
+    [CustomNavigationController setBackButtonWithImage:[UIImage imageNamed:@"Navigation-Left.png"] withViewController:self withSelector:@selector(popViewControllerAnimated:) andWithTarget:nil];
+    
     CGRect frameButton = CGRectMake(0,0,43,43);
     
     // Bouton Previous
-    UIButton *buttonPrevious = [[UIButton alloc] initWithFrame:frameButton];
-    UIImage *arrow_up_disable = [UIImage imageNamed:@"topbar_arrow_up_disable.png"];
-    UIImage *arrow_up_normal = [UIImage imageNamed:@"topbar_arrow_up_enable.png"];
-    [buttonPrevious setImage:arrow_up_disable forState:UIControlStateDisabled];
-    [buttonPrevious setImage:arrow_up_normal forState:UIControlStateNormal];
-    [buttonPrevious addTarget:self action:@selector(clicPrev) forControlEvents:UIControlEventTouchUpInside];
-    buttonPrevious.hidden = YES;
-    UIBarButtonItem *buttonItemPrevious = [[UIBarButtonItem alloc] initWithCustomView:buttonPrevious];
+    ////UIButton *buttonPrevious = [[UIButton alloc] initWithFrame:frameButton];
+    //UIImage *arrow_up_disable = [UIImage imageNamed:@"topbar_arrow_up_disable.png"];
+    //UIColor *arrow_up_disable = [UIColor darkGrayColor];
+    ////UIImage *arrow_up_normal = [UIImage imageNamed:@"topbar_arrow_up_enable.png"];
+    //UIColor *arrow_up_normal = [UIColor colorWithHex:0xD28000];
+    //[buttonPrevious setTitle:@"Précédent" forState:UIControlStateNormal];
+    //[buttonPrevious setImage:arrow_up_disable forState:UIControlStateDisabled];
+    //[buttonPrevious setTitleColor:arrow_up_disable forState:UIControlStateDisabled];
+    ////[buttonPrevious setImage:arrow_up_normal forState:UIControlStateNormal];
+    //[buttonPrevious setTitleColor:arrow_up_normal forState:UIControlStateNormal];
+    ////[buttonPrevious addTarget:self action:@selector(clicPrev) forControlEvents:UIControlEventTouchUpInside];
+    ////buttonPrevious.hidden = YES;
+    //[buttonPrevious setBackgroundColor:[UIColor redColor]];
+    ////UIBarButtonItem *buttonItemPrevious = [[UIBarButtonItem alloc] initWithCustomView:buttonPrevious];
     
     // 2e bouton
     UIButton *secondButton = [[UIButton alloc] initWithFrame:frameButton];
     UIBarButtonItem *secondBarButton = [[UIBarButtonItem alloc] initWithCustomView:secondButton];
     
     // Set buttons
-    self.navigationItem.rightBarButtonItems = @[secondBarButton, buttonItemPrevious];
+    self.navigationItem.rightBarButtonItems = @[secondBarButton];//, buttonItemPrevious];
     
     // Init For Step 1
     [self updateNavBarForStep:1];
@@ -302,7 +382,7 @@
         // Attributs du label
         NSRange range = NSMakeRange(0, 1);
         [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:maxSize] range:range];
-        [attributedString setTextColor:[[Config sharedInstance] orangeColor] range:range];
+        [attributedString setTextColor:[Config sharedInstance].orangeColor range:range];
         range = NSMakeRange(1, taille-2);
         [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:minSize] range:range];
         range = NSMakeRange(1, taille-1);
@@ -330,10 +410,10 @@
             [cf updateTTTAttributedString:mutableAttributedString withFontSize:maxSize onRange:NSMakeRange(taille-2, 1)];
             
             // 1er Lettre Couleur
-            [cf updateTTTAttributedString:mutableAttributedString withColor:[[Config sharedInstance] orangeColor] onRange:NSMakeRange(0, 1)];
+            [cf updateTTTAttributedString:mutableAttributedString withColor:[Config sharedInstance].orangeColor onRange:NSMakeRange(0, 1)];
             
             // Autres Lettes Couleur
-            [cf updateTTTAttributedString:mutableAttributedString withColor:[[Config sharedInstance] textColor] onRange:NSMakeRange(1, taille-1)];
+            [cf updateTTTAttributedString:mutableAttributedString withColor:[Config sharedInstance].textColor onRange:NSMakeRange(1, taille-1)];
             
             return mutableAttributedString;
         }];
@@ -384,7 +464,9 @@
     [self setLabelText:self.startDateLabel text:self.startDateLabel.text minFontSize:minSize maxFontSize:maxSize color:color];
     [self setLabelText:self.endDateLabel text:self.endDateLabel.text minFontSize:minSize maxFontSize:maxSize color:color];
     
+    [self.changerCoverButton setTitle:NSLocalizedString(@"CreationFicheViewController_ChangeCover", nil) forState:UIControlStateNormal];
     self.changerCoverButton.titleLabel.font = [[Config sharedInstance] defaultFontWithSize:13];
+    self.changerCoverButton.titleLabel.textColor = [Config sharedInstance].orangeColor;
 }
 
 - (void)initDatePicker
@@ -423,7 +505,7 @@
     
     // HashTag Label
 #ifdef HASHTAG_ENABLE
-    UIColor *orangeColor = [[Config sharedInstance] orangeColor];
+    UIColor *orangeColor = [Config sharedInstance].orangeColor;
     
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:self.hashtagLabel.text];
     NSInteger taille = [self.hashtagLabel.text length];
@@ -530,7 +612,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    _currentStep = 1;
+    self.currentStep = 1;
     self.globalScrollView.contentSize = CGSizeMake(320, 2*viewHeight);
     
     // ---- CustomNavigationBar init ----
@@ -622,10 +704,13 @@
     // Cacher clavier
     [self.view endEditing:YES];
     
-    [self.globalScrollView scrollRectToVisible:CGRectMake(0, _currentStep*viewHeight, 320, viewHeight) animated:YES];
-    _currentStep++;
+    [self.globalScrollView scrollRectToVisible:CGRectMake(0, self.currentStep*viewHeight, 320, viewHeight) animated:YES];
+    self.currentStep++;
         
-    [self updateNavBarForStep:_currentStep];
+    [self updateNavBarForStep:self.currentStep];
+    
+    //[CustomNavigationController setBackButtonWithTitle:[NSString stringWithFormat:@"  %@", NSLocalizedString(@"Back", nil)] andColor:[UIColor grayColor] andFont:[[Config sharedInstance] defaultFontWithSize:16] withViewController:self withSelector:@selector(clicPrev) andWithTarget:self];
+    [CustomNavigationController setBackButtonWithImage:[UIImage imageNamed:@"Navigation-Left.png"] withViewController:self withSelector:@selector(clicPrev) andWithTarget:self];
 }
 
 - (void)clicPrev
@@ -636,9 +721,14 @@
     // Cacher clavier
     [self.view endEditing:YES];
     
-    _currentStep--;
-    [self updateNavBarForStep:_currentStep];
-    [self.globalScrollView scrollRectToVisible:CGRectMake(0, (_currentStep-1)*viewHeight, 320, viewHeight) animated:YES];
+    self.currentStep--;
+    [self updateNavBarForStep:self.currentStep];
+    [self.globalScrollView scrollRectToVisible:CGRectMake(0, (self.currentStep-1)*viewHeight, 320, viewHeight) animated:YES];
+    
+    if (self.currentStep == 1) {
+        //[CustomNavigationController setBackButtonWithTitle:[NSString stringWithFormat:@"  %@", NSLocalizedString(@"Back", nil)] andColor:[UIColor grayColor] andFont:[[Config sharedInstance] defaultFontWithSize:16] withViewController:self withSelector:@selector(popViewControllerAnimated:) andWithTarget:nil];
+        [CustomNavigationController setBackButtonWithImage:[UIImage imageNamed:@"Navigation-Left.png"] withViewController:self withSelector:@selector(popViewControllerAnimated:) andWithTarget:nil];
+    }
 }
 
 - (void)datePickerChangeValue
@@ -838,7 +928,7 @@
 
 -(BOOL)textFieldShouldReturn:(UITextField *)textField {
     
-    if(_currentStep == 2)
+    if(self.currentStep == 2)
     {
 #ifdef HASHTAG_ENABLE
         if(textField == _infoLieuTextField) {
@@ -859,7 +949,7 @@
 
 - (BOOL)textFieldShouldEndEditing:(UITextField *)textField
 {
-    if((_currentStep == 1) && (textField.text.length > 0)) {
+    if((self.currentStep == 1) && (textField.text.length > 0)) {
 
         // On stocke la date
         if(textField == self.startDateTextField) {
@@ -878,7 +968,7 @@
 
 - (BOOL)textFieldShouldClear:(UITextField *)textField
 {
-    if(_currentStep == 1) {
+    if(self.currentStep == 1) {
         
         NSDate *today = [NSDate date];
         
@@ -902,7 +992,7 @@
 
 -(void)textFieldDidBeginEditing:(UITextField *)textField
 {
-    if( _currentStep == 1 )
+    if(self.currentStep == 1 )
     {
         
         BOOL startIsFull = self.startDateTextField.text.length > 0;
@@ -964,7 +1054,7 @@
 
 - (void)updateSecondNavBarEnable
 {
-    if(_currentStep == 2) {
+    if(self.currentStep == 2) {
         
         if( ((self.adresseLabel.text.length > 0)||(self.adresseText.length > 0)) && (self.descriptionTextView.text.length > 0) ) {
             [self setNavBarSecondButtonEnable:YES];
@@ -986,7 +1076,7 @@
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
 {    
-    if(_currentStep == 1)
+    if(self.currentStep == 1)
         return NO;
             
     return YES;
@@ -994,7 +1084,7 @@
 
 - (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
 {
-    if(_currentStep == 1)
+    if(self.currentStep == 1)
         return NO;
     
     // Check if textField empty
@@ -1033,7 +1123,7 @@
     self.coverView.contentMode = UIViewContentModeScaleAspectFill;
     self.coverView.image = image;
     
-    [[VersionControl sharedInstance] dismissModalViewControllerFromRoot:UIPicker animated:YES];
+    [UIPicker dismissViewControllerAnimated:YES completion:nil];
 }
 
 #pragma mark - UIActionSheet
@@ -1054,7 +1144,7 @@
         picker.sourceType = UIImagePickerControllerSourceTypeCamera;
     }
     
-    [[VersionControl sharedInstance] presentModalViewController:picker fromRoot:self animated:YES];
+    [self presentViewController:picker animated:YES completion:nil];
 }
 
 #pragma mark - Getters & Setters
@@ -1096,7 +1186,7 @@
     [self setLabelText:self.adresseLabel text:adresseText minFontSize:minSize maxFontSize:maxSize color:textColor];
     
     // Activer bouton si champs obligatoires remplis
-    if(_currentStep == 2 && adresseText.length > 0 && self.descriptionTextView.text.length > 0) {
+    if(self.currentStep == 2 && adresseText.length > 0 && self.descriptionTextView.text.length > 0) {
         [self setNavBarSecondButtonEnable:YES];
     }
 }
