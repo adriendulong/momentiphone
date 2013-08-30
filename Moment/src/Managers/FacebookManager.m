@@ -480,7 +480,7 @@ static FacebookManager *sharedInstance = nil;
             // Permissions Obtenue
             if(success)
             {
-                NSString *path = [NSString stringWithFormat:@"%@?fields=name,picture.height(600).width(600)", facebookId];
+                NSString *path = [NSString stringWithFormat:@"%@?fields=name,picture.height(400).width(400)", facebookId];
                 
                 //NSLog(@"path = %@", path);
                 
