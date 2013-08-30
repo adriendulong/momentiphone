@@ -72,17 +72,7 @@
                             
                             [[FacebookManager sharedInstance] createUsersFromFacebookInvited:e.invited withEnded:^(NSArray *users) {
                                 if (users != nil && users.count > 0) {
-                                    //NSLog(@"Nb users = %i",users.count);
-                                    
-                                    if (users.count > 500) {
-                                        
-                                        NSArray *truncate_users = [users subarrayWithRange:NSMakeRange(0, 500)];
-                                        //NSLog(@"Nb truncate users = %i",truncate_users.count);
-                                        
-                                        [moment inviteNewGuest:truncate_users withEnded:nil];
-                                    } else {
-                                        [moment inviteNewGuest:users withEnded:nil];
-                                    }
+                                    [moment inviteNewGuest:users withEnded:nil];
                                 }
                             }];
                         }

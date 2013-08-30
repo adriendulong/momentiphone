@@ -782,7 +782,7 @@ static FacebookManager *sharedInstance = nil;
                                       
                                       // Get list events
                                       [FBRequestConnection
-                                       startWithGraphPath:@"me/events?fields=id,cover,description,is_date_only,name,owner,location,privacy,rsvp_status,start_time,end_time,admins,picture.type(large),invited.fields(id,name,picture.width(200).height(200))&locale=fr_FR"
+                                       startWithGraphPath:@"me/events?fields=id,cover,description,is_date_only,name,owner,location,privacy,rsvp_status,start_time,end_time,admins,picture.type(large),invited.fields(id,name,picture.width(200).height(200)).limit(500)&locale=fr_FR"
                                        completionHandler:^(FBRequestConnection *connection,
                                                            id result,
                                                            NSError *error) {
