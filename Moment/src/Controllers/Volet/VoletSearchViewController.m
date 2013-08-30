@@ -388,6 +388,7 @@
     self.moments = @[];
     self.nbPrivateMoments = 0;
     self.searchBarTextField.text = nil;
+    self.delegate.alreadyPushSearchView = NO;
     [self designNbMomentsAndUtilisateursViews];
     [self.tableView reloadData];
     

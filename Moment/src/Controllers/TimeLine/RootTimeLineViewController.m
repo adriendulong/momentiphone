@@ -98,6 +98,7 @@ shouldLoadEventsFromFacebook:(BOOL)loadEvents
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    [AppDelegate updateActualViewController:self];
     
     // Préload Volet
     [[VoletViewController volet] loadNotifications];
@@ -164,7 +165,7 @@ shouldLoadEventsFromFacebook:(BOOL)loadEvents
 
 #pragma mark - Actions
 
-- (IBAction)clicChangeTimeLine {    
+/*- (IBAction)clicChangeTimeLine {
     
     // Show Feed
     if(self.isShowingPrivateTimeLine) {
@@ -208,7 +209,7 @@ shouldLoadEventsFromFacebook:(BOOL)loadEvents
         self.isShowingPrivateTimeLine = YES;
         [self showContentViewController:self.privateTimeLine];
     }
-}
+}*/
 
 - (void)showAddEvent
 {

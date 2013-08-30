@@ -36,6 +36,7 @@
 @synthesize isSponso = _isSponso;
 @synthesize uniqueURL = _uniqueURL;
 @synthesize coverPhotoURL = _coverPhotoURL;
+@synthesize nb_photos = _nb_photos;
 
 - (void)setupWithAttributes:(NSDictionary*)attributes
 {
@@ -96,6 +97,9 @@
     
     if(attributes[@"unique_url"])
         self.uniqueURL = attributes[@"unique_url"];
+    
+    if(attributes[@"nb_photos"])
+        self.nb_photos = attributes[@"nb_photos"];
     
     if(attributes[@"owner"]) {
         UserClass *owner = nil;

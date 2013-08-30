@@ -86,26 +86,4 @@ static VersionControl *sharedInstance = nil;
     return [[image resizableImageWithCapInsets:edge] stretchableImageWithLeftCapWidth:capWidth topCapHeight:capHeight];
 }
 
-- (void)dismissModalViewControllerFromRoot:(UIViewController*)root animated:(BOOL)animated
-{
-    if ([root respondsToSelector:@selector(dismissViewControllerAnimated:completion:)]){
-        [root dismissViewControllerAnimated:animated completion:nil];
-    }
-    else {
-        [root dismissModalViewControllerAnimated:animated];
-    }
-}
-
-- (void)presentModalViewController:(UIViewController*)modal fromRoot:(UIViewController*)root animated:(BOOL)animated
-{
-    if ([root respondsToSelector:@selector(presentViewController:animated:completion:)]){
-        [root presentViewController:modal animated:animated completion:nil];
-    }
-    else {
-        [root presentModalViewController:modal animated:animated];
-    }
-    
-}
-
-
 @end

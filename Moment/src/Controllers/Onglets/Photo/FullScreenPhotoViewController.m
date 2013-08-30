@@ -66,8 +66,8 @@
         [[UIApplication sharedApplication] setStatusBarOrientation:orientation animated:NO];
         //present/dismiss viewcontroller in order to activate rotating.
         UIViewController *mVC = [[UIViewController alloc] init];
-        [[VersionControl sharedInstance] presentModalViewController:mVC fromRoot:self animated:NO];
-        [[VersionControl sharedInstance] dismissModalViewControllerFromRoot:self animated:NO];
+        [self presentViewController:mVC animated:NO completion:nil];
+        [self dismissViewControllerAnimated:NO completion:nil];
     }
     else if(isRotating) {
         NSLog(@"Already rotated");

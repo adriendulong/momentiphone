@@ -27,7 +27,7 @@
 #import <MessageUI/MessageUI.h>
 #import "GAI.h"
 
-@interface InfoMomentViewController : UIViewController <RNExpandingButtonBarDelegate, UIScrollViewDelegate, OngletViewController, MFMailComposeViewControllerDelegate> {
+@interface InfoMomentViewController : UIViewController <UIAlertViewDelegate, RNExpandingButtonBarDelegate, UIScrollViewDelegate, OngletViewController, MFMailComposeViewControllerDelegate> {
     
     @private
     NSInteger hauteur;
@@ -89,6 +89,7 @@
 @property (nonatomic, weak) IBOutlet UIButton *inviteButton;
 @property (nonatomic, weak) IBOutlet UIView *invitesBackgroundView;
 @property (nonatomic, weak) IBOutlet UIImageView *valideImageView, *refusedImageView;
+@property (weak, nonatomic) IBOutlet UIButton *seeInviteButton;
 
 /* ----- Date View ----- */
 @property (nonatomic, strong) IBOutlet UIView *dateView;
@@ -100,6 +101,8 @@
 /* ----- Photos View ----- */
 @property (nonatomic, strong) IBOutlet UIView *photosView;
 @property (nonatomic, weak) IBOutlet UILabel *nbPhotosLabel;
+@property (strong, nonatomic) IBOutlet UIView *addPhotosView;
+@property (weak, nonatomic) IBOutlet UIButton *addPhotosButton;
 
 /* ----- Badges View ----- */
 @property (nonatomic, strong) IBOutlet UIView *badgesView;
@@ -126,11 +129,19 @@
 /* ------ Partage View ----- */
 @property (nonatomic, strong) IBOutlet UIView *partageView;
 
+/* ------ Suppression View ----- */
+@property (strong, nonatomic) IBOutlet UIView *suppressionView;
+@property (weak, nonatomic) IBOutlet UIButton *deleteMomentButton;
+@property (strong, nonatomic) UIAlertView *deleteMoment;
+
+@property (strong, nonatomic) NSNumber *nb_photos_in_moment;
+
 
 // ------------------- METHODES ------------------------ //
 - (id)initWithMoment:(MomentClass*)moment withRootViewController:(RootOngletsViewController*)rootViewController;
 
 - (IBAction)clicInviteButton;
+- (IBAction)clicSeeInviteButton;
 - (void)reloadData;
 - (IBAction)clicRSVPButton:(UIButton*)sender;
 
@@ -144,6 +155,8 @@
 //- (IBAction)clicCoursesButton;
 - (IBAction)clicComptesButton;
 - (IBAction)clicFeedBackButton;
+
+- (IBAction)clicDeleteMoment;
 
 // Google Analytics
 - (void)sendGoogleAnalyticsView;

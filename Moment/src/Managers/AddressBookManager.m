@@ -164,10 +164,10 @@
                 // Send an alert telling user to change privacy setting in settings app
                 //NSLog(@"Acces to addressBook not authorized");
                 
-                [[[UIAlertView alloc] initWithTitle:@"Authorisation manquante"
-                                            message:@"Veuillez changer les paramètres de confidentialité de l'iPhone afin d'accéder aux contacts"
+                [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"WebModalViewController_AuthorizationFailed_Title", nil)
+                                            message:NSLocalizedString(@"WebModalViewController_AuthorizationFailed_Message", nil)
                                            delegate:nil
-                                  cancelButtonTitle:@"OK"
+                                  cancelButtonTitle:NSLocalizedString(@"AlertView_Button_OK", nil)
                                   otherButtonTitles: nil]
                  show];
                 break;

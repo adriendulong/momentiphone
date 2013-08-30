@@ -38,7 +38,7 @@
     if(attributes[@"photo"]) {
         
         if([attributes[@"photo"] isKindOfClass:[UIImage class]]) {
-            file = UIImagePNGRepresentation(attributes[@"photo"]);
+            file = UIImageJPEGRepresentation(attributes[@"photo"], 0.8);
         }
         else if([attributes[@"photo"] isKindOfClass:[NSData class]]) {
             file = attributes[@"photo"];
@@ -141,7 +141,7 @@
     if(modifications[@"photo"]) {
         
         if([modifications[@"photo"] isKindOfClass:[UIImage class]]) {
-            file = UIImagePNGRepresentation(modifications[@"photo"]);
+            file = UIImageJPEGRepresentation(modifications[@"photo"], 0.8);
         }
         else if([modifications[@"photo"] isKindOfClass:[NSData class]]) {
             file = modifications[@"photo"];

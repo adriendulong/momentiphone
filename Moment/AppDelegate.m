@@ -11,17 +11,21 @@
 //#import "SDURLCache.h"
 #import "Config.h"
 #import "HomeViewController.h"
+#import "TutorialViewController.h"
 #import "MomentCoreData+Model.h"
 #import "HTAutocompleteTextField.h"
 #import "TextFieldAutocompletionManager.h"
 #import "FacebookManager.h"
 #import "DeviceModel.h"
 #import "PushNotificationManager.h"
+#import "RedirectionManager.h"
 #import "Three20/Three20.h"
 #import "FullScreenPhotoViewController.h"
 #import "Harpy.h"
 #import "iRate.h"
 #import <Crashlytics/Crashlytics.h>
+
+#import "MomentClass+Server.h"
 
 @implementation AppDelegate
 
@@ -42,6 +46,26 @@
     appDelegate.actualViewController = viewController;
 }
 
+/*- (UIViewController *)topViewController{
+    return [self topViewController:[UIApplication sharedApplication].keyWindow.rootViewController];
+}
+
+- (UIViewController *)topViewController:(UIViewController *)rootViewController
+{
+    if (rootViewController.presentedViewController == nil) {
+        return rootViewController;
+    }
+    
+    if ([rootViewController.presentedViewController isMemberOfClass:[UINavigationController class]]) {
+        UINavigationController *navigationController = (UINavigationController *)rootViewController.presentedViewController;
+        UIViewController *lastViewController = [[navigationController viewControllers] lastObject];
+        return [self topViewController:lastViewController];
+    }
+    
+    UIViewController *presentedViewController = (UIViewController *)rootViewController.presentedViewController;
+    return [self topViewController:presentedViewController];
+}*/
+
 #pragma mark - Facebook
 
 // The native facebook application transitions back to an authenticating application when the user
@@ -56,9 +80,15 @@
 - (BOOL)application:(UIApplication *)application
             openURL:(NSURL *)url
   sourceApplication:(NSString *)sourceApplication
-         annotation:(id)annotation {
-    // attempt to extract a token from the url
-    return [[FBSession activeSession] handleOpenURL:url];
+         annotation:(id)annotation
+{
+    
+    if ([sourceApplication isEqualToString:@"com.facebook.Facebook"]) {
+        // attempt to extract a token from the url
+        return [[FBSession activeSession] handleOpenURL:url];
+    } else {
+        return [[RedirectionManager sharedInstance] handleOpenURL:url withApplicationState:application.applicationState];
+    }
 }
 
 #pragma mark - AppDelegate
@@ -144,7 +174,7 @@
 		if (dictionary != nil)
 		{
 			//NSLog(@"Launched from push notification: %@", dictionary);
-            [[PushNotificationManager sharedInstance] receivePushNotification:dictionary updateUI:NO];
+            [[PushNotificationManager sharedInstance] receivePushNotification:dictionary withApplicationState:application.applicationState updateUI:NO];
         }
 	}
     
@@ -214,6 +244,14 @@
         
     }
     */
+    
+    /*NSURL *url = launchOptions[@"UIApplicationLaunchOptionsURLKey"];
+    
+    if (url) {
+        [[RedirectionManager sharedInstance] redirectSchemeFromURL:url withApplicationState:application.applicationState];
+    }*/
+    
+    [self deleteUploadPhotosCache];
         
     return YES;
 }
@@ -312,7 +350,7 @@
 - (void)application:(UIApplication*)application didReceiveRemoteNotification:(NSDictionary*)userInfo
 {
 	//NSLog(@"Received notification: %@", userInfo);
-    [[PushNotificationManager sharedInstance] receivePushNotification:userInfo updateUI:YES];
+    [[PushNotificationManager sharedInstance] receivePushNotification:userInfo withApplicationState:application.applicationState updateUI:YES];
 }
 
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
@@ -330,8 +368,33 @@
 }
 
 -(void)mailComposeController:(MFMailComposeViewController*)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError*)error {
-    [self.window.rootViewController dismissModalViewControllerAnimated:YES];
+    [self.window.rootViewController dismissViewControllerAnimated:YES completion:nil];
 }
 
+- (void)deleteUploadPhotosCache
+{
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths objectAtIndex:0]; // Get documents folder
+    NSString *photosPath = [documentsDirectory stringByAppendingPathComponent:@"PhotosCache"];
+    
+    NSFileManager *fileMgr = [[NSFileManager alloc] init];
+    NSError *theError = nil;
+    
+    BOOL isDir;
+    BOOL exists = [fileMgr fileExistsAtPath:photosPath isDirectory:&isDir];
+    
+    if (exists) {
+        if (isDir) {            
+            if (theError == nil) {
+                BOOL removeSuccess = [fileMgr removeItemAtPath:photosPath error:&theError];
+                if (!removeSuccess) {
+                    NSLog(@"DELETING FAILED... : %@ | Error: %@",photosPath, theError);
+                }
+            } else {
+                NSLog(@"DELETING FAILED... : %@ | Error: %@",photosPath, theError);
+            }
+        }
+    }
+}
 
 @end

@@ -43,11 +43,14 @@
     hud.labelText = NSLocalizedString(@"MBProgressHUD_Loading_FBEvents", nil);
     hud.detailsLabelText = NSLocalizedString(@"MBProgressHUD_Loading_FBEvents_2", nil);
     
+    __block int pass = 0;
+    
     [MomentClass importFacebookEventsWithEnded:^(NSArray *events, NSArray *moments) {
+        pass++;
         
         if (events && moments) {
             
-            int nbEvent = [events count];
+            int nbEvent = events.count;
             
             if (nbEvent > 0) {
                 
@@ -60,6 +63,21 @@
                      postFinishMessage:[NSString stringWithFormat:NSLocalizedString(@"StatusBarOverlay_ImportFacebookEvent", nil), nbEvent]
                      duration:2 animated:YES];
                 }
+                
+                for (MomentClass *moment in moments) {
+                    
+                    for (FacebookEvent *e in events) {
+                        
+                        if ([e.eventId isEqualToString:moment.facebookId]) {
+                            
+                            [[FacebookManager sharedInstance] createUsersFromFacebookInvited:e.invited withEnded:^(NSArray *users) {
+                                if (users != nil && users.count > 0) {
+                                    [moment inviteNewGuest:users withEnded:nil];
+                                }
+                            }];
+                        }
+                    }
+                }
             }
             
             // Save
@@ -69,10 +87,17 @@
             [self.tableView reloadData];
             [self.timeLine reloadData];
         }
-        else {
+        // Tableau vide retourné -> Aucun Event n'a été renvoyé par Facebook
+        else if(events && events.count == 0) {
             [[MTStatusBarOverlay sharedInstance]
-             postImmediateErrorMessage:NSLocalizedString(@"StatusBarOverlay_LoadingFailure", nil)
-             duration:1 animated:YES];
+             postFinishMessage:NSLocalizedString(@"StatusBarOverlay_ImportFacebookEvent_noResult", nil)
+             duration:2 animated:YES];
+        }
+        else {
+            if (pass > 1) {
+                [[MTStatusBarOverlay sharedInstance] postImmediateErrorMessage:NSLocalizedString(@"StatusBarOverlay_LoadingFailure", nil)
+                 duration:2 animated:YES];
+            }
         }
         
         [MBProgressHUD hideHUDForView:self.view animated:YES];

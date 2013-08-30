@@ -10,6 +10,7 @@
 
 #import "TimeLineViewController.h"
 #import "MomentClass.h"
+#import "CMPopTipView.h"
 
 enum OngletRank {
     OngletPhoto = 0,
@@ -19,7 +20,7 @@ enum OngletRank {
 
 @class InfoMomentViewController, PhotoViewController, ChatViewController;
 
-@interface RootOngletsViewController : UIViewController <UIScrollViewDelegate> {
+@interface RootOngletsViewController : UIViewController <UIScrollViewDelegate, CMPopTipViewDelegate> {
     @private
     NSInteger viewHeight;
 }
@@ -40,6 +41,10 @@ enum OngletRank {
 
 @property (nonatomic, weak) IBOutlet UIScrollView *scrollView;
 @property (nonatomic) BOOL shouldShowInviteViewController;
+
+@property (nonatomic, strong) CMPopTipView *roundRectButtonPopTipView;
+
+@property (nonatomic) BOOL poptipPhotos, poptipChat;
 
 - (id)initWithMoment:(MomentClass*)moment
           withOnglet:(enum OngletRank)onglet

@@ -179,51 +179,58 @@ static MomentClass *currentMoment = nil;
 {
     [self accesEventStoreWithEnded:^(EKEventStore *eventStore) {
         
-        // On cherche les events correspondant
-        NSDate *start = moment.dateDebut ?: [NSDate dateWithTimeIntervalSince1970:0]; // Depuis 1970
-        NSDate *end = moment.dateFin ?: [NSDate dateWithTimeIntervalSinceNow:3600*24*7*52]; // 1 an dans le futur
+        EKCalendar *targetCalendar = nil;
+        targetCalendar = [eventStore defaultCalendarForNewEvents];
         
-        NSPredicate *predicate = [eventStore predicateForEventsWithStartDate:start endDate:end calendars:@[[eventStore defaultCalendarForNewEvents]]];
-        NSArray *matches = [eventStore eventsMatchingPredicate:predicate];
-        
-        // Création de l'alertview si elle n'est pas déjà allouée
-        if(!addEventAlertView) {
-            addEventAlertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"CalendarManager_EventCreation_AskUserAlertView_Title", nil)
-                                                           message:NSLocalizedString(@"CalendarManager_EventCreation_AskUserAlertView_Message", nil)
-                                                          delegate:self
-                                                 cancelButtonTitle:NSLocalizedString(@"AlertView_Button_Cancel", nil)
-                                                 otherButtonTitles:NSLocalizedString(@"AlertView_Button_OK", nil), nil];
-        }
-        
-        // Si il n'y en a pas ==> Demande à l'utilisateur
-        if([matches count] == 0)
-        {
-            currentMoment = moment;
-            [addEventAlertView show];
-        }
-        else if(matches) {
+        if (targetCalendar) {
+            // On cherche les events correspondant
+            NSDate *start = moment.dateDebut ?: [NSDate dateWithTimeIntervalSince1970:0]; // Depuis 1970
+            NSDate *end = moment.dateFin ?: [NSDate dateWithTimeIntervalSinceNow:3600*24*7*52]; // 1 an dans le futur
             
-            /*
-             * Le Prédicate retourne les dates correspondant à l'interval
-             * --> Vérification manuelle de l'égalité des dates <--
-             */
+            NSPredicate *predicate = [eventStore predicateForEventsWithStartDate:start endDate:end calendars:@[targetCalendar]];
+            NSArray *matches = [eventStore eventsMatchingPredicate:predicate];
             
-            BOOL add = YES;
-            for( EKEvent *event in matches )
-            {
-                if( [event.startDate isEqualToDate:moment.dateDebut] && [event.endDate isEqualToDate:moment.dateFin] && [event.title isEqualToString:moment.titre] )
-                {
-                    add = NO;
-                    break;
-                }
+            // Création de l'alertview si elle n'est pas déjà allouée
+            if(!addEventAlertView) {
+                addEventAlertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"CalendarManager_EventCreation_AskUserAlertView_Title", nil)
+                                                               message:NSLocalizedString(@"CalendarManager_EventCreation_AskUserAlertView_Message", nil)
+                                                              delegate:self
+                                                     cancelButtonTitle:NSLocalizedString(@"AlertView_Button_Cancel", nil)
+                                                     otherButtonTitles:NSLocalizedString(@"AlertView_Button_OK", nil), nil];
             }
             
-            // Demande à l'utilisateur pour l'ajout de l'évènement
-            if(add) {
+            // Si il n'y en a pas ==> Demande à l'utilisateur
+            if([matches count] == 0)
+            {
                 currentMoment = moment;
                 [addEventAlertView show];
             }
-            
+            else if(matches) {
+                
+                /*
+                 * Le Prédicate retourne les dates correspondant à l'interval
+                 * --> Vérification manuelle de l'égalité des dates <--
+                 */
+                
+                BOOL add = YES;
+                for( EKEvent *event in matches )
+                {
+                    if( [event.startDate isEqualToDate:moment.dateDebut] && [event.endDate isEqualToDate:moment.dateFin] && [event.title isEqualToString:moment.titre] )
+                    {
+                        add = NO;
+                        break;
+                    }
+                }
+                
+                // Demande à l'utilisateur pour l'ajout de l'évènement
+                if(add) {
+                    currentMoment = moment;
+                    [addEventAlertView show];
+                }
+                
+            }
+        } else {
+            NSLog(@"The target calendar is nil.");
         }
     }];
 

@@ -112,9 +112,9 @@
         [self initBouton:self.buttonDelete];
         
         // Afficher bouton supprimer que si owner
-        if(![self.moment.owner.userId isEqualToNumber:[UserCoreData getCurrentUser].userId]) {
+        /*if(![self.moment.owner.userId isEqualToNumber:[UserCoreData getCurrentUser].userId]) {
             self.buttonDelete.hidden = YES;
-        }
+        }*/
         
         // Save Original Properties
         originalMedallionCenter = self.medallion.center;

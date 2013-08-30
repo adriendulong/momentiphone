@@ -10,6 +10,7 @@
 #import "InviteAddViewController.h"
 #import "UserCoreData+Model.h"
 #import "MomentClass+Server.h"
+#import "Config.h"
 
 @implementation RootOngletsViewController
 
@@ -28,6 +29,9 @@
 
 @synthesize scrollView = _scrollView;
 
+@synthesize roundRectButtonPopTipView = _roundRectButtonPopTipView;
+@synthesize poptipChat = _poptipChat, poptipPhotos = _poptipPhotos;
+
 
 - (id)initWithMoment:(MomentClass*)moment
           withOnglet:(enum OngletRank)onglet
@@ -45,7 +49,7 @@
             {
                 [MomentClass getInfosMomentWithId:self.moment.momentId.intValue withEnded:^(NSDictionary *attributes) {
                     
-                    if (attributes != nil) {
+                    if (attributes) {
                         self.moment = [[MomentClass alloc] initWithAttributesFromWeb:attributes];
                         self.photoViewController.moment = self.moment;
                         self.infoMomentViewController.moment = self.moment;
@@ -210,6 +214,12 @@
                 [self addOngletView:self.chatViewController.view rank:onglet];
             [AppDelegate updateActualViewController:self.chatViewController];
             [self.chatViewController sendGoogleAnalyticsView];
+            
+            // Reload Chat
+            [self.chatViewController loadMessagesForPage:1 atPosition:ChatViewControllerMessagePositionBottom
+                                          withEnded:^{
+                                              // Bloc nécessaire pour ne pas afficher le loader de rechargement
+                                          }];
             break;
     }
     
@@ -249,16 +259,25 @@
 - (IBAction)clicNavigationBarButtonPhoto {
     //NSLog(@"NavigationBar Button Photo");
     
+    if (self.poptipPhotos) {
+        [self dismissPopTipViewPhotosAnimated:YES];
+    }
+    
     // Si on passe passe par l'onglet info, on l'alloue
-    if( self.selectedOnglet == OngletChat )
+    if( self.selectedOnglet == OngletChat ) {
         [self addOnglet:OngletInfoMoment];
+    }
     
     [self addAndScrollToOnglet:OngletPhoto];
 }
 
 - (IBAction)clicNavigationBarButtonChat {
     //NSLog(@"NavigationBar Button Tchat");
-     
+    
+    if (self.poptipChat) {
+        [self dismissPopTipViewChatAnimated:YES];
+    }
+    
     // Si on passe passe par l'onglet info, on l'alloue
     if( self.selectedOnglet == OngletPhoto )
         [self addOnglet:OngletInfoMoment];
@@ -290,6 +309,28 @@
     self.scrollView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     [self scrollToOnglet:self.selectedOnglet animated:NO];
     [self addOnglet:self.selectedOnglet];    
+    
+    //Premier lancement de l'application
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    BOOL hasRunOncePopTipOnMoment = [defaults boolForKey:@"hasRunOncePopTipOnMoment"];
+    
+    if (!hasRunOncePopTipOnMoment)
+    {
+        [self showPopTipViewPhotos];
+        [self hasRunOncePopTipOnMoment];
+    }
+}
+
+- (void)hasRunOncePopTipOnMoment
+{
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    BOOL hasRunOncePopTipOnMoment = [defaults boolForKey:@"hasRunOncePopTipOnMoment"];
+    
+    if (!hasRunOncePopTipOnMoment)
+    {
+        [defaults setBool:YES forKey:@"hasRunOncePopTipOnMoment"];
+    }
+    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 - (void)viewDidUnload
@@ -313,7 +354,11 @@
 
 - (void)viewWillDisappear:(BOOL)animated
 {
+    if (self.roundRectButtonPopTipView)
+        [self dismissAnyPopTipViewAnimated:YES];
+    
     [self.scrollView endEditing:YES];
+    
     [super viewWillDisappear:animated];
 }
 
@@ -429,6 +474,105 @@
     */
     
     [scrollView endEditing:YES];
+}
+
+#pragma mark CMPopTipView
+- (void)spawnPopTipViewWithFrame:(CGRect)frame withMessage:(NSString *)message andBackgroundColor:(UIColor *)bgColor andBorderColor:(UIColor *)bdColor andTextColor:(UIColor *)txtColor andFontSize:(CGFloat)fontsize
+{
+    // Toggle popTipView when a standard UIButton is pressed
+    if (nil == self.roundRectButtonPopTipView) {
+        CMPopTipView *poptipview = [[CMPopTipView alloc] initWithMessage:message];
+        poptipview.delegate = self;
+        poptipview.backgroundColor = bgColor;
+        poptipview.textFont = [[Config sharedInstance] defaultFontWithSize:fontsize];
+        poptipview.textColor = txtColor;
+        poptipview.borderColor = bdColor;
+        poptipview.has3DStyle = NO;
+        poptipview.hasShadow = YES;
+        
+        UIView *spawnView = [[UIView alloc] initWithFrame:frame];
+        spawnView.backgroundColor = [UIColor redColor];
+        
+        [self.view addSubview:spawnView];
+        
+        self.roundRectButtonPopTipView = poptipview;
+        
+        [self.roundRectButtonPopTipView presentPointingAtView:spawnView inView:self.view animated:YES];
+    }
+    else {
+        // Dismiss
+        [self dismissAnyPopTipViewAnimated:YES];
+    }
+}
+
+- (void)showPopTipViewPhotos
+{
+    [self spawnPopTipViewWithFrame:CGRectMake(183, -44, 46, 44)
+                       withMessage:NSLocalizedString(@"RootOngletsViewController_PopTipViewPhotos_Message", nil)
+                andBackgroundColor:[UIColor colorWithHex:0xE7E7E7]
+                    andBorderColor:[UIColor colorWithHex:0xC1C1C1]
+                      andTextColor:[Config sharedInstance].orangeColor
+                       andFontSize:12];
+    
+    self.poptipPhotos = YES;
+    [self.roundRectButtonPopTipView autoDismissAnimated:YES atTimeInterval:5];
+}
+- (void)showPopTipViewChat
+{
+    [self spawnPopTipViewWithFrame:CGRectMake(298, -44, 46, 44)
+                       withMessage:NSLocalizedString(@"RootOngletsViewController_PopTipViewChat_Message", nil)
+                andBackgroundColor:[UIColor colorWithHex:0xE7E7E7]
+                    andBorderColor:[UIColor colorWithHex:0xC1C1C1]
+                      andTextColor:[Config sharedInstance].orangeColor
+                       andFontSize:12];
+    
+    self.poptipChat = YES;
+    [self.roundRectButtonPopTipView autoDismissAnimated:YES atTimeInterval:5];
+}
+
+- (void)dismissPopTipViewPhotosAnimated:(BOOL)animated
+{
+    [self.roundRectButtonPopTipView dismissAnimated:animated];
+    self.roundRectButtonPopTipView = nil;
+    
+    self.poptipPhotos = NO;
+    
+    [self showPopTipViewChat];
+}
+
+- (void)dismissPopTipViewChatAnimated:(BOOL)animated
+{
+    if (self.roundRectButtonPopTipView) {
+        [self.roundRectButtonPopTipView dismissAnimated:animated];
+        self.roundRectButtonPopTipView = nil;
+        
+        self.poptipChat = NO;
+    }
+}
+
+- (void)dismissAnyPopTipViewAnimated:(BOOL)animated
+{
+    if (self.roundRectButtonPopTipView) {
+        [self.roundRectButtonPopTipView dismissAnimated:animated];
+        self.roundRectButtonPopTipView = nil;
+        
+        self.poptipPhotos = NO;
+        self.poptipChat = NO;
+    }
+}
+
+#pragma mark CMPopTipViewDelegate methods
+- (void)popTipViewWasDismissedByUser:(CMPopTipView *)popTipView
+{
+    // User can tap CMPopTipView to dismiss it
+    
+    if (self.poptipPhotos) {
+        [self dismissPopTipViewPhotosAnimated:YES];
+    } else if (!self.poptipPhotos && self.poptipChat) {
+        [self dismissPopTipViewChatAnimated:YES];
+    } else {
+        [self dismissAnyPopTipViewAnimated:YES];
+    }
 }
 
 @end

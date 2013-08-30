@@ -188,7 +188,7 @@
 #pragma mark - Debug
 
 - (NSString*)description {
-    return [NSString stringWithFormat:@"USER :\n{\nuserId = %@\nnom = %@\nprenom = %@\nfacebookId = %@\npictureString = %@\nrequest_follower = %@\nrequest_follow_me = %@\nprivacy = %@\nstate = %@\n}\n", self.userId, self.nom, self.prenom, self.facebookId, self.imageString, self.request_follower, self.request_follow_me, self.privacy, self.state];
+    return [NSString stringWithFormat:@"USER :\n{\nuserId = %@\nnom = %@\nprenom = %@\nfacebookId = %@\nemail = %@\npictureString = %@\nrequest_follower = %@\nrequest_follow_me = %@\nprivacy = %@\nstate = %@\n}\n", self.userId, self.nom, self.prenom, self.facebookId, self.email, self.imageString, self.request_follower, self.request_follow_me, self.privacy, self.state];
 }
 
 @end

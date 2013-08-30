@@ -690,7 +690,7 @@ withDelegate:(PhotoViewController*)photoViewController
         } completion:^(BOOL finished) {
             self.rootViewController.navigationController.navigationBar.hidden = NO;
             backgroundNeedsUpdate = YES;
-            [[VersionControl sharedInstance] dismissModalViewControllerFromRoot:self.rootViewController animated:NO];
+            [self.rootViewController dismissViewControllerAnimated:NO completion:nil];
             //[self.navigationController popViewControllerAnimated:NO];
         }];
     }];
@@ -782,16 +782,16 @@ withDelegate:(PhotoViewController*)photoViewController
             [mc setToRecipients:@[kParameterContactMail]];
             
             // Present mail view controller on screen
-            [[VersionControl sharedInstance] presentModalViewController:mc fromRoot:self animated:YES];
+            [self presentViewController:mc animated:YES completion:nil];
         }
         else
         {
             //NSLog(@"mail composer fail");
             
-            [[[UIAlertView alloc] initWithTitle:@"Envoi impossible"
-                                        message:@"Votre appareil ne supporte pas l'envoi d'email"
+            [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"MFMailComposeViewController_Moment_Popup_Title", nil)
+                                        message:NSLocalizedString(@"MFMailComposeViewController_Moment_Popup_Message", nil)
                                        delegate:nil
-                              cancelButtonTitle:@"OK"
+                              cancelButtonTitle:NSLocalizedString(@"AlertView_Button_OK", nil)
                               otherButtonTitles:nil]
              show];
         }
@@ -803,7 +803,7 @@ withDelegate:(PhotoViewController*)photoViewController
 - (IBAction)clicLike {
     
     MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-    hud.labelText = NSLocalizedString(@"MBProgressHUD_Loading_updateLikeCount", nil);
+    hud.labelText = NSLocalizedString(@"MBProgressHUD_Update", nil);
     
     // Google Analytics
     [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Like" value:nil];
@@ -837,8 +837,7 @@ withDelegate:(PhotoViewController*)photoViewController
         [fbSheet addImage:image];
         [fbSheet addURL:url];
         
-        //[self presentViewController:fbSheet animated:YES completion:nil];
-        [[VersionControl sharedInstance] presentModalViewController:fbSheet fromRoot:self animated:YES];
+        [self presentViewController:fbSheet animated:YES completion:nil];
     }
     // iOS 5
     else
@@ -864,8 +863,7 @@ withDelegate:(PhotoViewController*)photoViewController
         [facebookViewComposer addImage:image];
         [facebookViewComposer addURL:url];
         //facebookViewComposer.completionHandler = completionHandler;
-        //[self presentViewController:facebookViewComposer animated:YES completion:nil];
-        [[VersionControl sharedInstance] presentModalViewController:facebookViewComposer fromRoot:self animated:YES];
+        [self presentViewController:facebookViewComposer animated:YES completion:nil];
     }
     
 }
@@ -899,8 +897,7 @@ withDelegate:(PhotoViewController*)photoViewController
         [tweetSheet addImage:image];
         [tweetSheet addURL:url];
         
-        //[self presentViewController:tweetSheet animated:YES completion:nil];
-        [[VersionControl sharedInstance] presentModalViewController:tweetSheet fromRoot:self animated:YES];
+        [self presentViewController:tweetSheet animated:YES completion:nil];
     }
     // iOS 5 -> Twitter Framework
     else
@@ -911,8 +908,7 @@ withDelegate:(PhotoViewController*)photoViewController
         [twitterViewComposer addImage:image];
         [twitterViewComposer addURL:url];
         
-        //[self presentViewController:twitterViewComposer animated:YES completion:nil];
-        [[VersionControl sharedInstance] presentModalViewController:twitterViewComposer fromRoot:self animated:YES];
+        [self presentViewController:twitterViewComposer animated:YES completion:nil];
     }
     
 }
@@ -1026,6 +1022,7 @@ withDelegate:(PhotoViewController*)photoViewController
                     }
                     
                     self.delegate.photos = self.photos;
+                    [self.delegate.rootViewController.infoMomentViewController reloadData];
                 }
                 // -- Fail
                 else {
@@ -1102,7 +1099,7 @@ withDelegate:(PhotoViewController*)photoViewController
     }
     
     // Close the Mail Interface
-    [[VersionControl sharedInstance] dismissModalViewControllerFromRoot:self animated:YES];
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 #pragma mark - UIScrollView Delegate

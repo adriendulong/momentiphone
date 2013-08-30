@@ -23,9 +23,10 @@
 #import "InviteAddTableViewController.h"
 #import "TTTAttributedLabel.h"
 #import <MessageUI/MessageUI.h>
+#import "CMPopTipView.h"
 
 @class InviteAddTableViewController;
-@interface InviteAddViewController : UIViewController <UITextFieldDelegate, InviteAddViewControllerDelegate, UIAlertViewDelegate, MFMessageComposeViewControllerDelegate>
+@interface InviteAddViewController : UIViewController <UITextFieldDelegate, InviteAddViewControllerDelegate, UIAlertViewDelegate, MFMessageComposeViewControllerDelegate, CMPopTipViewDelegate>
 
 @property (nonatomic, strong) UserClass *owner;
 @property (nonatomic, strong) MomentClass *moment;
@@ -48,6 +49,10 @@
 @property (nonatomic, strong) InviteAddTableViewController *facebookTableViewController;
 @property (nonatomic, strong) InviteAddTableViewController *favorisTableViewController;
 @property (nonatomic) BOOL contactLoaded, facebookLoaded, favorisLoaded;
+
+@property (nonatomic, strong) CMPopTipView *roundRectButtonPopTipView;
+
+@property (nonatomic) BOOL poptipFacebook;
 
 // Constant Header
 @property (nonatomic, weak) IBOutlet CustomLabel *validerLabel;

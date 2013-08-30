@@ -56,6 +56,7 @@ static VoletViewController *actualVoletViewController;
 
 @synthesize searchTextField = _searchTextField;
 @synthesize searchViewController = _searchViewController;
+@synthesize alreadyPushSearchView = _alreadyPushSearchView;
 
 + (VoletViewController*)volet {
     return actualVoletViewController;
@@ -69,8 +70,9 @@ static VoletViewController *actualVoletViewController;
         self.rootTimeLine = rootTimeLine;
         isEmpty = YES;
         isShowingInvitations = NO;
-        self.notifications = [[NSMutableArray alloc] init];
-        self.invitations = [[NSMutableArray alloc] init];
+        self.alreadyPushSearchView = NO;
+        self.notifications = [NSMutableArray array];
+        self.invitations = [NSMutableArray array];
         nbNewInvitations = nbNewNotifications = 0;
         
         // Accès global au volet pour les Push Notifications
@@ -107,7 +109,7 @@ static VoletViewController *actualVoletViewController;
     UIFont *font = [[Config sharedInstance] defaultFontWithSize:15];
     self.nomUserButton.titleLabel.font = font;
     // Mes actualités
-    self.mesActualites.titleLabel.font = font;
+    //self.mesActualites.titleLabel.font = font;
     // Paramètres
     self.parametresButton.titleLabel.font = font;
     // Mes Moments
@@ -153,6 +155,8 @@ static VoletViewController *actualVoletViewController;
     [self.nbInvitationsView addGestureRecognizer:tap];
     tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(clicNotifications)];
     [self.nbNotificationsView addGestureRecognizer:tap];
+    
+    [self.searchTextField setPlaceholder:NSLocalizedString(@"VoletSearchViewController_Placeholder_Search", nil)];
     
     [self reloadUsername];
     [self designNbNotificationsViews];
@@ -204,14 +208,14 @@ static VoletViewController *actualVoletViewController;
         for (int i=0; i < taille; i++) {
             LocalNotification *notif = [self.notifications objectAtIndex:i];
             
-            if (![rowIndexInVolet.indexNotifications containsObject:notif.id_notif]) {
-                [rowIndexInVolet.indexNotifications addObject:notif.id_notif];
+            if (![rowIndexInVolet.indexNotifications containsObject:notif]) {
+                [rowIndexInVolet.indexNotifications addObject:notif];
             }
         }
         
         nbNewNotificationsShowing = taille;
         self.nbNotificationsView.hidden = NO;
-        texte = [NSString stringWithFormat:@"%i", [rowIndexInVolet.indexNotifications count]];
+        texte = [NSString stringWithFormat:@"%i", rowIndexInVolet.indexNotifications.count];
         self.nbNotificationsLabel.text = texte;
         expectedSize = [texte sizeWithFont:self.nbNotificationsLabel.font constrainedToSize:maxSize];
         expectedSize.width = MAX(height, expectedSize.width);
@@ -248,7 +252,7 @@ static VoletViewController *actualVoletViewController;
     
     // Update Badge
     //NSInteger badgeNumber = nbNewInvitations + nbNewNotifications;    
-    NSInteger badgeNumber = nbNewInvitations + [rowIndexInVolet.indexNotifications count];
+    NSInteger badgeNumber = nbNewInvitations + rowIndexInVolet.indexNotifications.count;
     [[PushNotificationManager sharedInstance] setNbNotifcations:badgeNumber];
     
 }
@@ -396,32 +400,36 @@ static VoletViewController *actualVoletViewController;
                 LocalNotification *notif = [self.notifications objectAtIndex:indexPath.row];
                 
                 RowIndexInVolet *rowIndexInVolet = [RowIndexInVolet sharedManager];
-                if ([rowIndexInVolet.indexNotifications containsObject:notif.id_notif]) {
-                     switch (notif.type) {
-                     
-                         case NotificationTypeModification:
-                             ((VoletViewControllerNotificationCell *)cell).pictoView.image = [UIImage imageNamed:@"picto_bulle"];
-                             break;
-                     
-                         case NotificationTypeNewChat:
-                             ((VoletViewControllerNotificationCell *)cell).pictoView.image = [UIImage imageNamed:@"picto_message"];
-                             break;
-                     
-                         case NotificationTypeNewPhoto:
-                             ((VoletViewControllerNotificationCell *)cell).pictoView.image = [UIImage imageNamed:@"picto_photo"];
-                             break;
-                     
-                         case NotificationTypeNewFollower:
-                             ((VoletViewControllerNotificationCell *)cell).pictoView.image = [UIImage imageNamed:@"picto_invite"];
-                             break;
-                     
-                         case NotificationTypeFollowRequest:
-                             ((VoletViewControllerNotificationCell *)cell).pictoView.image = [UIImage imageNamed:@"picto_invite"];
-                             break;
-                     
-                         default:
-                             break;
-                     }
+                
+                for (LocalNotification *notif_save in rowIndexInVolet.indexNotifications) {
+                    if ([notif_save.id_notif isEqualToNumber:notif.id_notif]) {
+                        
+                        switch (notif.type) {
+                                
+                            case NotificationTypeModification:
+                                ((VoletViewControllerNotificationCell *)cell).pictoView.image = [UIImage imageNamed:@"picto_bulle"];
+                                break;
+                                
+                            case NotificationTypeNewChat:
+                                ((VoletViewControllerNotificationCell *)cell).pictoView.image = [UIImage imageNamed:@"picto_message"];
+                                break;
+                                
+                            case NotificationTypeNewPhoto:
+                                ((VoletViewControllerNotificationCell *)cell).pictoView.image = [UIImage imageNamed:@"picto_photo"];
+                                break;
+                                
+                            case NotificationTypeNewFollower:
+                                ((VoletViewControllerNotificationCell *)cell).pictoView.image = [UIImage imageNamed:@"picto_invite"];
+                                break;
+                                
+                            case NotificationTypeFollowRequest:
+                                ((VoletViewControllerNotificationCell *)cell).pictoView.image = [UIImage imageNamed:@"picto_invite"];
+                                break;
+                                
+                            default:
+                                break;
+                        }
+                    }
                 }
             }
         }
@@ -462,6 +470,26 @@ static VoletViewController *actualVoletViewController;
         // Reload
         //[self.tableView reloadData];
         
+        // Passera l'icône en gris après le clic.
+        RowIndexInVolet *rowIndexInVolet = [RowIndexInVolet sharedManager];
+        
+        NSMutableArray *tempsNotifs = [NSMutableArray array];
+        
+        for (LocalNotification *notif_save in rowIndexInVolet.indexNotifications) {
+            
+            if (![notif_save.moment.momentId isEqualToNumber:notif.moment.momentId]) {
+                [tempsNotifs addObject:notif_save];
+            } else {
+                if (notif_save.type != notif.type) {
+                    [tempsNotifs addObject:notif_save];
+                }
+            }
+        }
+        
+        [rowIndexInVolet setIndexNotifications:tempsNotifs];
+        
+        
+        // Redirection
         switch (notif.type) {
             case NotificationTypeModification:
                 [self redirectToInfoMoment:notif.moment];
@@ -490,12 +518,6 @@ static VoletViewController *actualVoletViewController;
             default:
                 break;
         }
-        
-        // Passera l'icône en gris après le clic.
-        RowIndexInVolet *rowIndexInVolet = [RowIndexInVolet sharedManager];
-        
-        if ([rowIndexInVolet.indexNotifications containsObject:notif.id_notif])
-            [rowIndexInVolet.indexNotifications removeObject:notif.id_notif];
     }
 }
 
@@ -567,38 +589,38 @@ static VoletViewController *actualVoletViewController;
     [navController pushViewController:eventMissing animated:YES];
 }
 
-- (void)selectActualitesButton {
+/*- (void)selectActualitesButton {
     if(!self.mesActualites.selected) {
         self.mesActualites.selected = YES;
         self.mesMoments.selected = NO;
     }
-}
+}*/
 
 - (void)selectMesMomentsButton {
     if(!self.mesMoments.selected) {
         self.mesMoments.selected = YES;
-        self.mesActualites.selected = NO;
+        //self.mesActualites.selected = NO;
     }
 }
 
 - (IBAction)clicChangeTimeLine:(UIButton*)sender {
     
     // Identification du bouton
-    BOOL actualitesButton = (sender == self.mesActualites) && (!self.mesActualites.selected);
+    //BOOL actualitesButton = (sender == self.mesActualites) && (!self.mesActualites.selected);
     BOOL momentsButton = (sender == self.mesMoments) && (!self.mesMoments.selected);
     
     // Google Analytics
-    if(actualitesButton) {
+    /*if(actualitesButton) {
         [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Actualités" value:nil];
     }
-    else if(momentsButton) {
+    else*/ if(momentsButton) {
         [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Moments" value:nil];
     }
     
     // Change TimeLine
-    if( actualitesButton || momentsButton ) {
+    if( /*actualitesButton ||*/ momentsButton ) {
         [self.delegate showRootController:YES];
-        [self.rootTimeLine clicChangeTimeLine];
+        //[self.rootTimeLine clicChangeTimeLine];
     }
 }
 
@@ -660,15 +682,19 @@ static VoletViewController *actualVoletViewController;
 
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
 {
-    // Google Analytics
-    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Recherche" value:nil];
-    
-    CATransition *transition = [CATransition animation];
-    transition.duration = 0.3f;
-    transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
-    transition.type = kCATransitionFade;
-    [self.delegate.navigationController.view.layer addAnimation:transition forKey:@"VoletSearchAnimation"];
-    [self.delegate.navigationController pushViewController:self.searchViewController animated:NO];
+    if (!self.alreadyPushSearchView) {
+        self.alreadyPushSearchView = YES;
+        
+        // Google Analytics
+        [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Recherche" value:nil];
+        
+        CATransition *transition = [CATransition animation];
+        transition.duration = 0.3f;
+        transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+        transition.type = kCATransitionFade;
+        [self.delegate.navigationController.view.layer addAnimation:transition forKey:@"VoletSearchAnimation"];
+        [self.delegate.navigationController pushViewController:self.searchViewController animated:NO];
+    }
         
     return NO;
 }

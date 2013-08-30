@@ -31,18 +31,21 @@
 #import "MomentClass+Server.h"
 #import "UserClass+Server.h"
 
+#import "UIView+viewRecursion.h"
+
 // Font Sizes
 enum InfoMomentFontSize {
     InfoMomentFontSizeBig = 18,
     InfoMomentFontSizeMedium = 14,
     InfoMomentFontSizeLittle = 12
-    };
+};
 
 @implementation InfoMomentViewController {
-    @private
+@private
     BOOL firstLoad;
     UIButton *seeMoreButton;
     BOOL shouldShowFullDescription;
+    BOOL viewIsLoading;
 }
 
 static CGFloat DescriptionBoxHeightMax = 100;
@@ -67,7 +70,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
 
 @synthesize invitesView = _invitesView, ttNbInvitesLabel = _ttNbInvitesLabel, nbInvitesLabel = _nbInvitesLabel;
 @synthesize nbInvitesRefusesLabel = _nbInvitesRefusesLabel, nbInvitesValidesLabel = _nbInvitesValidesLabel;
-@synthesize inviteButton = _inviteButton, invitesBackgroundView = _invitesBackgroundView;
+@synthesize inviteButton = _inviteButton, seeInviteButton = _seeInviteButton, invitesBackgroundView = _invitesBackgroundView;
 @synthesize valideImageView = _valideImageView, refusedImageView = _refusedImageView;
 
 @synthesize dateView = _dateView, ttDateDebutLabel = _ttDateDebutLabel, ttDateFinLabel = _ttDateFinLabel;
@@ -75,7 +78,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
 @synthesize dateDebutLabel = _dateDebutLabel, heureDebutLabel = _heureDebutLabel;
 @synthesize dateFinLabel = _dateFinLabel, heureFinLabel = _heureFinLabel;
 
-@synthesize photosView = _photosView, nbPhotosLabel = _nbPhotosLabel, photosImageView = _photosImageView;
+@synthesize photosView = _photosView, nbPhotosLabel = _nbPhotosLabel, photosImageView = _photosImageView, addPhotosView = _addPhotosView, addPhotosButton = _addPhotosButton;
 
 @synthesize badgesView = _badgesView, nbBadgesLabel = _nbBadgesLabel;
 
@@ -83,7 +86,11 @@ static CGFloat DescriptionBoxHeightMax = 100;
 
 @synthesize infoLieuView = _infoLieuView, ttInfoLieuLabel = _ttInfoLieuLabel, infoLieuLabel = _infoLieuLabel;
 
-@synthesize cagnotteView = _cagnotteView;
+@synthesize cagnotteView = _cagnotteView, suppressionView = _suppressionView;
+
+@synthesize deleteMomentButton = _deleteMomentButton, deleteMoment = _deleteMoment;
+
+@synthesize nb_photos_in_moment = _nb_photos_in_moment;
 
 
 #pragma mark - Init
@@ -94,6 +101,8 @@ static CGFloat DescriptionBoxHeightMax = 100;
     if(self) {
         
         self.moment = moment;
+        //NSLog(@"momentId = %@",self.moment.momentId);
+        self.nb_photos_in_moment = moment.nb_photos;
         self.user = [UserCoreData getCurrentUser];
         self.rootViewController = rootViewController;
         
@@ -117,7 +126,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
 
 #pragma mark - Util
 
-- (void)addSubviewAtAutomaticPosition:(UIView*)view 
+- (void)addSubviewAtAutomaticPosition:(UIView*)view
 {
     CGRect frame = view.frame;
     frame.origin.x = 0;
@@ -192,7 +201,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
         taille = taille + 1 + [numero length] + 3;
         [attributedString setFont:smallFont range:NSMakeRange(taille, [mois length]-1)];
         
-        [attributedString setTextColor:[[Config sharedInstance] textColor] ];
+        [attributedString setTextColor:[Config sharedInstance].textColor ];
         
         return attributedString;
     }
@@ -264,10 +273,10 @@ static CGFloat DescriptionBoxHeightMax = 100;
     NSString *final = [NSString stringWithFormat:@"%@h%@", heure, minutes];
     
     return @{
-    @"heure" : heure,
-    @"minutes" : minutes,
-    @"final" : final
-    };
+             @"heure" : heure,
+             @"minutes" : minutes,
+             @"final" : final
+             };
 }
 
 - (NSAttributedString*)createClassicAttributedStringForHour:(NSDate*)hour
@@ -289,9 +298,9 @@ static CGFloat DescriptionBoxHeightMax = 100;
     [attributedString setFont:smallFont range:NSMakeRange([heure length], 1)];
     [attributedString setFont:bigFont range:NSMakeRange([heure length]+1, [minutes length] )];
     
-        
-    [attributedString setTextColor:[[Config sharedInstance] textColor] ];
-
+    
+    [attributedString setTextColor:[Config sharedInstance].textColor ];
+    
     
     return attributedString;
 }
@@ -305,7 +314,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
     NSString *heure = formats[@"heure"];
     NSString *minutes = formats[@"minutes"];
     NSString *final = formats[@"final"];
-        
+    
     tttLabel.textAlignment = alignment;
     tttLabel.backgroundColor = [UIColor clearColor];
     [tttLabel setText:final afterInheritingLabelAttributesAndConfiguringWithBlock:^NSMutableAttributedString *(NSMutableAttributedString *mutableAttributedString) {
@@ -334,31 +343,31 @@ static CGFloat DescriptionBoxHeightMax = 100;
 }
 
 /*
-#pragma mark - Parallax effect
-
-- (void)updateOffsets {
-    CGFloat yOffset   = self.scrollView.contentOffset.y;
-    CGFloat threshold = ImageHeight - WindowHeight;
-    
-    if (yOffset > -threshold && yOffset < 0) {
-        self.imageScroller.contentOffset = CGPointMake(0.0, floorf(yOffset / 2.0));
-    } else if (yOffset < 0) {
-        self.imageScroller.contentOffset = CGPointMake(0.0, yOffset + floorf(threshold / 2.0));
-    } else {
-        self.imageScroller.contentOffset = CGPointMake(0.0, yOffset);
-    }
-}
-
-#pragma mark - View Layout
-- (void)layoutImage {
-    CGFloat imageWidth   = self.imageScroller.frame.size.width;
-    CGFloat imageYOffset = floorf((WindowHeight  - ImageHeight) / 2.0);
-    CGFloat imageXOffset = 0.0;
-    
-    self.momentImageView.frame       = CGRectMake(imageXOffset, imageYOffset, imageWidth, ImageHeight);
-    self.imageScroller.contentSize   = CGSizeMake(imageWidth, self.view.bounds.size.height);
-    self.imageScroller.contentOffset = CGPointMake(0.0, 0.0);
-}
+ #pragma mark - Parallax effect
+ 
+ - (void)updateOffsets {
+ CGFloat yOffset   = self.scrollView.contentOffset.y;
+ CGFloat threshold = ImageHeight - WindowHeight;
+ 
+ if (yOffset > -threshold && yOffset < 0) {
+ self.imageScroller.contentOffset = CGPointMake(0.0, floorf(yOffset / 2.0));
+ } else if (yOffset < 0) {
+ self.imageScroller.contentOffset = CGPointMake(0.0, yOffset + floorf(threshold / 2.0));
+ } else {
+ self.imageScroller.contentOffset = CGPointMake(0.0, yOffset);
+ }
+ }
+ 
+ #pragma mark - View Layout
+ - (void)layoutImage {
+ CGFloat imageWidth   = self.imageScroller.frame.size.width;
+ CGFloat imageYOffset = floorf((WindowHeight  - ImageHeight) / 2.0);
+ CGFloat imageXOffset = 0.0;
+ 
+ self.momentImageView.frame       = CGRectMake(imageXOffset, imageYOffset, imageWidth, ImageHeight);
+ self.imageScroller.contentSize   = CGSizeMake(imageWidth, self.view.bounds.size.height);
+ self.imageScroller.contentOffset = CGPointMake(0.0, 0.0);
+ }
  */
 
 #pragma mark - Subviews init
@@ -372,11 +381,11 @@ static CGFloat DescriptionBoxHeightMax = 100;
     
     // Medallion
     /*self.ownerAvatarView.borderWidth = 2.0;
-    self.ownerAvatarView.defaultStyle = MedallionStyleProfile;
-    [self.ownerAvatarView setImage:self.moment.owner.uimage imageString:self.moment.owner.imageString withSaveBlock:^(UIImage *image) {
-        [self.moment.owner setUimage:image];
-    }];
-    [self.ownerAvatarView addTarget:self action:@selector(clicProfile) forControlEvents:UIControlEventTouchUpInside];
+     self.ownerAvatarView.defaultStyle = MedallionStyleProfile;
+     [self.ownerAvatarView setImage:self.moment.owner.uimage imageString:self.moment.owner.imageString withSaveBlock:^(UIImage *image) {
+     [self.moment.owner setUimage:image];
+     }];
+     [self.ownerAvatarView addTarget:self action:@selector(clicProfile) forControlEvents:UIControlEventTouchUpInside];
      */
     
     CGRect frame = self.ownerDescripionView.frame;
@@ -410,10 +419,10 @@ static CGFloat DescriptionBoxHeightMax = 100;
     }
     else
         self.avatarImage.image = cropped;
-    [self.avatarImage addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(clicProfile)]];
+    //[self.avatarImage addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(clicProfile)]];
     
     // Owner Description
-    self.ownerNameLabel.text =  [NSString stringWithFormat:@"par %@ %@", self.moment.owner.prenom?:@"", self.moment.owner.nom?:@""];
+    self.ownerNameLabel.text =  [NSString stringWithFormat:@"%@ %@ %@", NSLocalizedString(@"Words_by", nil), self.moment.owner.prenom?:@"", self.moment.owner.nom?:@""];
     
 #ifdef HASHTAG_ENABLE
     if(self.moment.hashtag)
@@ -448,13 +457,12 @@ static CGFloat DescriptionBoxHeightMax = 100;
             // Attributs du label
             NSRange range = NSMakeRange(0, 1);
             [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:InfoMomentFontSizeBig] range:range];
-            [attributedString setTextColor:[[Config sharedInstance] orangeColor] range:range];
+            [attributedString setTextColor:[Config sharedInstance].orangeColor range:range];
             range = NSMakeRange(1, [attributedString length]-1);
             [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:InfoMomentFontSizeMedium] range:range];
-            [attributedString setTextColor:[[Config sharedInstance] textColor] range:range];
+            [attributedString setTextColor:[Config sharedInstance].textColor range:range];
             
             [self.titreLabel setAttributedText:attributedString];
-            self.titreLabel.textAlignment = kCTLeftTextAlignment;
         }
         else
         {
@@ -481,6 +489,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
                 return mutableAttributedString;
             }];
             
+            self.titreLabel.textAlignment = [[VersionControl sharedInstance] alignment:TextAlignmentLeft];
             [self.ttTitreLabel removeFromSuperview];
             [self.titreLabel.superview addSubview:self.ttTitreLabel];
             self.titreLabel.hidden = YES;
@@ -489,11 +498,10 @@ static CGFloat DescriptionBoxHeightMax = 100;
             //self.titreLabel.textAlignment = NSTextAlignmentLeft;
         }
         
-        if(firstLoad) {            
+        if(firstLoad) {
             
             [self addSubviewAtAutomaticPosition:self.titreView];
         }
-
     }
 }
 
@@ -504,7 +512,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
     if(state == 0) {
         state = ([self.moment.owner.userId isEqualToNumber:self.user.userId]) ? UserStateOwner : UserStateNoInvited;
     }
-    // Cacher `rsvp si non invité
+    // Cacher rsvp si non invité
     if( !((self.moment.privacy.intValue != MomentPrivacyOpen) && (state == UserStateNoInvited)) ) {
         // Police
         self.rsvpLabel.font = [[Config sharedInstance] defaultFontWithSize:12];
@@ -517,14 +525,14 @@ static CGFloat DescriptionBoxHeightMax = 100;
             case UserStateAdmin:
             case UserStateOwner:
             case UserStateValid:
-                message = @"Je serais présent au moment ...";
+                message = NSLocalizedString(@"InfoMomentViewController_RSVP_Yes", nil);
                 self.rsvpYesButton.selected = YES;
                 self.rsvpNoButton.selected = NO;
                 self.rsvpMaybeButton.selected = NO;
                 break;
                 
             case UserStateRefused:
-                message = @"Je ne serais pas présent au moment ...";
+                message = NSLocalizedString(@"InfoMomentViewController_RSVP_No", nil);
                 self.rsvpNoButton.selected = YES;
                 self.rsvpMaybeButton.selected = NO;
                 self.rsvpYesButton.selected = NO;
@@ -532,7 +540,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
                 
             case UserStateUnknown:
             case UserStateWaiting:
-                message = @"Je sais pas si je serais présent au moment ...";
+                message = NSLocalizedString(@"InfoMomentViewController_RSVP_Maybe", nil);
                 self.rsvpMaybeButton.selected = YES;
                 self.rsvpYesButton.selected = NO;
                 self.rsvpNoButton.selected = NO;
@@ -540,12 +548,16 @@ static CGFloat DescriptionBoxHeightMax = 100;
                 
                 // Unknown
             default:
-                message = @"Serez-vous présent au moment ?";
+                message = NSLocalizedString(@"InfoMomentViewController_RSVP_Question", nil);
                 self.rsvpMaybeButton.selected = NO;
                 self.rsvpYesButton.selected = NO;
                 self.rsvpNoButton.selected = NO;
                 break;
         }
+        
+        // Change le bouton dans la top view
+        expandingBarState = state;
+        expandingBarNeedUpdate = YES;
         
         // Text
         self.rsvpLabel.text = message;
@@ -576,7 +588,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
         self.descriptionLabel.text = self.moment.descriptionString;
         UIFont *font = [[Config sharedInstance] defaultFontWithSize:InfoMomentFontSizeLittle];
         self.descriptionLabel.font = font;
-        self.descriptionLabel.textColor = [[Config sharedInstance] textColor];
+        self.descriptionLabel.textColor = [Config sharedInstance].textColor;
         CGSize maxSize = CGSizeMake(self.descriptionLabel.frame.size.width, 9999);
         CGSize expectedSize = [self.moment.descriptionString sizeWithFont:font constrainedToSize:maxSize lineBreakMode:self.descriptionLabel.lineBreakMode];
         CGRect frame = self.descriptionLabel.frame;
@@ -598,13 +610,13 @@ static CGFloat DescriptionBoxHeightMax = 100;
             if(!seeMoreButton) {
                 seeMoreButton = [[UIButton alloc] init];
                 seeMoreButton.userInteractionEnabled = YES;
-                [seeMoreButton setTitle:@"Voir plus" forState:UIControlStateNormal];
+                [seeMoreButton setTitle:NSLocalizedString(@"InfoMomentViewController_View_More", nil) forState:UIControlStateNormal];
                 [seeMoreButton setTitleColor:[Config sharedInstance].textColor forState:UIControlStateNormal];
                 seeMoreButton.titleLabel.textAlignment = [[VersionControl sharedInstance] alignment:TextAlignmentCenter];
                 seeMoreButton.titleLabel.font = [[Config sharedInstance] defaultFontWithSize:13];
                 [seeMoreButton addTarget:self action:@selector(clicExpandDescriptionView) forControlEvents:UIControlEventTouchUpInside];
                 [seeMoreButton sizeToFit];
-                CGSize size = CGSizeMake(self.descriptionLabel.frame.size.width - 10, seeMoreButton.frame.size.height + 5);
+                CGSize size = CGSizeMake(frame.size.width - 10, seeMoreButton.frame.size.height + 5);
                 seeMoreButton.frame = CGRectMake(seeMoreButton.frame.origin.x, seeMoreButton.frame.origin.y, size.width, size.height);
                 
                 [self.foregroundView addSubview:seeMoreButton];
@@ -615,7 +627,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
             
             // Frame
             CGPoint origin = (CGPoint){(320 - seeMoreButton.frame.size.width)/2.0,
-                                        self.rsvpView.frame.origin.y + self.rsvpView.frame.size.height + DescriptionBoxHeightMax + 35};
+                self.photosView.frame.origin.y + self.photosView.frame.size.height + DescriptionBoxHeightMax + 35};
             seeMoreButton.frame = CGRectMake(origin.x, origin.y, seeMoreButton.frame.size.width, seeMoreButton.frame.size.height);
         }
         else
@@ -656,7 +668,6 @@ static CGFloat DescriptionBoxHeightMax = 100;
             
             [self addSubviewAtAutomaticPosition:self.descriptionView];
         }
-
     }
 }
 
@@ -715,7 +726,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
                             
                         }
                         else  {
-                                                        
+
                             dispatch_async(dispatch_get_main_queue(), ^{
                                 [activityIndicator stopAnimating];
                             });
@@ -731,7 +742,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
         });
         dispatch_release(geocoderQueue);
         
-                
+
 #pragma CustomLabel
         // ---- Attributed string for CustomLabel ----
         int taille = [self.moment.adresse length];
@@ -744,7 +755,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
                 NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:self.moment.adresse];
                 
                 // Couleur
-                [attributedString setTextColor:[[Config sharedInstance] textColor]];
+                [attributedString setTextColor:[Config sharedInstance].textColor];
                 
                 // 1er Lettre
                 [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:InfoMomentFontSizeMedium] range:NSMakeRange(0, 1)];
@@ -757,7 +768,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
                 [self.adresseLabel setAttributedText:attributedString];
             }
             else
-            {                
+            {
                 if(!self.ttAdresseLabel)
                     self.ttAdresseLabel = [[TTTAttributedLabel alloc] initWithFrame:self.adresseLabel.frame];
                 
@@ -789,7 +800,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
                 /*
                  self.adresseLabel.text = adresse;
                  self.adresseLabel.textAlignment = NSTextAlignmentCenter;
-                 self.adresseLabel.textColor = [[Config sharedInstance] textColor];
+                 self.adresseLabel.textColor = [Config sharedInstance].textColor;
                  self.adresseLabel.font = [[Config sharedInstance] defaultFontWithSize:InfoMomentFontSizeMedium];
                  */
             }
@@ -804,7 +815,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
         // ---- Nom Lieu ----
         if([self.moment.nomLieu length] > 0)
         {
-            self.nomLieuLabel.textColor = [[Config sharedInstance] textColor];
+            self.nomLieuLabel.textColor = [Config sharedInstance].textColor;
             self.nomLieuLabel.text = [self.moment.nomLieu uppercaseString];
             self.nomLieuLabel.font = [[Config sharedInstance] defaultFontWithSize:InfoMomentFontSizeMedium];
             self.nomLieuLabel.alpha = 0.7;
@@ -848,15 +859,16 @@ static CGFloat DescriptionBoxHeightMax = 100;
     // Attributed string
     int nb = self.moment.guests_number.intValue;
     
-    UIColor *color = [[Config sharedInstance] textColor];
+    UIColor *color = [Config sharedInstance].textColor;
     UIFont *smallFont = [[Config sharedInstance] defaultFontWithSize:InfoMomentFontSizeLittle];
     
     NSMutableString *texte = [NSMutableString stringWithFormat:@"%d", nb];
     int taille = [texte length];
-    if(nb > 1)
-        [texte appendString:@" invités"];
-    else
-        [texte appendString:@" invité"];
+    if(nb > 1) {
+        [texte appendString:[NSString stringWithFormat: @" %@", NSLocalizedString(@"Guest_Plural", nil)]];
+    } else {
+        [texte appendString:[NSString stringWithFormat: @" %@", NSLocalizedString(@"Guest_Singular", nil)]];
+    }
     
     if( [[VersionControl sharedInstance] supportIOS6] )
     {
@@ -893,9 +905,9 @@ static CGFloat DescriptionBoxHeightMax = 100;
         self.nbInvitesLabel.hidden = YES;
         
         /*
-        self.nbInvitesLabel.text = texte;
-        self.nbInvitesLabel.textColor = color;
-        self.nbInvitesLabel.font = smallFont;
+         self.nbInvitesLabel.text = texte;
+         self.nbInvitesLabel.textColor = color;
+         self.nbInvitesLabel.font = smallFont;
          */
     }
     
@@ -916,36 +928,9 @@ static CGFloat DescriptionBoxHeightMax = 100;
     
     if( (!self.moment.isOpen.boolValue) && (state != UserStateAdmin) && (state != UserStateOwner) )
     {
-        self.inviteButton.hidden = YES;
-        
-        // Background frame
-        CGRect frame = self.invitesBackgroundView.frame;
-        int difference = 300 - frame.size.width;
-        frame.size.width = 300;
-        frame.size.height += 20;
-        frame.origin.y -= 10;
-        self.invitesBackgroundView.frame = frame;
-        
-        // Valide frame
-        frame = self.valideImageView.frame;
-        frame.origin.x = self.invitesBackgroundView.frame.size.width - frame.size.width - 9;
-        self.valideImageView.frame = frame;
-        
-        // Label valide frame
-        frame = self.nbInvitesValidesLabel.frame;
-        frame.origin.x += difference/2.0;
-        frame.size.width = self.valideImageView.frame.origin.x - frame.origin.x - 1;
-        self.nbInvitesValidesLabel.frame = frame;
-        
-        // Refused frame
-        frame = self.refusedImageView.frame;
-        frame.origin.x += difference/2.0;
-        self.refusedImageView.frame = frame;
-        
-        // Label refused frame
-        frame = self.nbInvitesRefusesLabel.frame;
-        frame.size.width = self.refusedImageView.frame.origin.x - frame.origin.x - 1;
-        self.nbInvitesRefusesLabel.frame = frame;
+        //self.inviteButton.hidden = YES;
+        self.inviteButton.alpha = 0.6;
+        self.inviteButton.enabled = NO;
         
     }
     
@@ -957,7 +942,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
         }
         
         // Sparateur
-        separator = [[InfoMomentSeparateurView alloc] initAtPosition:(50 + 5)];
+        separator = [[InfoMomentSeparateurView alloc] initAtPosition:(65 + 5)];
         [self.invitesView addSubview:separator];
         
         // Frame
@@ -975,7 +960,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
 }
 
 - (void) initDateView
-{    
+{
     if( [[VersionControl sharedInstance] supportIOS6] )
     {
         // Création des textes
@@ -987,7 +972,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
             self.dateFinLabel.attributedText = [self createClassicAttributedStringForDate:self.moment.dateFin];
             self.heureFinLabel.attributedText = [self createClassicAttributedStringForHour:self.moment.dateFin];
         }
-            
+        
         // Alignement
         [self.dateDebutLabel setTextAlignment:kCTTextAlignmentLeft];
         [self.dateFinLabel setTextAlignment:NSTextAlignmentRight];
@@ -1047,6 +1032,8 @@ static CGFloat DescriptionBoxHeightMax = 100;
 
 - (void) initPhotosView
 {
+    [self initAddPhotosView];
+    
     static InfoMomentSeparateurView *separator = nil;
     
     if(separator) {
@@ -1054,7 +1041,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
     }
     
     // Sparateur
-    separator = [[InfoMomentSeparateurView alloc] initAtPosition:(78 + 5)];
+    separator = [[InfoMomentSeparateurView alloc] initAtPosition:(83 + 5)];
     [self.photosView addSubview:separator];
     
     CGRect frame = self.photosView.frame;
@@ -1064,11 +1051,18 @@ static CGFloat DescriptionBoxHeightMax = 100;
     //rotate label in 45 degrees
     self.nbPhotosLabel.transform = CGAffineTransformMakeRotation( (-1)*M_PI/4 );
     
+    if (self.nb_photos_in_moment) {
+        self.nbPhotosLabel.text = [NSString stringWithFormat:@"%@", self.nb_photos_in_moment];
+    } else {
+        self.nbPhotosLabel.text = 0; //[NSString stringWithFormat:@"%i", 0];
+    }
+    
     // Load Photos
     [self.moment getPhotosWithEnded:^(NSArray *photos) {
         
+        //NSLog(@"photos = %@", photos);
+        
         int taille = [photos count];
-        self.nbPhotosLabel.text = [NSString stringWithFormat:@"%d", taille];
         for(int i=0; i<taille && i<5; i++) {
             Photos *p = photos[taille - 1 - i];
             [self.photosImageView[i] setImage:p.imageThumbnail imageString:p.urlThumbnail withSaveBlock:^(UIImage *image) {
@@ -1077,15 +1071,51 @@ static CGFloat DescriptionBoxHeightMax = 100;
         }
     }];
     
-    if(firstLoad) {
-        
+    if (firstLoad) {
         // Tap Gesture recognizer
         UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(clicPhotoView)];
         [self.photosView addGestureRecognizer:tap];
         
         [self addSubviewAtAutomaticPosition:self.photosView];
     }
+    
+    if (self.nb_photos_in_moment && [self.nb_photos_in_moment intValue] != 0)
+    {
+        for (UIView *v in [self.photosView allSubViews])
+        {
+            if (![v isKindOfClass:[InfoMomentSeparateurView class]]) {
+                v.hidden = NO;
+            }
+        }
         
+        self.addPhotosButton.hidden = YES;
+    }
+    else
+    {
+        for (UIView *v in [self.photosView allSubViews])
+        {
+            if (![v isKindOfClass:[InfoMomentSeparateurView class]]) {
+                v.hidden = YES;
+            }
+        }
+        
+        self.addPhotosButton.hidden = NO;
+    }
+}
+
+- (void)initAddPhotosView
+{
+    [self.addPhotosButton setBackgroundImage:[[UIImage imageNamed:@"add_photo_button.png"]
+                                              stretchableImageWithLeftCapWidth:8.0f
+                                              topCapHeight:0.0f]
+                                    forState:UIControlStateNormal];
+    
+    [self.addPhotosButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    self.addPhotosButton.titleLabel.font = [UIFont boldSystemFontOfSize:20];
+    
+    if (firstLoad) {
+        [self.addPhotosButton addTarget:self action:@selector(clicAddPhotoView) forControlEvents:UIControlEventTouchUpInside];
+    }
 }
 
 - (void) initBadgesView
@@ -1116,7 +1146,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
     if(self.moment.infoMetro)
     {
         [self.metroLabel setFont:[[Config sharedInstance] defaultFontWithSize:InfoMomentFontSizeMedium] ];
-        [self.metroLabel setTextColor:[[Config sharedInstance] textColor] ];
+        [self.metroLabel setTextColor:[Config sharedInstance].textColor ];
         //[self.metroLabel setFontSize:InfoMomentFontSizeMedium];
         self.metroLabel.text = self.moment.infoMetro;
         
@@ -1143,7 +1173,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
     if(self.moment.infoLieu)
     {
         [self.infoLieuLabel setFont:[[Config sharedInstance] defaultFontWithSize:InfoMomentFontSizeMedium] ];
-        [self.infoLieuLabel setTextColor:[[Config sharedInstance] textColor] ];
+        [self.infoLieuLabel setTextColor:[Config sharedInstance].textColor ];
         //[self.infoLieuLabel setFontSize:InfoMomentFontSizeMedium];
         self.infoLieuLabel.text = self.moment.infoLieu;
         
@@ -1164,39 +1194,72 @@ static CGFloat DescriptionBoxHeightMax = 100;
     }
 }
 
-- (void) initCagnotteView
-{
-    static InfoMomentSeparateurView *separator = nil;
-    if(separator) {
-        [separator removeFromSuperview];
-    }
-     // Sparateur
-     separator = [[InfoMomentSeparateurView alloc] initAtPosition:(121)];
-     [self.cagnotteView addSubview:separator];
-     
-     CGRect frame = self.cagnotteView.frame;
-     frame.size.height = separator.frame.origin.y + separator.frame.size.height + 5;
-     self.cagnotteView.frame = frame;
-    
-    if(firstLoad) {
-        UIFont *font = [[Config sharedInstance] defaultFontWithSize:10];
-        for( UILabel *label in self.comingSoonCagnotteLabels) {
-            label.font = font;
-        }
-        
-        font = [[Config sharedInstance] defaultFontWithSize:11];
-        self.cagnotteCourseLabel.font = font;
-        self.cagnotteCagnotteLabel.font = font;
-        self.cagnotteCompteLabel.font = font;
-        
-        [self addSubviewAtAutomaticPosition:self.cagnotteView];
-    }
-}
+/*- (void) initCagnotteView
+ {
+ static InfoMomentSeparateurView *separator = nil;
+ if(separator) {
+ [separator removeFromSuperview];
+ }
+ // Sparateur
+ separator = [[InfoMomentSeparateurView alloc] initAtPosition:(121)];
+ [self.cagnotteView addSubview:separator];
+ 
+ CGRect frame = self.cagnotteView.frame;
+ frame.size.height = separator.frame.origin.y + separator.frame.size.height + 5;
+ self.cagnotteView.frame = frame;
+ 
+ if(firstLoad) {
+ UIFont *font = [[Config sharedInstance] defaultFontWithSize:10];
+ for( UILabel *label in self.comingSoonCagnotteLabels) {
+ label.font = font;
+ }
+ 
+ font = [[Config sharedInstance] defaultFontWithSize:11];
+ self.cagnotteCourseLabel.font = font;
+ self.cagnotteCagnotteLabel.font = font;
+ self.cagnotteCompteLabel.font = font;
+ 
+ [self addSubviewAtAutomaticPosition:self.cagnotteView];
+ }
+ }*/
 
 - (void) initPartageView
-{    
+{
+    if([self.moment.owner.userId isEqualToNumber:[UserCoreData getCurrentUser].userId]) {
+        static InfoMomentSeparateurView *separator = nil;
+        if(separator) {
+            [separator removeFromSuperview];
+        }
+        // Sparateur
+        separator = [[InfoMomentSeparateurView alloc] initAtPosition:(102)];
+        [self.partageView addSubview:separator];
+        
+        CGRect frame = self.partageView.frame;
+        frame.size.height = separator.frame.origin.y + separator.frame.size.height + 5;
+        self.partageView.frame = frame;
+    }
+    
     if(firstLoad)
         [self addSubviewAtAutomaticPosition:self.partageView];
+}
+
+- (void)initSuppressionView
+{
+    if([self.moment.owner.userId isEqualToNumber:[UserCoreData getCurrentUser].userId]) {
+        
+        if(firstLoad) {
+            
+            [self.deleteMomentButton setBackgroundImage:[[UIImage imageNamed:@"delete_button.png"]
+                                                         stretchableImageWithLeftCapWidth:8.0f
+                                                         topCapHeight:0.0f]
+                                               forState:UIControlStateNormal];
+            
+            [self.deleteMomentButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+            self.deleteMomentButton.titleLabel.font = [UIFont boldSystemFontOfSize:20];
+            
+            [self addSubviewAtAutomaticPosition:self.suppressionView];
+        }
+    }
 }
 
 #pragma mark - View lifecycle
@@ -1204,12 +1267,14 @@ static CGFloat DescriptionBoxHeightMax = 100;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-        
+    
+    viewIsLoading = YES;
+    
     // View
     CGRect frame = self.view.frame;
     frame.size.height = [[VersionControl sharedInstance] screenHeight] - TOPBAR_HEIGHT;
     self.view.frame = frame;
-        
+    
     // Initialisation
     hauteur = 0;
     self.foregroundView = [[IgnoreTouchView alloc] initWithFrame:CGRectMake(0, 0, 320, 0)];
@@ -1229,18 +1294,19 @@ static CGFloat DescriptionBoxHeightMax = 100;
      ***********************************************/
     [self initTitreView];
     [self initRsvpView];
+    [self initPhotosView];
     [self initDescriptionView];
     [self initMapView];
     [self initInvitesView];
     [self initDateView];
-    [self initPhotosView];
     //[self initBadgesView];
     [self initMetroView];
     [self initInfoLieuView];
     [self initTopImageView];
-    [self initCagnotteView];
+    //[self initCagnotteView]; // Désactivation de la vue cagnotte - Coming soon
     [self initPartageView];
-
+    [self initSuppressionView];
+    
     /***********************************************
      *              Parallax View                  *
      ***********************************************/
@@ -1266,7 +1332,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
     self.expandButton = [[CustomExpandingButton alloc] initWithDelegate:self withState:state];
     [self.parallaxView.scrollView addSubview:self.expandButton];
     
-    // Cacher RSVP    
+    // Cacher RSVP
     if(
        (
         (
@@ -1290,15 +1356,15 @@ static CGFloat DescriptionBoxHeightMax = 100;
         [self.foregroundView bringSubviewToFront:seeMoreButton];
     
     /*
-    [self layoutImage];
-    [self updateOffsets];
-    */
+     [self layoutImage];
+     [self updateOffsets];
+     */
     
     // Load RSVP From Facebook
     if(state != UserStateNoInvited)
     {
         MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-        hud.labelText = NSLocalizedString(@"MBProgressHUD_Loading_updateRSVP", nil);
+        hud.labelText = NSLocalizedString(@"MBProgressHUD_Update", nil);
         
         [[FacebookManager sharedInstance] getRSVP:self.moment withEnded:^(enum UserState rsvp) {
             
@@ -1307,7 +1373,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
             if( (rsvp != -1) && (self.moment.state.intValue != rsvp)) {
                 
                 // Informer User
-                [[MTStatusBarOverlay sharedInstance] postImmediateFinishMessage:@"Status Facebook Importé" duration:1 animated:YES];
+                [[MTStatusBarOverlay sharedInstance] postImmediateFinishMessage:NSLocalizedString(@"StatusBarOverlay_FacebookStatusImported", nil) duration:1 animated:YES];
                 
                 // Update View
                 UIButton *buttonSimulation = nil;
@@ -1329,7 +1395,8 @@ static CGFloat DescriptionBoxHeightMax = 100;
             }
         }];
     }
-
+    
+    viewIsLoading = NO;
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -1337,6 +1404,13 @@ static CGFloat DescriptionBoxHeightMax = 100;
     [super viewDidAppear:animated];
     [self reloadData];
     [self sendGoogleAnalyticsView];
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    [AppDelegate updateActualViewController:self];
 }
 
 - (void)viewDidUnload
@@ -1384,9 +1458,10 @@ static CGFloat DescriptionBoxHeightMax = 100;
     [self setInviteButton:nil];
     [self setInvitesBackgroundView:nil];
     [self setValideImageView:nil];
+    [self setSeeInviteButton:nil];
+    [self setValideImageView:nil];
     [self setRefusedImageView:nil];
     [self setParallaxView:nil];
-    [self setPhotosImageView:nil];
     [self setTitreView:nil];
     [self setCagnotteView:nil];
     [self setComingSoonCagnotteLabels:nil];
@@ -1398,6 +1473,10 @@ static CGFloat DescriptionBoxHeightMax = 100;
     [self setRsvpMaybeButton:nil];
     [self setRsvpYesButton:nil];
     [self setRsvpNoButton:nil];
+    [self setSuppressionView:nil];
+    [self setDeleteMomentButton:nil];
+    [self setAddPhotosView:nil];
+    [self setPhotosImageView:nil];
     [super viewDidUnload];
 }
 
@@ -1412,19 +1491,22 @@ static CGFloat DescriptionBoxHeightMax = 100;
             self.momentImageView.image = nil;
             self.momentImageView.imageString = nil;
             
+            self.nb_photos_in_moment = self.moment.nb_photos;
+            
             [self initTitreView];
             [self initRsvpView];
+            [self initPhotosView];
             [self initDescriptionView];
             [self initMapView];
             [self initInvitesView];
             [self initDateView];
-            [self initPhotosView];
             //[self initBadgesView];
             [self initMetroView];
             [self initInfoLieuView];
             [self initTopImageView];
-            [self initCagnotteView];
+            //[self initCagnotteView];
             [self initPartageView];
+            [self initSuppressionView];
             
             // Ramener bouton "Voir plus" au premier plan
             if(seeMoreButton)
@@ -1517,7 +1599,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
     if(self.moment.state.intValue != state) {
         
         MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-        hud.labelText = NSLocalizedString(@"MBProgressHUD_Loading_updateRSVP", nil);
+        hud.labelText = NSLocalizedString(@"MBProgressHUD_Update", nil);
         
         // User State
         enum UserState userState = self.moment.state.intValue;
@@ -1597,6 +1679,14 @@ static CGFloat DescriptionBoxHeightMax = 100;
         state = UserStateRefused;
     }else {
         state = UserStateValid;
+        
+        if (!viewIsLoading) {
+            [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"InfoMomentViewController_PopupRSVP_Title", nil)
+                                        message:NSLocalizedString(@"InfoMomentViewController_PopupRSVP_Message", nil)
+                                       delegate:self
+                              cancelButtonTitle:NSLocalizedString(@"AlertView_Button_NO", nil)
+                              otherButtonTitles:NSLocalizedString(@"AlertView_Button_YES", nil), nil] show];
+        }
     }
     
     [self changeRSVP:state];
@@ -1614,6 +1704,10 @@ static CGFloat DescriptionBoxHeightMax = 100;
     
     InviteAddViewController *inviteViewController = [[InviteAddViewController alloc] initWithOwner:self.user withMoment:self.moment];
     [self.rootViewController.navigationController pushViewController:inviteViewController animated:YES];
+}
+
+- (IBAction)clicSeeInviteButton {
+    [self clicInviteView];
 }
 
 - (void)clicInviteView {
@@ -1649,6 +1743,21 @@ static CGFloat DescriptionBoxHeightMax = 100;
     [self.rootViewController addAndScrollToOnglet:OngletPhoto];
 }
 
+- (void)clicAddPhotoView {
+    
+    // Google Analytics
+    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Racourcis Photos" value:nil];
+    
+    [self.rootViewController addAndScrollToOnglet:OngletPhoto];
+    
+    UIViewController *actualViewController = [AppDelegate actualViewController];
+    
+    if ([actualViewController isKindOfClass:[PhotoViewController class]]) {
+        PhotoViewController *photoviewcontroller = (PhotoViewController *)actualViewController;
+        [photoviewcontroller showPhotoActionSheet];
+    }
+}
+
 - (void)clicExpandDescriptionView
 {
     // Forcer recréation de la vue
@@ -1679,7 +1788,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
 #else
         [messageBody appendString:@"\n"];
 #endif
-      
+        
         if(self.moment.uniqueURL)
             [messageBody appendFormat:@"<a href=%@>%@</a>\n", self.moment.uniqueURL, self.moment.uniqueURL];
         
@@ -1689,16 +1798,16 @@ static CGFloat DescriptionBoxHeightMax = 100;
         [mc setMessageBody:messageBody isHTML:YES];
         
         // Present mail view controller on screen
-        [[VersionControl sharedInstance] presentModalViewController:mc fromRoot:self.rootViewController animated:YES];
+        [self.rootViewController presentViewController:mc animated:YES completion:nil];;
     }
     else
     {
         //NSLog(@"mail composer fail");
         
-        [[[UIAlertView alloc] initWithTitle:@"Envoi impossible"
-                                    message:@"Votre appareil ne supporte pas l'envoi d'email"
+        [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"MFMailComposeViewController_Moment_Popup_Title", nil)
+                                    message:NSLocalizedString(@"MFMailComposeViewController_Moment_Popup_Message", nil)
                                    delegate:nil
-                          cancelButtonTitle:@"OK"
+                          cancelButtonTitle:NSLocalizedString(@"AlertView_Button_OK", nil)
                           otherButtonTitles:nil]
          show];
     }
@@ -1712,7 +1821,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
         UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
         pasteboard.string = self.moment.uniqueURL;
         
-        [[MTStatusBarOverlay sharedInstance] postImmediateFinishMessage:@"URL Copiée" duration:1 animated:YES];
+        [[MTStatusBarOverlay sharedInstance] postImmediateFinishMessage:NSLocalizedString(@"StatusBarOverlay_URL_Paste", nil) duration:1 animated:YES];
     }
     
     // Google Analytics
@@ -1737,8 +1846,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
         if(self.moment.uniqueURL)
             [fbSheet addURL:[NSURL URLWithString:self.moment.uniqueURL]];
         
-        //[self presentViewController:fbSheet animated:YES completion:nil];
-        [[VersionControl sharedInstance] presentModalViewController:fbSheet fromRoot:self animated:YES];
+        [self presentViewController:fbSheet animated:YES completion:nil];
     }
     // iOS 5
     else
@@ -1764,8 +1872,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
         if(self.moment.uniqueURL)
             [facebookViewComposer addURL:[NSURL URLWithString:self.moment.uniqueURL]];
         //facebookViewComposer.completionHandler = completionHandler;
-        //[self presentViewController:facebookViewComposer animated:YES completion:nil];
-        [[VersionControl sharedInstance] presentModalViewController:facebookViewComposer fromRoot:self animated:YES];
+        [self presentViewController:facebookViewComposer animated:YES completion:nil];
     }
     
 }
@@ -1789,10 +1896,9 @@ static CGFloat DescriptionBoxHeightMax = 100;
                                                composeViewControllerForServiceType:SLServiceTypeTwitter];
         [tweetSheet setInitialText:initialText];
         //if(self.moment.uniqueURL)
-            [tweetSheet addURL:[NSURL URLWithString:self.moment.uniqueURL]];
+        [tweetSheet addURL:[NSURL URLWithString:self.moment.uniqueURL]];
         
-        //[self presentViewController:tweetSheet animated:YES completion:nil];
-        [[VersionControl sharedInstance] presentModalViewController:tweetSheet fromRoot:self animated:YES];
+        [self presentViewController:tweetSheet animated:YES completion:nil];
     }
     // iOS 5 -> Twitter Framework
     else
@@ -1801,23 +1907,98 @@ static CGFloat DescriptionBoxHeightMax = 100;
         self.modalPresentationStyle = UIModalPresentationCurrentContext;
         [twitterViewComposer setInitialText:initialText];
         //if(self.moment.uniqueURL)
-            [twitterViewComposer addURL:[NSURL URLWithString:self.moment.uniqueURL]];
+        [twitterViewComposer addURL:[NSURL URLWithString:self.moment.uniqueURL]];
         
-        //[self presentViewController:twitterViewComposer animated:YES completion:nil];
-        [[VersionControl sharedInstance] presentModalViewController:twitterViewComposer fromRoot:self animated:YES];
+        [self presentViewController:twitterViewComposer animated:YES completion:nil];
     }
     
 }
 
 /*
-- (IBAction)clicShareInstagram {
-    NSLog(@"Instagram");
+ - (IBAction)clicShareInstagram {
+ NSLog(@"Instagram");
+ 
+ // Google Analytics
+ [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Partager Instagram" value:nil];
+ 
+ }
+ */
+
+- (IBAction)clicDeleteMoment {
+    // AlertView de confirmation
+    self.deleteMoment = [[UIAlertView alloc]
+                         initWithTitle:NSLocalizedString(@"TimeLineViewController_DeleteMomentAlertView_Title", nil)
+                         message:NSLocalizedString(@"TimeLineViewController_DeleteMomentAlertView_Message", nil)
+                         delegate:self
+                         cancelButtonTitle:NSLocalizedString(@"AlertView_Button_NO", nil)
+                         otherButtonTitles:NSLocalizedString(@"AlertView_Button_YES", nil), nil];
     
-    // Google Analytics
-    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Partager Instagram" value:nil];
-    
+    [self.deleteMoment show];
 }
-*/
+
+#pragma mark - UIAlertView Delegate
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if ([alertView isEqual:self.deleteMoment]) {
+        
+        // Confirmation de suppression
+        if(buttonIndex == 1)
+        {
+            MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+            hud.labelText = NSLocalizedString(@"MBProgressHUD_Deleting", nil);
+            
+            // Delete From Server
+            [self.moment deleteWithEnded:^(BOOL success) {
+                
+                if(success)
+                {
+                    
+                    // Delete From CoreData
+                    [MomentCoreData deleteMoment:self.moment];
+                    
+                    self.moment = nil;
+                    
+                    [MBProgressHUD hideHUDForView:self.view animated:YES];
+                    
+                    [self.rootViewController.timeLine reloadDataWithWaitUntilFinished:YES withEnded:^(BOOL success) {
+                        [self.rootViewController.navigationController popViewControllerAnimated:YES];
+                    }];
+                }
+                else
+                {
+                    [MBProgressHUD hideHUDForView:self.view animated:YES];
+                    
+                    [[[UIAlertView alloc]
+                      initWithTitle:NSLocalizedString(@"Error_Title", nil)
+                      message:NSLocalizedString(@"TimeLineViewController_DeleteMoment_Fail_Message", nil)
+                      delegate:self
+                      cancelButtonTitle:NSLocalizedString(@"AlertView_Button_OK", nil)
+                      otherButtonTitles: nil]
+                     show];
+                }
+                
+            }];
+            
+        }
+    } else {
+        if (buttonIndex == 1) {
+            
+            [[FacebookManager sharedInstance] getTagsFromMoment:self.moment withEnded:^(NSString *tags) {
+                //NSLog(@"alertView clickedButtonAtIndex | tags = %@", tags);
+                
+                [[FacebookManager sharedInstance] postRSVPOnWall:self.moment action:@"Participe" tags:tags withEnded:^(BOOL success) {
+                    if (success) {
+                        NSLog(@"postRSVPOnWall = SUCCESS");
+                    } else {
+                        NSLog(@"postRSVPOnWall = FAIL");
+                    }
+                }];
+            }];
+        }
+    }
+}
+
 
 #pragma mark - UIScrollView Delegate
 
@@ -1835,7 +2016,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
 #pragma mark - Maps
 
 - (void)openMapsWithDirectionsTo:(CLLocationCoordinate2D)coord title:(NSString*)title {
-        
+    
     // iOS 6 and later -> Application Maps
     Class itemClass = [MKMapItem class];
     if (itemClass && [itemClass respondsToSelector:@selector(openMapsWithItems:launchOptions:)]) {
@@ -1844,9 +2025,9 @@ static CGFloat DescriptionBoxHeightMax = 100;
         toLocation.name = title;
         [MKMapItem openMapsWithItems:@[currentLocation, toLocation]
                        launchOptions:@{
-                                        MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeDriving,
-                                         MKLaunchOptionsShowsTrafficKey : @(YES)
-          }];
+    MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeDriving,
+     MKLaunchOptionsShowsTrafficKey : @(YES)
+         }];
         
     }
     // iOS 5
@@ -1919,11 +2100,11 @@ static CGFloat DescriptionBoxHeightMax = 100;
 }
 
 /*
-- (IBAction)clicCoursesButton {
-    // Google Analytics
-    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Soon Courses" value:nil];
-}
-*/
+ - (IBAction)clicCoursesButton {
+ // Google Analytics
+ [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Soon Courses" value:nil];
+ }
+ */
 
 - (IBAction)clicFeedBackButton {
     // Google Analytics
@@ -1960,10 +2141,10 @@ static CGFloat DescriptionBoxHeightMax = 100;
         case MFMailComposeResultFailed:
             //NSLog(@"Mail sent failure: %@", [error localizedDescription]);
             
-            [[[UIAlertView alloc] initWithTitle:@"Erreur d'envoi"
+            [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error_Send", nil)
                                         message:[error localizedDescription]
                                        delegate:nil
-                              cancelButtonTitle:@"OK"
+                              cancelButtonTitle:NSLocalizedString(@"AlertView_Button_OK", nil)
                               otherButtonTitles:nil]
              show];
             
@@ -1973,8 +2154,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
     }
     
     // Close the Mail Interface
-    [[VersionControl sharedInstance] dismissModalViewControllerFromRoot:self.rootViewController animated:YES];
+    [self.rootViewController dismissViewControllerAnimated:YES completion:nil];
 }
-
 
 @end

@@ -33,7 +33,7 @@
         {
             // Conversion si nécessaire
             if([attributes[@"dataImage"] isKindOfClass:[UIImage class]]) {
-                file = UIImagePNGRepresentation(attributes[@"dataImage"]);
+                file = UIImageJPEGRepresentation(attributes[@"dataImage"], 0.8);
             }
             else if([attributes[@"dataImage"] isKindOfClass:[NSData class]]) {
                 file = attributes[@"dataImage"];
@@ -235,10 +235,15 @@
             // Get Facebook Events
             [[FacebookManager sharedInstance] getEventsWithEnded:^(NSArray *events) {
                 
-                if (!events || [events count] == 0) {
+                if (!events) {
                     if(block)
                         block(nil, nil);
-                } else {
+                }
+                else if(events.count == 0) {
+                    if(block)
+                        block(events, nil);
+                }
+                else {
                     // Identifier quels évenements sont déjà sur Moment
                     [self identifyFacebookEventsOnMoment:events withEnded:^(NSDictionary *results) {
                         
@@ -289,7 +294,7 @@
                              
                              
                              // ----- Ajouter en tant qu'invité aux moments déjà existant -> Requete de création ----
-                             i = 0;
+                             __block int j = 0;
                              [MomentClass createMultipleMomentsFromLocalToServerWithMoments:moments_exist
                                                                              withTransition:
                               ^(MomentClass *moment) {
@@ -305,10 +310,10 @@
                                       if(moment)
                                       {
                                           // Update moments with server attributes
-                                          [moments_exist replaceObjectAtIndex:i withObject:moment];
+                                          [moments_exist replaceObjectAtIndex:j withObject:moment];
                                       }
                                   }
-                                  i++;
+                                  j++;
                                   
                               } withEnded:^{
                                   
@@ -534,6 +539,11 @@
 
 - (void)updateCurrentUserState:(enum UserState)state withEnded:(void (^) (BOOL success) )block
 {
+    [self setState:[NSNumber numberWithInt:state]];
+    
+    // Mettre à jour CoreData
+    [MomentCoreData updateMoment:self];
+    
     NSString *path = [NSString stringWithFormat:@"state/%d/%d", self.momentId.intValue, state];
     
     [[AFMomentAPIClient sharedClient] getPath:path parameters:nil encoding:AFFormURLParameterEncoding success:^(AFHTTPRequestOperation *operation, id JSON) {
@@ -610,7 +620,7 @@
         
         // Conversion si nécessaire
         if([params[@"photo"] isKindOfClass:[UIImage class]]) {
-            file = UIImagePNGRepresentation(params[@"photo"]);
+            file = UIImageJPEGRepresentation(params[@"photo"], 0.8);
         }
         else if([params[@"photo"] isKindOfClass:[NSData class]]) {
             file = params[@"photo"];
@@ -703,6 +713,7 @@
     [[AFMomentAPIClient sharedClient] getPath:path parameters:nil encoding:AFFormURLParameterEncoding success:^(AFHTTPRequestOperation *operation, id JSON) {
                         
         if(block) {
+            //NSLog(@"JSON[@\"photos\"] = %@", JSON[@"photos"]);
             block([Photos arrayWithArrayFromWeb:JSON[@"photos"]]);
         }
         
@@ -717,7 +728,8 @@
 }
 
 - (AFJSONRequestOperation*)operationSendPhoto:(UIImage*)photo
-                                    withStart:(void (^) (UIImage *photo))startBlock
+                                     withPath:(NSString *)photoPath
+                                    withStart:(void (^) (NSString *photoPath))startBlock
                               withProgression:(void (^) (CGFloat progress))progressBlock
                                     withEnded:(void (^) (Photos *photo))endBlock
 {
@@ -725,7 +737,7 @@
     
     NSData *file = nil;
     if(photo) {
-        file = UIImagePNGRepresentation(photo);
+        file = UIImageJPEGRepresentation(photo, 1.0);
     }
     
     NSMutableURLRequest *request = [[AFMomentAPIClient sharedClient] multipartFormRequestWithMethod:@"POST" path:path parameters:nil constructingBodyWithBlock: ^(id <AFMultipartFormData>formData) {
@@ -740,7 +752,9 @@
     AFJSONRequestOperation *operation = [[AFJSONRequestOperation alloc] initWithRequest:request];
     if(progressBlock) {
         [operation setUploadProgressBlock:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite) {
-            CGFloat progression = (CGFloat)totalBytesWritten/totalBytesExpectedToWrite;
+            CGFloat progression = (CGFloat)totalBytesWritten/(CGFloat)totalBytesExpectedToWrite;
+            //NSLog(@"Taille: %f Mb",(CGFloat)totalBytesExpectedToWrite/1000000);
+            //NSLog(@"progression: %i%%", (int)roundf(progression*100.0));
             progressBlock(progression);
         }];
     }
@@ -761,6 +775,20 @@
             }];
         }
         
+        NSFileManager *fileMgr = [[NSFileManager alloc] init];
+        NSError *theError = nil;
+        
+        if (theError == nil) {
+            BOOL removeSuccess = [fileMgr removeItemAtPath:photoPath error:&theError];
+            if (!removeSuccess) {
+                NSLog(@"DELETING FAILED... : %@ | Error: %@",photoPath, theError);
+            } else {
+                NSLog(@"DELETING SUCCESSFUL : %@",photoPath);
+            }
+        } else {
+            NSLog(@"DELETING FAILED... : %@ | Error: %@",photoPath, theError);
+        }
+        
         if(endBlock)
             endBlock(photo);
         
@@ -769,23 +797,40 @@
         //NSLog(@"Error : %@", error.localizedDescription);
         //NSLog(@"Message : %@", operation.responseString);
         
+        NSFileManager *fileMgr = [[NSFileManager alloc] init];
+        NSError *theError = nil;
+        
+        NSLog(@"Lancement de la suppression...");
+        if (theError == nil) {
+            BOOL removeSuccess = [fileMgr removeItemAtPath:photoPath error:&theError];
+            if (!removeSuccess) {
+                NSLog(@"DELETING FAILED... : %@ | Error: %@",photoPath, theError);
+            } else {
+                NSLog(@"DELETING SUCCESSFUL : %@",photoPath);
+            }
+        } else {
+            NSLog(@"DELETING FAILED... : %@ | Error: %@",photoPath, theError);
+        }
+          
         if(endBlock)
             endBlock(nil);
         
     }];
     
     if(startBlock)
-        startBlock(photo);
+        startBlock(photoPath);
     
     return operation;
 }
 
 - (void)sendPhoto:(UIImage*)photo
-        withStart:(void (^) (UIImage *photo))startBlock
+         withPath:(NSString *)photoPath
+        withStart:(void (^) (NSString *photoPath))startBlock
         withProgression:(void (^) (CGFloat progress))progressBlock
         withEnded:(void (^) (Photos *photo))endBlock
 {
     AFJSONRequestOperation *operation = [self operationSendPhoto:photo
+                                                        withPath:photoPath
                                                        withStart:startBlock
                                                  withProgression:progressBlock
                                                        withEnded:endBlock];
@@ -794,7 +839,7 @@
 }
 
 - (void)sendArrayOfPhotos:(NSArray*)array
-                withStart:(void (^) (UIImage *photo))startBlock
+                withStart:(void (^) (NSString *photoPath))startBlock
           withProgression:(void (^) (CGFloat progress))progressBlock
            withTransition:(void (^) (Photos *photo))transitionBlock
                 withEnded:(void (^) (void))endBlock
@@ -803,7 +848,7 @@
     if(array)
     {
 
-        int taille = [array count];
+        __block int taille = [array count];
         
         // Tableau non vide
         if(taille > 0)
@@ -832,10 +877,11 @@
                 }
                 // Photo suivante
                 else
-                {
+                {                    
                     // Send
                     i++;
-                    [self sendPhoto:array[i]
+                    [self sendPhoto:[UIImage imageWithContentsOfFile:array[i]]
+                           withPath:array[i]
                           withStart:startBlock
                     withProgression:progressBlock
                           withEnded:recursifEndBlock];
@@ -844,8 +890,9 @@
             } copy];
  #pragma clang diagnostic pop
             
-            // Envoi de la première photo
-            [self sendPhoto:array[0]
+            // Envoi de la première photo            
+            [self sendPhoto:[UIImage imageWithContentsOfFile:array[0]]
+                   withPath:array[0]
                   withStart:startBlock
             withProgression:progressBlock
                   withEnded:recursifEndBlock];
@@ -886,7 +933,7 @@
     NSString *path = [NSString stringWithFormat:@"newguests/%d", self.momentId.intValue];
     
     // Mapping
-    NSMutableArray *params = [[NSMutableArray alloc] initWithCapacity:[users count]];
+    NSMutableArray *params = [NSMutableArray arrayWithCapacity:users.count];
     for( UserClass *u in users) {
         [params addObject:[u mappingToWeb]];
     }

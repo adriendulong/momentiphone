@@ -146,7 +146,7 @@ static Config *sharedInstance = nil;
 #pragma mark - Font
 
 - (UIFont*)defaultFontWithSize:(CGFloat)size {
-    return [UIFont fontWithName:@"Numans" size:size];
+    return [UIFont fontWithName:fontName size:size];
 }
 
 - (void)updateTTTAttributedString:(NSMutableAttributedString*)mutableString withFontSize:(CGFloat)size onRange:(NSRange)range
@@ -222,7 +222,7 @@ static Config *sharedInstance = nil;
     
     UIGraphicsBeginImageContext(targetSize); // this will crop
     
-    CGRect thumbnailRect = CGRectZero;
+    CGRect thumbnailRect = CGRectMake(0,0,1,1);
     thumbnailRect.origin = thumbnailPoint;
     thumbnailRect.size.width  = scaledWidth;
     thumbnailRect.size.height = scaledHeight;
@@ -265,6 +265,67 @@ static Config *sharedInstance = nil;
     }
     
     return image;
+}
+
+#pragma mark - Create UIImage programmatically
+
+- (UIImage *)imageFromText:(NSString *)text withColor:(UIColor *)color andFont:(UIFont *)font
+{
+    // set the font type and size
+    CGSize size  = [text sizeWithFont:font];
+    
+    // check if UIGraphicsBeginImageContextWithOptions is available (iOS is 4.0+)
+    if (UIGraphicsBeginImageContextWithOptions != NULL)
+        UIGraphicsBeginImageContextWithOptions(size,NO,0.0);
+    else
+        // iOS is < 4.0
+        UIGraphicsBeginImageContext(size);
+    
+    // optional: add a shadow, to avoid clipping the shadow you should make the context size bigger
+    //
+    // CGContextRef ctx = UIGraphicsGetCurrentContext();
+    // CGContextSetShadowWithColor(ctx, CGSizeMake(1.0, 1.0), 5.0, [[UIColor grayColor] CGColor]);
+    [color set];
+    
+    // draw in context, you can use also drawInRect:withFont:
+    [text drawAtPoint:CGPointMake(0.0, 0.0) withFont:font];
+    
+    // transfer image
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    return image;
+}
+
+#pragma mark - Create NSString directly with font
+
+- (NSString *)createStylizedStringFromString:(NSString *)string withFont:(UIFont *)font andColor:(UIColor *)color fromRect:(CGRect)rect
+{
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    
+    // ERASE BACKGROUND
+    CGContextSetRGBStrokeColor(context, 0.0, 0.0, 0.0, 1.0);
+    CGContextSetRGBFillColor(context, 0.0, 0.0, 0.0, 1.0);
+    CGContextFillRect(context, rect);
+    
+    // DRAW TEXT
+    [color set];
+    
+    [string drawAtPoint:CGPointMake(0,70) withFont:font];
+    
+    return string;
+}
+
+- (UIFont *)boldFontFromFont:(UIFont *)font
+{
+    BOOL wantBold = YES;
+    CTFontRef ctFont = CTFontCreateCopyWithSymbolicTraits(CFBridgingRetain(font), 0.0, NULL, (wantBold?kCTFontBoldTrait:0), kCTFontBoldTrait);
+
+    NSString *fontName = (NSString *)CFBridgingRelease(CTFontCopyName(ctFont, kCTFontPostScriptNameKey));
+    CGFloat fontSize = CTFontGetSize(ctFont);
+    UIFont *boldFont = [UIFont fontWithName:fontName size:fontSize];
+    
+    return boldFont;
 }
 
 #pragma mark - Regex Validation
@@ -323,7 +384,7 @@ static Config *sharedInstance = nil;
 
 - (void)saveNewCoverImage:(UIImage *)image {
     
-    NSData *data = UIImagePNGRepresentation(image);    
+    NSData *data = UIImageJPEGRepresentation(image, 0.8);
     NSString *fullPath = [self coverImageFullPath];
     
     // Delete previous cover if it exist
@@ -426,7 +487,7 @@ static Config *sharedInstance = nil;
         [mc setToRecipients:@[kParameterContactMail]];
         
         // Present mail view controller on screen
-        [[VersionControl sharedInstance] presentModalViewController:mc fromRoot:rootViewController animated:YES];
+        [rootViewController presentViewController:mc animated:YES completion:nil];
     }
     else
     {
@@ -458,7 +519,7 @@ static Config *sharedInstance = nil;
         [mc setToRecipients:@[kParameterContactMail]];
         
         // Present mail view controller on screen
-        [[VersionControl sharedInstance] presentModalViewController:mc fromRoot:rootViewController animated:YES];
+        [rootViewController presentViewController:mc animated:YES completion:nil];
     }
     else
     {
@@ -479,6 +540,7 @@ static Config *sharedInstance = nil;
         // DEV
         
         [self setKAFBaseURLString:@"http://apidev.appmoment.fr"];
+        [self setAppFBNamespace:@"devappmoment"];
         [self setFBSessionStateChangedNotification:@"com.devappmoment.Moment:FBSessionStateChangedNotification"];
         [self setTestFlightAppToken:@"01bdc3ce-6a5c-457a-8f65-346e800264b1"];
         
@@ -492,6 +554,7 @@ static Config *sharedInstance = nil;
         // PROD
         
         [self setKAFBaseURLString:@"http://api.appmoment.fr"];
+        [self setAppFBNamespace:@"appmoment"];
         [self setFBSessionStateChangedNotification:@"com.appMoment.Moment:FBSessionStateChangedNotification"];
         [self setTestFlightAppToken:@"85ba03e5-22dc-45c5-9810-be2274ed75d1"];
         

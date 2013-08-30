@@ -119,6 +119,8 @@
                     [dp.message.user setUimage:image];
                 }];
             }];
+        } else {
+            [self.medallion setImage:[UIImage imageNamed:@"profil_defaut.png"]];
         }
         [self.medallion addTarget:self action:@selector(clicProfile) forControlEvents:UIControlEventTouchUpInside];
         
