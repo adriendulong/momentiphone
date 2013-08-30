@@ -445,6 +445,25 @@
     return YES;
 }
 
+-(void)textFieldDidBeginEditing:(UITextField *)textField {
+    BOOL birthdayIsFull = self.birthdayTextField.text.length > 0;
+    
+    if( textField == self.birthdayTextField ) {
+        
+        [self.pickerView setButtonStyle:CustomDatePickerButtonStyleDone];
+        
+        if(birthdayIsFull) {
+            self.pickerView.datePicker.maximumDate = [NSDate date];
+        }
+        
+        // Rénitialise date min
+        if(!birthdayIsFull) {
+            self.pickerView.datePicker.date = [NSDate date];
+            self.pickerView.datePicker.maximumDate = [NSDate date];
+            [self.birthdayTextField setText:[self.dateFormatter stringFromDate:[NSDate date]]];
+        }
+    }
+}
 
 #pragma mark - UIImagePickerController Delegate
 
