@@ -181,7 +181,7 @@ static UIImageView *splashScreen = nil;
     self.navigationItem.titleView = img;
     
     //mettre le fond
-    self.view.backgroundColor = [[UIColor alloc] initWithPatternImage:[UIImage imageNamed:@"login-bg.jpg"]];
+    self.view.backgroundColor = [[UIColor alloc] initWithPatternImage:[UIImage imageNamed:@"login-bg.png"]];
     
     //mettre le fond de la box
     UIImage *image = [UIImage imageNamed:@"bg-box.png"];
