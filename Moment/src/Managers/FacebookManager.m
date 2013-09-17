@@ -729,6 +729,79 @@ static FacebookManager *sharedInstance = nil;
 
 #pragma mark - Events
 
+- (void)parseEvents:(NSArray *)webList withEnded:( void (^) (NSArray *finalArray) )block
+{
+    if (block) {
+        int taille = webList.count;
+        if (taille == 0) {
+            if (block)
+                block(@[]);
+        } else {
+            NSMutableArray *mutableArray = [NSMutableArray arrayWithCapacity:taille];
+            NSMutableArray *ownerIdsArray = [NSMutableArray arrayWithCapacity:taille];
+            
+            
+            __block int i = 0;
+            for (NSDictionary *attr in webList)
+            {
+                // Owner attributes
+                NSDictionary *owner = [NSDictionary dictionary];
+                if (attr[@"owner"][@"id"] == nil) {
+                    owner = @{@"facebookId":@0};
+                } else {
+                    owner = @{@"facebookId":attr[@"owner"][@"id"]};
+                }
+                
+                [UserClass getUsersWhoAreOnMoment:@[owner] withEnded:^(NSArray *usersOnMoment) {
+                    
+                    //  ------> Create Event
+                    FacebookEvent *event = [[FacebookEvent alloc] initWithAttributes:attr];
+                    // Save Event
+                    [mutableArray addObject:event];
+                    // Save Owner ID
+                    [ownerIdsArray addObject:[NSString stringWithFormat:@"%@", attr[@"owner"][@"id"]]];
+                    
+                    
+                    //  ------> User is on Moment
+                    if([usersOnMoment count] == 1) {
+                        event.ownerAttributes = usersOnMoment[0];
+                    }
+                    
+                    // ************** >Last event < *************
+                    if(i == taille-1) {
+                        
+                        
+                        ///////////////////////////////////////////////////////////////////////
+                        // --------- Récupérer Owners informations depuis Server Facebook -----
+                        ///////////////////////////////////////////////////////////////////////
+                        [FacebookEvent arrayWithArrayOfEvents:mutableArray withArrayOfOwnerId:ownerIdsArray withEnded:^(NSArray *events) {
+                            
+                            
+                            //NSLog(@"events = %@", events);
+                            
+                            NSMutableArray *finalArray = events.mutableCopy;
+                            
+                            // Sort By Date
+                            [finalArray sortUsingComparator:^NSComparisonResult(FacebookEvent *obj1, FacebookEvent *obj2) {
+                                return [obj1.startTime compare:obj2.startTime];
+                            }];
+                            
+                            //NSLog(@"finalArray = %@",finalArray);
+                            
+                            // Final block
+                            block(finalArray);
+                            
+                        }];
+                        
+                    }
+                    
+                    i++;
+                }];
+            }
+        }
+    }
+}
+
 - (void)getCoverEventWithID:(NSString *)facebookId withEnded:( void (^) (NSString *pic_url) )block
 {
     if (block) {
@@ -804,7 +877,12 @@ static FacebookManager *sharedInstance = nil;
                                                    for (NSDictionary *attr in webList)
                                                    {
                                                        // Owner attributes
-                                                       NSDictionary *owner = @{@"facebookId":attr[@"owner"][@"id"]};
+                                                       NSDictionary *owner = [NSDictionary dictionary];
+                                                       if (attr[@"owner"][@"id"] == nil) {
+                                                           owner = @{@"facebookId":@0};
+                                                       } else {
+                                                           owner = @{@"facebookId":attr[@"owner"][@"id"]};
+                                                       }
                                                        
                                                        [UserClass getUsersWhoAreOnMoment:@[owner] withEnded:^(NSArray *usersOnMoment) {
                                                            
@@ -898,6 +976,189 @@ static FacebookManager *sharedInstance = nil;
         }];
         
     }
+}
+
+- (void)loadOldEventsWithEnded:( void (^) (NSArray *eventsValid, NSArray *eventsMaybe) )block
+{    
+    if(block)
+    {
+        // Ask For Permissions
+        [self askForPermissions:@[kFbPermissionBasicInfo] type:FacebookPermissionReadType withEnded:^(BOOL success) {
+            
+            if (success) {
+                //NSLog(@"askForPermissions - Basic - YES");
+                
+                // Ask Permissions for Events
+                [self askForPermissions:[self defaultReadPermissions] type:FacebookPermissionReadType
+                              withEnded:^(BOOL success) {
+                                  
+                                  // Permissions Obtenue
+                                  if(success)
+                                  {
+                                      //NSLog(@"askForPermissions - defaultReadPermissions - YES");
+                                      NSDateComponents *components = [[NSCalendar currentCalendar] components:NSDayCalendarUnit | NSMonthCalendarUnit | NSYearCalendarUnit fromDate:[NSDate date]];
+                                      
+                                      //NSLog(@"components.year-2 = %i",components.year-2);
+                                      
+                                      NSString *eventsValidRequest = [NSString stringWithFormat:@"me/events?fields=id,cover,description,is_date_only,name,owner,location,privacy,rsvp_status,start_time,end_time,admins,picture.type(large),attending.limit(50).fields(id,name,picture.height(200).width(200)),maybe.limit(50).fields(id,name,picture.width(200).height(200))&type=attending&limit=25&since=%i&until=now", components.year-2];
+                                      
+                                      NSString *eventsMaybeRequest = [NSString stringWithFormat:@"me/events?fields=id,cover,description,is_date_only,name,owner,location,privacy,rsvp_status,start_time,end_time,admins,picture.type(large),attending.limit(50).fields(id,name,picture.height(200).width(200)),maybe.limit(50).fields(id,name,picture.width(200).height(200))&type=maybe&limit=25&since=%i&until=now", components.year-2];
+                                      
+                                      
+                                      // Get list events
+                                      [FBRequestConnection
+                                       startWithGraphPath:eventsValidRequest
+                                       completionHandler:^(FBRequestConnection *connection,
+                                                           id result,
+                                                           NSError *error) {
+                                           
+                                           if (!error) {
+                                               
+                                               NSArray *webList = [result[@"data"] mutableCopy];
+                                               
+                                               [self parseEvents:webList withEnded:^(NSArray *finalArray) {
+                                                   NSArray *eventsValid = [NSArray arrayWithArray:finalArray];
+                                                   
+                                                   
+                                                   [FBRequestConnection
+                                                    startWithGraphPath:eventsMaybeRequest
+                                                    completionHandler:^(FBRequestConnection *connection,
+                                                                        id result,
+                                                                        NSError *error) {
+                                                        
+                                                        if (!error) {
+                                                            
+                                                            NSArray *webList = [result[@"data"] mutableCopy];
+                                                            
+                                                            [self parseEvents:webList withEnded:^(NSArray *finalArray) {
+                                                                NSArray *eventsMaybe = [NSArray arrayWithArray:finalArray];
+                                                                
+                                                                block(eventsValid, eventsMaybe);
+                                                            }];
+                                                        }
+                                                        else{
+                                                            /*
+                                                             NSLog(@"Facebook Load Events Error : %@", error.localizedDescription);
+                                                             NSLog(@"Response = %@", connection.urlResponse);
+                                                             NSLog(@"Headers = %@", connection.urlResponse.allHeaderFields);
+                                                             NSLog(@"Request = %@", connection.urlRequest);
+                                                             NSLog(@"Connection = %@", connection);
+                                                             */
+                                                            
+                                                            /*
+                                                             [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error", nil)
+                                                             message:[error localizedDescription]
+                                                             delegate:nil
+                                                             cancelButtonTitle:nil
+                                                             otherButtonTitles:NSLocalizedString(@"OK", nil), nil]
+                                                             show];
+                                                             */
+                                                            
+                                                            if (block) {
+                                                                block(nil, nil);
+                                                            }
+                                                        }
+                                                    }];
+                                               }];
+                                           }
+                                           else{
+                                               /*
+                                                NSLog(@"Facebook Load Events Error : %@", error.localizedDescription);
+                                                NSLog(@"Response = %@", connection.urlResponse);
+                                                NSLog(@"Headers = %@", connection.urlResponse.allHeaderFields);
+                                                NSLog(@"Request = %@", connection.urlRequest);
+                                                NSLog(@"Connection = %@", connection);
+                                                */
+                                               
+                                               /*
+                                                [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error", nil)
+                                                message:[error localizedDescription]
+                                                delegate:nil
+                                                cancelButtonTitle:nil
+                                                otherButtonTitles:NSLocalizedString(@"OK", nil), nil]
+                                                show];
+                                                */
+                                               
+                                               if (block) {
+                                                   block(nil, nil);
+                                               }
+                                           }
+                                       }];
+                                      
+                                  }
+                                  // Permission refusée
+                                  else {
+                                      /*
+                                       [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error", nil)
+                                       message:@"Erreur lors de l'obtention des permissions"
+                                       delegate:nil
+                                       cancelButtonTitle:nil
+                                       otherButtonTitles:NSLocalizedString(@"OK", nil), nil]
+                                       show];
+                                       */
+                                      
+                                      /*[[MTStatusBarOverlay sharedInstance] postImmediateErrorMessage:@"Permissions Facebook refusées"
+                                       duration:2.0
+                                       animated:YES];*/
+                                  }
+                                  
+                              }];
+            }
+        }];
+        
+    }
+}
+
+- (void)getNumberInvitedInFacebookEvent:(FacebookEvent *)event withEnded:(void (^) (FacebookEvent *eventModif) )block
+{
+    // Connection
+    FBRequestConnection *connection = [[FBRequestConnection alloc] init];
+    FBRequest *request = [FBRequest requestForGraphPath:@"fql"];
+    
+    // Requete
+    NSString *query = [NSString stringWithFormat:@"SELECT all_members_count FROM event WHERE eid=%@", event.eventId];
+    [request.parameters setObject:query forKey:@"q"];
+    
+    // Completion
+    [connection addRequest:request completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
+        if(block) {
+            if(error) {
+                block(event);
+            }
+            else {
+                
+                // Result
+                if(result[@"data"] && ([result[@"data"] count] > 0) && result[@"data"][0][@"all_members_count"])
+                {
+                    NSNumber *numberInvited = result[@"data"][0][@"all_members_count"];
+                    
+                    event.numberInvited = numberInvited;
+                    
+                    block(event);
+                } else {
+                    block(event);
+                }
+                
+            }
+        }
+    }];
+    
+    [connection start];
+}
+
+- (void)getEventsFromPastWithEnded:(void (^) (NSArray* eventsValid, NSArray *eventsMaybe) )block
+{
+    if (FBSession.activeSession.state != FBSessionStateCreatedTokenLoaded) {
+        [self loginReadPermissionsWithEnded:^(BOOL success) {
+            if(success) {
+                [self loadOldEventsWithEnded:block];
+            }
+        }];
+    }
+    else {
+        [self loadOldEventsWithEnded:block];
+    }
+    
 }
 
 - (void)getEventsWithEnded:(void (^) (NSArray* events) )block

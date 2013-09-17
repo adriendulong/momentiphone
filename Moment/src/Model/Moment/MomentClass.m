@@ -179,7 +179,9 @@
 - (BOOL)isEqual:(id)object
 {
     if([object respondsToSelector:@selector(momentId)]) {
-        return [self.momentId isEqualToNumber:[object momentId]];
+        if ([object momentId]) {
+            return [self.momentId isEqualToNumber:[object momentId]];
+        }
     }
     return NO;
 }

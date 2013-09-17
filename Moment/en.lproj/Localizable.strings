@@ -153,6 +153,11 @@
 "MBProgressHUD_Deleting" = "Suppression en cours ...";
 "MBProgressHUD_Update" = "Mise à jour ...";
 "MBProgressHUD_UploadPreparing" = "Préparation de l'envoi ...";
+"MBProgressHUD_PhotosPreparing" = "Préparation des photos ...";
+//"MBProgressHUD_PhotosIndexing" = "Indexation des photos ...";
+"MBProgressHUD_Search_Photo" = "Recherche des photos...";
+"MBProgressHUD_Search_EmptyPhoto" = "Aucune photo trouvée";
+"MBProgressHUD_Search_NoSelectedPhoto" = "Aucune photo sélectionnée";
 "MBProgressHUD_Finish" = "Terminé";
 "MBProgressHUD_Failure" = "Échec";
 
@@ -324,6 +329,7 @@
 /* -------------- ImporterFBViewController ------------- */
 "MBProgressHUD_Loading_FBEvents" = "Importation en cours ...";
 "MBProgressHUD_Loading_FBEvents_2" = "Si l'importation dure plus de 30 secondes, retournez à l'étape précédente puis recommencez";
+"MBProgressHUD_Loading_FBEvents_3" = "L'importation risque d'être longue si vous avez beaucoup d'évènements";
 "ImporterFBViewController_EmptyLabel" = "Aucun nouvel évènement trouvé. Pour votre confort, nous importons uniquement les évènements auxquels vous avez répondu sur Facebook. Pensez donc à indiquez votre présence à l'évènement puis à l'importer sur Moment !";
 
 /* -------------- CreationHomeViewController ------------- */

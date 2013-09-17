@@ -223,10 +223,244 @@
     }
 }
 
++ (void)identifyFacebookEventsOnMomentForRevivre:(NSArray*)events withEnded:(void (^) (NSDictionary* results))block
+{
+    if(block)
+    {
+        NSString *path = @"facebookevents";
+        
+        NSMutableArray *eventsId = [[NSMutableArray alloc] initWithCapacity:events.count];
+        for(FacebookEvent *e in events) {
+            // DEBUG
+            //NSLog(@"FacebookEvent | name = %@ - fbId = %@",e.name, e.eventId);
+            [eventsId addObject:e.eventId];
+        }
+        
+        [[AFMomentAPIClient sharedClient] postPath:path parameters:@{@"events":eventsId} encoding:AFJSONParameterEncoding success:^(AFHTTPRequestOperation *operation, id JSON) {
+            
+            // Réponse
+            NSArray *existAndInvited_id = JSON[@"exist_and_invited"];
+            NSArray *exist_id = JSON[@"exist"];
+            NSArray *notExist_id = JSON[@"not_exist"];
+            
+            //NSLog(@"existAndInvited_id = %@",existAndInvited_id);
+            //NSLog(@"exist_id = %@",exist_id);
+            //NSLog(@"notExist_id = %@",notExist_id);
+            
+            // Identification des Facebook Moments
+            NSMutableArray *existAndInvited = [[NSMutableArray alloc] initWithCapacity:existAndInvited_id.count];
+            NSMutableArray *exist = [[NSMutableArray alloc] initWithCapacity:exist_id.count];
+            NSMutableArray *notExist = [[NSMutableArray alloc] initWithCapacity:notExist_id.count];
+            
+            // Identification des "Exist And Invited"
+             for( NSNumber *fbId in existAndInvited_id ) {
+                 FacebookEvent *e = [self eventInArray:events withFbId:[NSString stringWithFormat:@"%@",fbId]];
+                 if (e) {
+                     // DEBUG
+                     //NSLog(@"Le FacebookEvent est déjà sur Moment.");
+                     e.isAlreadyOnMoment = YES;
+                     [existAndInvited addObject:e];
+                 }/* else {
+                     NSLog(@"Le FacebookEvent est introuvable...");
+                 }*/
+             }
+            
+            // Identification des "Exist"
+            for( NSNumber *fbId in exist_id ) {
+                FacebookEvent *e = [self eventInArray:events withFbId:[NSString stringWithFormat:@"%@",fbId]];
+                if(e) {
+                    e.isAlreadyOnMoment = YES;
+                    [exist addObject:e];
+                }
+            }
+            // Identification des "Not Exist"
+            for( NSNumber *fbId in notExist_id ) {
+                FacebookEvent *e = [self eventInArray:events withFbId:[NSString stringWithFormat:@"%@",fbId]];
+                if(e)
+                    [notExist addObject:e];
+            }
+            
+            block(@{@"exist_and_invited":existAndInvited,
+                  @"exist":exist,
+                  @"not_exist":notExist
+                  });
+            
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            
+            //NSLog(@"Error = %@", error.localizedDescription);
+            //NSLog(@"Message = %@", operation.responseString);
+            
+            block(nil);
+        }];
+    }
+}
+
++ (void)createMomentFromFBEvents:(NSArray *)events withEnded:(void (^) (NSArray *events, NSArray* moments))block
+{    
+    // Identifier quels évenements sont déjà sur Moment
+    [self identifyFacebookEventsOnMoment:events withEnded:^(NSDictionary *results) {
+        
+        // Facebook Events à afficher
+        NSArray *fb_exist = results[@"exist"];
+        NSArray *fb_notExist = results[@"not_exist"];
+        
+        // --------- Créer Moments qui ne sont pas sur le server ---
+        NSMutableArray *moments_notExist = [MomentClass arrayOfMomentsWithFacebookEvents:fb_notExist].mutableCopy;
+        
+#ifdef DEBUG_IMPORT_FACEBOOK_EVENT
+        NSLog(@"\n$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ NOT EXISTED $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n");
+#endif
+        
+        __block int i = 0;
+        // Création sur le server
+        [MomentClass createMultipleMomentsFromLocalToServerWithMoments:moments_notExist
+                                                        withTransition:
+         ^(MomentClass *moment) {
+             
+             if(block) {
+                 
+#ifdef DEBUG_IMPORT_FACEBOOK_EVENT
+                 NSLog(@"\n-------------------------------------------------------------------\n");
+                 NSLog(@"MOMENT\n : {\n %@ \n}", moment);
+                 NSLog(@"OWNER : {\n %@ \n}", moment.owner);
+                 NSLog(@"\n-------------------------------------------------------------------\n");
+#endif
+                 
+                 
+                 if(moment)
+                 {
+                     // Update moments with server attributes
+                     [moments_notExist replaceObjectAtIndex:i withObject:moment];
+                 }
+             }
+             i++;
+             
+         } withEnded:
+         ^{
+             
+#ifdef DEBUG_IMPORT_FACEBOOK_EVENT
+             NSLog(@"\n$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ EXISTED $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n");
+#endif
+             
+             // Création NotExist terminée -> Création locale des fb_exist
+             NSMutableArray *moments_exist = [MomentClass arrayOfMomentsWithFacebookEvents:fb_exist].mutableCopy;
+             
+             
+             // ----- Ajouter en tant qu'invité aux moments déjà existant -> Requete de création ----
+             __block int j = 0;
+             [MomentClass createMultipleMomentsFromLocalToServerWithMoments:moments_exist
+                                                             withTransition:
+              ^(MomentClass *moment) {
+                  
+                  if(block) {
+                      
+#ifdef DEBUG_IMPORT_FACEBOOK_EVENT
+                      NSLog(@"\n-------------------------------------------------------------------\n");
+                      NSLog(@"MOMENT\n : {\n %@ \n}", moment);
+                      NSLog(@"OWNER : {\n %@ \n}", moment.owner);
+                      NSLog(@"\n-------------------------------------------------------------------\n");
+#endif
+                      if(moment)
+                      {
+                          // Update moments with server attributes
+                          [moments_exist replaceObjectAtIndex:j withObject:moment];
+                      }
+                  }
+                  j++;
+                  
+              } withEnded:^{
+                  
+                  if(block) {
+                      //  ----- Facebook Events par ordre chronologique -----
+                      int taille = [fb_exist count] + [fb_notExist count];
+                      NSMutableArray *fb = [[NSMutableArray alloc] initWithCapacity:taille];
+                      [fb addObjectsFromArray:fb_exist];
+                      [fb addObjectsFromArray:fb_notExist];
+                      [fb sortUsingComparator:^NSComparisonResult(FacebookEvent *e1, FacebookEvent *e2) {
+                          return [e1.startTime compare:e2.startTime];
+                      }];
+                      
+                      //  ----- Moments par ordre chronologique -----
+                      NSMutableArray *moments = [[NSMutableArray alloc] initWithCapacity:taille];
+                      [moments addObjectsFromArray:moments_exist];
+                      [moments addObjectsFromArray:moments_notExist];
+                      [moments sortUsingComparator:^NSComparisonResult( MomentClass *m1, MomentClass *m2) {
+                          return [m1.dateDebut compare:m2.dateDebut];
+                      }];
+                      
+#ifdef DEBUG_IMPORT_FACEBOOK_EVENT
+                      NSLog(@"\n$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ FIN $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n");
+                      
+                      NSLog(@"\n-------------------------------------------------------------------\n");
+                      NSLog(@"MOMENT\n : {\n %@ \n}", moments);
+                      NSLog(@"EVENTS : {\n %@ \n}", fb);
+                      NSLog(@"\n-------------------------------------------------------------------\n");
+#endif
+                      
+                      // Retourne tableaux
+                      block(fb, moments);
+                  }
+                  
+              }]; // Fin Moments Exists
+             
+             
+         }]; // Fin Moments Not Exists
+        
+        
+    }];// Fin identifyFacebookEvents
+}
+
++ (void)getMomentFromFBEvents:(NSArray *)events withEnded:(void (^) (NSArray *events, NSArray* moments))block
+{
+    
+    // Identifier quels évenements sont déjà sur Moment
+    [self identifyFacebookEventsOnMomentForRevivre:events withEnded:^(NSDictionary *results) {
+        
+        // Facebook Events à afficher
+        NSArray *fb_existAndInvited = results[@"exist_and_invited"];
+        // DEBUG
+        //NSLog(@"fb_existAndInvited.count = %i",fb_existAndInvited.count);
+        
+        // Création locale des fb_existAndInvited_id
+        NSMutableArray *moments_existAndInvited = [NSMutableArray arrayWithCapacity:fb_existAndInvited.count];
+        for (FacebookEvent *e in fb_existAndInvited) {
+            MomentClass *moment = [MomentCoreData requestMomentWithFacebookEvent:e];
+            
+            if (moment) {
+                [moments_existAndInvited addObject:moment];
+            }
+        }
+        
+        
+        if(block) {
+            //  ----- Facebook Events par ordre chronologique -----
+            int taille = fb_existAndInvited.count;
+            NSMutableArray *fb = [[NSMutableArray alloc] initWithCapacity:taille];
+            [fb addObjectsFromArray:fb_existAndInvited];
+            [fb sortUsingComparator:^NSComparisonResult(FacebookEvent *e1, FacebookEvent *e2) {
+                return [e1.startTime compare:e2.startTime];
+            }];
+            
+            //  ----- Moments par ordre chronologique -----
+            NSMutableArray *moments = [[NSMutableArray alloc] initWithCapacity:taille];
+            [moments addObjectsFromArray:moments_existAndInvited];
+            [moments sortUsingComparator:^NSComparisonResult( MomentClass *m1, MomentClass *m2) {
+                return [m1.dateDebut compare:m2.dateDebut];
+            }];
+            
+            //NSLog(@"moments = %@",moments);
+            
+            // Retourne tableaux
+            block(fb, moments);
+        }
+        
+    }];// Fin identifyFacebookEvents
+}
+
 //#define DEBUG_IMPORT_FACEBOOK_EVENT
 + (void)importFacebookEventsWithEnded:(void (^) (NSArray *events, NSArray* moments))block
 {
-        
+    
     // Update Facebook Id
     [[FacebookManager sharedInstance] updateCurrentUserFacebookIdOnServer:^(BOOL success) {
         
@@ -244,117 +478,41 @@
                         block(events, nil);
                 }
                 else {
-                    // Identifier quels évenements sont déjà sur Moment
-                    [self identifyFacebookEventsOnMoment:events withEnded:^(NSDictionary *results) {
-                        
-                        // Facebook Events à afficher
-                        NSArray *fb_exist = results[@"exist"];
-                        NSArray *fb_notExist = results[@"not_exist"];
-                        
-                        // --------- Créer Moments qui ne sont pas sur le server ---
-                        NSMutableArray *moments_notExist = [MomentClass arrayOfMomentsWithFacebookEvents:fb_notExist].mutableCopy;
-                        
-#ifdef DEBUG_IMPORT_FACEBOOK_EVENT
-                        NSLog(@"\n$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ NOT EXISTED $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n");
-#endif
-                        
-                        __block int i = 0;
-                        // Création sur le server
-                        [MomentClass createMultipleMomentsFromLocalToServerWithMoments:moments_notExist
-                                                                        withTransition:
-                         ^(MomentClass *moment) {
-                             
-                             if(block) {
-                                 
-#ifdef DEBUG_IMPORT_FACEBOOK_EVENT
-                                 NSLog(@"\n-------------------------------------------------------------------\n");
-                                 NSLog(@"MOMENT\n : {\n %@ \n}", moment);
-                                 NSLog(@"OWNER : {\n %@ \n}", moment.owner);
-                                 NSLog(@"\n-------------------------------------------------------------------\n");
-#endif
-                                 
-                                 
-                                 if(moment)
-                                 {
-                                     // Update moments with server attributes
-                                     [moments_notExist replaceObjectAtIndex:i withObject:moment];
-                                 }
-                             }
-                             i++;
-                             
-                         } withEnded:
-                         ^{
-                             
-#ifdef DEBUG_IMPORT_FACEBOOK_EVENT
-                             NSLog(@"\n$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ EXISTED $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n");
-#endif
-                             
-                             // Création NotExist terminée -> Création locale des fb_exist
-                             NSMutableArray *moments_exist = [MomentClass arrayOfMomentsWithFacebookEvents:fb_exist].mutableCopy;
-                             
-                             
-                             // ----- Ajouter en tant qu'invité aux moments déjà existant -> Requete de création ----
-                             __block int j = 0;
-                             [MomentClass createMultipleMomentsFromLocalToServerWithMoments:moments_exist
-                                                                             withTransition:
-                              ^(MomentClass *moment) {
-                                  
-                                  if(block) {
-                                      
-#ifdef DEBUG_IMPORT_FACEBOOK_EVENT
-                                      NSLog(@"\n-------------------------------------------------------------------\n");
-                                      NSLog(@"MOMENT\n : {\n %@ \n}", moment);
-                                      NSLog(@"OWNER : {\n %@ \n}", moment.owner);
-                                      NSLog(@"\n-------------------------------------------------------------------\n");
-#endif
-                                      if(moment)
-                                      {
-                                          // Update moments with server attributes
-                                          [moments_exist replaceObjectAtIndex:j withObject:moment];
-                                      }
-                                  }
-                                  j++;
-                                  
-                              } withEnded:^{
-                                  
-                                  if(block) {
-                                      //  ----- Facebook Events par ordre chronologique -----
-                                      int taille = [fb_exist count] + [fb_notExist count];
-                                      NSMutableArray *fb = [[NSMutableArray alloc] initWithCapacity:taille];
-                                      [fb addObjectsFromArray:fb_exist];
-                                      [fb addObjectsFromArray:fb_notExist];
-                                      [fb sortUsingComparator:^NSComparisonResult(FacebookEvent *e1, FacebookEvent *e2) {
-                                          return [e1.startTime compare:e2.startTime];
-                                      }];
-                                      
-                                      //  ----- Moments par ordre chronologique -----
-                                      NSMutableArray *moments = [[NSMutableArray alloc] initWithCapacity:taille];
-                                      [moments addObjectsFromArray:moments_exist];
-                                      [moments addObjectsFromArray:moments_notExist];
-                                      [moments sortUsingComparator:^NSComparisonResult( MomentClass *m1, MomentClass *m2) {
-                                          return [m1.dateDebut compare:m2.dateDebut];
-                                      }];
-                                      
-#ifdef DEBUG_IMPORT_FACEBOOK_EVENT
-                                      NSLog(@"\n$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ FIN $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n");
-                                      
-                                      NSLog(@"\n-------------------------------------------------------------------\n");
-                                      NSLog(@"MOMENT\n : {\n %@ \n}", moments);
-                                      NSLog(@"EVENTS : {\n %@ \n}", fb);
-                                      NSLog(@"\n-------------------------------------------------------------------\n");
-#endif
-                                      
-                                      // Retourne tableaux
-                                      block(fb, moments);
-                                  }
-                                  
-                              }]; // Fin Moments Exists
-                             
-                             
-                         }]; // Fin Moments Not Exists
-                        
-                        
-                    }];// Fin identifyFacebookEvents
+                    [self createMomentFromFBEvents:events withEnded:block];
+                }
+                
+            }];
+        }
+        else
+        {
+            block(nil, nil);
+        }
+        
+    }];
+}
+
++ (void)getOldFacebookEventsWithEnded:(void (^) (NSArray *eventsValid, NSArray *eventsMaybe))block
+{
+    // Update Facebook Id
+    [[FacebookManager sharedInstance] updateCurrentUserFacebookIdOnServer:^(BOOL success) {
+        
+        if(success)
+        {
+            NSLog(@"updateCurrentUserFacebookIdOnServer - success - 1");
+            // Get Facebook Events
+            [[FacebookManager sharedInstance] getEventsFromPastWithEnded:^(NSArray *eventsValid, NSArray *eventsMaybe) {
+                
+                if (!eventsValid && !eventsMaybe) {
+                    if(block)
+                        block(nil, nil);
+                }
+                else if(eventsValid.count == 0 && eventsMaybe.count == 0) {
+                    if(block)
+                        block(eventsValid, eventsMaybe);
+                }
+                else {
+                    if (block)                        
+                        block(eventsValid, eventsMaybe);
                 }
                 
                 
@@ -781,12 +939,12 @@
         if (theError == nil) {
             BOOL removeSuccess = [fileMgr removeItemAtPath:photoPath error:&theError];
             if (!removeSuccess) {
-                NSLog(@"DELETING FAILED... : %@ | Error: %@",photoPath, theError);
-            } else {
+                NSLog(@"DELETING FAILED... : %@ | Error: %@",photoPath, theError.localizedDescription);
+            }/* else {
                 NSLog(@"DELETING SUCCESSFUL : %@",photoPath);
-            }
+            }*/
         } else {
-            NSLog(@"DELETING FAILED... : %@ | Error: %@",photoPath, theError);
+            NSLog(@"DELETING FAILED... : %@ | Error: %@",photoPath, theError.localizedDescription);
         }
         
         if(endBlock)
@@ -804,12 +962,12 @@
         if (theError == nil) {
             BOOL removeSuccess = [fileMgr removeItemAtPath:photoPath error:&theError];
             if (!removeSuccess) {
-                NSLog(@"DELETING FAILED... : %@ | Error: %@",photoPath, theError);
-            } else {
+                NSLog(@"DELETING FAILED... : %@ | Error: %@",photoPath, theError.localizedDescription);
+            }/* else {
                 NSLog(@"DELETING SUCCESSFUL : %@",photoPath);
-            }
+            }*/
         } else {
-            NSLog(@"DELETING FAILED... : %@ | Error: %@",photoPath, theError);
+            NSLog(@"DELETING FAILED... : %@ | Error: %@",photoPath, theError.localizedDescription);
         }
           
         if(endBlock)

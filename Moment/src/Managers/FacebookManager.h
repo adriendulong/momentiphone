@@ -56,7 +56,9 @@ enum FacebookPermissionType {
 - (void)getFriendProfilePrictureURL:(NSString*)facebookId withEnded:(void (^) (NSString* url) )block;
 
 // Events
+- (void)getEventsFromPastWithEnded:(void (^) (NSArray* eventsValid, NSArray *eventsMaybe) )block;
 - (void)getEventsWithEnded:(void (^) (NSArray* events) )block;
+- (void)getNumberInvitedInFacebookEvent:(FacebookEvent *)event withEnded:(void (^) (FacebookEvent *eventModif) )block;
 - (void)getTagsFromMoment:(MomentClass *)moment withEnded:(void (^) (NSString *tags))block;
 
 // RSVP

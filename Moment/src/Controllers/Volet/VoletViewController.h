@@ -23,6 +23,7 @@
 @property (weak, nonatomic) IBOutlet UIButton *mesMoments;
 @property (weak, nonatomic) IBOutlet UIButton *parametresButton;
 @property (weak, nonatomic) IBOutlet UIButton *eventMissingButton;
+@property (weak, nonatomic) IBOutlet UIButton *revivreMomentButton;
 
 @property (weak, nonatomic) IBOutlet UIButton *nomUserButton;
 @property (weak, nonatomic) IBOutlet UIView *sectionView;
@@ -60,6 +61,7 @@
 - (IBAction)clicUser;
 - (IBAction)clicParametres;
 - (IBAction)clicEventMissing;
+- (IBAction)clicRevivreMoment;
 
 // Load
 - (void)loadNotifications;

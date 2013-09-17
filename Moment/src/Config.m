@@ -267,6 +267,26 @@ static Config *sharedInstance = nil;
     return image;
 }
 
+- (float)getScaleFromImageMetadata:(NSDictionary *)metadata maxSize:(CGFloat)maxImageSize
+{
+    //NSLog(@"metadata = %@", metadata);
+    CGFloat width = [metadata[@"PixelWidth"] floatValue];
+    CGFloat height = [metadata[@"PixelHeight"] floatValue];
+    
+    //NSLog(@"original - width = %f | height = %f", width, height);
+    
+    // Si l'image est trop grande, on la redimentionne
+    if( (width > maxImageSize) || (height > maxImageSize) )
+    {
+        CGFloat scale = (width > height) ? width/maxImageSize : height/maxImageSize;
+        //NSLog(@"scale = %f",scale);
+        
+        return scale;
+    } else {
+        return 1.0;
+    }
+}
+
 #pragma mark - Create UIImage programmatically
 
 - (UIImage *)imageFromText:(NSString *)text withColor:(UIColor *)color andFont:(UIFont *)font

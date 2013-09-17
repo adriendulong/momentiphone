@@ -27,6 +27,7 @@
 @property (strong, nonatomic) UserClass *owner;
 @property (nonatomic) BOOL isAlreadyOnMoment;
 @property (strong, nonatomic) NSArray *invited;
+@property (strong, nonatomic) NSNumber *numberInvited;
 
 - (id)initWithAttributes:(NSDictionary *)attributes;
 

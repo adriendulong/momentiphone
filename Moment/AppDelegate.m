@@ -83,12 +83,14 @@
          annotation:(id)annotation
 {
     
-    if ([sourceApplication isEqualToString:@"com.facebook.Facebook"]) {
+    /*if ([sourceApplication isEqualToString:@"com.facebook.Facebook"]) {
         // attempt to extract a token from the url
         return [[FBSession activeSession] handleOpenURL:url];
     } else {
         return [[RedirectionManager sharedInstance] handleOpenURL:url withApplicationState:application.applicationState];
-    }
+    }*/
+    
+    return [[FBSession activeSession] handleOpenURL:url];
 }
 
 #pragma mark - AppDelegate
@@ -98,7 +100,7 @@
     [super initialize];
     
     // VERSION DEV ou VERSION PROD
-    [[Config sharedInstance] setDeveloppementVersion:NO];
+    [[Config sharedInstance] setDeveloppementVersion:YES];
     
     /* ------------------ iRate ------------------- */
     /*          ---> Noter l'application <--        */
@@ -245,11 +247,11 @@
     }
     */
     
-    /*NSURL *url = launchOptions[@"UIApplicationLaunchOptionsURLKey"];
+    NSURL *url = launchOptions[@"UIApplicationLaunchOptionsURLKey"];
     
     if (url) {
-        [[RedirectionManager sharedInstance] redirectSchemeFromURL:url withApplicationState:application.applicationState];
-    }*/
+        [[RedirectionManager sharedInstance] handleOpenURL:url withApplicationState:application.applicationState];
+    }
     
     [self deleteUploadPhotosCache];
         
@@ -392,6 +394,29 @@
                 }
             } else {
                 NSLog(@"DELETING FAILED... : %@ | Error: %@",photosPath, theError);
+            }
+        }
+    }
+    
+    
+    
+    NSString *photosRevivrePath = [documentsDirectory stringByAppendingPathComponent:@"PhotosRevivreCache"];
+    
+    NSFileManager *fileMgr2 = [[NSFileManager alloc] init];
+    NSError *theError2 = nil;
+    
+    BOOL isDir2;
+    BOOL exists2 = [fileMgr2 fileExistsAtPath:photosRevivrePath isDirectory:&isDir2];
+    
+    if (exists2) {
+        if (isDir2) {
+            if (theError2 == nil) {
+                BOOL removeSuccess = [fileMgr removeItemAtPath:photosRevivrePath error:&theError2];
+                if (!removeSuccess) {
+                    NSLog(@"DELETING FAILED... : %@ | Error: %@",photosRevivrePath, theError2);
+                }
+            } else {
+                NSLog(@"DELETING FAILED... : %@ | Error: %@",photosRevivrePath, theError2);
             }
         }
     }

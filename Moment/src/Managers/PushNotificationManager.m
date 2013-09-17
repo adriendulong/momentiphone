@@ -13,6 +13,7 @@
 #import "Config.h"
 #import "RowIndexInVolet.h"
 #import "RedirectionManager.h"
+#import "RevivrePartagerViewController.h"
 
 #import "MTStatusBarOverlay.h"
 
@@ -544,7 +545,10 @@ static PushNotificationManager *sharedInstance = nil;
     } else {
         if (applicationState == UIApplicationStateActive) {
             photoNotifAction = nil;
-            [self alertViewPhotoWithMessage:message];
+            
+            if( ![actualViewController isMemberOfClass:[RevivrePartagerViewController class]] ) {
+                [self alertViewPhotoWithMessage:message];
+            }
         } else {
             photoNotifAction = nil;
         }

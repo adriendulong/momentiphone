@@ -20,6 +20,7 @@
 #import "MesReglagesViewController.h"
 #import "UserClass+Server.h"
 
+#import "RevivreMomentViewController.h"
 #import "EventMissingViewController.h"
 #import "RowIndexInVolet.h"
 
@@ -43,7 +44,7 @@ static VoletViewController *actualVoletViewController;
 @synthesize notifications = _notifications;
 @synthesize invitations = _invitations;
 
-@synthesize nomUserButton = _nomUserButton, mesActualites = _mesActualites, parametresButton = _parametresButton, eventMissingButton = _eventMissingButton;
+@synthesize nomUserButton = _nomUserButton, mesActualites = _mesActualites, parametresButton = _parametresButton, eventMissingButton = _eventMissingButton, revivreMomentButton = _revivreMomentButton;
 @synthesize sectionView = _sectionView;
 @synthesize sectionTitleLabel = _sectionTitleLabel;
 @synthesize ttSectionTitleLabel = _ttSectionTitleLabel;
@@ -116,6 +117,9 @@ static VoletViewController *actualVoletViewController;
     self.mesMoments.titleLabel.font = font;
     // Event Missing
     self.eventMissingButton.titleLabel.font = font;
+    // Revivre ses Moment
+    self.revivreMomentButton.titleLabel.font = font;
+    
     
     // TableView
     frame = self.tableView.frame;
@@ -340,6 +344,7 @@ static VoletViewController *actualVoletViewController;
     [self setNbInvitationsLabel:nil];
     [self setNbInvitationsBackground:nil];
     [self setEventMissingButton:nil];
+    [self setRevivreMomentButton:nil];
     [super viewDidUnload];
 }
 
@@ -587,6 +592,14 @@ static VoletViewController *actualVoletViewController;
     UINavigationController *navController = (UINavigationController*)self.delegate.rootViewController;
     [self.delegate showRootController:NO];
     [navController pushViewController:eventMissing animated:YES];
+}
+
+- (IBAction)clicRevivreMoment
+{
+    RevivreMomentViewController *revivreMoment = [[RevivreMomentViewController alloc] initWithDDMenuDelegate:self.delegate withTimeLine:self.rootTimeLine.privateTimeLine];
+    UINavigationController *navController = (UINavigationController*)self.delegate.rootViewController;
+    [self.delegate showRootController:NO];
+    [navController pushViewController:revivreMoment animated:YES];
 }
 
 /*- (void)selectActualitesButton {

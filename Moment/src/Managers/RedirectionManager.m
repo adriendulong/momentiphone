@@ -69,6 +69,8 @@ static RedirectionManager *sharedInstance = nil;
     } else {
         return NO;
     }
+    
+    return nil;
 }
 
 #pragma mark Receive Redirection

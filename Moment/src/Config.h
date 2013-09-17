@@ -71,6 +71,7 @@
 #pragma mark - Image Cropping
 - (UIImage*)scaleAndCropImage:(UIImage*)sourceImage forSize:(CGSize)targetSize;
 - (UIImage*)imageWithMaxSize:(UIImage*)image maxSize:(CGFloat)maxImageSize;
+- (float)getScaleFromImageMetadata:(NSDictionary *)metadata maxSize:(CGFloat)maxImageSize;
 
 #pragma mark - Create UIImage programmatically
 - (UIImage *)imageFromText:(NSString *)text withColor:(UIColor *)color andFont:(UIFont *)font;

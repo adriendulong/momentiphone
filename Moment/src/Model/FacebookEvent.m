@@ -37,6 +37,7 @@ static NSDateFormatter *dateFormatter = nil;
 @synthesize owner = _owner;
 @synthesize isAlreadyOnMoment;
 @synthesize invited = _invited;
+@synthesize numberInvited = _numberInvited;
 
 + (enum UserState)mappRSVP:(NSString*)rsvp
 {
@@ -102,6 +103,10 @@ static NSDateFormatter *dateFormatter = nil;
         self.rsvp_status = [FacebookEvent mappRSVP:attributes[@"rsvp_status"]];
         self.isAlreadyOnMoment = NO;
         self.invited = attributes[@"invited"];
+        
+        if (attributes[@"numberInvited"]) {
+            self.numberInvited = attributes[@"numberInvited"];
+        }
         
         // Cover Picture
         if(attributes[@"cover"]) {

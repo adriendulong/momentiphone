@@ -406,7 +406,9 @@
     NSMutableArray *momentIdCoreData = [NSMutableArray array];
     
     for (MomentClass *momentCD in [MomentCoreData getMoments]) {
-        [momentIdCoreData addObject:momentCD.momentId];
+        if (momentCD.momentId) {
+            [momentIdCoreData addObject:momentCD.momentId];
+        }
     }    
     
     // Construction de la requete
