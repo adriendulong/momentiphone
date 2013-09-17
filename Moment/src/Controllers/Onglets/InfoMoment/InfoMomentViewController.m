@@ -86,9 +86,9 @@ static CGFloat DescriptionBoxHeightMax = 100;
 
 @synthesize infoLieuView = _infoLieuView, ttInfoLieuLabel = _ttInfoLieuLabel, infoLieuLabel = _infoLieuLabel;
 
-@synthesize cagnotteView = _cagnotteView, suppressionView = _suppressionView;
+@synthesize cagnotteView = _cagnotteView, managementView = _managementView;
 
-@synthesize deleteMomentButton = _deleteMomentButton, deleteMoment = _deleteMoment;
+@synthesize manageMomentButton = _manageMomentButton, deleteMoment = _deleteMoment, removeGuest = _removeGuest;
 
 @synthesize nb_photos_in_moment = _nb_photos_in_moment;
 
@@ -1105,7 +1105,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
 
 - (void)initAddPhotosView
 {
-    [self.addPhotosButton setBackgroundImage:[[UIImage imageNamed:@"add_photo_button.png"]
+    [self.addPhotosButton setBackgroundImage:[[UIImage imageNamed:@"add_button.png"]
                                               stretchableImageWithLeftCapWidth:8.0f
                                               topCapHeight:0.0f]
                                     forState:UIControlStateNormal];
@@ -1243,22 +1243,38 @@ static CGFloat DescriptionBoxHeightMax = 100;
         [self addSubviewAtAutomaticPosition:self.partageView];
 }
 
-- (void)initSuppressionView
+- (void)initManagementView
 {
+    NSString *buttonTitle = [NSString string];
+    SEL sel = nil;
+    
     if([self.moment.owner.userId isEqualToNumber:[UserCoreData getCurrentUser].userId]) {
         
-        if(firstLoad) {
-            
-            [self.deleteMomentButton setBackgroundImage:[[UIImage imageNamed:@"delete_button.png"]
-                                                         stretchableImageWithLeftCapWidth:8.0f
-                                                         topCapHeight:0.0f]
-                                               forState:UIControlStateNormal];
-            
-            [self.deleteMomentButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-            self.deleteMomentButton.titleLabel.font = [UIFont boldSystemFontOfSize:20];
-            
-            [self addSubviewAtAutomaticPosition:self.suppressionView];
-        }
+        buttonTitle = NSLocalizedString(@"InfoMomentViewController_ManageButton_DeleteMoment", nil);
+        sel = @selector(clicDeleteMoment);
+        
+    } else {
+        
+        buttonTitle = NSLocalizedString(@"InfoMomentViewController_ManageButton_RemoveGuest", nil);
+        sel = @selector(clicRemoveGuest);
+        
+    }
+    
+    if(firstLoad) {
+        
+        [self.manageMomentButton setBackgroundImage:[[UIImage imageNamed:@"delete_button.png"]
+                                                     stretchableImageWithLeftCapWidth:8.0f
+                                                     topCapHeight:0.0f]
+                                           forState:UIControlStateNormal];
+        
+        [self.manageMomentButton setTitle:buttonTitle forState:UIControlStateNormal];
+        [self.manageMomentButton setTitle:buttonTitle forState:UIControlStateSelected];
+        [self.manageMomentButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        [self.manageMomentButton setTitleColor:[UIColor whiteColor] forState:UIControlStateSelected];
+        self.manageMomentButton.titleLabel.font = [UIFont boldSystemFontOfSize:20];
+        [self.manageMomentButton addTarget:self action:sel forControlEvents:UIControlEventTouchUpInside];
+        
+        [self addSubviewAtAutomaticPosition:self.managementView];
     }
 }
 
@@ -1305,7 +1321,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
     [self initTopImageView];
     //[self initCagnotteView]; // Désactivation de la vue cagnotte - Coming soon
     [self initPartageView];
-    [self initSuppressionView];
+    [self initManagementView];
     
     /***********************************************
      *              Parallax View                  *
@@ -1473,10 +1489,10 @@ static CGFloat DescriptionBoxHeightMax = 100;
     [self setRsvpMaybeButton:nil];
     [self setRsvpYesButton:nil];
     [self setRsvpNoButton:nil];
-    [self setSuppressionView:nil];
-    [self setDeleteMomentButton:nil];
+    [self setManagementView:nil];
     [self setAddPhotosView:nil];
     [self setPhotosImageView:nil];
+    [self setManageMomentButton:nil];
     [super viewDidUnload];
 }
 
@@ -1506,7 +1522,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
             [self initTopImageView];
             //[self initCagnotteView];
             [self initPartageView];
-            [self initSuppressionView];
+            [self initManagementView];
             
             // Ramener bouton "Voir plus" au premier plan
             if(seeMoreButton)
@@ -1924,7 +1940,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
  }
  */
 
-- (IBAction)clicDeleteMoment {
+- (void)clicDeleteMoment {
     // AlertView de confirmation
     self.deleteMoment = [[UIAlertView alloc]
                          initWithTitle:NSLocalizedString(@"TimeLineViewController_DeleteMomentAlertView_Title", nil)
@@ -1934,6 +1950,18 @@ static CGFloat DescriptionBoxHeightMax = 100;
                          otherButtonTitles:NSLocalizedString(@"AlertView_Button_YES", nil), nil];
     
     [self.deleteMoment show];
+}
+
+- (void)clicRemoveGuest {
+    // AlertView de confirmation
+    self.removeGuest = [[UIAlertView alloc]
+                         initWithTitle:NSLocalizedString(@"TimeLineViewController_RemoveGuestAlertView_Title", nil)
+                         message:NSLocalizedString(@"TimeLineViewController_RemoveGuestAlertView_Message", nil)
+                         delegate:self
+                         cancelButtonTitle:NSLocalizedString(@"AlertView_Button_NO", nil)
+                         otherButtonTitles:NSLocalizedString(@"AlertView_Button_YES", nil), nil];
+    
+    [self.removeGuest show];
 }
 
 #pragma mark - UIAlertView Delegate
@@ -1978,6 +2006,45 @@ static CGFloat DescriptionBoxHeightMax = 100;
                      show];
                 }
                 
+            }];
+            
+        }
+    } else if ([alertView isEqual:self.removeGuest]) {
+        // Confirmation de suppression
+        if(buttonIndex == 1)
+        {
+            MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+            hud.labelText = NSLocalizedString(@"MBProgressHUD_Unsubscribing", nil);
+            
+            // Delete From Server
+            [self.moment removeGuest:self.user.userId withEnded:^(BOOL success) {
+                
+                if(success)
+                {
+                    
+                    // Delete From CoreData
+                    [MomentCoreData deleteMoment:self.moment];
+                    
+                    self.moment = nil;
+                    
+                    [MBProgressHUD hideHUDForView:self.view animated:YES];
+                    
+                    [self.rootViewController.timeLine reloadDataWithWaitUntilFinished:YES withEnded:^(BOOL success) {
+                        [self.rootViewController.navigationController popViewControllerAnimated:YES];
+                    }];
+                }
+                else
+                {
+                    [MBProgressHUD hideHUDForView:self.view animated:YES];
+                    
+                    [[[UIAlertView alloc]
+                      initWithTitle:NSLocalizedString(@"Error_Title", nil)
+                      message:NSLocalizedString(@"TimeLineViewController_Unsubscribing_Fail_Message", nil)
+                      delegate:self
+                      cancelButtonTitle:NSLocalizedString(@"AlertView_Button_OK", nil)
+                      otherButtonTitles: nil]
+                     show];
+                }
             }];
             
         }

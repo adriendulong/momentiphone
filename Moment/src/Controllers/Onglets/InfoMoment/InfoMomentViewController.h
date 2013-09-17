@@ -130,9 +130,10 @@
 @property (nonatomic, strong) IBOutlet UIView *partageView;
 
 /* ------ Suppression View ----- */
-@property (strong, nonatomic) IBOutlet UIView *suppressionView;
-@property (weak, nonatomic) IBOutlet UIButton *deleteMomentButton;
+@property (strong, nonatomic) IBOutlet UIView *managementView;
+@property (weak, nonatomic) IBOutlet UIButton *manageMomentButton;
 @property (strong, nonatomic) UIAlertView *deleteMoment;
+@property (strong, nonatomic) UIAlertView *removeGuest;
 
 @property (strong, nonatomic) NSNumber *nb_photos_in_moment;
 
@@ -155,8 +156,6 @@
 //- (IBAction)clicCoursesButton;
 - (IBAction)clicComptesButton;
 - (IBAction)clicFeedBackButton;
-
-- (IBAction)clicDeleteMoment;
 
 // Google Analytics
 - (void)sendGoogleAnalyticsView;

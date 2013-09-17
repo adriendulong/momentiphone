@@ -151,6 +151,7 @@
 "MBProgressHUD_Reoading_Moments" = "Rechargement des moments...";
 "MBProgressHUD_Loading_Login" = "Connexion ...";
 "MBProgressHUD_Deleting" = "Suppression en cours ...";
+"MBProgressHUD_Unsubscribing" = "Désinscription en cours ...";
 "MBProgressHUD_Update" = "Mise à jour ...";
 "MBProgressHUD_UploadPreparing" = "Préparation de l'envoi ...";
 "MBProgressHUD_PhotosPreparing" = "Préparation des photos ...";
@@ -190,8 +191,13 @@
 // Delete Moment AlertView
 "TimeLineViewController_DeleteMomentAlertView_Title" = "Supprimer ce Moment";
 "TimeLineViewController_DeleteMomentAlertView_Message" = "Êtes vous sûr de vouloir supprimer ce moment ? Cette action est irréversible !";
+// Remove Guest AlertView
+"TimeLineViewController_RemoveGuestAlertView_Title" = "Désinscription";
+"TimeLineViewController_RemoveGuestAlertView_Message" = "Êtes vous sûr de vouloir vous désinscrire de ce moment ?";
 // Erreur suppression
 "TimeLineViewController_DeleteMoment_Fail_Message" = "Erreur lors de la suppression, merci de ré-essayer ultérieurement";
+// Erreur désinscription
+"TimeLineViewController_Unsubscribing_Fail_Message" = "Erreur lors de la désinscription, merci de ré-essayer ultérieurement";
 
 //Overlay
 "TimeLineViewController_Overlay_Label1" = "Recherche,";
@@ -211,6 +217,9 @@
 
 "InfoMomentViewController_PopupRSVP_Title" = "Bonne nouvelle !";
 "InfoMomentViewController_PopupRSVP_Message" = "Souhaites-tu informer tes amis de ta présence à cet évènement ?";
+
+"InfoMomentViewController_ManageButton_DeleteMoment" = "Supprimer l'évènement";
+"InfoMomentViewController_ManageButton_RemoveGuest" = "Me desincrire de l'évènement";
 
 /* --------------- RootOngletsViewController --------------- */
 "RootOngletsViewController_PopTipViewPhotos_Message" = "Retrouvez toutes les photos de l'évènement ici.";

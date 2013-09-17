@@ -1088,7 +1088,7 @@
 
 - (void)inviteNewGuest:(NSArray*)users withEnded:( void (^) (BOOL success) )block
 {
-    NSString *path = [NSString stringWithFormat:@"newguests/%d", self.momentId.intValue];
+    NSString *path = [NSString stringWithFormat:@"newguests/%i", self.momentId.intValue];
     
     // Mapping
     NSMutableArray *params = [NSMutableArray arrayWithCapacity:users.count];
@@ -1109,6 +1109,29 @@
         if(block)
             block(NO);
     }];
+}
+
+- (void)removeGuest:(NSNumber *)userId withEnded:(void (^) (BOOL success))block
+{
+    NSString *path = [NSString stringWithFormat:@"removeguest/%i/%i", self.momentId.intValue, userId.intValue];
+    
+    //NSLog(@"delete moment path = %@", path);
+    
+    [[AFMomentAPIClient sharedClient] getPath:path parameters:nil encoding:AFFormURLParameterEncoding success:^(AFHTTPRequestOperation *operation, id JSON) {
+        
+        if(block) {
+            block(YES);
+        }
+        
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        
+        HTTP_ERROR(operation, error);
+        
+        if(block)
+            block(NO);
+        
+    }];
+    
 }
 
 // --- Local Conversions ----

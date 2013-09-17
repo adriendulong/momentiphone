@@ -78,6 +78,7 @@ enum TimeDirectiion {
 
 // Invités
 - (void)inviteNewGuest:(NSArray*)users withEnded:( void (^) (BOOL success) )block;
+- (void)removeGuest:(NSNumber *)userId withEnded:(void (^) (BOOL success))block;
 - (void)getInvitedUsersWithAdminEncapsulation:(BOOL)adminEncapsulation
                                     withEnded:( void (^) (NSDictionary* invites) )block;
 - (void)getInvitedUsersWithEnded:( void (^) (NSDictionary* invites) )block;
