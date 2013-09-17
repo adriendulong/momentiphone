@@ -35,6 +35,7 @@
          */
         
         rootViewController.navigationItem.hidesBackButton = YES;
+        rootViewController.navigationItem.backBarButtonItem = nil;
         
         if ([self.navigationBar respondsToSelector:@selector(setBackgroundImage:forBarMetrics:)] ) {
             UIImage *image = [UIImage imageNamed:@"topbar-bg.png"];
@@ -58,9 +59,11 @@
         titleView.backgroundColor = [UIColor clearColor];
         
         if(title.length > 20)
-            titleView.font = [UIFont systemFontOfSize:20.0];
+            titleView.font = [UIFont systemFontOfSize:17];
+            //titleView.font = [[Config sharedInstance] defaultFontWithSize:13];
         else
-            titleView.font = [UIFont systemFontOfSize:25.0];
+            titleView.font = [UIFont systemFontOfSize:17];
+            //titleView.font = [[Config sharedInstance] defaultFontWithSize:18];
         
         //titleView.shadowColor = [UIColor colorWithWhite:0.0 alpha:0.5];
         titleView.shadowColor = nil;
@@ -102,6 +105,36 @@
     UIBarButtonItem *barBackItem = [[UIBarButtonItem alloc] initWithCustomView:button];
     
     viewController.navigationItem.hidesBackButton = YES;
+    viewController.navigationItem.backBarButtonItem = nil;
+    viewController.navigationItem.leftBarButtonItem = barBackItem;
+}
+
++ (void)setBackButtonChevronWithViewController:(UIViewController *)viewController
+{
+    [self setBackButtonChevronWithViewController:viewController withNewBackSelector:nil];
+}
+
++ (void)setBackButtonChevronWithViewController:(UIViewController *)viewController withNewBackSelector:(SEL)selector
+{
+    UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
+    UIImage *img = [UIImage imageNamed:@"chevron-left-orange.png"];
+    
+    button.frame = CGRectMake(0, 0, 44, 44);
+    
+    [button setImage:img forState:UIControlStateNormal];
+    [button setImage:img forState:UIControlStateSelected];
+    [button setImageEdgeInsets:UIEdgeInsetsMake(0, 0, 0, 15)];
+    
+    if (!selector) {
+        [button addTarget:viewController.navigationController action:@selector(popViewControllerAnimated:) forControlEvents:UIControlEventTouchUpInside];
+    } else {
+        [button addTarget:viewController action:selector forControlEvents:UIControlEventTouchUpInside];
+    }
+    
+    UIBarButtonItem *barBackItem = [[UIBarButtonItem alloc] initWithCustomView:button];
+    
+    viewController.navigationItem.hidesBackButton = YES;
+    viewController.navigationItem.backBarButtonItem = nil;
     viewController.navigationItem.leftBarButtonItem = barBackItem;
 }
 
@@ -127,6 +160,7 @@
     UIBarButtonItem *barBackItem = [[UIBarButtonItem alloc] initWithCustomView:button];
     
     viewController.navigationItem.hidesBackButton = YES;
+    viewController.navigationItem.backBarButtonItem = nil;
     viewController.navigationItem.leftBarButtonItem = barBackItem;
 }
 
@@ -153,6 +187,7 @@
     [barBackItem setTitle:title];
     
     viewController.navigationItem.hidesBackButton = YES;
+    viewController.navigationItem.backBarButtonItem = nil;
     viewController.navigationItem.leftBarButtonItem = barBackItem;
 }
 
@@ -167,6 +202,13 @@
     
     [CustomNavigationController setLogo:logo withViewController:viewController];
     [CustomNavigationController setBackButtonWithViewController:viewController];
+}
+
++ (void)customToolBarWithLogo:(UIImage*)logo withViewController:(UIViewController *) viewController {
+    
+    [CustomNavigationController setLogo:logo withViewController:viewController];
+    viewController.navigationItem.hidesBackButton = YES;
+    viewController.navigationItem.backBarButtonItem = nil;
 }
 
 + (void) setRightBarButtonWithImage:(UIImage*)image withTarget:(id)target withAction:(SEL)action withViewController:(UIViewController*)viewController
