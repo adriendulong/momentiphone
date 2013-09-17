@@ -334,7 +334,7 @@ enum InviteAddFontSize {
 
 - (void) initNavigationBar
 {
-    [CustomNavigationController setBackButtonWithViewController:self];
+    [CustomNavigationController setBackButtonChevronWithViewController:self withNewBackSelector:@selector(confirmCancel)];
     
     // Remove space at right
     UIBarButtonItem *negativeSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:nil action:nil];
@@ -346,25 +346,6 @@ enum InviteAddFontSize {
     // Set Nav bar buttons
     self.navigationItem.rightBarButtonItems = @[negativeSpace, buttons];
     [self selectNavigationBarButton:self.selectedOnglet];
-    
-    
-    
-    
-    UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
-    UIImage *img = [UIImage imageNamed:@"btn-back.png"];
-    
-    button.frame = CGRectMake(0, 0, img.size.width, img.size.height);
-    
-    [button setImage:img forState:UIControlStateNormal];
-    [button setImage:img forState:UIControlStateSelected];
-    
-    [button removeTarget:self.navigationController action:@selector(popViewControllerAnimated:) forControlEvents:UIControlEventTouchUpInside];
-    [button addTarget:self action:@selector(confirmCancel) forControlEvents:UIControlEventTouchUpInside];
-    
-    UIBarButtonItem *barBackItem = [[UIBarButtonItem alloc] initWithCustomView:button];
-    
-    self.navigationItem.hidesBackButton = YES;
-    self.navigationItem.leftBarButtonItem = barBackItem;
 }
 
 - (void)selectNavigationBarButton:(enum InviteAddTableViewControllerStyle)rank

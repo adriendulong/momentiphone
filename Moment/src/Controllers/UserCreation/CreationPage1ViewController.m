@@ -150,7 +150,7 @@
     self.emailLabel.autocompleteDisabled = NO;
     
     // Image de fond
-    self.view.backgroundColor = [[UIColor alloc] initWithPatternImage:[UIImage imageNamed:@"login-bg.jpg"]];
+    self.view.backgroundColor = [[UIColor alloc] initWithPatternImage:[UIImage imageNamed:@"login-bg.png"]];
     
     // Fond de la box
     UIImage *image = [UIImage imageNamed:@"bg_box_inscription.png"];

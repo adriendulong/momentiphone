@@ -49,7 +49,7 @@
     self.trackedViewName = @"Vue Inscription tel";
     
     //mettre le fond
-    self.view.backgroundColor = [[UIColor alloc] initWithPatternImage:[UIImage imageNamed:@"login-bg.jpg"]];
+    self.view.backgroundColor = [[UIColor alloc] initWithPatternImage:[UIImage imageNamed:@"login-bg.png"]];
     
     //mettre le fond de la box
     // bg-box.png

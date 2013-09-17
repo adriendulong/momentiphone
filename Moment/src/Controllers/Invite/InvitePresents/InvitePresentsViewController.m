@@ -55,7 +55,7 @@
 - (void)initNavigationBar
 {
     // ------ Navigation Bar init
-    [CustomNavigationController setBackButtonWithViewController:self];
+    [CustomNavigationController setBackButtonChevronWithViewController:self];
     
     if((self.moment.state.intValue == UserStateAdmin) || ([self.moment.owner.userId isEqualToNumber:[UserCoreData getCurrentUser].userId]))
     {
@@ -247,6 +247,23 @@
         
     // Update selected onglet
     self.selectedOnglet = onglet;
+    
+    switch (onglet) {
+        case InvitePresentsOngletComing:
+            [CustomNavigationController setTitle:@"Participants" withColor:[UIColor blackColor] withViewController:self];
+            break;
+            
+        case InvitePresentsOngletMaybe:
+            [CustomNavigationController setTitle:@"Peut-être" withColor:[UIColor blackColor] withViewController:self];
+            break;
+            
+        case InvitePresentsOngletUnknown:
+            [CustomNavigationController setTitle:@"Invités" withColor:[UIColor blackColor] withViewController:self];
+            break;
+            
+        default:
+            break;
+    }
 }
 
 #pragma mark - Actions

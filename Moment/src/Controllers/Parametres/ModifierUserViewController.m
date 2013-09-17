@@ -49,11 +49,12 @@ enum PhotoPickerDestination {
     if(self) {
         
         // Navigation Bar
-        [CustomNavigationController setBackButtonWithViewController:self];
-        [CustomNavigationController setRightBarButtonWithImage:[UIImage imageNamed:@"topbar_valider"] withTarget:self withAction:@selector(clicValider) withViewController:self];
+        //[CustomNavigationController setRightBarButtonWithImage:[UIImage imageNamed:@"topbar_valider"] withTarget:self withAction:@selector(clicValider) withViewController:self];
+        [CustomNavigationController setBackButtonChevronWithViewController:self withNewBackSelector:@selector(clicValider)];
+        [CustomNavigationController setTitle:@"Profil" withColor:[UIColor blackColor] withViewController:self];
         
         // Modifications effectuées
-        self.modifications = [[NSMutableSet alloc] init];
+        self.modifications = [NSMutableSet set];
     }
     return self;
 }
@@ -512,6 +513,9 @@ enum PhotoPickerDestination {
                             self.nouveauPasswordTextField.text = @"";
                             self.oldPasswordTextField.text = @"";
                             
+                            //Retour vue précédente
+                            [self.navigationController popViewControllerAnimated:YES];
+                            
                         }];
                         
                     }
@@ -555,8 +559,10 @@ enum PhotoPickerDestination {
                         self.coverImage = nil;
                         self.profilePictureImage = nil;
                         [self.modifications removeAllObjects];
+                        
+                        //Retour vue précédente
+                        [self.navigationController popViewControllerAnimated:YES];
                     }
-                    
                 }
                 else
                 {
@@ -585,6 +591,10 @@ enum PhotoPickerDestination {
             [invalideTextField becomeFirstResponder];
         }
         
+    } else {
+        
+        //Retour vue précédente
+        [self.navigationController popViewControllerAnimated:YES];
     }
 }
 

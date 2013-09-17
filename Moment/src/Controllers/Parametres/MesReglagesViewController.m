@@ -39,8 +39,6 @@
     self = [super initWithNibName:@"MesReglagesViewController" bundle:nil];
     if(self) {
         self.delegate = delegate;
-        
-        [CustomNavigationController setBackButtonWithViewController:self];
     }
     return self;
 }
@@ -52,6 +50,9 @@
     [super viewDidLoad];
     // Google Analytics
     self.trackedViewName = @"Vue Paramètre";
+    
+    [CustomNavigationController setBackButtonChevronWithViewController:self];
+    [CustomNavigationController setTitle:@"Paramètres" withColor:[UIColor blackColor] withViewController:self];
     
     // iPhone 5
     CGRect frame = self.view.frame;

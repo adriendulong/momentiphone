@@ -37,7 +37,8 @@
     // Google Analytics
     self.trackedViewName = @"Ajout Event";
     
-    [CustomNavigationController setBackButtonWithViewController:self];
+    [CustomNavigationController setBackButtonChevronWithViewController:self];
+    [CustomNavigationController setTitle:@"Création" withColor:[UIColor blackColor] withViewController:self];
     
     // Centrer la vue
     CGRect frame = _contentView.frame;

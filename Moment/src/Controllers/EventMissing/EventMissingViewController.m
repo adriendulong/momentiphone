@@ -75,23 +75,8 @@
 
 - (void)initNavigationBar
 {
-    [CustomNavigationController setBackButtonWithViewController:self];
-    
-    UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
-    UIImage *img = [UIImage imageNamed:@"btn-back.png"];
-    
-    button.frame = CGRectMake(0, 0, img.size.width, img.size.height);
-    
-    [button setImage:img forState:UIControlStateNormal];
-    [button setImage:img forState:UIControlStateSelected];
-    
-    [button removeTarget:self.navigationController action:@selector(popViewControllerAnimated:) forControlEvents:UIControlEventTouchUpInside];
-    [button addTarget:self action:@selector(confirmBack) forControlEvents:UIControlEventTouchUpInside];
-    
-    UIBarButtonItem *barBackItem = [[UIBarButtonItem alloc] initWithCustomView:button];
-    
-    self.navigationItem.hidesBackButton = YES;
-    self.navigationItem.leftBarButtonItem = barBackItem;
+    [CustomNavigationController setBackButtonChevronWithViewController:self withNewBackSelector:@selector(confirmBack)];
+    [CustomNavigationController setTitle:@"Manquants" withColor:[UIColor blackColor] withViewController:self];
 }
 
 - (void)confirmBack
@@ -621,7 +606,6 @@
                 hud.mode = MBProgressHUDModeCustomView;
                 
                 if (success) {
-                    //hud.labelText = NSLocalizedString(@"MBProgressHUD_Reoading_Moments", nil);
                     hud.customView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"37x-Checkmark.png"]];
                     hud.labelText = NSLocalizedString(@"MBProgressHUD_Finish", nil);
                 } else {

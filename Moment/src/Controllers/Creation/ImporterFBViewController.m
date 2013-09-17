@@ -109,7 +109,8 @@
     [super viewDidLoad];
 
     // Navigation bar
-    [CustomNavigationController setBackButtonWithViewController:self];
+    [CustomNavigationController setBackButtonChevronWithViewController:self];
+    [CustomNavigationController setTitle:@"Importation" withColor:[UIColor blackColor] withViewController:self];
     
     // iPhone 5
     CGRect frame = self.view.frame;

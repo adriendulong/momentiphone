@@ -117,7 +117,7 @@
     
     
     [self setSuivantPage1:[UIButton buttonWithType:UIButtonTypeCustom]];
-    [self.suivantPage1 setBackgroundImage:[[UIImage imageNamed:@"add_photo_button.png"]
+    [self.suivantPage1 setBackgroundImage:[[UIImage imageNamed:@"add_button.png"]
                                               stretchableImageWithLeftCapWidth:8.0f
                                               topCapHeight:0.0f]
                                     forState:UIControlStateNormal];
@@ -131,7 +131,7 @@
     
     
     [self setSuivantPage2:[UIButton buttonWithType:UIButtonTypeCustom]];
-    [self.suivantPage2 setBackgroundImage:[[UIImage imageNamed:@"add_photo_button.png"]
+    [self.suivantPage2 setBackgroundImage:[[UIImage imageNamed:@"add_button.png"]
                                            stretchableImageWithLeftCapWidth:8.0f
                                            topCapHeight:0.0f]
                                  forState:UIControlStateNormal];
@@ -145,7 +145,7 @@
     
     
     [self setSuivantPage3:[UIButton buttonWithType:UIButtonTypeCustom]];
-    [self.suivantPage3 setBackgroundImage:[[UIImage imageNamed:@"add_photo_button.png"]
+    [self.suivantPage3 setBackgroundImage:[[UIImage imageNamed:@"add_button.png"]
                                            stretchableImageWithLeftCapWidth:8.0f
                                            topCapHeight:0.0f]
                                  forState:UIControlStateNormal];
@@ -159,7 +159,7 @@
     
     
     [self setLetsgoButton:[UIButton buttonWithType:UIButtonTypeCustom]];
-    [self.letsgoButton setBackgroundImage:[[UIImage imageNamed:@"finish_tuto_button.png"]
+    [self.letsgoButton setBackgroundImage:[[UIImage imageNamed:@"finish_button.png"]
                                            stretchableImageWithLeftCapWidth:8.0f
                                            topCapHeight:0.0f]
                                  forState:UIControlStateNormal];

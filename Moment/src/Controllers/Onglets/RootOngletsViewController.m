@@ -92,7 +92,7 @@
 
 - (void) initNavigationBar
 {
-    [CustomNavigationController setBackButtonWithViewController:self];
+    [CustomNavigationController setBackButtonChevronWithViewController:self];
     
     // Remove space at right
     UIBarButtonItem *negativeSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:nil action:nil];
