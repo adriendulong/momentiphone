@@ -227,8 +227,6 @@ withRootViewController:(UIViewController *)rootViewController
 -(void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
     if (indexPath.item > 0) {
-        //Photos *photo = [self.photos objectAtIndex:indexPath.item-1];
-        //NSLog(@"Photo = %@", photo.urlOriginal);
         
         if([self.photos count] > 0)
         {
@@ -251,7 +249,6 @@ withRootViewController:(UIViewController *)rootViewController
             [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Photo" value:nil];
             
             // Afficher Big Photo
-            NSLog(@"On montre l'item %i qui correspond à l'index %i dans le tableau.",indexPath.item, indexPath.item-1);
             [self.bigPhotoViewController showViewAtIndex:indexPath.item-1 fromParent:YES];
             //[self.rootViewController presentViewController:self.bigPhotoViewController animated:NO completion:nil];
             self.navigationController.navigationBar.hidden = YES;
