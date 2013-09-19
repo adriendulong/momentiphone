@@ -1768,8 +1768,8 @@ static CGFloat DescriptionBoxHeightMax = 100;
     
     UIViewController *actualViewController = [AppDelegate actualViewController];
     
-    if ([actualViewController isKindOfClass:[PhotoViewController class]]) {
-        PhotoViewController *photoviewcontroller = (PhotoViewController *)actualViewController;
+    if ([actualViewController isKindOfClass:[PhotoCollectionViewController class]]) {
+        PhotoCollectionViewController *photoviewcontroller = (PhotoCollectionViewController *)actualViewController;
         [photoviewcontroller showPhotoActionSheet];
     }
 }

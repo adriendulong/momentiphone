@@ -303,12 +303,12 @@ static PushNotificationManager *sharedInstance = nil;
         case OngletPhoto: {
             [timeLine showPhotoView:actualMoment];
             
-            if([actualViewController isMemberOfClass:[PhotoViewController class]]) {
-                PhotoViewController *photoViewController = (PhotoViewController*)actualViewController;
+            if([actualViewController isMemberOfClass:[PhotoCollectionViewController class]]) {
+                PhotoCollectionViewController *photoViewController = (PhotoCollectionViewController*)actualViewController;
                 
                 if([photoViewController.moment.momentId isEqualToNumber:actualMoment.momentId]) {
                     // Reload Photos
-                    [photoViewController loadPhotos];
+                    [photoViewController loadPhotosFromPage:1];
                 }
             }
         }
@@ -411,7 +411,7 @@ static PushNotificationManager *sharedInstance = nil;
         
     }
     // On est dans un moment
-    else if([actualViewController isMemberOfClass:[PhotoViewController class]] || [actualViewController isMemberOfClass:[InfoMomentViewController class]]) {
+    else if([actualViewController isMemberOfClass:[PhotoCollectionViewController class]] || [actualViewController isMemberOfClass:[InfoMomentViewController class]]) {
         
         UIViewController <OngletViewController> *momentViewController = (UIViewController <OngletViewController> *)actualViewController;
         
@@ -506,13 +506,13 @@ static PushNotificationManager *sharedInstance = nil;
      animated:YES];
     
     // On est sur les Photos
-    if([actualViewController isMemberOfClass:[PhotoViewController class]]) {
+    if([actualViewController isMemberOfClass:[PhotoCollectionViewController class]]) {
         
-        PhotoViewController *photoViewController = (PhotoViewController*)actualViewController;
+        PhotoCollectionViewController *photoViewController = (PhotoCollectionViewController*)actualViewController;
         // C'est le même Moment
         if([photoViewController.moment.momentId isEqualToNumber:actualMoment.momentId]) {
             // Reload Photos
-            [photoViewController loadPhotos];
+            [photoViewController loadPhotosFromPage:1];
         } else {
             photoNotifAction = @selector(photoActionPopToTimeLineAndOpenNewMoment);
             [self alertViewPhotoWithMessage:message];

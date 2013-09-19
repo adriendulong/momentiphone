@@ -85,7 +85,7 @@ static RedirectionManager *sharedInstance = nil;
                 MomentClass *moment = [[MomentClass alloc] initWithAttributesFromWeb:attributes];
                 
                 if ([actualView isKindOfClass:[InfoMomentViewController class]] ||
-                    [actualView isKindOfClass:[PhotoViewController class]] ||
+                    [actualView isKindOfClass:[PhotoCollectionViewController class]] ||
                     [actualView isKindOfClass:[ChatViewController class]] ) {
                     
                     InfoMomentViewController *infoMoment = (InfoMomentViewController *)actualView;

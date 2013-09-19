@@ -20,7 +20,7 @@
 @property (nonatomic, strong) UserClass *user; // User owner de toutes les photos (util si on est dans le profil)
 @property (nonatomic, strong) MomentClass *moment; // Moment qui a toutes les photos (util son on est dans les onglets)
 @property (nonatomic, weak) UIViewController *rootViewController;
-@property (nonatomic, weak) PhotoViewController *delegate;
+@property (nonatomic, weak) PhotoCollectionViewController *delegate;
 @property (nonatomic, strong) FullScreenPhotoViewController *fullScreenViewController;
 
 @property (weak, nonatomic) IBOutlet UIView *generalPopupView;
@@ -54,13 +54,13 @@
 - (id)initWithMoment:(MomentClass*)moment
           withPhotos:(NSMutableArray*)photos
 withRootViewController:(UIViewController *)rootViewController
-        withDelegate:(PhotoViewController*)photoViewController;
+        withDelegate:(PhotoCollectionViewController*)photoViewController;
 
 // Init From Profil
 - (id)initWithUser:(UserClass*)user
         withPhotos:(NSMutableArray*)photos
 withRootViewController:(UIViewController*)rootViewController
-      withDelegate:(PhotoViewController*)photoViewController;
+      withDelegate:(PhotoCollectionViewController*)photoViewController;
 
 - (void)showViewAtIndex:(NSInteger)index fromParent:(BOOL)fromParent;
 - (void)updateBackground;

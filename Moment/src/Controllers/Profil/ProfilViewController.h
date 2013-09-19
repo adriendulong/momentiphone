@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "TimeLineViewController.h"
-#import "PhotoViewController.h"
+#import "PhotoCollectionViewController.h"
 #import "FollowTableViewController.h"
 #import "CustomUIImageView.h"
 #import "GAITrackedViewController.h"
@@ -24,7 +24,7 @@ enum FollowButtonState {
 @property (strong, nonatomic) UserClass *user;
 
 @property (strong, nonatomic) TimeLineViewController *timeLineViewController;
-@property (strong, nonatomic) PhotoViewController *photoViewController;
+@property (strong, nonatomic) PhotoCollectionViewController *photoViewController;
 @property (strong, nonatomic) FollowTableViewController *followTableViewController;
 @property (strong, nonatomic) FollowTableViewController *followerTableViewController;
 

@@ -156,6 +156,7 @@
 "MBProgressHUD_UploadPreparing" = "Préparation de l'envoi ...";
 "MBProgressHUD_PhotosPreparing" = "Préparation des photos ...";
 //"MBProgressHUD_PhotosIndexing" = "Indexation des photos ...";
+"MBProgressHUD_Loading_Photos" = "Chargement des photos...";
 "MBProgressHUD_Search_Photo" = "Recherche des photos...";
 "MBProgressHUD_Search_EmptyPhoto" = "Aucune photo trouvée";
 "MBProgressHUD_Search_NoSelectedPhoto" = "Aucune photo sélectionnée";

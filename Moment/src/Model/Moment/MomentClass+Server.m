@@ -885,6 +885,27 @@
     }];
 }
 
+- (void)getPhotosFromPage:(int)pageNumber withEnded:( void (^) (NSArray* photos) )block
+{
+    NSString *path = [NSString stringWithFormat:@"v1/photosmoment/%i/%i", self.momentId.intValue, pageNumber];
+    
+    [[AFMomentAPIClient sharedClient] getPath:path parameters:nil encoding:AFFormURLParameterEncoding success:^(AFHTTPRequestOperation *operation, id JSON) {
+        
+        if(block) {
+            //NSLog(@"JSON[@\"photos\"] = %@", JSON[@"photos"]);
+            block([Photos arrayWithArrayFromWeb:JSON[@"photos"]]);
+        }
+        
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        
+        HTTP_ERROR(operation, error);
+        
+        if(block)
+            block(nil);
+        
+    }];
+}
+
 - (AFJSONRequestOperation*)operationSendPhoto:(UIImage*)photo
                                      withPath:(NSString *)photoPath
                                     withStart:(void (^) (NSString *photoPath))startBlock

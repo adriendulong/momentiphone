@@ -18,7 +18,7 @@ enum OngletRank {
     OngletChat = 2
 };
 
-@class InfoMomentViewController, PhotoViewController, ChatViewController;
+@class InfoMomentViewController, PhotoCollectionViewController, ChatViewController;
 
 @interface RootOngletsViewController : UIViewController <UIScrollViewDelegate, CMPopTipViewDelegate> {
     @private
@@ -36,7 +36,7 @@ enum OngletRank {
 
 @property (nonatomic, strong) UIViewController <TimeLineDelegate> *timeLine;
 @property (nonatomic, strong) InfoMomentViewController *infoMomentViewController;
-@property (nonatomic, strong) PhotoViewController *photoViewController;
+@property (nonatomic, strong) PhotoCollectionViewController *photoViewController;
 @property (nonatomic, strong) ChatViewController *chatViewController;
 
 @property (nonatomic, weak) IBOutlet UIScrollView *scrollView;
@@ -60,5 +60,5 @@ enum OngletRank {
 @end
 
 #import "InfoMomentViewController.h"
-#import "PhotoViewController.h"
+#import "PhotoCollectionViewController.h"
 #import "ChatViewController.h"

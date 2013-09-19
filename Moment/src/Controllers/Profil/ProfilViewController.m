@@ -752,9 +752,9 @@ enum ProfilOnglet {
     return _timeLineViewController;
 }
 
-- (PhotoViewController*)photoViewController {
+- (PhotoCollectionViewController*)photoViewController {
     if(!_photoViewController) {
-        _photoViewController = [[PhotoViewController alloc]
+        _photoViewController = [[PhotoCollectionViewController alloc]
                                 initWithUser:self.user
                                 withRootViewController:self
                                 withSize:self.contentView.frame.size];

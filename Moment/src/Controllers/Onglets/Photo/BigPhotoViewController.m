@@ -93,7 +93,7 @@
 
 - (id)initWithPhotos:(NSMutableArray *)photos
 withRootViewController:(UIViewController *)rootViewController
-withDelegate:(PhotoViewController*)photoViewController
+withDelegate:(PhotoCollectionViewController*)photoViewController
 {
     self = [super initWithNibName:@"BigPhotoViewController" bundle:nil];
     if(self) {
@@ -122,7 +122,7 @@ withDelegate:(PhotoViewController*)photoViewController
 - (id)initWithMoment:(MomentClass*)moment
           withPhotos:(NSMutableArray*)photos
 withRootViewController:(UIViewController *)rootViewController
-withDelegate:(PhotoViewController*)photoViewController
+withDelegate:(PhotoCollectionViewController*)photoViewController
 {
     self = [self initWithPhotos:photos
          withRootViewController:rootViewController
@@ -137,7 +137,7 @@ withDelegate:(PhotoViewController*)photoViewController
 - (id)initWithUser:(UserClass*)user
         withPhotos:(NSMutableArray*)photos
 withRootViewController:(UIViewController*)rootViewController
-withDelegate:(PhotoViewController*)photoViewController
+withDelegate:(PhotoCollectionViewController*)photoViewController
 {
     self = [self initWithPhotos:photos
          withRootViewController:rootViewController
@@ -395,7 +395,7 @@ withDelegate:(PhotoViewController*)photoViewController
     UIGraphicsEndImageContext();
     
     CGRect contentRect;
-    if ([[VersionControl sharedInstance] isRetina]) {
+    if ([VersionControl sharedInstance].isRetina) {
         // Retina
         contentRect = CGRectMake(0, 2*STATUS_BAR_HEIGHT, 2*rect.size.width, 2*(rect.size.height-STATUS_BAR_HEIGHT));
         //contentRect = CGRectMake(0, 2*TOPBAR_HEIGHT, 2*rect.size.width, 2*(rect.size.height - TOPBAR_HEIGHT));
@@ -427,8 +427,8 @@ withDelegate:(PhotoViewController*)photoViewController
     if(backgroundNeedsUpdate)
        [self updateBackground];
     
-    if(fromParent)
-        index = [self convertIndexFromParentView:index];
+    /*if(fromParent)
+        index = [self convertIndexFromParentView:index];*/
     if( (index < [self.photos count]) && (index >= 0) ) {
         
         Photos *photo = (Photos*)self.photos[index];
@@ -973,25 +973,14 @@ withDelegate:(PhotoViewController*)photoViewController
                 if(success)
                 {
                     // Remove
-                    [self.photos removeObject:photo];
+                    [self.photos removeObjectAtIndex:self.selectedIndex];
+                    self.delegate.photos = self.photos;
                     
-                    // Update Delegate
-                    // ------------ > Il faut convertir l'index
-                    
-                    int index = [self convertIndexForDataForCurrentStyle:self.selectedIndex];
-                    [self.delegate.imageShowCase deleteImage:self.delegate.imageShowCase.itemsInShowCase[index] imageIndex:index];
+                    [self.delegate.collectionView reloadData];
                     
                     [self clearScrollView];
                     
                     NSInteger count = [self.photos count];
-                    NSInteger deleteIndex;
-
-                    deleteIndex = (photoViewStyle == PhotoViewControllerStyleComplete) ? count+1 : count;
-#ifdef ACTIVE_PRINT_MODE
-                    deleteIndex = (deleteIndex>=PHOTOVIEW_PRINT_BUTTON_INDEX)?deleteIndex+1 : deleteIndex;
-#endif
-                    [self.delegate.imageShowCase updateItemsShowCaseWithSize:deleteIndex];
-                    //[self updateBackground];
                     
                     // Scroll or close
                     if(count > 0) {
@@ -1011,7 +1000,6 @@ withDelegate:(PhotoViewController*)photoViewController
                                 self.previousButton.enabled = YES;
                             else if(self.selectedIndex == 0)
                                 self.previousButton.enabled = NO;
-                            [self.delegate updateIndexesAfterDeletetion];
 
                         }
                     
@@ -1021,7 +1009,6 @@ withDelegate:(PhotoViewController*)photoViewController
                         [self clicClose];
                     }
                     
-                    self.delegate.photos = self.photos;
                     [self.delegate.rootViewController.infoMomentViewController reloadData];
                 }
                 // -- Fail

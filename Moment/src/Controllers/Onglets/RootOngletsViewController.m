@@ -377,10 +377,10 @@
     return _infoMomentViewController;
 }
 
-- (PhotoViewController*)photoViewController {
+- (PhotoCollectionViewController*)photoViewController {
     
     if(!_photoViewController) {
-        _photoViewController = [[PhotoViewController alloc]
+        _photoViewController = [[PhotoCollectionViewController alloc]
                                 initWithMoment:self.moment
                                 withRootViewController:self
                                 withSize:self.scrollView.frame.size];
