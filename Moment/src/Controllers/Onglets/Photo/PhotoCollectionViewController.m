@@ -386,7 +386,6 @@ withRootViewController:(UIViewController *)rootViewController
                 if (self.pageNumber > 1) {
                     // Augmenter taille de la scroll view de la big photo
                     CGSize size = self.bigPhotoViewController.photoScrollView.contentSize;
-                    NSLog(@"[self.photos count] AFTER LOADING = %i",[self.photos count]);
                     size.width = [self.photos count]*self.bigPhotoViewController.photoScrollView.frame.size.width;
                     self.bigPhotoViewController.photoScrollView.contentSize = size;
                     
