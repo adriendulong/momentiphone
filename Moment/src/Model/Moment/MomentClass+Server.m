@@ -885,7 +885,7 @@
     }];
 }
 
-- (void)getPhotosFromPage:(int)pageNumber withEnded:( void (^) (NSArray* photos) )block
+- (void)getPhotosFromPage:(int)pageNumber withEnded:( void (^) (NSArray* photos, BOOL nextPage) )block
 {
     NSString *path = [NSString stringWithFormat:@"v1/photosmoment/%i/%i", self.momentId.intValue, pageNumber];
     
@@ -893,7 +893,9 @@
         
         if(block) {
             //NSLog(@"JSON[@\"photos\"] = %@", JSON[@"photos"]);
-            block([Photos arrayWithArrayFromWeb:JSON[@"photos"]]);
+            BOOL nextPage = (JSON[@"next_page"]) ? YES : NO;
+            
+            block([Photos arrayWithArrayFromWeb:JSON[@"photos"]], nextPage);
         }
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -901,7 +903,7 @@
         HTTP_ERROR(operation, error);
         
         if(block)
-            block(nil);
+            block(nil, NO);
         
     }];
 }

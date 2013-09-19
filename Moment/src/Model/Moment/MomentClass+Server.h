@@ -61,7 +61,7 @@ enum TimeDirectiion {
 // Photos
 - (void)getPhotosWithEnded:( void (^) (NSArray* photos) )block;
 - (void)getPhotosFromPage:(int)pageNumber
-                withEnded:( void (^) (NSArray* photos) )block;
+                withEnded:( void (^) (NSArray* photos, BOOL nextPage) )block;
 
 - (void)sendPhoto:(UIImage*)photo
          withPath:(NSString *)photoPath

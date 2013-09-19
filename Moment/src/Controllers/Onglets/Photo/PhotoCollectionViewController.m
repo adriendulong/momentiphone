@@ -351,7 +351,6 @@ withRootViewController:(UIViewController *)rootViewController
         // then we are at the end
         
         if (!reachedEndPage) {
-            self.pageNumber = self.pageNumber+1;
             [self loadPhotosFromPage:self.pageNumber];
         }
         
@@ -370,15 +369,15 @@ withRootViewController:(UIViewController *)rootViewController
     // Loader soit à partir du moment soit à partir du user
     id loader = (self.style == PhotoViewControllerStyleComplete)? self.moment : self.user;
     
-    [loader getPhotosFromPage:pageNumber withEnded:^(NSArray *photos) {
+    [loader getPhotosFromPage:pageNumber withEnded:^(NSArray *photos, BOOL nextPage) {
         
         dispatch_queue_t loadingQueue = dispatch_queue_create("PhotosLoadingQueue", NULL);
         dispatch_async(loadingQueue, ^{
             
-            if (photos.count == 0) {
-                reachedEndPage = YES;
-            } else {
-                [self.photos addObjectsFromArray:photos];
+            //NSLog(@"moment: %i | photos: %i",self.moment.momentId.intValue, photos.count);
+
+            if (photos && photos.count > 0) {
+                [self.photos addObjectsFromArray:photos];                
                 
                 if (self.pageNumber > 1) {
                     // Augmenter taille de la scroll view de la big photo
@@ -389,6 +388,12 @@ withRootViewController:(UIViewController *)rootViewController
                     // Update BigPhoto Background
                     [self.bigPhotoViewController updateBackground];
                 }
+            }
+            
+            if (nextPage) {
+                self.pageNumber = self.pageNumber+1;
+            } else {
+                reachedEndPage = YES;
             }
         });
         dispatch_release(loadingQueue);
