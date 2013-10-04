@@ -568,9 +568,9 @@ withRootViewController:(UIViewController *)rootViewController
                 
                 self.picker = imagePickerController;
                 
-                [self presentViewController:self.picker animated:YES completion:nil];
+                [self.rootViewController.navigationController presentViewController:self.picker animated:YES completion:nil];
             } else {
-                [self dismissViewControllerAnimated:YES completion:nil];
+                [self.rootViewController.navigationController dismissViewControllerAnimated:YES completion:nil];
             }
         }
             break;
@@ -582,9 +582,9 @@ withRootViewController:(UIViewController *)rootViewController
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
 {    
     // Dismiss
-    [self dismissViewControllerAnimated:YES completion:nil];
+    [self.rootViewController.navigationController dismissViewControllerAnimated:YES completion:nil];
     
-    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view.window animated:YES];
+    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.rootViewController.navigationController.view animated:YES];
     hud.labelText = NSLocalizedString(@"MBProgressHUD_UploadPreparing", nil);
     
     dismissUploadPreparingHUD = NO;
@@ -710,7 +710,10 @@ withRootViewController:(UIViewController *)rootViewController
         
         runOnMainQueuePhotoCollectionWithoutDeadlocking(^{
             if (dismissUploadPreparingHUD) {
-                [MBProgressHUD hideHUDForView:self.view.window animated:YES];
+                [MBProgressHUD hideHUDForView:self.view.window
+                                     animated:YES];
+                [MBProgressHUD hideHUDForView:self.rootViewController.navigationController.view
+                                     animated:YES];
             }
         });
         

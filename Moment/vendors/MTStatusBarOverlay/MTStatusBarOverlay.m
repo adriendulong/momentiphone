@@ -1201,9 +1201,9 @@ kDetailViewWidth, kHistoryTableRowHeight*kMaxHistoryTableRowCount + kStatusBarHe
         } else {
             // choose image depending on size
             if (self.shrinked) {
-                self.statusBarBackgroundImageView.image = [self.defaultStatusBarImageShrinked stretchableImageWithLeftCapWidth:2.0f topCapHeight:0.0f];
+                self.statusBarBackgroundImageView.image = [self.defaultStatusBarImageShrinked resizableImageWithCapInsets:UIEdgeInsetsMake(0.0f, 2.0f, 0.0f, 2.0f)];
             } else {
-                self.statusBarBackgroundImageView.image = [self.defaultStatusBarImage stretchableImageWithLeftCapWidth:2.0f topCapHeight:0.0f];
+                self.statusBarBackgroundImageView.image = [self.defaultStatusBarImage resizableImageWithCapInsets:UIEdgeInsetsMake(0.0f, 2.0f, 0.0f, 2.0f)];
             }
             statusBarBackgroundImageView_.backgroundColor = [UIColor clearColor];
         }
@@ -1300,7 +1300,7 @@ kDetailViewWidth, kHistoryTableRowHeight*kMaxHistoryTableRowCount + kStatusBarHe
             self.detailTextView.textColor = kLightThemeHistoryTextColor;
             
             self.progressView.backgroundColor = [UIColor clearColor];
-            self.progressView.image = [self.defaultStatusBarImageShrinked stretchableImageWithLeftCapWidth:2.0f topCapHeight:0.0f];
+            self.progressView.image = [self.defaultStatusBarImageShrinked resizableImageWithCapInsets:UIEdgeInsetsMake(0.0f, 2.0f, 0.0f, 2.0f)];
         }
 	} else {
 		// set color of labels depending on messageType
