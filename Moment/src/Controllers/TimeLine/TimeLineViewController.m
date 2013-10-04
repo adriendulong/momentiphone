@@ -266,7 +266,7 @@ shouldLoadEventsFromFacebook:(BOOL)loadEvents
     CGRect frame = self.echelleFuturLabel.frame;
     frame.origin.x = contentWidth - frame.size.width - 5;
     //frame.origin.y = (division-1)*(contentHeight - frame.size.height)/division + originToday;
-    frame.origin.y = 5*(contentHeight - frame.size.height)/6.0;
+    frame.origin.y = ([VersionControl sharedInstance].supportIOS7) ? 5*(contentHeight - frame.size.height/*+TOPBAR_HEIGHT*/)/6.0 : 5*(contentHeight - frame.size.height+TOPBAR_HEIGHT)/6.0;
     self.echelleFuturLabel.frame = frame;
     
     // Today
@@ -278,7 +278,7 @@ shouldLoadEventsFromFacebook:(BOOL)loadEvents
     frame = self.echelleTodayLabel.frame;
     frame.origin.x = contentWidth - frame.size.width - 5;
     //frame.origin.y = (contentHeight - frame.size.height)/2.0f + originToday;
-    frame.origin.y = (contentHeight - frame.size.height)/2.0;
+    frame.origin.y = ([VersionControl sharedInstance].supportIOS7) ? (contentHeight - frame.size.height/*+TOPBAR_HEIGHT*/)/2.0 : (contentHeight - frame.size.height+TOPBAR_HEIGHT)/2.0;
     self.echelleTodayLabel.frame = frame;
     
     // Passé
@@ -290,7 +290,7 @@ shouldLoadEventsFromFacebook:(BOOL)loadEvents
     frame = self.echellePasseLabel.frame;
     frame.origin.x = contentWidth - frame.size.width - 5;
     //frame.origin.y =  (contentHeight - frame.size.height)/division + originToday;
-    frame.origin.y = (contentHeight - frame.size.height)/6.0;
+    frame.origin.y = ([VersionControl sharedInstance].supportIOS7) ? (contentHeight - frame.size.height/*+TOPBAR_HEIGHT*/)/6.0 : (contentHeight - frame.size.height+TOPBAR_HEIGHT)/6.0;
     self.echellePasseLabel.frame = frame;
 }
 
@@ -299,12 +299,14 @@ shouldLoadEventsFromFacebook:(BOOL)loadEvents
     // Image de fond
     if(self.timeLineStyle == TimeLineStyleComplete)
     {
+        
         UIGraphicsBeginImageContext(self.view.frame.size);
+        //UIGraphicsBeginImageContext(screenSize);
         CGContextRef context = UIGraphicsGetCurrentContext();
         
         // TableView Background Image
         backgroundImage = [[Config sharedInstance] scaleAndCropImage:backgroundImage forSize:self.view.frame.size];
-        [backgroundImage drawInRect:self.tableView.frame];
+        [backgroundImage drawInRect:self.view.frame];
         
         // Ligne Blanche au milieu
         CGContextSetStrokeColorWithColor(context, [[[UIColor whiteColor] colorWithAlphaComponent:0.4] CGColor] );
@@ -366,7 +368,13 @@ shouldLoadEventsFromFacebook:(BOOL)loadEvents
     // Cacher bandeau de base
     self.bandeauTitre.alpha = 0;
     CGRect frame = self.bandeauTitre.frame;
-    frame.origin.y -= frame.size.height;
+    
+    if ([VersionControl sharedInstance].supportIOS7) {
+        frame.origin.y -= frame.size.height;//-TOPBAR_HEIGHT;
+    } else {
+        frame.origin.y -= frame.size.height;
+    }
+    
     self.bandeauTitre.frame = frame;
     /*
     frame.origin.y += frame.size.height;
@@ -382,7 +390,12 @@ shouldLoadEventsFromFacebook:(BOOL)loadEvents
         frame.origin.y = self.size.height - frame.size.height - 63;
     }
     else {*/
-        frame.origin.y = self.size.height - frame.size.height - 10;
+        //frame.origin.y = self.size.height - frame.size.height - 10;
+    if ([VersionControl sharedInstance].supportIOS7) {
+        frame.origin.y = self.size.height-TOPBAR_HEIGHT - frame.size.height - 10;
+    } else {
+        frame.origin.y = self.size.height-TOPBAR_HEIGHT - frame.size.height - 10;
+    }
     //}
     self.B2PButton.frame = frame;
     
@@ -416,11 +429,19 @@ shouldLoadEventsFromFacebook:(BOOL)loadEvents
         // Start Reload Moment
         if(shouldReloadMoments && !isLoading) {
             [self reloadDataWithWaitUntilFinished:NO withEnded:^(BOOL success) {
-                [self showTutorialOverlayWithFrame:CGRectMake(0, -20, screenSize.width, screenSize.height)];
+                if ([VersionControl sharedInstance].supportIOS7) {
+                    [self showTutorialOverlayWithFrame:CGRectMake(0, 0, screenSize.width, screenSize.height)];
+                } else {
+                    [self showTutorialOverlayWithFrame:CGRectMake(0, -STATUS_BAR_HEIGHT, screenSize.width, screenSize.height)];
+                }
             }];
         }
         else {
-            [self showTutorialOverlayWithFrame:CGRectMake(0, -20, screenSize.width, screenSize.height)];
+            if ([VersionControl sharedInstance].supportIOS7) {
+                [self showTutorialOverlayWithFrame:CGRectMake(0, 0, screenSize.width, screenSize.height)];
+            } else {
+                [self showTutorialOverlayWithFrame:CGRectMake(0, -STATUS_BAR_HEIGHT, screenSize.width, screenSize.height)];
+            }
         }
         
     }
@@ -454,18 +475,6 @@ shouldLoadEventsFromFacebook:(BOOL)loadEvents
     firstLoad = NO;
 }
 
-- (void)viewDidUnload
-{
-    [self setUser:nil];
-    [self setMoments:nil];
-    [self setSelectedMoment:nil];
-    [self setTimeScroller:nil];
-    [self setEchelleFuturLabel:nil];
-    [self setEchelleTodayLabel:nil];
-    [self setEchellePasseLabel:nil];
-    [super viewDidUnload];
-}
-
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
@@ -477,16 +486,6 @@ shouldLoadEventsFromFacebook:(BOOL)loadEvents
 {
     [super viewDidAppear:animated];
     [TimeLineViewController sendGoogleAnalyticsView];
-}
-
-- (void)viewWillDisappear:(BOOL)animated
-{
-    [super viewWillDisappear:animated];
-}
-
-- (void)viewDidDisappear:(BOOL)animated
-{
-    [super viewDidDisappear:animated];
 }
 
 - (void)dealloc {
@@ -560,10 +559,6 @@ shouldLoadEventsFromFacebook:(BOOL)loadEvents
             
         }
         
-        // Custom
-        cell.backgroundColor = [UIColor clearColor];
-        cell.selectionStyle = UITableViewCellSelectionStyleNone;
-        
     }
     
     // Cellule développée
@@ -586,6 +581,9 @@ shouldLoadEventsFromFacebook:(BOOL)loadEvents
         
     }
     
+    // Custom
+    cell.backgroundColor = [UIColor clearColor];
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
     
     
     
@@ -940,52 +938,15 @@ shouldLoadEventsFromFacebook:(BOOL)loadEvents
     NSInteger taille = [texteLabel length];
     
 #pragma CustomLabel
-    if( [[VersionControl sharedInstance] supportIOS6] )
-    {
-        // Attributs du label
-        NSRange range = NSMakeRange(0, 1);
-        [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:18 ] range:range];
-        range = NSMakeRange(1, taille-1);
-        [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:14] range:range];
-        [attributedString setTextColor:[Config sharedInstance].textColor];
-        
-        [self.nomMomentLabel setAttributedText:attributedString];
-        self.nomMomentLabel.textAlignment = kCTLeftTextAlignment;
-    }
-    else
-    {
-        //NSLog(@"nomMomentLabel = %@", self.nomMomentLabel);
-        if(self.nomMomentTTLabel) {
-           [self.nomMomentTTLabel removeFromSuperview];
-            self.nomMomentTTLabel = nil;
-        }
-        
-        TTTAttributedLabel *tttLabel = [[TTTAttributedLabel alloc] initWithFrame:self.nomMomentLabel.frame];
-        tttLabel.backgroundColor = [UIColor clearColor];
-        [tttLabel setText:texteLabel afterInheritingLabelAttributesAndConfiguringWithBlock:^NSMutableAttributedString *(NSMutableAttributedString *mutableAttributedString) {
-            
-
-            Config *cf = [Config sharedInstance];
-            
-            // 1er Lettre Font
-            [cf updateTTTAttributedString:mutableAttributedString withFontSize:18 onRange:NSMakeRange(0, 1)];
-            
-            // Autres Lettres Font
-            [cf updateTTTAttributedString:mutableAttributedString withFontSize:14 onRange:NSMakeRange(1, taille-1 )];
-            
-            // Autres lettres couleurs
-            [cf updateTTTAttributedString:mutableAttributedString withColor:cf.textColor onRange:NSMakeRange(0, taille)];
-            
-            return mutableAttributedString;
-        }];
-        
-        [self.nomMomentLabel.superview addSubview:tttLabel];
-        self.nomMomentLabel.hidden = YES;
-        self.nomMomentTTLabel = tttLabel;
-        
-        //[self.titreLabel setAttributedTextFromString:texteLabel withFontSize:InfoMomentFontSizeMedium];
-        //self.titreLabel.textAlignment = NSTextAlignmentLeft;
-    }
+    // Attributs du label
+    NSRange range = NSMakeRange(0, 1);
+    [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:18 ] range:range];
+    range = NSMakeRange(1, taille-1);
+    [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:14] range:range];
+    [attributedString setTextColor:[Config sharedInstance].textColor];
+    
+    [self.nomMomentLabel setAttributedText:attributedString];
+    self.nomMomentLabel.textAlignment = kCTLeftTextAlignment;
 }
 
 -(void)setNomOwnerLabelText:(NSString*)texteLabel
@@ -996,63 +957,17 @@ shouldLoadEventsFromFacebook:(BOOL)loadEvents
     NSInteger taille = [texteLabel length];
     
 #pragma CustomLabel
-    if( [[VersionControl sharedInstance] supportIOS6] )
-    {
-        // Attributs du label
-        NSRange range = NSMakeRange(0, 3);
-        [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:10] range:range];
-        range = NSMakeRange(4, 1);
-        [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:16] range:range];
-        range = NSMakeRange(5, taille-5);
-        [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:12] range:range];
-        [attributedString setTextColor:[Config sharedInstance].orangeColor];
-        
-        [self.nomOwnerLabel setAttributedText:attributedString];
-        self.nomOwnerLabel.textAlignment = kCTLeftTextAlignment;
-    }
-    else
-    {
-        //NSLog(@"nomOwnerLabel = %@", self.nomOwnerLabel);
-        if(self.nomOwnerTTLabel) {
-            [self.nomOwnerTTLabel removeFromSuperview];
-            self.nomOwnerTTLabel = nil;
-        }
-        
-        /*
-        TTTAttributedLabel *tttLabel = [[TTTAttributedLabel alloc] initWithFrame:self.nomOwnerLabel.frame];
-        tttLabel.backgroundColor = [UIColor clearColor];
-        [tttLabel setText:texteLabel afterInheritingLabelAttributesAndConfiguringWithBlock:^NSMutableAttributedString *(NSMutableAttributedString *mutableAttributedString) {
-            
-            
-            Config *cf = [Config sharedInstance];
-            
-            [cf updateTTTAttributedString:mutableAttributedString withFontSize:10 onRange:NSMakeRange(0, 3)];
-            [cf updateTTTAttributedString:mutableAttributedString withFontSize:16 onRange:NSMakeRange(4, 1 )];
-            [cf updateTTTAttributedString:mutableAttributedString withFontSize:12 onRange:NSMakeRange(5, taille-5 )];
-            
-            // Autres lettres couleurs
-            [cf updateTTTAttributedString:mutableAttributedString withColor:cf.orangeColor onRange:NSMakeRange(0, taille)];
-            
-            return mutableAttributedString;
-        }];
-        
-        [self.nomOwnerLabel.superview addSubview:tttLabel];
-        self.nomOwnerLabel.hidden = YES;
-        self.nomOwnerTTLabel = tttLabel;
-        */
-        
-        UILabel *label = [[UILabel alloc] initWithFrame:self.nomOwnerLabel.frame];
-        label.text = texteLabel;
-        label.font = [[Config sharedInstance] defaultFontWithSize:12];
-        label.textColor = [Config sharedInstance].orangeColor;
-        label.textAlignment = NSTextAlignmentLeft;
-        self.nomOwnerTTLabel = label;
-        [self.nomOwnerLabel.superview addSubview:label];
-        self.nomOwnerLabel.hidden = YES;
-         
-        //[self.titreLabel setAttributedTextFromString:texteLabel withFontSize:InfoMomentFontSizeMedium];
-        //self.titreLabel.textAlignment = NSTextAlignmentLeft;
-    }
+    // Attributs du label
+    NSRange range = NSMakeRange(0, 3);
+    [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:10] range:range];
+    range = NSMakeRange(4, 1);
+    [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:16] range:range];
+    range = NSMakeRange(5, taille-5);
+    [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:12] range:range];
+    [attributedString setTextColor:[Config sharedInstance].orangeColor];
+    
+    [self.nomOwnerLabel setAttributedText:attributedString];
+    self.nomOwnerLabel.textAlignment = kCTLeftTextAlignment;
 }
 
 - (void)setDateLabelTextFromDate:(NSDate*)date;
@@ -1084,71 +999,22 @@ shouldLoadEventsFromFacebook:(BOOL)loadEvents
     NSInteger rank = (jourVal >= 10)? 2 : 1;
     
 #pragma CustomLabel
-    if( [[VersionControl sharedInstance] supportIOS6] )
-    {
-        // Attributs du label
-        NSRange range = NSMakeRange(0, rank);
+    // Attributs du label
+    NSRange range = NSMakeRange(0, rank);
+    [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:15] range:range];
+    range = NSMakeRange(rank, month.length+1);
+    rank += month.length+1;
+    [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:11] range:range];
+    
+    if([hour length] > 0) {
+        range = NSMakeRange(rank, 4 + ((hourVal >= 10)?2:1) );
         [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:15] range:range];
-        range = NSMakeRange(rank, month.length+1);
-        rank += month.length+1;
-        [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:11] range:range];
-        
-        if([hour length] > 0) {
-            range = NSMakeRange(rank, 4 + ((hourVal >= 10)?2:1) );
-            [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:15] range:range];
-        }
-        
-        [attributedString setTextColor:[Config sharedInstance].textColor];
-        
-        [self.fullDateLabel setAttributedText:attributedString];
-        self.fullDateLabel.textAlignment = NSTextAlignmentRight;
     }
-    else
-    {
-        if(self.fullDateTTLabel) {
-            [self.fullDateTTLabel removeFromSuperview];
-            self.fullDateTTLabel = nil;
-        }
-        
-        /*
-        TTTAttributedLabel *tttLabel = [[TTTAttributedLabel alloc] initWithFrame:self.fullDateLabel.frame];
-        tttLabel.backgroundColor = [UIColor clearColor];
-        [tttLabel setText:texteLabel afterInheritingLabelAttributesAndConfiguringWithBlock:^NSMutableAttributedString *(NSMutableAttributedString *mutableAttributedString) {
-            
-            Config *cf = [Config sharedInstance];
-            
-            // 1er Lettre Font
-            [cf updateTTTAttributedString:mutableAttributedString withFontSize:15 onRange:NSMakeRange(0, rank)];
-            [cf updateTTTAttributedString:mutableAttributedString withFontSize:11 onRange:NSMakeRange(rank, month.length+1 )];
-            
-            if([hour length] > 0) {
-                NSInteger end = (hourVal >= 10)? 2 : 1;
-                [cf updateTTTAttributedString:mutableAttributedString withFontSize:11 onRange:NSMakeRange(rank, end)];
-            }
-            
-            // Autres lettres couleurs
-            [cf updateTTTAttributedString:mutableAttributedString withColor:cf.textColor onRange:NSMakeRange(0, taille)];
-            
-            return mutableAttributedString;
-        }];
-        
-        [self.fullDateLabel.superview addSubview:tttLabel];
-        self.fullDateLabel.hidden = YES;
-        self.fullDateTTLabel = tttLabel;
-        */
-        
-        UILabel *label = [[UILabel alloc] initWithFrame:self.fullDateLabel.frame];
-        label.text = texteLabel;
-        label.font = [[Config sharedInstance] defaultFontWithSize:12];
-        label.textColor = [Config sharedInstance].textColor;
-        label.textAlignment = NSTextAlignmentRight;
-        self.fullDateTTLabel = label;
-        [self.fullDateLabel.superview addSubview:label];
-        self.fullDateLabel.hidden = YES;
-        
-        //[self.titreLabel setAttributedTextFromString:texteLabel withFontSize:InfoMomentFontSizeMedium];
-        //self.titreLabel.textAlignment = NSTextAlignmentLeft;
-    }
+    
+    [attributedString setTextColor:[Config sharedInstance].textColor];
+    
+    [self.fullDateLabel setAttributedText:attributedString];
+    self.fullDateLabel.textAlignment = NSTextAlignmentRight;
 }
 
 - (void)updateBandeauWithMoment:(MomentClass*)moment
@@ -1582,7 +1448,7 @@ shouldLoadEventsFromFacebook:(BOOL)loadEvents
     UIImage *image_overlay = [[UIImage alloc] init];
     self.overlay = [[UIImageView alloc] initWithFrame:frame];
     
-    if ([[VersionControl sharedInstance] isIphone5]) {
+    if ([VersionControl sharedInstance].isIphone5) {
         image_overlay = [UIImage imageNamed:@"tuto_overlay"];
     } else {
         image_overlay = [UIImage imageNamed:@"tuto_overlay_iphone4"];
@@ -1594,8 +1460,8 @@ shouldLoadEventsFromFacebook:(BOOL)loadEvents
     [self.overlay setAlpha:0.9];
     [self.navController.view addSubview:self.overlay];
     
-    self.overlay_button = [UIButton buttonWithType:UIButtonTypeCustom];
-    [self.overlay_button setFrame:self.overlay.frame];
+    self.overlay_button = [[UIButton alloc] initWithFrame:self.overlay.frame];
+    //[self.overlay_button setFrame:self.overlay.frame];
     [self.overlay_button addTarget:self action:@selector(hideTutorialOverlay) forControlEvents:UIControlEventTouchUpInside];
     
     [self.navController.view addSubview:self.overlay_button];

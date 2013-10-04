@@ -20,6 +20,8 @@
         [self addSubview:screens[0]];
         [self setSelectionStyle:UITableViewCellSelectionStyleNone];
         
+        self.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg_volet.png"]];
+        
         CGRect frame = self.frame;
         frame.size.height = height;
         self.frame = frame;

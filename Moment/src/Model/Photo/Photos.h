@@ -8,13 +8,12 @@
 
 #import <Foundation/Foundation.h>
 #import "UserCoreData.h"
-#import "Three20/Three20.h"
 
 #define PHOTO_MAX_SIZE 900.0f
 
 // Le protocol TTPhoto est défini dans la librairie Three20
 // --> Il est utilisé par TTPhotoViewController
-@interface Photos : NSObject <TTPhoto>
+@interface Photos : NSObject //<TTPhoto>
 
 @property (nonatomic, strong) UserClass* owner;
 @property (nonatomic, strong) NSString *urlThumbnail;
@@ -28,7 +27,7 @@
 
 // TTPhoto Protocol
 @property (nonatomic, copy) NSString *caption;
-@property (nonatomic, assign) id <TTPhotoSource> photoSource;
+//@property (nonatomic, assign) id <TTPhotoSource> photoSource;
 @property (nonatomic) CGSize size;
 @property (nonatomic) NSInteger index;
 

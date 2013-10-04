@@ -43,7 +43,7 @@
 - (void)initNavigationBar
 {
     [CustomNavigationController setBackButtonChevronWithViewController:self];
-    [CustomNavigationController setTitle:@"Revivre" withColor:[UIColor blackColor] withViewController:self];
+    [CustomNavigationController setTitle:@"Revivre" withColor:[Config sharedInstance].orangeColor withViewController:self];
 }
 
 #pragma mark - View manager
@@ -86,46 +86,18 @@
     }
     
     
-    if([[VersionControl sharedInstance] supportIOS6]) {
-        
-        //SUBTITLE
-        [self.titleLabel setFont:[[Config sharedInstance] defaultFontWithSize:14]];
-        
-        NSMutableAttributedString *titleText = [[NSMutableAttributedString alloc] initWithString:self.titleLabel.text];
-        [titleText addAttribute:NSFontAttributeName value:[[Config sharedInstance] defaultFontWithSize:18] range:NSMakeRange(0, 1)];
-        [self.titleLabel setAttributedText:titleText];
-        
-    } else {
-        
-        //SUBTITLE
-        TTTAttributedLabel *titleText = [[TTTAttributedLabel alloc] initWithFrame:self.titleLabel.frame];
-        [titleText setFont:[[Config sharedInstance] defaultFontWithSize:14]];
-        //[subTitleText setTextColor:[UIColor orangeColor]];
-        
-        [titleText setText:self.titleLabel.text afterInheritingLabelAttributesAndConfiguringWithBlock:^NSMutableAttributedString *(NSMutableAttributedString *mutableAttributedString) {
-            
-            Config *cf = [Config sharedInstance];
-            
-            // 1 first Lettre Font
-            [cf updateTTTAttributedString:mutableAttributedString withFontSize:18 onRange:NSMakeRange(0, 1)];
-            
-            return mutableAttributedString;
-        }];
-    }
+    //SUBTITLE
+    [self.titleLabel setFont:[[Config sharedInstance] defaultFontWithSize:14]];
+    
+    NSMutableAttributedString *titleText = [[NSMutableAttributedString alloc] initWithString:self.titleLabel.text];
+    [titleText addAttribute:NSFontAttributeName value:[[Config sharedInstance] defaultFontWithSize:18] range:NSMakeRange(0, 1)];
+    [self.titleLabel setAttributedText:titleText];
 }
 
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
-}
-
-- (void)viewDidUnload {
-    [self setContentView:nil];
-    [self setCreaImageView:nil];
-    [self setRecupererEventsButton:nil];
-    [self setTitleLabel:nil];
-    [super viewDidUnload];
 }
 
 - (IBAction)clicRecupererEvents:(id)sender {

@@ -74,15 +74,6 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (void)viewDidUnload {
-    [self setInviteAllButton:nil];
-    [self setParametres:nil];
-    [self setInvites:nil];
-    [self setBandeauLabel:nil];
-    [self setBandeauView:nil];
-    [super viewDidUnload];
-}
-
 #pragma mark - Cagnotte 3 Delegate
 
 - (void)clicProfile:(UserClass*)user {

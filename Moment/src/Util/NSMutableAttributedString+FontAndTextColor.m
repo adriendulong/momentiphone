@@ -13,26 +13,22 @@
 
 - (void)setFont:(UIFont*)font range:(NSRange)range
 {
-    if( [[VersionControl sharedInstance] supportIOS6] )
-        [self addAttribute:NSFontAttributeName value:font range:range];
+    [self addAttribute:NSFontAttributeName value:font range:range];
 }
 
 - (void)setFont:(UIFont*)font
 {
-    if( [[VersionControl sharedInstance] supportIOS6] )
-        [self setFont:font range:NSMakeRange(0, self.length)];
+    [self setFont:font range:NSMakeRange(0, self.length)];
 }
 
 - (void)setTextColor:(UIColor*)color range:(NSRange)range
 {
-    if( [[VersionControl sharedInstance] supportIOS6] )
-        [self addAttribute:NSForegroundColorAttributeName value:color range:range];
+    [self addAttribute:NSForegroundColorAttributeName value:color range:range];
 }
 
 - (void)setTextColor:(UIColor *)color
 {
-    if( [[VersionControl sharedInstance] supportIOS6] )
-        [self setTextColor:color range:NSMakeRange(0, self.length )];
+    [self setTextColor:color range:NSMakeRange(0, self.length )];
 }
 
 @end

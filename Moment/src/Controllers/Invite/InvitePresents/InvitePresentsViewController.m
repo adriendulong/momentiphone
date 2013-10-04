@@ -14,6 +14,7 @@
 
 #import "UserClass+Server.h"
 #import "MomentClass+Server.h"
+#import "Config.h"
 
 #define HeaderHeight 49
 
@@ -250,15 +251,15 @@
     
     switch (onglet) {
         case InvitePresentsOngletComing:
-            [CustomNavigationController setTitle:@"Participants" withColor:[UIColor blackColor] withViewController:self];
+            [CustomNavigationController setTitle:@"Participants" withColor:[Config sharedInstance].orangeColor withViewController:self];
             break;
             
         case InvitePresentsOngletMaybe:
-            [CustomNavigationController setTitle:@"Peut-être" withColor:[UIColor blackColor] withViewController:self];
+            [CustomNavigationController setTitle:@"Peut-être" withColor:[Config sharedInstance].orangeColor withViewController:self];
             break;
             
         case InvitePresentsOngletUnknown:
-            [CustomNavigationController setTitle:@"Invités" withColor:[UIColor blackColor] withViewController:self];
+            [CustomNavigationController setTitle:@"Invités" withColor:[Config sharedInstance].orangeColor withViewController:self];
             break;
             
         default:

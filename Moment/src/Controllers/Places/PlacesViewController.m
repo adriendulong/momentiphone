@@ -31,7 +31,10 @@
         emptyTextField = YES;
         self.results = [[NSMutableArray alloc] init];
         
-        [CustomNavigationController setBackButtonWithViewController:self];
+        self.view.backgroundColor = [[UIColor alloc] initWithPatternImage:[UIImage imageNamed:@"bg.png"]];
+        
+        [CustomNavigationController setBackButtonChevronWithViewController:self];
+        [CustomNavigationController setTitle:@"Lieu" withColor:[Config sharedInstance].orangeColor withViewController:self];
         
     }
     return self;

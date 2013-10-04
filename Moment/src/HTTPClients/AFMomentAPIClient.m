@@ -113,8 +113,11 @@ waitUntilFinisehd:(BOOL)waitUntilFinished
     
     [self setParameterEncoding:parameterEnconding];
     
-    NSURLRequest *request = [self requestWithMethod:methode path:path parameters:parameters];
-    AFHTTPRequestOperation *operation = [self HTTPRequestOperationWithRequest:request success:^(AFHTTPRequestOperation *operation, id JSON) {
+    NSMutableURLRequest *request = [self requestWithMethod:methode path:path parameters:parameters];
+    
+    [request setTimeoutInterval:30.0];
+    
+    AFHTTPRequestOperation *operation = [self HTTPRequestOperationWithRequest:request.copy success:^(AFHTTPRequestOperation *operation, id JSON) {
     
         // Save Automatic Connexion cookie
         [self saveHeaderResponse:operation.response];

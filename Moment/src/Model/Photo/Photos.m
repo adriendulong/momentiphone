@@ -25,7 +25,7 @@ static NSDateFormatter *dateFormatter;
 @synthesize imageThumbnail = _imageThumbnail;
 @synthesize uniqueURL = _uniqueURL;
 
-@synthesize photoSource = _photoSource;
+//@synthesize photoSource = _photoSource;
 @synthesize size = _size;
 @synthesize index = _index;
 
@@ -48,7 +48,7 @@ static NSDateFormatter *dateFormatter;
         self.urlOriginal = urlOriginal;
         self.nbLike = nbLike;
         self.date = date;
-        self.photoSource = nil;
+        //self.photoSource = nil;
         self.size = size;
         self.uniqueURL = uniqueURL;
         
@@ -127,8 +127,11 @@ static NSDateFormatter *dateFormatter;
 - (void)deletePhotoWithEnded:(void (^) (BOOL success) )block
 {
     NSString *path = [NSString stringWithFormat:@"delphoto/%d", self.photoId];
+    NSLog(@"deletePhotoWithEnded | path = %@", path);
     
     [[AFMomentAPIClient sharedClient] getPath:path parameters:nil encoding:AFFormURLParameterEncoding success:^(AFHTTPRequestOperation *operation, id JSON) {
+        
+        NSLog(@"deletePhotoWithEnded | JSON = %@", JSON);
                 
         if(block) {
             block(YES);
@@ -145,7 +148,7 @@ static NSDateFormatter *dateFormatter;
     
 }
 
-
+/*
 #pragma mark - TTPhoto
 
 - (NSString*)URLForVersion:(TTPhotoVersion)version {
@@ -162,6 +165,6 @@ static NSDateFormatter *dateFormatter;
         default:
             return nil;
     }
-}
+}*/
 
 @end

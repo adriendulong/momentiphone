@@ -110,7 +110,7 @@
 - (void)initNavigationBar
 {
     [CustomNavigationController setBackButtonChevronWithViewController:self];
-    [CustomNavigationController setTitle:@"Revivre" withColor:[UIColor blackColor] withViewController:self];
+    [CustomNavigationController setTitle:@"Revivre" withColor:[Config sharedInstance].orangeColor withViewController:self];
     
     CGRect frameButton = CGRectMake(0,0,90,43);
     
@@ -401,12 +401,10 @@
     return self;
 }
 
-- (id)initWithDatasource:(NSArray *)datasource /*events:(NSArray *)events */moments:(NSArray *)moments timeLine:(UIViewController <TimeLineDelegate> *)timeLine andThumbnailViewClass:(Class)thumbnailViewClass
+- (id)initWithDatasource:(NSArray *)datasource moments:(NSArray *)moments timeLine:(UIViewController <TimeLineDelegate> *)timeLine andThumbnailViewClass:(Class)thumbnailViewClass
 {
-    NSLog(@"initWithDatasource");
     self = [self initWithStyle:UITableViewStylePlain];
     if (self) {
-        //self.events = [NSArray arrayWithArray:events];
         self.moments = [NSArray arrayWithArray:moments];
         self.timeLine = timeLine;
         self.thumbnailViewClass = thumbnailViewClass;
@@ -452,6 +450,7 @@
         cell.imageView.userInteractionEnabled = YES;
         cell.imageView.tag = indexPath.row;
         cell.delegate = self;
+        cell.backgroundColor = [UIColor clearColor];
     }
     
     REPhotoGroup *group = (REPhotoGroup *)[_ds objectAtIndex:indexPath.section];

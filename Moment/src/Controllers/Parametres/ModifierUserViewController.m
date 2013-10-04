@@ -48,10 +48,11 @@ enum PhotoPickerDestination {
     self = [super initWithNibName:@"ModifierUserViewController" bundle:nil];
     if(self) {
         
+        self.view.backgroundColor = [[UIColor alloc] initWithPatternImage:[UIImage imageNamed:@"bg.png"]];
+        
         // Navigation Bar
-        //[CustomNavigationController setRightBarButtonWithImage:[UIImage imageNamed:@"topbar_valider"] withTarget:self withAction:@selector(clicValider) withViewController:self];
         [CustomNavigationController setBackButtonChevronWithViewController:self withNewBackSelector:@selector(clicValider)];
-        [CustomNavigationController setTitle:@"Profil" withColor:[UIColor blackColor] withViewController:self];
+        [CustomNavigationController setTitle:@"Profil" withColor:[Config sharedInstance].orangeColor withViewController:self];
         
         // Modifications effectuées
         self.modifications = [NSMutableSet set];
@@ -144,34 +145,6 @@ enum PhotoPickerDestination {
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
-}
-
-- (void)viewDidUnload {
-    [self setContentView:nil];
-    [self setPrenomTextField:nil];
-    [self setNomTextField:nil];
-    [self setEmailTextField:nil];
-    [self setPhoneTextField:nil];
-    [self setAdresseTextField:nil];
-    [self setSecondEmailTextField:nil];
-    [self setSecondPhoneTextField:nil];
-    [self setOldPasswordTextField:nil];
-    [self setNouveauPasswordTextField:nil];
-    [self setLabel1:nil];
-    [self setLabel2:nil];
-    [self setLabel3:nil];
-    [self setMedallion:nil];
-    [self setModifications:nil];
-    [self setCoverImage:nil];
-    [self setProfilePictureImage:nil];
-    [self setBackgroundDescriptionView:nil];
-    [self setDescriptionTextView:nil];
-    [self setPrivacyTitleLabels:nil];
-    [self setPrivacyDetailLabels:nil];
-    [self setPrivacyPublicButton:nil];
-    [self setPrivacyFriendButton:nil];
-    [self setPrivacyClosedButton:nil];
-    [super viewDidUnload];
 }
 
 #pragma mark - UITextField Delegate

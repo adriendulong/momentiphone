@@ -7,10 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "PhotosMultipleSelectionViewController.h"
 #import "MomentCoreData+Model.h"
 #import "RootOngletsViewController.h"
-#import "ELCImagePickerController.h"
-#import "ELCAlbumPickerController.h"
 
 #import "MTStatusBarOverlay.h"
 #import "BigPhotoViewController.h"
@@ -20,7 +19,7 @@ enum PhotoViewControllerStyle {
     PhotoViewControllerStyleProfil = 1
 };
 
-@interface PhotoCollectionViewController : UICollectionViewController <UICollectionViewDataSource, UICollectionViewDelegate, UIScrollViewDelegate, OngletViewController, ELCImagePickerControllerDelegate, UIActionSheetDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate, MTStatusBarOverlayDelegate>
+@interface PhotoCollectionViewController : UICollectionViewController <UICollectionViewDataSource, UICollectionViewDelegate, UIScrollViewDelegate, OngletViewController, UIActionSheetDelegate, UINavigationControllerDelegate, PhotosMultipleSelectionViewControllerDelegate, UIImagePickerControllerDelegate, MTStatusBarOverlayDelegate>
 
 
 @property (nonatomic, strong) UserClass *user;
@@ -28,15 +27,18 @@ enum PhotoViewControllerStyle {
 
 @property (nonatomic, strong) NSMutableDictionary *imageDownloadsInProgress;
 @property (nonatomic, strong) NSMutableArray *photos;
+@property (nonatomic, strong) NSMutableArray *photosInCache;
+@property (nonatomic, strong) NSMutableArray *photosToUpload;
 @property (nonatomic, weak) RootOngletsViewController *rootViewController;
 @property (nonatomic) enum PhotoViewControllerStyle style;
 
 @property (weak, nonatomic) UIImagePickerController *picker;
-@property (weak, nonatomic) ELCImagePickerController *imagePicker;
+//@property (weak, nonatomic) ELCImagePickerController *imagePicker;
 
 @property (nonatomic, strong) BigPhotoViewController *bigPhotoViewController;
 
-@property (strong, nonatomic) id mediaInfo;
+@property (nonatomic, strong) NSMutableArray *mediaInfo;
+@property (nonatomic, strong) NSArray *mediaInfoCache;
 @property (nonatomic) int pageNumber;
 
 
@@ -51,5 +53,7 @@ withRootViewController:(UIViewController *)rootViewController
 - (void)sendGoogleAnalyticsView;
 - (void)showPhotoActionSheet;
 - (void)loadPhotosFromPage:(int)pageNumber;
+
+- (void)stackImages;
 
 @end

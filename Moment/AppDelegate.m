@@ -19,8 +19,6 @@
 #import "DeviceModel.h"
 #import "PushNotificationManager.h"
 #import "RedirectionManager.h"
-#import "Three20/Three20.h"
-#import "FullScreenPhotoViewController.h"
 #import "Harpy.h"
 #import "iRate.h"
 #import <Crashlytics/Crashlytics.h>
@@ -66,7 +64,7 @@
     return [self topViewController:presentedViewController];
 }*/
 
-#pragma mark - Facebook
+#pragma mark - Facebook & Schemes
 
 // The native facebook application transitions back to an authenticating application when the user
 // chooses to either log in, or cancel. The url passed to this method contains the token in the
@@ -83,14 +81,12 @@
          annotation:(id)annotation
 {
     
-    /*if ([sourceApplication isEqualToString:@"com.facebook.Facebook"]) {
-        // attempt to extract a token from the url
-        return [[FBSession activeSession] handleOpenURL:url];
-    } else {
+    if([[url scheme] caseInsensitiveCompare:@"moment"] == NSOrderedSame)
+    {
         return [[RedirectionManager sharedInstance] handleOpenURL:url withApplicationState:application.applicationState];
-    }*/
-    
-    return [[FBSession activeSession] handleOpenURL:url];
+    } else {
+        return [[FBSession activeSession] handleOpenURL:url];
+    }
 }
 
 #pragma mark - AppDelegate
@@ -150,8 +146,8 @@
     // -------------- Default Background -----------------
     // Override point for customization after application launch.
     [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationSlide];
-    self.window.backgroundColor = [[UIColor alloc] initWithPatternImage:[UIImage imageNamed:@"bg.png"]];
-    self.window.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
+    //self.window.backgroundColor = [[UIColor alloc] initWithPatternImage:[UIImage imageNamed:@"bg.png"]];
+    //self.window.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
     
     [self.window makeKeyAndVisible];
     
@@ -203,12 +199,6 @@
         NSLog(@"Login fail");
     }*/
     
-    // -------------------- Three20 ----------------------
-    //            ----> Full Screnn Plugin <----
-    // ---------------------------------------------------
-    // -> FullScreen (TTPhotoViewController) URL Mapping
-    [[TTURLRequestQueue mainQueue] setMaxContentLength:0];
-    
     
     // ------------------ Harpy Alert --------------------
     //    ----> Vérifier version de l'application <----
@@ -246,12 +236,6 @@
         
     }
     */
-    
-    NSURL *url = launchOptions[@"UIApplicationLaunchOptionsURLKey"];
-    
-    if (url) {
-        [[RedirectionManager sharedInstance] handleOpenURL:url withApplicationState:application.applicationState];
-    }
     
     [self deleteUploadPhotosCache];
         

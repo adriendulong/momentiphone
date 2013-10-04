@@ -14,8 +14,10 @@
 
 enum MomentPrivacy {
     MomentPrivacySecret = 0,
+    MomentPrivacyFriends = 1,
     MomentPrivacyOpen = 2,
-    MomentPrivacyFriends = 1
+    MomentPrivacySpecialEvent = 3,
+    MomentPrivacySpecialEventLive = 4
     };
 
 @interface MomentCoreData (Model)

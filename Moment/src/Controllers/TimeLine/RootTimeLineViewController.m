@@ -10,6 +10,7 @@
 #import "MomentClass+Server.h"
 #import "VoletViewController.h"
 #import "HomeViewController.h"
+#import "CustomNavigationBarButton.h"
 
 @interface RootTimeLineViewController () {
     @private
@@ -43,7 +44,7 @@ shouldLoadEventsFromFacebook:(BOOL)loadEvents
     if(self) {
         
         // Cacher Splash Screnn
-        [HomeViewController hideSplashScreen];
+        //[HomeViewController hideSplashScreen];
         
         shouldReloadMoments = reloadMoments;
         shouldLoadEventsFromFacebook = loadEvents;
@@ -58,7 +59,16 @@ shouldLoadEventsFromFacebook:(BOOL)loadEvents
         
         // Plus Button
         UIImage *image = [UIImage imageNamed:@"topbar_add.png"];
-        UIButton *button = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, image.size.width, image.size.height)];
+        id button = nil;
+        CGRect frame = CGRectMake(0, 0, image.size.width, image.size.height);
+        
+        if ([VersionControl sharedInstance].supportIOS7) {
+            button = [[CustomNavigationBarButton alloc] initWithFrame:frame andIsLeftButton:NO];
+        } else {
+            button = [[UIButton alloc] initWithFrame:frame];
+        }
+        
+        //UIButton *button = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, image.size.width, image.size.height)];
         [button setImage:image forState:UIControlStateNormal];
         //[button setImage:image forState:UIControlStateHighlighted];
         [button setImage:image forState:UIControlStateSelected];
@@ -68,6 +78,8 @@ shouldLoadEventsFromFacebook:(BOOL)loadEvents
         
         self.navigationItem.rightBarButtonItem = buttonItem;
         plusButton = button;
+        
+        self.navController.navigationBar.shadowImage = [[UIImage alloc] init];
 
     }
     return self;
@@ -93,6 +105,15 @@ shouldLoadEventsFromFacebook:(BOOL)loadEvents
     [self.publicFeedList.view setNeedsDisplay];
     [self.publicFeedList.view setNeedsLayout];
     self.publicFeedList.view.alpha = 0;
+    
+    if ([VersionControl sharedInstance].supportIOS7) {
+        [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault
+                                                    animated:YES];
+        
+        [UIView animateWithDuration:0.5 animations:^{
+            [self setNeedsStatusBarAppearanceUpdate];
+        }];
+    }
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -109,11 +130,6 @@ shouldLoadEventsFromFacebook:(BOOL)loadEvents
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
-}
-
-- (void)viewDidUnload {
-    [self setChangeTimeLineButton:nil];
-    [super viewDidUnload];
 }
 
 #pragma mark - Animation

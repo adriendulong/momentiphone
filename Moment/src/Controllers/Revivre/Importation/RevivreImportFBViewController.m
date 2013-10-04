@@ -13,9 +13,11 @@
 #import "InfoMomentViewController.h"
 #import "MomentClass+Server.h"
 #import "Config.h"
-#import "REPhotoCollectionController.h"
+//#import "REPhotoCollectionController.h"
+#import "RevivrePhotosCollectionViewController.h"
 #import "ThumbnailView.h"
 #import "Photo.h"
+#import "CustomNavigationBarButton.h"
 
 @interface RevivreImportFBViewController () {
     @private
@@ -125,26 +127,30 @@
 }
 
 - (void)initSegmentedControl
-{    
+{
+    self.segmentedControl.backgroundColor = [UIColor clearColor];
+    
     CGRect frame = self.segmentedControl.frame;
     [self.segmentedControl setFrame:CGRectMake(frame.origin.x, frame.origin.y, frame.size.width, 47)];
     
-    NSDictionary *textAttributesNormal = [NSDictionary dictionaryWithObjectsAndKeys:[UIFont boldSystemFontOfSize:16], UITextAttributeFont, [UIColor clearColor], UITextAttributeTextShadowColor, nil];
+    NSDictionary *textAttributesNormal = [NSDictionary dictionaryWithObjectsAndKeys:
+                                          [UIFont boldSystemFontOfSize:16], UITextAttributeFont,
+                                          [UIColor whiteColor], UITextAttributeTextColor, nil];
     [self.segmentedControl setTitleTextAttributes:textAttributesNormal forState:UIControlStateNormal];
     
-    NSDictionary *textAttributesSelected = [NSDictionary dictionaryWithObjectsAndKeys:[UIFont boldSystemFontOfSize:16], UITextAttributeFont, [UIColor clearColor], UITextAttributeTextShadowColor, nil];
+    NSDictionary *textAttributesSelected = [NSDictionary dictionaryWithObjectsAndKeys:
+                                            [UIFont boldSystemFontOfSize:16], UITextAttributeFont,
+                                            [UIColor whiteColor], UITextAttributeTextColor, nil];
     [self.segmentedControl setTitleTextAttributes:textAttributesSelected forState:UIControlStateSelected];
     
     
     /* Unselected background */
-    //UIImage *unselectedBackgroundImage = [[UIImage imageNamed:@"segment_background_unselected"] resizableImageWithCapInsets:UIEdgeInsetsMake(10, 10, 10, 10)];
     UIImage *unselectedBackgroundImage = [[UIImage imageNamed:@"tab_unselect.png"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 0, 0, 0)];
     [self.segmentedControl setBackgroundImage:unselectedBackgroundImage
                                      forState:UIControlStateNormal
                                    barMetrics:UIBarMetricsDefault];
     
     /* Selected background */
-    //UIImage *selectedBackgroundImage = [[UIImage imageNamed:@"segment_background_selected"] resizableImageWithCapInsets:UIEdgeInsetsMake(10, 10, 10, 10)];
     UIImage *selectedBackgroundImage = [[UIImage imageNamed:@"tab_select.png"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 0, 0, 0)];
     [self.segmentedControl setBackgroundImage:selectedBackgroundImage
                                      forState:UIControlStateSelected
@@ -182,12 +188,12 @@
 - (void)initNavigationBar
 {
     [CustomNavigationController setBackButtonChevronWithViewController:self];
-    [CustomNavigationController setTitle:@"Revivre" withColor:[UIColor blackColor] withViewController:self];
+    [CustomNavigationController setTitle:@"Revivre" withColor:[Config sharedInstance].orangeColor withViewController:self];
     
     CGRect frameButton = CGRectMake(0,0,90,43);
     
     // 2e bouton
-    UIButton *secondButton = [[UIButton alloc] initWithFrame:frameButton];
+    CustomNavigationBarButton *secondButton = [[CustomNavigationBarButton alloc] initWithFrame:frameButton andIsLeftButton:NO];
     UIBarButtonItem *secondBarButton = [[UIBarButtonItem alloc] initWithCustomView:secondButton];
     
     // Set buttons
@@ -208,7 +214,8 @@
         BOOL secondButtonEnable = NO;
         
         // Second Button
-        UIButton *button = (UIButton*)[buttons[0] customView];
+        //UIButton *button = (UIButton*)[buttons[0] customView];
+        CustomNavigationBarButton *button = (CustomNavigationBarButton*)[buttons[0] customView];
         
         int allEvents = self.eventsValid.count+self.eventsMaybe.count;
         
@@ -227,6 +234,7 @@
         [button setTitleColor:colorDisabled forState:UIControlStateDisabled];
         [button setTitleColor:colorEnable forState:UIControlStateNormal];
         [button.titleLabel setTextAlignment:NSTextAlignmentRight];
+        [button setContentHorizontalAlignment:UIControlContentHorizontalAlignmentRight];
         [button removeTarget:self action:NULL forControlEvents:UIControlEventTouchUpInside];
         [button addTarget:self action:@selector(getPhotoFromCameraRoll) forControlEvents:UIControlEventTouchUpInside];
         [button setEnabled:secondButtonEnable];
@@ -267,35 +275,37 @@
     
     NSArray *allSelectedEvents = set.allObjects;
     
-    [MomentClass createMomentFromFBEvents:allSelectedEvents withEnded:^(NSArray *events, NSArray *moments) {
+    [MomentClass createMomentFromFBEventsForRevivre:allSelectedEvents withEnded:^(NSArray *events, NSArray *moments) {
         
-        [MomentClass getMomentFromFBEvents:allSelectedEvents withEnded:^(NSArray *events, NSArray *moments) {
-            if (events && moments) {
+        if (events && moments) {
+            
+            NSLog(@"events.count = %i", events.count);
+            NSLog(@"moments.count = %i", moments.count);
+            
+            [MBProgressHUD hideHUDForView:self.navigationController.view animated:YES];
+            
+            if (!datasource || datasource.count == 0) {
                 
-                [MBProgressHUD hideHUDForView:self.navigationController.view animated:YES];
+                MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+                hud.mode = MBProgressHUDModeCustomView;
+                hud.customView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"37x-Cross.png"]];
+                hud.labelText = NSLocalizedString(@"MBProgressHUD_Search_EmptyPhoto", nil);
                 
-                if (!datasource || datasource.count == 0) {
-                    
-                    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-                    hud.mode = MBProgressHUDModeCustomView;
-                    hud.customView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"37x-Cross.png"]];
-                    hud.labelText = NSLocalizedString(@"MBProgressHUD_Search_EmptyPhoto", nil);
-                    
-                    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, 1.5 * NSEC_PER_SEC);
-                    dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
-                        [MBProgressHUD hideHUDForView:self.view animated:YES];
-                    });
-                } else {
-                    
-                    REPhotoCollectionController *photoCollectionController = [[REPhotoCollectionController alloc] initWithDatasource:datasource
-                                                                                                                             moments:moments
-                                                                                                                            timeLine:self.timeLine
-                                                                                                               andThumbnailViewClass:[ThumbnailView class]];
-                    
-                    [self.navigationController pushViewController:photoCollectionController animated:YES];
-                }
+                dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, 1.5 * NSEC_PER_SEC);
+                dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+                    [MBProgressHUD hideHUDForView:self.view animated:YES];
+                });
+            } else {
+                
+                RevivrePhotosCollectionViewController *photoCollectionController = [[RevivrePhotosCollectionViewController alloc]
+                                                                                    initWithDatasource:datasource
+                                                                                    moments:moments
+                                                                                    timeLine:self.timeLine];
+                
+                [self.navigationController pushViewController:photoCollectionController animated:YES];
             }
-        }];
+        }
+        
     }];
 }
 
@@ -319,12 +329,7 @@
                             photo.thumbnail = [UIImage imageWithCGImage:result.thumbnail];
                             photo.date = [result valueForProperty:ALAssetPropertyDate];
                             photo.isSelected = YES;
-                            
-                            if([VersionControl sharedInstance].supportIOS6) {
-                                photo.assetUrl = [result valueForProperty:ALAssetPropertyAssetURL];
-                            } else {
-                                photo.assetUrl = result.defaultRepresentation.url;
-                            }
+                            photo.assetUrl = [result valueForProperty:ALAssetPropertyAssetURL];
                             
                             [datasource addObject:photo];
                         }
@@ -352,6 +357,11 @@
     // iPhone 5
     CGRect frame = self.view.frame;
     frame.size.height = [VersionControl sharedInstance].screenHeight - TOPBAR_HEIGHT;
+    
+    if ([VersionControl sharedInstance].supportIOS7) {
+        frame.origin.y += TOPBAR_HEIGHT;
+    }
+    
     self.view.frame= frame;
     self.tableView.frame = frame;
     emptyCellSize = frame.size.height;
@@ -387,14 +397,6 @@
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
-}
-
-- (void)viewDidUnload
-{
-    [self setEventsValid:nil];
-    [self setEventsMaybe:nil];
-    [self setSegmentedControl:nil];
-    [super viewDidUnload];
 }
 
 #pragma mark - Segmented control
@@ -459,6 +461,7 @@
             frame.size.width = self.tableView.frame.size.width;
             frame.size.height = emptyCellSize;
             cell.frame = frame;
+            cell.backgroundColor = [UIColor clearColor];
             
             UILabel *emptyLabel = [[UILabel alloc] init];
             emptyLabel.text = NSLocalizedString(@"ImporterFBViewController_EmptyLabel", nil);
@@ -466,7 +469,7 @@
             emptyLabel.textColor = [Config sharedInstance].textColor;
             emptyLabel.backgroundColor = [UIColor clearColor];
             emptyLabel.numberOfLines = 0;
-            emptyLabel.textAlignment = ([VersionControl sharedInstance].supportIOS6) ? NSTextAlignmentCenter : UITextAlignmentCenter;
+            emptyLabel.textAlignment = NSTextAlignmentCenter;
             frame = cell.frame;
             frame.size.width -= 20;
             frame.origin.x = (cell.frame.size.width - frame.size.width)/2.0f;
@@ -493,6 +496,7 @@
         cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
         if (cell == nil) {
             cell = [[RevivreImportFBTableViewCell alloc] initWithFacebookEvent:event withIndex:indexPath.row reuseIdentifier:CellIdentifier];
+            cell.backgroundColor = [UIColor clearColor];
         }
     }
     return cell;
@@ -500,7 +504,11 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 46.0f;
+    if (isEmpty) {
+        return self.tableView.frame.size.height;
+    } else {
+        return 46.0f;
+    }
 }
 
 /*- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath

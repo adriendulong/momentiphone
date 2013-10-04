@@ -23,7 +23,7 @@
         
         int i = 0;
         for(Photos *p in self.photos) {
-            p.photoSource = self;
+            //p.photoSource = self;
             p.index = i;
             i++;
         }
@@ -55,12 +55,12 @@
     return _photos.count-1;
 }
 
-- (id<TTPhoto>)photoAtIndex:(NSInteger)photoIndex {
+/*- (id<TTPhoto>)photoAtIndex:(NSInteger)photoIndex {
     if (photoIndex < _photos.count) {
         return [_photos objectAtIndex:photoIndex];
     } else {
         return nil;
     }
-}
+}*/
 
 @end

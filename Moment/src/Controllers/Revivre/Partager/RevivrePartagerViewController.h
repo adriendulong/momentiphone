@@ -13,7 +13,7 @@
 
 @property (nonatomic, strong) NSArray *moments;
 @property (nonatomic, strong) NSArray *photos;
-@property (nonatomic, strong) NSMutableArray *photosInCahe;
+@property (nonatomic, strong) NSMutableArray *photosInCache;
 
 @property (nonatomic, weak) UIViewController <TimeLineDelegate> *timeLine;
 

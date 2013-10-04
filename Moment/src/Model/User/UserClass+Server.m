@@ -329,10 +329,12 @@
 
 #pragma mark - Logout
 
-+ (void)logoutCurrentUserWithEnded:(void (^) (void))block
++ (void)logoutCurrentUserWithRequestToServer:(BOOL)status withEnded:(void (^) (void))block
 {
     // Prévenir Server d'arreter Push Notifications
-    [DeviceModel logout];
+    if (status) {
+        [DeviceModel logout];
+    }
     
     // Delete Current User
     //[[Config sharedInstance].managedObjectContext deleteObject:user];

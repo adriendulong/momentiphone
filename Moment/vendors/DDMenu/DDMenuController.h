@@ -70,6 +70,8 @@ typedef enum {
 @property(nonatomic,readonly) UITapGestureRecognizer *tap;
 @property(nonatomic,readonly) UIPanGestureRecognizer *pan;
 
+@property(nonatomic, strong) UIView *blackBackgroundStatusBar;
+
 @property(nonatomic,assign) Class barButtonItemClass;
 
 - (void)setRootController:(UIViewController *)controller animated:(BOOL)animated; // used to push a new controller on the stack

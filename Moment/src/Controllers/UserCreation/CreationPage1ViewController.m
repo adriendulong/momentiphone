@@ -21,6 +21,7 @@
 #import "UserClass+Server.h"
 #import "FacebookManager.h"
 #import "WebModalViewController.h"
+#import "UIImage+handling.h"
 
 @interface CreationPage1ViewController () {
     @private
@@ -117,8 +118,14 @@
     // Google Analytics
     self.trackedViewName = @"Vue Inscription";
     
+    if ([VersionControl sharedInstance].supportIOS7) {
+        CGRect frame = self.view.frame;
+        frame.origin.y += STATUS_BAR_HEIGHT;
+        self.view.frame = frame;
+    }
+    
     // iPhone 4 layout
-    if ( ![[VersionControl sharedInstance] isIphone5] )
+    if ( ![VersionControl sharedInstance].isIphone5 )
     {
         // Move & Resize Box
         CGRect frame = self.boxView.frame;
@@ -150,7 +157,15 @@
     self.emailLabel.autocompleteDisabled = NO;
     
     // Image de fond
-    self.view.backgroundColor = [[UIColor alloc] initWithPatternImage:[UIImage imageNamed:@"login-bg.png"]];
+    UIImage *backGround = [UIImage imageNamed:@"login-bg"];
+    
+    if ([VersionControl sharedInstance].supportIOS7) {
+        
+        if ([VersionControl sharedInstance].isIphone5) {
+            backGround = [UIImage imageWithImage:backGround scaledToHeight:[VersionControl sharedInstance].screenHeight];
+        }
+    }
+    self.view.backgroundColor = [[UIColor alloc] initWithPatternImage:backGround];
     
     // Fond de la box
     UIImage *image = [UIImage imageNamed:@"bg_box_inscription.png"];
@@ -188,135 +203,40 @@
     NSString *photoProfilString = self.photoProfilLabel.text;
     NSString *cguString = self.cguLabel.text;
     
-    if( [[VersionControl sharedInstance] supportIOS6] )
-    {
-        /* ----------------- CONFIDENTIALITE LABEL ------------------ */
-        NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:confidialiteLabelString];
-        [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:10] range:NSMakeRange(0, 1)];
-        [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:8] range:NSMakeRange(1, [confidialiteLabelString length] -1 )];
-        self.confidentialiteLabel.attributedText = attributedString;
-        //[self.confidentialiteLabel setAlignment:CLabelAlignmentCenter];
-        self.confidentialiteLabel.textAlignment = NSTextAlignmentCenter;
-        
-        /* ---------------------- CGU LABEL ----------------------- */
-        attributedString = [[NSMutableAttributedString alloc] initWithString:cguString];
-        [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:11] range:NSMakeRange(0, 1)];
-        [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:9] range:NSMakeRange(1, [cguString length] -1 )];
-        self.cguLabel.attributedText = attributedString;
-        //[self.confidentialiteLabel setAlignment:CLabelAlignmentCenter];
-        self.cguLabel.textAlignment = NSTextAlignmentCenter;
-        
-        /* ----------------- PHOTO PROFIL LABEL ------------------ */
-        attributedString = [[NSMutableAttributedString alloc] initWithString:photoProfilString];
-        UIFont *bigFont = [[Config sharedInstance] defaultFontWithSize:12];
-        UIFont *smalFont = [[Config sharedInstance] defaultFontWithSize:10];
-        
-        [attributedString setFont:bigFont range:NSMakeRange(0, 1)];
-        [attributedString setFont:smalFont range:NSMakeRange(1, 2)];
-        [attributedString setFont:bigFont range:NSMakeRange(3, 1)];
-        [attributedString setFont:smalFont range:NSMakeRange(4, 8)];
-        [attributedString setFont:bigFont range:NSMakeRange(12, 1)];
-        [attributedString setFont:smalFont range:NSMakeRange(13, 5)];
-        self.photoProfilLabel.attributedText = attributedString;
-        //[self.photoProfilLabel setAlignment:CLabelAlignmentCenter];
-        self.photoProfilLabel.textAlignment = NSTextAlignmentCenter;
-        
-        self.confidentialiteLabel.textColor = [UIColor whiteColor];
-        self.photoProfilLabel.textColor = [UIColor whiteColor];
-        self.cguLabel.textColor = [UIColor whiteColor];
-    }
-    else
-    {
-        Config *cf = [Config sharedInstance];
-        
-        /* ----------------- CONFIDENTIALITE LABEL ------------------ */
-        TTTAttributedLabel *tttLabel = [[TTTAttributedLabel alloc] initWithFrame:self.confidentialiteLabel.frame];
-        
-        tttLabel.textAlignment = NSTextAlignmentCenter;        
-        tttLabel.textColor = [UIColor whiteColor];
-        tttLabel.lineBreakMode = self.confidentialiteLabel.lineBreakMode;
-        tttLabel.numberOfLines = self.confidentialiteLabel.numberOfLines;
-        [self addShadowToView:tttLabel];
-        
-        tttLabel.backgroundColor = [UIColor clearColor];
-        [tttLabel setText:confidialiteLabelString afterInheritingLabelAttributesAndConfiguringWithBlock:^NSMutableAttributedString *(NSMutableAttributedString *mutableAttributedString) {
-            
-            NSInteger taille = [confidialiteLabelString length];
-            
-            [cf updateTTTAttributedString:mutableAttributedString withFontSize:10 onRange:NSMakeRange(0, 1)];
-            [cf updateTTTAttributedString:mutableAttributedString withFontSize:8 onRange:NSMakeRange(1, taille-1 )];
-            
-            [cf updateTTTAttributedString:mutableAttributedString withColor:[UIColor whiteColor] onRange:NSMakeRange(0, taille)];
-            
-            return mutableAttributedString;
-        }];
-        
-        [self.confidentialiteLabel.superview addSubview:tttLabel];
-        self.confidentialiteLabel.hidden = YES;
-        
-        /* ---------------------- CGU LABEL ----------------------- */
-        
-        tttLabel = [[TTTAttributedLabel alloc] initWithFrame:self.cguLabel.frame];
-        
-        tttLabel.textAlignment = NSTextAlignmentCenter;
-        tttLabel.textColor = [UIColor whiteColor];
-        tttLabel.lineBreakMode = self.cguLabel.lineBreakMode;
-        tttLabel.numberOfLines = self.cguLabel.numberOfLines;
-        [self addShadowToView:tttLabel];
-        
-        tttLabel.backgroundColor = [UIColor clearColor];
-        [tttLabel setText:cguString afterInheritingLabelAttributesAndConfiguringWithBlock:^NSMutableAttributedString *(NSMutableAttributedString *mutableAttributedString) {
-            
-            NSInteger taille = [cguString length];
-            
-            [cf updateTTTAttributedString:mutableAttributedString withFontSize:11 onRange:NSMakeRange(0, 1)];
-            [cf updateTTTAttributedString:mutableAttributedString withFontSize:9 onRange:NSMakeRange(1, taille-1 )];
-            
-            [cf updateTTTAttributedString:mutableAttributedString withColor:[UIColor whiteColor] onRange:NSMakeRange(0, taille)];
-            
-            return mutableAttributedString;
-        }];
-        
-        [self.cguLabel.superview addSubview:tttLabel];
-        self.cguLabel.hidden = YES;
-        
-        /* ----------------- PHOTO PROFIL LABEL ------------------ */
-        
-        tttLabel = [[TTTAttributedLabel alloc] initWithFrame:self.photoProfilLabel.frame];
-        
-        tttLabel.textAlignment = NSTextAlignmentCenter;        
-        tttLabel.textColor = [UIColor whiteColor];
-        tttLabel.lineBreakMode = self.photoProfilLabel.lineBreakMode;
-        tttLabel.numberOfLines = self.photoProfilLabel.numberOfLines;
-        [self addShadowToView:tttLabel];
-
-        
-        tttLabel.backgroundColor = [UIColor clearColor];
-        [tttLabel setText:photoProfilString afterInheritingLabelAttributesAndConfiguringWithBlock:^NSMutableAttributedString *(NSMutableAttributedString *mutableAttributedString) {
-            
-            NSInteger bigSize = 12, smallSize = 10;
-            NSInteger taille = [photoProfilString length];
-            
-            [cf updateTTTAttributedString:mutableAttributedString withFontSize:bigSize onRange:NSMakeRange(0, 1)];
-            [cf updateTTTAttributedString:mutableAttributedString withFontSize:smallSize onRange:NSMakeRange(1, 2)];
-            [cf updateTTTAttributedString:mutableAttributedString withFontSize:bigSize onRange:NSMakeRange(3, 1)];
-            [cf updateTTTAttributedString:mutableAttributedString withFontSize:smallSize onRange:NSMakeRange(4, 8)];
-            [cf updateTTTAttributedString:mutableAttributedString withFontSize:bigSize onRange:NSMakeRange(12, 1)];
-            [cf updateTTTAttributedString:mutableAttributedString withFontSize:smallSize onRange:NSMakeRange(13, 5)];
-            
-            [cf updateTTTAttributedString:mutableAttributedString withColor:[UIColor whiteColor] onRange:NSMakeRange(0, taille)];
-            
-            return mutableAttributedString;
-        }];
-        
-        [self.photoProfilLabel.superview addSubview:tttLabel];
-        self.photoProfilLabel.hidden = YES;
-        
-        /*
-        [self.confidentialiteLabel setAttributedTextFromString:confidialiteLabelString withFontSize:8];
-        [self.photoProfilLabel setAttributedTextFromString:photoProfilString withFontSize:12];
-         */
-    }
+    /* ----------------- CONFIDENTIALITE LABEL ------------------ */
+    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:confidialiteLabelString];
+    [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:10] range:NSMakeRange(0, 1)];
+    [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:8] range:NSMakeRange(1, [confidialiteLabelString length] -1 )];
+    self.confidentialiteLabel.attributedText = attributedString;
+    //[self.confidentialiteLabel setAlignment:CLabelAlignmentCenter];
+    self.confidentialiteLabel.textAlignment = NSTextAlignmentCenter;
+    
+    /* ---------------------- CGU LABEL ----------------------- */
+    attributedString = [[NSMutableAttributedString alloc] initWithString:cguString];
+    [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:11] range:NSMakeRange(0, 1)];
+    [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:9] range:NSMakeRange(1, [cguString length] -1 )];
+    self.cguLabel.attributedText = attributedString;
+    //[self.confidentialiteLabel setAlignment:CLabelAlignmentCenter];
+    self.cguLabel.textAlignment = NSTextAlignmentCenter;
+    
+    /* ----------------- PHOTO PROFIL LABEL ------------------ */
+    attributedString = [[NSMutableAttributedString alloc] initWithString:photoProfilString];
+    UIFont *bigFont = [[Config sharedInstance] defaultFontWithSize:12];
+    UIFont *smalFont = [[Config sharedInstance] defaultFontWithSize:10];
+    
+    [attributedString setFont:bigFont range:NSMakeRange(0, 1)];
+    [attributedString setFont:smalFont range:NSMakeRange(1, 2)];
+    [attributedString setFont:bigFont range:NSMakeRange(3, 1)];
+    [attributedString setFont:smalFont range:NSMakeRange(4, 8)];
+    [attributedString setFont:bigFont range:NSMakeRange(12, 1)];
+    [attributedString setFont:smalFont range:NSMakeRange(13, 5)];
+    self.photoProfilLabel.attributedText = attributedString;
+    //[self.photoProfilLabel setAlignment:CLabelAlignmentCenter];
+    self.photoProfilLabel.textAlignment = NSTextAlignmentCenter;
+    
+    self.confidentialiteLabel.textColor = [UIColor whiteColor];
+    self.photoProfilLabel.textColor = [UIColor whiteColor];
+    self.cguLabel.textColor = [UIColor whiteColor];
     
     
     // Shadows
@@ -355,25 +275,6 @@
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
-}
-
-- (void)viewDidUnload {
-    [self setNomLabel:nil];
-    [self setPrenomLabel:nil];
-    [self setEmailLabel:nil];
-    [self setMdpLabel:nil];
-    [self setPhotoProfil:nil];
-    [self setPhotoProfilLabel:nil];
-    [self setConfidentialiteLabel:nil];
-    [self setBackButton:nil];
-    [self setNextButton:nil];
-    [self setBgBox:nil];
-    [self setBoxView:nil];
-    [self setScrollView:nil];
-    [self setBirthdayTextField:nil];
-    [self setMaleButton:nil];
-    [self setFemaleButton:nil];
-    [super viewDidUnload];
 }
 
 - (void)viewDidAppear:(BOOL)animated

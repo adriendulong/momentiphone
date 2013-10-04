@@ -106,24 +106,6 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (void)viewDidUnload {
-    [self setBandeauView:nil];
-    [self setPriceLabel:nil];
-    [self setTiretLabel:nil];
-    [self setPhotosSelectionneesLabel:nil];
-    [self setNbPhotosLabel:nil];
-    [self setPrenomTextField:nil];
-    [self setNomTextField:nil];
-    [self setAdresseTextField:nil];
-    [self setCodePostalTextField:nil];
-    [self setVilleTextField:nil];
-    [self setPaysTextField:nil];
-    [self setFacturationLabel:nil];
-    [self setEmailTextField:nil];
-    [self setScrollView:nil];
-    [super viewDidUnload];
-}
-
 - (IBAction)clicCommander
 {
     UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@"Valider la commande"

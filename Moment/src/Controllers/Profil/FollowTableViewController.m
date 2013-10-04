@@ -59,14 +59,6 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (void)viewDidUnload
-{
-    [self setUsers:nil];
-    [self setNavController:nil];
-    [self setOwner:nil];
-    [super viewDidUnload];
-}
-
 #pragma mark - Load
 
 - (void)loadUsersListWithEnded:(void (^) (void))block

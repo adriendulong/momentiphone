@@ -76,24 +76,41 @@
 - (void)initNavigationBar
 {
     [CustomNavigationController setBackButtonChevronWithViewController:self withNewBackSelector:@selector(confirmBack)];
-    [CustomNavigationController setTitle:@"Manquants" withColor:[UIColor blackColor] withViewController:self];
+    [CustomNavigationController setTitle:@"Manquants" withColor:[Config sharedInstance].orangeColor withViewController:self];
 }
 
 - (void)confirmBack
 {
     [self.navigationController popToRootViewControllerAnimated:YES];
     
-    UIViewController *actualView = [AppDelegate actualViewController];
-    
-    if ([actualView isKindOfClass:[RootTimeLineViewController class]]) {
-        RootTimeLineViewController *rootTimeline = (RootTimeLineViewController *)actualView;
+    if ([VersionControl sharedInstance].supportIOS7) {
         
-        MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:rootTimeline.view animated:YES];
-        hud.labelText = NSLocalizedString(@"MBProgressHUD_Reoading_Moments", nil);
+        UIViewController *rootViewController = (UIViewController *)self.navigationController.viewControllers[0];
         
-        [rootTimeline.privateTimeLine reloadDataWithWaitUntilFinished:YES withEnded:^(BOOL success) {
-            [MBProgressHUD hideHUDForView:rootTimeline.view animated:YES];
-        }];
+        if ([rootViewController isKindOfClass:[RootTimeLineViewController class]]) {
+            RootTimeLineViewController *rootTimeline = (RootTimeLineViewController *)rootViewController;
+            
+            MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:rootTimeline.navigationController.view animated:YES];
+            hud.labelText = NSLocalizedString(@"MBProgressHUD_Reoading_Moments", nil);
+            
+            [rootTimeline.privateTimeLine reloadDataWithWaitUntilFinished:YES withEnded:^(BOOL success) {
+                [MBProgressHUD hideHUDForView:rootTimeline.navigationController.view animated:YES];
+            }];
+        }
+    } else {
+        
+        UIViewController *actualView = [AppDelegate actualViewController];
+        
+        if ([actualView isKindOfClass:[RootTimeLineViewController class]]) {
+            RootTimeLineViewController *rootTimeline = (RootTimeLineViewController *)actualView;
+            
+            MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:rootTimeline.view animated:YES];
+            hud.labelText = NSLocalizedString(@"MBProgressHUD_Reoading_Moments", nil);
+            
+            [rootTimeline.privateTimeLine reloadDataWithWaitUntilFinished:YES withEnded:^(BOOL success) {
+                [MBProgressHUD hideHUDForView:rootTimeline.view animated:YES];
+            }];
+        }
     }
 }
 
@@ -142,144 +159,108 @@
     [self.contactButton.titleLabel setText:NSLocalizedString(@"EventMissingViewController_contactButton", nil)];
     
     
-    if([[VersionControl sharedInstance] supportIOS6]) {
-        
-        //MAIN TITLE
-        [self.mainTitle setFont:[UIFont fontWithName:@"Numans-Regular" size:13.0]];
-        
-        NSMutableAttributedString *mainTitleText = [[NSMutableAttributedString alloc] initWithString:self.mainTitle.text];
-        //[text addAttribute:NSForegroundColorAttributeName value:(id) range:NSMakeRange(NSUInteger loc, NSUInteger len)];
-        [mainTitleText addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"Numans-Regular" size:17.0] range:NSMakeRange(0, 1)];
-        [mainTitleText addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"Numans-Regular" size:17.0] range:NSMakeRange([self.mainTitle.text length]-1, 1)];
-        [self.mainTitle setAttributedText:mainTitleText];
-        
-        
-        //SUBTITLE
-        [self.subTitle setFont:[UIFont fontWithName:@"Numans-Regular" size:13.0]];
-        
-        NSMutableAttributedString *subTitleText = [[NSMutableAttributedString alloc] initWithString:self.subTitle.text];
-        [subTitleText addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"Numans-Regular" size:17.0] range:NSMakeRange(0, 1)];
-        [self.subTitle setAttributedText:subTitleText];
-        
-        
-        //FACEBOOK TITLE
-        [self.facebookTitle setFont:[UIFont fontWithName:@"Numans-Regular" size:10.0]];
-        
-        NSMutableAttributedString *facebookTitleText = [[NSMutableAttributedString alloc] initWithString:self.facebookTitle.text];
-        [facebookTitleText addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"Numans-Regular" size:14.0] range:NSMakeRange(0, 1)];
-        [facebookTitleText addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"Numans-Regular" size:14.0] range:NSMakeRange(34, 1)];
-        [facebookTitleText addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"Numans-Regular" size:14.0] range:NSMakeRange(81, 1)];
-        [facebookTitleText addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"Numans-Regular" size:14.0] range:NSMakeRange(99, 1)];
-        [facebookTitleText addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"Numans-Regular" size:14.0] range:NSMakeRange(106, 1)];
-        [self.facebookTitle setAttributedText:facebookTitleText];
-        
-        
-        //FACEBOOK BUTTON
-        [self.facebookButton.titleLabel setFont:[UIFont fontWithName:@"Numans-Regular" size:14]];
-        
-        NSMutableAttributedString *facebookButtonText = [[NSMutableAttributedString alloc] initWithString:self.facebookButton.titleLabel.text];
-        [facebookButtonText addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"Numans-Regular" size:19] range:NSMakeRange(0, 1)];
-        //[facebookButtonText addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"Numans-Regular" size:19] range:NSMakeRange(16, 1)];
-        
-        [facebookButtonText addAttribute:NSForegroundColorAttributeName value:[UIColor orangeColor] range:NSMakeRange(0, 1)];
-        [self.facebookButton setAttributedTitle:facebookButtonText forState:UIControlStateNormal];
-        [self.facebookButton setAttributedTitle:facebookButtonText forState:UIControlStateSelected];
-        
-        
-        //CALL TITLE
-        [self.callTitle setFont:[UIFont fontWithName:@"Numans-Regular" size:10.0]];
-        
-        NSMutableAttributedString *callTitleText = [[NSMutableAttributedString alloc] initWithString:self.callTitle.text];
-        [callTitleText addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"Numans-Regular" size:14.0] range:NSMakeRange(0, 1)];
-        [callTitleText addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"Numans-Regular" size:14.0] range:NSMakeRange(32, 3)];
-        [callTitleText addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"Numans-Regular" size:14.0] range:NSMakeRange(102, 1)];
-        [self.callTitle setAttributedText:callTitleText];
-        
-        
-        //CALL BUTTON
-        [self.callButton.titleLabel setFont:[UIFont fontWithName:@"Numans-Regular" size:14]];
-        
-        NSMutableAttributedString *callButtonText = [[NSMutableAttributedString alloc] initWithString:self.callButton.titleLabel.text];
-        [callButtonText addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"Numans-Regular" size:19] range:NSMakeRange(0, 1)];
-        
-        [callButtonText addAttribute:NSForegroundColorAttributeName value:[UIColor orangeColor] range:NSMakeRange(0, 1)];
-        [self.callButton setAttributedTitle:callButtonText forState:UIControlStateNormal];
-        [self.callButton setAttributedTitle:callButtonText forState:UIControlStateSelected];
-        
-        
-        //MAIL TITLE
-        [self.mailTitle setFont:[UIFont fontWithName:@"Numans-Regular" size:10.0]];
-        
-        NSMutableAttributedString *mailTitleText = [[NSMutableAttributedString alloc] initWithString:self.mailTitle.text];
-        [mailTitleText addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"Numans-Regular" size:14.0] range:NSMakeRange(0, 1)];
-        [self.mailTitle setAttributedText:mailTitleText];
-        
-        
-        //MAIL BUTTON
-        [self.mailButton.titleLabel setFont:[UIFont fontWithName:@"Numans-Regular" size:14]];
-        
-        NSMutableAttributedString *mailButtonText = [[NSMutableAttributedString alloc] initWithString:self.mailButton.titleLabel.text];
-        [mailButtonText addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"Numans-Regular" size:19] range:NSMakeRange(0, 1)];
-        
-        [mailButtonText addAttribute:NSForegroundColorAttributeName value:[UIColor orangeColor] range:NSMakeRange(0, 1)];
-        [self.mailButton setAttributedTitle:mailButtonText forState:UIControlStateNormal];
-        [self.mailButton setAttributedTitle:mailButtonText forState:UIControlStateSelected];
-        
-        
-        //CONTACT TITLE
-        [self.contactTitle setFont:[UIFont fontWithName:@"Numans-Regular" size:10.0]];
-        
-        NSMutableAttributedString *contactTitleText = [[NSMutableAttributedString alloc] initWithString:self.contactTitle.text];
-        [contactTitleText addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"Numans-Regular" size:14.0] range:NSMakeRange(0, 1)];
-        [contactTitleText addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"Numans-Regular" size:14.0] range:NSMakeRange(13, 1)];
-        [contactTitleText addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"Numans-Regular" size:14.0] range:NSMakeRange(15, 1)];
-        [contactTitleText addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"Numans-Regular" size:14.0] range:NSMakeRange([self.contactTitle.text length]-1, 1)];
-        [self.contactTitle setAttributedText:contactTitleText];
-        
-        
-        //CONTACT BUTTON
-        [self.contactButton.titleLabel setFont:[UIFont fontWithName:@"Numans-Regular" size:14]];
-        
-        NSMutableAttributedString *contactButtonText = [[NSMutableAttributedString alloc] initWithString:self.contactButton.titleLabel.text];
-        [contactButtonText addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"Numans-Regular" size:19] range:NSMakeRange(0, 1)];
-        
-        [contactButtonText addAttribute:NSForegroundColorAttributeName value:[UIColor orangeColor] range:NSMakeRange(0, 1)];
-        [self.contactButton setAttributedTitle:contactButtonText forState:UIControlStateNormal];
-        [self.contactButton setAttributedTitle:contactButtonText forState:UIControlStateSelected];
-    } else {
-        
-        //MAIN TITLE
-        TTTAttributedLabel *mainTitleText = [[TTTAttributedLabel alloc] initWithFrame:self.mainTitle.frame];
-        [mainTitleText setFont:[UIFont fontWithName:@"Numans-Regular" size:11.0]];
-        //[mainTitleText setTextColor:[UIColor orangeColor]];
-        
-        [mainTitleText setText:self.mainTitle.text afterInheritingLabelAttributesAndConfiguringWithBlock:^NSMutableAttributedString *(NSMutableAttributedString *mutableAttributedString) {
-            
-            Config *cf = [Config sharedInstance];
-            
-            // 1 first Lettre Font
-            [cf updateTTTAttributedString:mutableAttributedString withFontSize:15.0 onRange:NSMakeRange(0, 1)];
-            [cf updateTTTAttributedString:mutableAttributedString withFontSize:15.0 onRange:NSMakeRange([self.mainTitle.text length]-1, 1)];
-            
-            return mutableAttributedString;
-        }];
-        
-        
-        //SUBTITLE
-        TTTAttributedLabel *subTitleText = [[TTTAttributedLabel alloc] initWithFrame:self.subTitle.frame];
-        [subTitleText setFont:[UIFont fontWithName:@"Numans-Regular" size:11.0]];
-        //[subTitleText setTextColor:[UIColor orangeColor]];
-        
-        [subTitleText setText:self.mainTitle.text afterInheritingLabelAttributesAndConfiguringWithBlock:^NSMutableAttributedString *(NSMutableAttributedString *mutableAttributedString) {
-            
-            Config *cf = [Config sharedInstance];
-            
-            // 1 first Lettre Font
-            [cf updateTTTAttributedString:mutableAttributedString withFontSize:15.0 onRange:NSMakeRange(0, 1)];
-            
-            return mutableAttributedString;
-        }];
-    }
+    //MAIN TITLE
+    [self.mainTitle setFont:[UIFont fontWithName:@"Numans-Regular" size:13.0]];
+    
+    NSMutableAttributedString *mainTitleText = [[NSMutableAttributedString alloc] initWithString:self.mainTitle.text];
+    //[text addAttribute:NSForegroundColorAttributeName value:(id) range:NSMakeRange(NSUInteger loc, NSUInteger len)];
+    [mainTitleText addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"Numans-Regular" size:17.0] range:NSMakeRange(0, 1)];
+    [mainTitleText addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"Numans-Regular" size:17.0] range:NSMakeRange([self.mainTitle.text length]-1, 1)];
+    [self.mainTitle setAttributedText:mainTitleText];
+    
+    
+    //SUBTITLE
+    [self.subTitle setFont:[UIFont fontWithName:@"Numans-Regular" size:13.0]];
+    
+    NSMutableAttributedString *subTitleText = [[NSMutableAttributedString alloc] initWithString:self.subTitle.text];
+    [subTitleText addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"Numans-Regular" size:17.0] range:NSMakeRange(0, 1)];
+    [self.subTitle setAttributedText:subTitleText];
+    
+    
+    //FACEBOOK TITLE
+    [self.facebookTitle setFont:[UIFont fontWithName:@"Numans-Regular" size:10.0]];
+    
+    NSMutableAttributedString *facebookTitleText = [[NSMutableAttributedString alloc] initWithString:self.facebookTitle.text];
+    [facebookTitleText addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"Numans-Regular" size:14.0] range:NSMakeRange(0, 1)];
+    [facebookTitleText addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"Numans-Regular" size:14.0] range:NSMakeRange(34, 1)];
+    [facebookTitleText addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"Numans-Regular" size:14.0] range:NSMakeRange(81, 1)];
+    [facebookTitleText addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"Numans-Regular" size:14.0] range:NSMakeRange(99, 1)];
+    [facebookTitleText addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"Numans-Regular" size:14.0] range:NSMakeRange(106, 1)];
+    [self.facebookTitle setAttributedText:facebookTitleText];
+    
+    
+    //FACEBOOK BUTTON
+    [self.facebookButton.titleLabel setFont:[UIFont fontWithName:@"Numans-Regular" size:14]];
+    
+    NSMutableAttributedString *facebookButtonText = [[NSMutableAttributedString alloc] initWithString:self.facebookButton.titleLabel.text];
+    [facebookButtonText addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"Numans-Regular" size:19] range:NSMakeRange(0, 1)];
+    //[facebookButtonText addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"Numans-Regular" size:19] range:NSMakeRange(16, 1)];
+    
+    [facebookButtonText addAttribute:NSForegroundColorAttributeName value:[UIColor orangeColor] range:NSMakeRange(0, 1)];
+    [self.facebookButton setAttributedTitle:facebookButtonText forState:UIControlStateNormal];
+    [self.facebookButton setAttributedTitle:facebookButtonText forState:UIControlStateSelected];
+    
+    
+    //CALL TITLE
+    [self.callTitle setFont:[UIFont fontWithName:@"Numans-Regular" size:10.0]];
+    
+    NSMutableAttributedString *callTitleText = [[NSMutableAttributedString alloc] initWithString:self.callTitle.text];
+    [callTitleText addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"Numans-Regular" size:14.0] range:NSMakeRange(0, 1)];
+    [callTitleText addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"Numans-Regular" size:14.0] range:NSMakeRange(32, 3)];
+    [callTitleText addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"Numans-Regular" size:14.0] range:NSMakeRange(102, 1)];
+    [self.callTitle setAttributedText:callTitleText];
+    
+    
+    //CALL BUTTON
+    [self.callButton.titleLabel setFont:[UIFont fontWithName:@"Numans-Regular" size:14]];
+    
+    NSMutableAttributedString *callButtonText = [[NSMutableAttributedString alloc] initWithString:self.callButton.titleLabel.text];
+    [callButtonText addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"Numans-Regular" size:19] range:NSMakeRange(0, 1)];
+    
+    [callButtonText addAttribute:NSForegroundColorAttributeName value:[UIColor orangeColor] range:NSMakeRange(0, 1)];
+    [self.callButton setAttributedTitle:callButtonText forState:UIControlStateNormal];
+    [self.callButton setAttributedTitle:callButtonText forState:UIControlStateSelected];
+    
+    
+    //MAIL TITLE
+    [self.mailTitle setFont:[UIFont fontWithName:@"Numans-Regular" size:10.0]];
+    
+    NSMutableAttributedString *mailTitleText = [[NSMutableAttributedString alloc] initWithString:self.mailTitle.text];
+    [mailTitleText addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"Numans-Regular" size:14.0] range:NSMakeRange(0, 1)];
+    [self.mailTitle setAttributedText:mailTitleText];
+    
+    
+    //MAIL BUTTON
+    [self.mailButton.titleLabel setFont:[UIFont fontWithName:@"Numans-Regular" size:14]];
+    
+    NSMutableAttributedString *mailButtonText = [[NSMutableAttributedString alloc] initWithString:self.mailButton.titleLabel.text];
+    [mailButtonText addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"Numans-Regular" size:19] range:NSMakeRange(0, 1)];
+    
+    [mailButtonText addAttribute:NSForegroundColorAttributeName value:[UIColor orangeColor] range:NSMakeRange(0, 1)];
+    [self.mailButton setAttributedTitle:mailButtonText forState:UIControlStateNormal];
+    [self.mailButton setAttributedTitle:mailButtonText forState:UIControlStateSelected];
+    
+    
+    //CONTACT TITLE
+    [self.contactTitle setFont:[UIFont fontWithName:@"Numans-Regular" size:10.0]];
+    
+    NSMutableAttributedString *contactTitleText = [[NSMutableAttributedString alloc] initWithString:self.contactTitle.text];
+    [contactTitleText addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"Numans-Regular" size:14.0] range:NSMakeRange(0, 1)];
+    [contactTitleText addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"Numans-Regular" size:14.0] range:NSMakeRange(13, 1)];
+    [contactTitleText addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"Numans-Regular" size:14.0] range:NSMakeRange(15, 1)];
+    [contactTitleText addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"Numans-Regular" size:14.0] range:NSMakeRange([self.contactTitle.text length]-1, 1)];
+    [self.contactTitle setAttributedText:contactTitleText];
+    
+    
+    //CONTACT BUTTON
+    [self.contactButton.titleLabel setFont:[UIFont fontWithName:@"Numans-Regular" size:14]];
+    
+    NSMutableAttributedString *contactButtonText = [[NSMutableAttributedString alloc] initWithString:self.contactButton.titleLabel.text];
+    [contactButtonText addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"Numans-Regular" size:19] range:NSMakeRange(0, 1)];
+    
+    [contactButtonText addAttribute:NSForegroundColorAttributeName value:[UIColor orangeColor] range:NSMakeRange(0, 1)];
+    [self.contactButton setAttributedTitle:contactButtonText forState:UIControlStateNormal];
+    [self.contactButton setAttributedTitle:contactButtonText forState:UIControlStateSelected];
 }
 
 /*- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
@@ -288,10 +269,10 @@
     {
         NSLog(@"Reply");
         UIAlertView *myalert = [[UIAlertView alloc] initWithTitle:@"Button Clicked" message:@"U clicked Reply " delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
-        
+ 
         [myalert show];
     }
-    
+ 
     if (buttonIndex == 2)
     {
         NSLog(@"Delete");
@@ -761,18 +742,4 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (void)viewDidUnload {
-    [self setTitle:nil];
-    [self setSubTitle:nil];
-    [self setFacebookTitle:nil];
-    [self setCallTitle:nil];
-    [self setMailTitle:nil];
-    [self setContactTitle:nil];
-    [self setFacebookButton:nil];
-    [self setCallButton:nil];
-    [self setMailButton:nil];
-    [self setContactButton:nil];
-    [self setContentView:nil];
-    [super viewDidUnload];
-}
 @end

@@ -21,21 +21,6 @@
 
 @implementation RevivrePartagerViewController
 
-//@synthesize events = _events;
-@synthesize moments = _moments;
-@synthesize timeLine = _timeLine;
-
-@synthesize titleLabel = _titleLabel;
-@synthesize contentView = _contentView;
-
-@synthesize sendToFaceBookFriendsButton = _sendToFaceBookFriendsButton;
-@synthesize tweetToFollowersButton = _tweetToFollowersButton;
-@synthesize sendSMSButton = _sendSMSButton;
-@synthesize backToTheTimeLineButton = _backToTheTimeLineButton;
-
-@synthesize photos = _photos;
-@synthesize photosInCahe = _photosInCahe;
-
 #pragma mark - View Init
 
 - (id)initWithTimeLine:(UIViewController <TimeLineDelegate> *)timeLine
@@ -47,7 +32,7 @@
         self.timeLine = timeLine;
         self.moments = [NSArray arrayWithArray:moments];
         self.photos = [NSArray arrayWithArray:photos];
-        self.photosInCahe = [NSMutableArray arrayWithCapacity:photos.count];
+        self.photosInCache = [NSMutableArray arrayWithCapacity:photos.count];
     }
     return self;
 }
@@ -135,34 +120,13 @@
     
     
     
-    if([[VersionControl sharedInstance] supportIOS6]) {
-        
-        //SUBTITLE
-        [self.titleLabel setFont:[[Config sharedInstance] defaultFontWithSize:14]];
-        
-        NSMutableAttributedString *titleText = [[NSMutableAttributedString alloc] initWithString:self.titleLabel.text];
-        [titleText addAttribute:NSFontAttributeName value:[[Config sharedInstance] defaultFontWithSize:18] range:NSMakeRange(0, 1)];
-        [titleText addAttribute:NSFontAttributeName value:[[Config sharedInstance] defaultFontWithSize:18] range:NSMakeRange(91, 1)];
-        [self.titleLabel setAttributedText:titleText];
-        
-    } else {
-        
-        //SUBTITLE
-        TTTAttributedLabel *titleText = [[TTTAttributedLabel alloc] initWithFrame:self.titleLabel.frame];
-        [titleText setFont:[[Config sharedInstance] defaultFontWithSize:14]];
-        //[subTitleText setTextColor:[UIColor orangeColor]];
-        
-        [titleText setText:self.titleLabel.text afterInheritingLabelAttributesAndConfiguringWithBlock:^NSMutableAttributedString *(NSMutableAttributedString *mutableAttributedString) {
-            
-            Config *cf = [Config sharedInstance];
-            
-            // 1 first Lettre Font
-            [cf updateTTTAttributedString:mutableAttributedString withFontSize:18 onRange:NSMakeRange(0, 1)];
-            [cf updateTTTAttributedString:mutableAttributedString withFontSize:18 onRange:NSMakeRange(91, 1)];
-            
-            return mutableAttributedString;
-        }];
-    }
+    //SUBTITLE
+    [self.titleLabel setFont:[[Config sharedInstance] defaultFontWithSize:14]];
+    
+    NSMutableAttributedString *titleText = [[NSMutableAttributedString alloc] initWithString:self.titleLabel.text];
+    [titleText addAttribute:NSFontAttributeName value:[[Config sharedInstance] defaultFontWithSize:18] range:NSMakeRange(0, 1)];
+    [titleText addAttribute:NSFontAttributeName value:[[Config sharedInstance] defaultFontWithSize:18] range:NSMakeRange(91, 1)];
+    [self.titleLabel setAttributedText:titleText];
     
     if (self.photos && self.photos > 0) {
         
@@ -181,16 +145,6 @@
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
-}
-
-- (void)viewDidUnload {
-    [self setSendToFaceBookFriendsButton:nil];
-    [self setTweetToFollowersButton:nil];
-    [self setSendSMSButton:nil];
-    [self setBackToTheTimeLineButton:nil];
-    [self setTitleLabel:nil];
-    [self setContentView:nil];
-    [super viewDidUnload];
 }
 
 #pragma mark - Actions
@@ -217,65 +171,6 @@
 
 #pragma mark - Upload Photos
 
-- (void)getUIImageFromAssetURL:(NSURL *)assetUrl toPath:(NSString *)path withEnded:(void (^) (NSString *fullPathToPhoto) )block
-{
-    if (block) {
-        
-        ALAssetsLibrary *assetsLibrary = [[ALAssetsLibrary alloc] init];
-        [assetsLibrary assetForURL:assetUrl resultBlock: ^(ALAsset *asset) {
-            
-            if (asset) {
-                
-                @autoreleasepool {
-                    ALAssetRepresentation *representation = [asset defaultRepresentation];
-                    
-                    /*CGFloat scale = [[Config sharedInstance] getScaleFromImageMetadata:representation.metadata
-                                                                               maxSize:PHOTO_MAX_SIZE];*/
-                    
-                    /*UIImage *img = [UIImage imageWithCGImage:representation.fullResolutionImage
-                                                       scale:scale
-                                                 orientation:representation.orientation];*/
-                    UIImage *img = [UIImage imageWithCGImage:representation.fullResolutionImage
-                                                       scale:representation.scale
-                                                 orientation:representation.orientation];
-                    
-                    //NSLog(@"img size AFTER= %@", NSStringFromCGSize(img.size));
-                    UIImage *croppedImg = [[Config sharedInstance] imageWithMaxSize:img maxSize:PHOTO_MAX_SIZE];
-                    img = nil;
-                    // DEBUG
-                    //NSLog(@"croppedImg size= %@", NSStringFromCGSize(croppedImg.size));
-                    
-                    NSData *photoData = UIImageJPEGRepresentation(croppedImg, 0.8);
-                    croppedImg = nil;
-                    // DEBUG
-                    //NSLog(@"Taille: %f Mo",(CGFloat)photoData.length/1000000);
-                    //NSLog(@"progression: %i%%", (int)roundf(progression*100.0));
-                    
-                    NSString *imageName = [NSString stringWithFormat:@"Photo_%f.png",[[NSDate date] timeIntervalSince1970]];
-                    
-                    NSString *fullPathToPhoto = [path stringByAppendingPathComponent:imageName];
-                    //NSLog(@"Library | fullPathToFile = %@",fullPathToPhoto);
-                    
-                    [photoData writeToFile:fullPathToPhoto atomically:NO];
-                    photoData = nil;
-                    
-                    if (![self.photosInCahe containsObject:fullPathToPhoto]) {
-                        [self.photosInCahe addObject:fullPathToPhoto];
-                    }
-                    
-                    
-                    block(fullPathToPhoto);
-                }
-            }
-            
-        } failureBlock:^(NSError *error) {
-            NSLog(@"Error: %@", error.localizedDescription);
-            
-            block(nil);
-        }];
-    }
-}
-
 - (void)stackImages:(NSArray *)photos
 {
     MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
@@ -299,35 +194,29 @@
             
             Photo *photoToDeal = (Photo *)obj;
             
-            //NSLog(@"attributes = %@", attributes);
-            
             NSString *momentPath = [photosPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%i",photoToDeal.momentId.intValue]];
             
             NSError *error = nil;
             if (![[NSFileManager defaultManager] fileExistsAtPath:momentPath])
                 [[NSFileManager defaultManager] createDirectoryAtPath:momentPath withIntermediateDirectories:NO attributes:nil error:&error];
             
-            /*dispatch_async( dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                
-                
-            });*/
             
-            [self getUIImageFromAssetURL:photoToDeal.assetUrl
+            [[Config sharedInstance] getUIImageFromAssetURL:photoToDeal.assetUrl
                                   toPath:momentPath
                                withEnded:^(NSString *fullPathToPhoto) {
                 
                 if (fullPathToPhoto) {
                     
-                    if (self.photosInCahe.count == self.photos.count) {
+                    if (![self.photosInCache containsObject:fullPathToPhoto]) {
+                        [self.photosInCache addObject:fullPathToPhoto];
+                    }
+                    
+                    if (self.photosInCache.count == self.photos.count) {
                         
                         dispatch_async( dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                            // Add code here to do background processing
-                            //
-                            //NSLog(@"images count first = %i",images.count);
+                            [self prepareForSendingToServer:self.photosInCache];
                             
-                            [self prepareForSendingToServer:self.photosInCahe];
-                            
-                            self.photosInCahe = nil;
+                            self.photosInCache = nil;
                         });
                     }
                 }
@@ -519,8 +408,19 @@
     } withEnded:^ {
         // Status Bar Finished
         [overlayStatusBar postFinishMessage:NSLocalizedString(@"StatusBarOverlay_Photo_UploadEnded", nil) duration:2];
-        [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackOpaque];
         
+        if ([VersionControl sharedInstance].supportIOS7) {
+            [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault
+                                                        animated:YES];
+            
+            [UIView animateWithDuration:0.5 animations:^{
+                [self setNeedsStatusBarAppearanceUpdate];
+            }];
+        } else {
+            [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackOpaque
+                                                        animated:YES];
+        }
+            
         // Activate the idle timer
         [[UIApplication sharedApplication] setIdleTimerDisabled:NO];
     }];

@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		320AF8492C47A4D819F7C451 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 320AF8492C47A4D819F7C450 /* QuartzCore.framework */; };
-		320B6C86F11D9990244A9731 /* Three20.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 320B6C86F11D9990244A9730 /* Three20.bundle */; };
 		5B0055DA16E86CD800C45A3D /* RootTimeLineViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5B0055D916E86CD800C45A3D /* RootTimeLineViewController.xib */; };
 		5B0055DF16E86F1A00C45A3D /* timeLine_bouton_private.png in Resources */ = {isa = PBXBuildFile; fileRef = 5B0055DB16E86F1A00C45A3D /* timeLine_bouton_private.png */; };
 		5B0055E016E86F1A00C45A3D /* timeLine_bouton_private@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5B0055DC16E86F1A00C45A3D /* timeLine_bouton_private@2x.png */; };
@@ -220,7 +219,6 @@
 		5B4455C316E547A500F94D5B /* ProfilViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5B4455C116E547A500F94D5B /* ProfilViewController.xib */; };
 		5B49EDF116B76D910033E525 /* AddressBookManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B49EDF016B76D910033E525 /* AddressBookManager.m */; };
 		5B4E863B16E7985D00D897FD /* MomentClass+Mapping.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B4E863A16E7985D00D897FD /* MomentClass+Mapping.m */; };
-		5B4E91A8175E0A53006A08F6 /* libGoogleAnalytics.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B4E91A6175E0A53006A08F6 /* libGoogleAnalytics.a */; };
 		5B51153D16F251E100B96DFD /* separateur_feed.png in Resources */ = {isa = PBXBuildFile; fileRef = 5B51153716F251E100B96DFD /* separateur_feed.png */; };
 		5B51153E16F251E100B96DFD /* separateur_feed@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5B51153816F251E100B96DFD /* separateur_feed@2x.png */; };
 		5B51154B16F25D9700B96DFD /* Feed.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B51154A16F25D9700B96DFD /* Feed.m */; };
@@ -778,7 +776,8 @@
 		6E40F01317F1E66B00607E1F /* btn_star_down@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6E40F00717F1E66B00607E1F /* btn_star_down@2x.png */; };
 		6E40F01417F1E66B00607E1F /* btn_star_up.png in Resources */ = {isa = PBXBuildFile; fileRef = 6E40F00817F1E66B00607E1F /* btn_star_up.png */; };
 		6E40F01517F1E66B00607E1F /* btn_star_up@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6E40F00917F1E66B00607E1F /* btn_star_up@2x.png */; };
-		6E4B5D4917FEB38B00F7896C /* libTestFlight.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E4B5D4317FEB38B00F7896C /* libTestFlight.a */; };
+		6E4B5D4D17FEB88F00F7896C /* libGoogleAnalytics.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B4E91A6175E0A53006A08F6 /* libGoogleAnalytics.a */; };
+		6E4B5D4E17FEB89F00F7896C /* libTestFlight.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E4B5D4317FEB38B00F7896C /* libTestFlight.a */; };
 		6E4D6EE8177850D60043B095 /* RowIndexInVolet.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4D6EE7177850D60043B095 /* RowIndexInVolet.m */; };
 		6E53C39F17CE20D0004C667F /* 37x-Checkmark.png in Resources */ = {isa = PBXBuildFile; fileRef = 6E53C39D17CE20D0004C667F /* 37x-Checkmark.png */; };
 		6E53C3A017CE20D0004C667F /* 37x-Checkmark@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6E53C39E17CE20D0004C667F /* 37x-Checkmark@2x.png */; };
@@ -865,7 +864,6 @@
 
 /* Begin PBXFileReference section */
 		320AF8492C47A4D819F7C450 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.frameworks; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
-		320B6C86F11D9990244A9730 /* Three20.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = Three20.bundle; path = "three20-master/src/Three20.bundle"; sourceTree = SOURCE_ROOT; };
 		5B0055D916E86CD800C45A3D /* RootTimeLineViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RootTimeLineViewController.xib; sourceTree = "<group>"; };
 		5B0055DB16E86F1A00C45A3D /* timeLine_bouton_private.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = timeLine_bouton_private.png; sourceTree = "<group>"; };
 		5B0055DC16E86F1A00C45A3D /* timeLine_bouton_private@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "timeLine_bouton_private@2x.png"; sourceTree = "<group>"; };
@@ -1942,6 +1940,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6E4B5D4E17FEB89F00F7896C /* libTestFlight.a in Frameworks */,
+				6E4B5D4D17FEB88F00F7896C /* libGoogleAnalytics.a in Frameworks */,
 				5BCCDE7516A1DC6D00C86579 /* MobileCoreServices.framework in Frameworks */,
 				6EDCE97F17A12F21005B83BA /* ImageIO.framework in Frameworks */,
 				5B95C1F916D1BA1E00EE556D /* AssetsLibrary.framework in Frameworks */,
@@ -1957,7 +1957,6 @@
 				5B5EF80216E41D38001C5A00 /* EventKit.framework in Frameworks */,
 				5B0DFEE216C64B8E00033C86 /* Accounts.framework in Frameworks */,
 				5B0DFEE016C64B8100033C86 /* AdSupport.framework in Frameworks */,
-				6E4B5D4917FEB38B00F7896C /* libTestFlight.a in Frameworks */,
 				5B0DFEDA16C64A0D00033C86 /* Social.framework in Frameworks */,
 				5B13B0C016B590C4002D8AC4 /* AddressBookUI.framework in Frameworks */,
 				5B13B0BE16B590B7002D8AC4 /* AddressBook.framework in Frameworks */,
@@ -1968,7 +1967,6 @@
 				5BF02E78169C8F7400232E75 /* UIKit.framework in Frameworks */,
 				5BF02E7A169C8F7400232E75 /* Foundation.framework in Frameworks */,
 				5BF02E7C169C8F7400232E75 /* CoreGraphics.framework in Frameworks */,
-				5B4E91A8175E0A53006A08F6 /* libGoogleAnalytics.a in Frameworks */,
 				6E7DB527178E923900CEC1BD /* Crashlytics.framework in Frameworks */,
 				6E0D86E017DA06360093B1C1 /* FacebookSDK.framework in Frameworks */,
 			);
@@ -3118,7 +3116,6 @@
 		5BF02E7E169C8F7400232E75 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				320B6C86F11D9990244A9730 /* Three20.bundle */,
 				5BF02E7F169C8F7400232E75 /* Moment-Info.plist */,
 				5BF02E80169C8F7400232E75 /* InfoPlist.strings */,
 				5BF02E83169C8F7400232E75 /* main.m */,
@@ -4253,7 +4250,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				320B6C86F11D9990244A9731 /* Three20.bundle in Resources */,
 				5BF02E82169C8F7400232E75 /* InfoPlist.strings in Resources */,
 				5BF03022169C944700232E75 /* Numans-Regular.otf in Resources */,
 				5BF03023169C944700232E75 /* bg-textfield.png in Resources */,
@@ -5205,6 +5201,7 @@
 					"\"$(SRCROOT)/Moment\"",
 					"\"$(SRCROOT)/../../../FacebookSDK\"",
 					"\"$(SRCROOT)/GoogleAnalyticsiOS_2.0beta4\"",
+					"\"$(SRCROOT)/TestFlightSDK2.0.2\"",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Moment/Moment-Prefix.pch";
@@ -5213,8 +5210,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\\\"$(SRCROOT)/GoogleAnalyticsiOS_2.0beta4\\\"",
-					"\\\"$(SRCROOT)/TestFlightSDK2.0.0\\\"",
+					"/Users/SkeletonGamer/Documents/Appmoment/dev-iOS7/momentiphone/GoogleAnalyticsiOS_2.0beta4",
 					"/Users/SkeletonGamer/Documents/Appmoment/dev-iOS7/momentiphone/TestFlightSDK2.0.2",
 				);
 				OTHER_LDFLAGS = (
@@ -5245,6 +5241,7 @@
 					"\"$(SRCROOT)/Moment\"",
 					"\"$(SRCROOT)/../../../FacebookSDK\"",
 					"\"$(SRCROOT)/GoogleAnalyticsiOS_2.0beta4\"",
+					"\"$(SRCROOT)/TestFlightSDK2.0.2\"",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Moment/Moment-Prefix.pch";
@@ -5253,8 +5250,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\\\"$(SRCROOT)/GoogleAnalyticsiOS_2.0beta4\\\"",
-					"\\\"$(SRCROOT)/TestFlightSDK2.0.0\\\"",
+					"/Users/SkeletonGamer/Documents/Appmoment/dev-iOS7/momentiphone/GoogleAnalyticsiOS_2.0beta4",
 					"/Users/SkeletonGamer/Documents/Appmoment/dev-iOS7/momentiphone/TestFlightSDK2.0.2",
 				);
 				OTHER_LDFLAGS = (

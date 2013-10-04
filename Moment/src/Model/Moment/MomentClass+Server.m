@@ -19,6 +19,7 @@
 + (AFJSONRequestOperation*)operationCreateMomentWithAttributes:(NSDictionary*)attributes
                                                      withEnded:( void (^) (MomentClass *moment) )block
 {
+    
     NSString *path = @"newmoment";
     
     NSMutableDictionary *params = attributes.mutableCopy;
@@ -74,6 +75,7 @@
             
             //NSLog(@"Reponse = %@", attr);
             //NSLog(@"Moment = %@", moment);
+            //NSLog(@"AFJSONRequestOperation: %@ | id: %@", moment.titre, moment.momentId);
             
             if(block)
                 block(moment);
@@ -295,8 +297,76 @@
     }
 }
 
++ (void)createMomentFromFBEventsForRevivre:(NSArray *)events withEnded:(void (^) (NSArray *events, NSArray* moments))block
+{
+    NSMutableArray *moments_forRevivre = [MomentClass arrayOfMomentsWithFacebookEvents:events].mutableCopy;
+    
+#ifdef DEBUG_IMPORT_FACEBOOK_EVENT
+    NSLog(@"\n$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ NOT EXISTED $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n");
+#endif
+    
+    __block int i = 0;
+    // Création sur le server
+    [MomentClass createMultipleMomentsFromLocalToServerWithMoments:moments_forRevivre
+                                                    withTransition:
+     ^(MomentClass *moment) {
+         
+         NSLog(@"moments_forRevivre: %@ | id: %@", moment.titre, moment.momentId);
+         
+         if(block) {
+             
+#ifdef DEBUG_IMPORT_FACEBOOK_EVENT
+             NSLog(@"\n-------------------------------------------------------------------\n");
+             NSLog(@"MOMENT\n : {\n %@ \n}", moment);
+             NSLog(@"OWNER : {\n %@ \n}", moment.owner);
+             NSLog(@"\n-------------------------------------------------------------------\n");
+#endif
+             
+             
+             if(moment)
+             {
+                 // Update moments with server attributes
+                 [moments_forRevivre replaceObjectAtIndex:i withObject:moment];
+             }
+         }
+         i++;
+         
+     } withEnded:
+     ^{
+         if(block) {
+             //  ----- Facebook Events par ordre chronologique -----
+             int taille = events.count;
+             NSMutableArray *fb = [[NSMutableArray alloc] initWithCapacity:taille];
+             [fb addObjectsFromArray:events];
+             [fb sortUsingComparator:^NSComparisonResult(FacebookEvent *e1, FacebookEvent *e2) {
+                 return [e1.startTime compare:e2.startTime];
+             }];
+             
+             //  ----- Moments par ordre chronologique -----
+             NSMutableArray *moments = [[NSMutableArray alloc] initWithCapacity:taille];
+             [moments addObjectsFromArray:moments_forRevivre];
+             [moments sortUsingComparator:^NSComparisonResult( MomentClass *m1, MomentClass *m2) {
+                 return [m1.dateDebut compare:m2.dateDebut];
+             }];
+             
+#ifdef DEBUG_IMPORT_FACEBOOK_EVENT
+             NSLog(@"\n$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ FIN $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n");
+             
+             NSLog(@"\n-------------------------------------------------------------------\n");
+             NSLog(@"MOMENT\n : {\n %@ \n}", moments);
+             NSLog(@"EVENTS : {\n %@ \n}", fb);
+             NSLog(@"\n-------------------------------------------------------------------\n");
+#endif
+             
+             // Retourne tableaux
+             block(fb, moments);
+         }
+         
+     }]; // Fin Moments For Revivre
+}
+
 + (void)createMomentFromFBEvents:(NSArray *)events withEnded:(void (^) (NSArray *events, NSArray* moments))block
-{    
+{
     // Identifier quels évenements sont déjà sur Moment
     [self identifyFacebookEventsOnMoment:events withEnded:^(NSDictionary *results) {
         
@@ -316,6 +386,8 @@
         [MomentClass createMultipleMomentsFromLocalToServerWithMoments:moments_notExist
                                                         withTransition:
          ^(MomentClass *moment) {
+             
+             NSLog(@"moment_notExist = %@", moment.description);
              
              if(block) {
                  
@@ -418,6 +490,7 @@
         
         // Facebook Events à afficher
         NSArray *fb_existAndInvited = results[@"exist_and_invited"];
+        //NSLog(@"fb_existAndInvited = %@",fb_existAndInvited);
         // DEBUG
         //NSLog(@"fb_existAndInvited.count = %i",fb_existAndInvited.count);
         
@@ -427,6 +500,8 @@
             MomentClass *moment = [MomentCoreData requestMomentWithFacebookEvent:e];
             
             if (moment) {
+                //NSLog(@"MomentCD.titre = %@", moment.titre);
+                //NSLog(@"MomentCD.momentId = %@", moment.momentId);
                 [moments_existAndInvited addObject:moment];
             }
         }
@@ -682,6 +757,7 @@
 {
     [MomentClass getInfosMomentWithId:self.momentId.intValue
                             withEnded:^(NSDictionary *attributes) {
+                                
         if(attributes) {
             [self setupWithAttributes:attributes];
             if(block) block(YES);
@@ -887,6 +963,7 @@
 
 - (void)getPhotosFromPage:(int)pageNumber withEnded:( void (^) (NSArray* photos, BOOL nextPage) )block
 {
+
     NSString *path = [NSString stringWithFormat:@"v1/photosmoment/%i/%i", self.momentId.intValue, pageNumber];
     
     [[AFMomentAPIClient sharedClient] getPath:path parameters:nil encoding:AFFormURLParameterEncoding success:^(AFHTTPRequestOperation *operation, id JSON) {
@@ -947,14 +1024,14 @@
         Photos *photo = [[Photos alloc] initWithAttributesFromWeb:JSON[@"success"]];
         
         // Notify Facebook Notification
-        if(self.facebookId)
+        /*if(self.facebookId)
         {
             [[FacebookManager sharedInstance] postMessageOnEventWall:self photo:photo withEnded:^(BOOL success) {
                 if(!success) {
                     [TestFlight passCheckpoint:[NSString stringWithFormat:@"Facebook Notification Fail - Photo %d - Moment %@", photo.photoId, self.momentId]];
                 }
             }];
-        }
+        }*/
         
         NSFileManager *fileMgr = [[NSFileManager alloc] init];
         NSError *theError = nil;

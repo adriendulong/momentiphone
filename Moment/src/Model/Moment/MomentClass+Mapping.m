@@ -15,6 +15,7 @@ static NSDateFormatter *smallDateFormatter = nil;
 
 + (NSDictionary*) mappingToLocalWithAttributes:(NSDictionary*)attributes
 {
+    //NSLog(@"mappingToLocalWithAttributes = attributes = %@", attributes);
     // Empeche le mapping d'un dictionnaire dans le bon format
     if( !attributes[@"ios_mapping"] || [attributes[@"ios_mapping"] isEqualToString:@"WEB"] )
     {
@@ -159,7 +160,6 @@ static NSDateFormatter *smallDateFormatter = nil;
         
         NSMutableDictionary *dico = @{
                                       @"ios_mapping":@"WEB",
-                                      @"address":attributes[@"adresse"],
                                       @"startDate":[dfJour stringFromDate:attributes[@"dateDebut"]],
                                       @"endDate":[dfJour stringFromDate:attributes[@"dateFin"]],
                                       @"startTime":[dfHeure stringFromDate:attributes[@"dateDebut"]],
@@ -181,6 +181,9 @@ static NSDateFormatter *smallDateFormatter = nil;
         
         if(attributes[@"infoLieu"])
             dico[@"placeInformations"] = attributes[@"infoLieu"];
+        
+        if(attributes[@"adresse"])
+            dico[@"address"] = attributes[@"adresse"];
         
         if(attributes[@"dataImage"])
             dico[@"photo"] = attributes[@"dataImage"];

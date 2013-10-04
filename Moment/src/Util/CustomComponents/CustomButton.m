@@ -34,18 +34,8 @@
     
     /*
     // Label
-    if ([[VersionControl sharedInstance] supportIOS6] )
-    {
-        self.label = [[CustomLabel alloc] initWithFrame:labelFrame];
-        [self.label setAttributedTextFromString:text withAccentuatedLetters:ranges withFontSize:14.0f];
-        NSMutableAttributedString *t = [self.label.attributedText mutableCopy];
-        self.label.attributedText = t;
-        //self.label.textAlignment = NSTextAlignmentCenter;
-    }
-    else {
-        //self.label.text = text;
-        [self.label setAttributedTextFromString:text withFontSize:14.0f];
-    }
+     //self.label.text = text;
+     [self.label setAttributedTextFromString:text withFontSize:14.0f];
     */
     
     [self addSubview:self.label];

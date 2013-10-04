@@ -49,6 +49,8 @@
         frame.size.height = height + CHAT_CELL_OFFSET_HEIGHT;
         self.frame = frame;
         
+        self.backgroundColor = [UIColor clearColor];
+        
         //NSLog(@"height = %f - Default : %f",height, CHAT_CELL_DEFAULT_HEIGHT - CHAT_CELL_OFFSET_HEIGHT);
         if(height > CHAT_CELL_DEFAULT_HEIGHT - CHAT_CELL_OFFSET_HEIGHT) {
             // Text Size

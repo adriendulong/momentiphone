@@ -71,24 +71,6 @@
     self.cadeauLabel.font = font;
 }
 
-- (void)viewDidUnload {
-    [self setBandeauLabel:nil];
-    [self setBandeauView:nil];
-    [self setParametres:nil];
-    [self setBackgroundDescriptionView:nil];
-    [self setDescriptionTextView:nil];
-    [self setBeneficiaireTextField:nil];
-    [self setTitreTextField:nil];
-    [self setMontantTextField:nil];
-    [self setDateFinTextField:nil];
-    [self setChoixLabel:nil];
-    [self setCagnotteLabel:nil];
-    [self setCadeauLabel:nil];
-    [self setBandeauLabel:nil];
-    [self setScrollView:nil];
-    [super viewDidUnload];
-}
-
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];

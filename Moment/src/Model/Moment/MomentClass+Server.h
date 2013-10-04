@@ -45,6 +45,7 @@ enum TimeDirectiion {
 + (void)identifyFacebookEventsOnMoment:(NSArray*)events withEnded:(void (^) (NSDictionary* results))block;
 + (void)identifyFacebookEventsOnMomentForRevivre:(NSArray*)events withEnded:(void (^) (NSDictionary* results))block;
 + (void)createMomentFromFBEvents:(NSArray *)events withEnded:(void (^) (NSArray *events, NSArray* moments))block;
++ (void)createMomentFromFBEventsForRevivre:(NSArray *)events withEnded:(void (^) (NSArray *events, NSArray* moments))block;
 + (void)getMomentFromFBEvents:(NSArray *)events withEnded:(void (^) (NSArray *events, NSArray* moments))block;
 + (void)importFacebookEventsWithEnded:(void (^) (NSArray *events, NSArray* moments))block;
 + (void)getOldFacebookEventsWithEnded:(void (^) (NSArray *eventsValid, NSArray *eventsMaybe))block;

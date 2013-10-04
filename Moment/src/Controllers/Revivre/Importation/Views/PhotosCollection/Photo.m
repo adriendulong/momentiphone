@@ -17,4 +17,22 @@
             isSelected = _isSelected,
             momentId = _momentId;
 
+- (NSString *)description {
+    return [NSString stringWithFormat:@"PHOTO :\n{\nMOMENT : %@\nDATE : %@\nASSETURL : %@\n}\n-----------\n", self.momentId, self.date, self.assetUrl.absoluteString];
+}
+
+- (id)mutableCopyWithZone:(NSZone *)zone
+{
+    Photo *photoCopy = [[Photo allocWithZone:zone] init];
+    
+    [photoCopy setDate:self.date];
+    [photoCopy setThumbnail:self.thumbnail];
+    [photoCopy setPhotoCachePath:self.photoCachePath];
+    [photoCopy setAssetUrl:self.assetUrl];
+    [photoCopy setIsSelected:self.isSelected];
+    [photoCopy setMomentId:self.momentId];
+    
+    return photoCopy;
+}
+
 @end

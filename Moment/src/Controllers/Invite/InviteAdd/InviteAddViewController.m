@@ -204,38 +204,16 @@ enum InviteAddFontSize {
     NSInteger taille = [texteLabel length];
     
 #pragma CustomLabel
-    if( [[VersionControl sharedInstance] supportIOS6] )
-    {
-        // Attributs du label
-        NSRange range = NSMakeRange(0, 1);
-        [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:InviteAddFontSizeBig] range:range];
-        range = NSMakeRange(1, taille-1);
-        [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:InviteAddFontSizeSmall] range:range];
-        [attributedString setTextColor:[Config sharedInstance].textColor];
-        
-        [self.validerLabel setAttributedText:attributedString];
-        self.validerLabel.textAlignment = kCTLeftTextAlignment;
-        [self.validerLabel sizeToFit];
-    }
-    else
-    {
-        self.ttValiderLabel = [[TTTAttributedLabel alloc] initWithFrame:self.validerLabel.frame];
-        self.ttValiderLabel.backgroundColor = [UIColor clearColor];
-        [self.ttValiderLabel setText:texteLabel afterInheritingLabelAttributesAndConfiguringWithBlock:^NSMutableAttributedString *(NSMutableAttributedString *mutableAttributedString) {
-            
-            Config *cf = [Config sharedInstance];
-            
-            [cf updateTTTAttributedString:mutableAttributedString withFontSize:InviteAddFontSizeBig onRange:NSMakeRange(0, 1)];
-            [cf updateTTTAttributedString:mutableAttributedString withFontSize:InviteAddFontSizeSmall onRange:NSMakeRange(1, taille-1)];
-            [cf updateTTTAttributedString:mutableAttributedString withColor:cf.textColor onRange:NSMakeRange(0, taille)];
-            
-            return mutableAttributedString;
-        }];
-        
-        [self.ttValiderLabel sizeToFit];
-        [self.validerLabel.superview addSubview:self.ttValiderLabel];
-        self.validerLabel.hidden = YES;
-    }
+    // Attributs du label
+    NSRange range = NSMakeRange(0, 1);
+    [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:InviteAddFontSizeBig] range:range];
+    range = NSMakeRange(1, taille-1);
+    [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:InviteAddFontSizeSmall] range:range];
+    [attributedString setTextColor:[Config sharedInstance].textColor];
+    
+    [self.validerLabel setAttributedText:attributedString];
+    self.validerLabel.textAlignment = kCTLeftTextAlignment;
+    [self.validerLabel sizeToFit];
 }
 
 /*
@@ -245,52 +223,24 @@ enum InviteAddFontSize {
     NSInteger taille = [texteLabel length];
     
 #pragma CustomLabel
-    if( [[VersionControl sharedInstance] supportIOS6] )
-    {
-        // Attributs du label
-        UIFont *bigFont = [[Config sharedInstance] defaultFontWithSize:InviteAddFontSizeBig];
-        UIFont *smallFont = [[Config sharedInstance] defaultFontWithSize:InviteAddFontSizeSmall];
-        
-        NSRange range = NSMakeRange(0, 1);
-        [attributedString setFont:smallFont range:range];
-        [attributedString setTextColor:[Config sharedInstance].textColor];
-        range = NSMakeRange(1, 1);
-        [attributedString setFont:bigFont range:range];
-        [attributedString setTextColor:[Config sharedInstance].orangeColor range:range];
-        
-        range = NSMakeRange(2, taille-2);
-        [attributedString setFont:smallFont range:range];
-        [attributedString setTextColor:[Config sharedInstance].textColor range:range];
-        
-        [self.momentLabel setAttributedText:attributedString];
-        self.momentLabel.textAlignment = kCTTextAlignmentLeft;
-        [self.momentLabel sizeToFit];
-    }
-    else
-    {
-        self.ttMomentLabel = [[TTTAttributedLabel alloc] initWithFrame:self.momentLabel.frame];
-        self.ttMomentLabel.backgroundColor = [UIColor clearColor];
-        [self.ttMomentLabel setText:texteLabel afterInheritingLabelAttributesAndConfiguringWithBlock:^NSMutableAttributedString *(NSMutableAttributedString *mutableAttributedString) {
-            
-            Config *cf = [Config sharedInstance];
-            
-            NSRange rang = NSMakeRange(0, 1);
-            [cf updateTTTAttributedString:mutableAttributedString withFontSize:InviteAddFontSizeSmall onRange:rang];
-            [cf updateTTTAttributedString:mutableAttributedString withColor:cf.textColor onRange:rang];
-            rang = NSMakeRange(1, 1);
-            [cf updateTTTAttributedString:mutableAttributedString withFontSize:InviteAddFontSizeBig onRange:rang];
-            [cf updateTTTAttributedString:mutableAttributedString withColor:cf.orangeColor onRange:rang];
-            rang = NSMakeRange(2, taille-2);
-            [cf updateTTTAttributedString:mutableAttributedString withFontSize:InviteAddFontSizeSmall onRange:rang];
-            [cf updateTTTAttributedString:mutableAttributedString withColor:cf.textColor onRange:rang];
-            
-            return mutableAttributedString;
-        }];
-        
-        [self.ttMomentLabel sizeToFit];
-        [self.momentLabel.superview addSubview:self.ttMomentLabel];
-        self.momentLabel.hidden = YES;
-    }
+    // Attributs du label
+    UIFont *bigFont = [[Config sharedInstance] defaultFontWithSize:InviteAddFontSizeBig];
+    UIFont *smallFont = [[Config sharedInstance] defaultFontWithSize:InviteAddFontSizeSmall];
+ 
+    NSRange range = NSMakeRange(0, 1);
+    [attributedString setFont:smallFont range:range];
+    [attributedString setTextColor:[Config sharedInstance].textColor];
+    range = NSMakeRange(1, 1);
+    [attributedString setFont:bigFont range:range];
+    [attributedString setTextColor:[Config sharedInstance].orangeColor range:range];
+ 
+    range = NSMakeRange(2, taille-2);
+    [attributedString setFont:smallFont range:range];
+    [attributedString setTextColor:[Config sharedInstance].textColor range:range];
+ 
+    [self.momentLabel setAttributedText:attributedString];
+    self.momentLabel.textAlignment = kCTTextAlignmentLeft;
+    [self.momentLabel sizeToFit];
 }
 */
 

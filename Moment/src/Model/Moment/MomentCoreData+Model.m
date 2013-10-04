@@ -23,6 +23,7 @@
 - (void)setupWithMoment:(MomentClass*)moment
 {
     self.titre = moment.titre;
+    self.privacy = moment.privacy;
     self.state = moment.state;
     self.imageString = moment.imageString;
     self.dataImage = moment.dataImage;
@@ -49,6 +50,7 @@
 
 - (void)setupWithAttributes:(NSDictionary*)attributes
 {
+    
     self.momentId = attributes[@"momentId"];
     self.titre = attributes[@"titre"];
     self.dateDebut = attributes[@"dateDebut"];

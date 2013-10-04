@@ -13,10 +13,8 @@
 #import "Photos.h"
 #import "UserCoreData+Model.h"
 #import "MTStatusBarOverlay.h"
-#import "Three20/Three20.h"
 #import "RotationNavigationControllerViewController.h"
 
-#import "DEFacebookComposeViewController.h"
 #import <Twitter/Twitter.h>
 #import <Social/Social.h>
 
@@ -101,6 +99,9 @@ withDelegate:(PhotoCollectionViewController*)photoViewController
         self.rootViewController = rootViewController;
         self.delegate = photoViewController;
         self.photos = photos;
+        
+        //NSLog(@"BigPhotoViewController | self.photos.count = %i", self.photos.count);
+        
         self.selectedIndex = -1;
         suppressionModeActif = YES;
         shouldAnimate = YES;
@@ -250,6 +251,12 @@ withDelegate:(PhotoCollectionViewController*)photoViewController
             }];
             
         }];
+        
+        [UIView animateWithDuration:0.2 animations:^{
+            if ([VersionControl sharedInstance].supportIOS7) {
+                self.view.backgroundColor = [UIColor colorWithRed:1 green:1 blue:1 alpha:0.5];
+            }
+        }];
     }
     else {
         shouldAnimate = YES;
@@ -269,11 +276,22 @@ withDelegate:(PhotoCollectionViewController*)photoViewController
     CGRect frame = self.view.frame;
     frame.origin.y = 0;
     frame.size.height = [VersionControl sharedInstance].screenHeight - STATUS_BAR_HEIGHT;
+    
+    if ([VersionControl sharedInstance].supportIOS7) {
+        frame.origin.y += STATUS_BAR_HEIGHT;
+    }
+    
     self.view.frame = frame;
     self.backgroundImageView.frame = frame;
     self.blackFilterView.frame = frame;
     frame = self.generalPopupView.frame;
-    frame.origin.y = (self.view.frame.size.height - frame.size.height)/2.0;
+    
+    if ([VersionControl sharedInstance].supportIOS7) {
+        frame.origin.y = self.view.frame.size.height/2 - self.generalPopupView.frame.size.height/2+STATUS_BAR_HEIGHT;
+    } else {
+        frame.origin.y = self.view.frame.size.height/2 - self.generalPopupView.frame.size.height/2;
+    }
+    
     self.generalPopupView.frame = frame;
     [self.view addSubview:self.generalPopupView];
     
@@ -353,37 +371,10 @@ withDelegate:(PhotoCollectionViewController*)photoViewController
     
 }
 
-- (void)viewDidUnload {
-    [self setPhotoScrollView:nil];
-    [self setAuteurLabel:nil];
-    [self setDateLabel:nil];
-    [self setTopPhotoView:nil];
-    [self setTrashButton:nil];
-    [self setLikeButton:nil];
-    [self setFacebookButton:nil];
-    [self setTwitterButton:nil];
-    [self setDownloadButton:nil];
-    [self setBottomPhotoView:nil];
-    [self setCloseButton:nil];
-    [self setNextButton:nil];
-    [self setPreviousButton:nil];
-    [self setBlackFilterView:nil];
-    [self setBackgroundImage:nil];
-    [self setMoment:nil];
-    [self setCurrentUser:nil];
-    [self setRootViewController:nil];
-    [self setCenterPhotoView:nil];
-    [self setGeneralPopupView:nil];
-    [self setLikeImageView:nil];
-    [self setLikeNumberLabel:nil];
-    [self setUser:nil];
-    [super viewDidUnload];
-}
-
 #pragma mark - ScrollView Delegate
 
 - (void)updateBackground
-{    
+{
     // Capture d'écran
     UIWindow *keyWindow = [[UIApplication sharedApplication] keyWindow];
     CGRect rect = [keyWindow frame];
@@ -395,7 +386,7 @@ withDelegate:(PhotoCollectionViewController*)photoViewController
     UIGraphicsEndImageContext();
     
     CGRect contentRect;
-    if ([VersionControl sharedInstance].isRetina) {
+    if ([VersionControl sharedInstance].isRetina) { 
         // Retina
         contentRect = CGRectMake(0, 2*STATUS_BAR_HEIGHT, 2*rect.size.width, 2*(rect.size.height-STATUS_BAR_HEIGHT));
         //contentRect = CGRectMake(0, 2*TOPBAR_HEIGHT, 2*rect.size.width, 2*(rect.size.height - TOPBAR_HEIGHT));
@@ -426,6 +417,8 @@ withDelegate:(PhotoCollectionViewController*)photoViewController
 {
     if(backgroundNeedsUpdate)
        [self updateBackground];
+    
+    //NSLog(@"showViewAtIndex | self.photos.count = %i", self.photos.count);
     
     /*if(fromParent)
         index = [self convertIndexFromParentView:index];*/
@@ -607,12 +600,17 @@ withDelegate:(PhotoCollectionViewController*)photoViewController
 
 - (void)addIndexToScrollView:(NSInteger)index
 {
+    [self addIndexToScrollView:index forBrowserView:nil];
+}
+
+- (void)addIndexToScrollView:(NSInteger)index forBrowserView:(AGPhotoBrowserView *)browserView
+{
     Photos *photo = (Photos*)self.photos[index];
     CustomUIImageView *imageView = nil;
     
     if([onScreenPhotos count]-1 > index)
         imageView = onScreenPhotos[index];
-        
+    
     if(!imageView || [imageView isEqual:[NSNull null]]) {
         imageView = [[CustomUIImageView alloc] init];
         imageView.frame = CGRectMake( index*self.photoScrollView.frame.size.width,0, self.photoScrollView.frame.size.width, self.photoScrollView.frame.size.height);
@@ -632,6 +630,12 @@ withDelegate:(PhotoCollectionViewController*)photoViewController
     
     [imageView setImage:photo.imageOriginal imageString:photo.urlOriginal withSaveBlock:^(UIImage *image) {
         photo.imageOriginal = image;
+        
+        if (browserView) {
+            //NSLog(@"On update le browserView");
+            [self photoBrowser:browserView imageAtIndex:index];
+            [browserView reloadFromIndex:index];
+        }
     }];
 }
 
@@ -687,6 +691,7 @@ withDelegate:(PhotoCollectionViewController*)photoViewController
     } completion:^(BOOL finished) {
         [UIView animateWithDuration:0.3 animations:^{
             self.blackFilterView.alpha = 0;
+            self.view.backgroundColor = [UIColor whiteColor];
         } completion:^(BOOL finished) {
             self.rootViewController.navigationController.navigationBar.hidden = NO;
             backgroundNeedsUpdate = YES;
@@ -839,32 +844,6 @@ withDelegate:(PhotoCollectionViewController*)photoViewController
         
         [self presentViewController:fbSheet animated:YES completion:nil];
     }
-    // iOS 5
-    else
-    {
-        /*
-        DEFacebookComposeViewControllerCompletionHandler completionHandler = ^(DEFacebookComposeViewControllerResult result) {
-            switch (result) {
-                case DEFacebookComposeViewControllerResultCancelled:
-                    NSLog(@"Facebook Result: Cancelled - iOS 5");
-                    break;
-                case DEFacebookComposeViewControllerResultDone:
-                    NSLog(@"Facebook Result: Sent - iOS 5");
-                    break;
-            }
-            
-            [self dismissModalViewControllerAnimated:YES];
-        };
-         */
-        
-        DEFacebookComposeViewController *facebookViewComposer = [[DEFacebookComposeViewController alloc] init];
-        self.modalPresentationStyle = UIModalPresentationCurrentContext;
-        [facebookViewComposer setInitialText:initialText];
-        [facebookViewComposer addImage:image];
-        [facebookViewComposer addURL:url];
-        //facebookViewComposer.completionHandler = completionHandler;
-        [self presentViewController:facebookViewComposer animated:YES completion:nil];
-    }
     
 }
 
@@ -898,17 +877,6 @@ withDelegate:(PhotoCollectionViewController*)photoViewController
         [tweetSheet addURL:url];
         
         [self presentViewController:tweetSheet animated:YES completion:nil];
-    }
-    // iOS 5 -> Twitter Framework
-    else
-    {
-        TWTweetComposeViewController *twitterViewComposer = [[TWTweetComposeViewController alloc] init];
-        self.modalPresentationStyle = UIModalPresentationCurrentContext;
-        [twitterViewComposer setInitialText:initialText];
-        [twitterViewComposer addImage:image];
-        [twitterViewComposer addURL:url];
-        
-        [self presentViewController:twitterViewComposer animated:YES completion:nil];
     }
     
 }
@@ -965,6 +933,7 @@ withDelegate:(PhotoCollectionViewController*)photoViewController
         if(buttonIndex == 0)
         {
             Photos *photo = (Photos*)self.photos[self.selectedIndex];
+            NSLog(@"Photo = %i", photo.photoId);
             
             // Delete From Server
             [photo deletePhotoWithEnded:^(BOOL success) {
@@ -979,6 +948,9 @@ withDelegate:(PhotoCollectionViewController*)photoViewController
                     [self.delegate.collectionView reloadData];
                     
                     [self clearScrollView];
+                    
+                    NSLog(@"self.delegate.photos = %@", self.delegate.photos);
+                    NSLog(@"self.photos = %@", self.photos);
                     
                     NSInteger count = [self.photos count];
                     
@@ -1028,7 +1000,89 @@ withDelegate:(PhotoCollectionViewController*)photoViewController
     }
 }
 
-#pragma mark - Full Screen
+#pragma mark - AGPhotoBrowser datasource
+
+- (NSInteger)numberOfPhotosForPhotoBrowser:(AGPhotoBrowserView *)photoBrowser
+{
+	return self.photos.count;
+}
+
+- (UIImage *)photoBrowser:(AGPhotoBrowserView *)photoBrowser imageAtIndex:(NSInteger)index
+{
+    Photos *photo = [self.photos objectAtIndex:index];
+    //NSLog(@"photo.imageOriginal = %@",photo.imageOriginal);
+    
+    if (!photo.imageOriginal) {
+        dispatch_async( dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            [self addIndexToScrollView:index forBrowserView:photoBrowser];
+        });
+        
+        return photo.imageThumbnail;
+    } else {
+        return photo.imageOriginal;
+    }
+    
+    return nil;
+}
+
+- (NSString *)photoBrowser:(AGPhotoBrowserView *)photoBrowser titleForImageAtIndex:(NSInteger)index
+{
+    Photos *photo = [self.photos objectAtIndex:index];
+    NSString *completeName = [NSString stringWithFormat:@"%@ %@", photo.owner.prenom, photo.owner.nom];
+    //NSLog(@"completename = %@", completeName);
+    
+	return completeName;
+}
+
+- (NSString *)photoBrowser:(AGPhotoBrowserView *)photoBrowser descriptionForImageAtIndex:(NSInteger)index
+{
+    Photos *photo = [self.photos objectAtIndex:index];
+    NSString *description = [NSString stringWithFormat:@"Date: %@ | Like: %i", [dateFormatter stringFromDate:photo.date], photo.nbLike];
+    //NSLog(@"description = %@", description);
+    
+	return description;
+}
+
+#pragma mark - AGPhotoBrowser delegate
+
+- (void)photoBrowser:(AGPhotoBrowserView *)photoBrowser didTapOnDoneButton:(UIButton *)doneButton atIndex:(NSInteger)index
+{
+	// -- Dismiss
+	//NSLog(@"Dismiss the photo browser here | index = %i", index);
+    [self scrollToIndex:index animated:NO];
+	[self.browserView hideWithCompletion:^(BOOL finished){
+		//NSLog(@"Dismissed!");
+	}];
+}
+
+- (void)photoBrowser:(AGPhotoBrowserView *)photoBrowser didTapOnActionButton:(UIButton *)actionButton atIndex:(NSInteger)index
+{
+	//NSLog(@"Action button tapped at index %d!", index);
+	UIActionSheet *action = [[UIActionSheet alloc] initWithTitle:@""
+														delegate:nil
+											   cancelButtonTitle:NSLocalizedString(@"Cancel", @"Cancel button")
+										  destructiveButtonTitle:NSLocalizedString(@"Delete", @"Delete button")
+											   otherButtonTitles:NSLocalizedString(@"Share", @"Share button"), nil];
+	[action showInView:self.view];
+}
+
+
+#pragma mark - Getters
+
+- (AGPhotoBrowserView *)browserView
+{
+	if (!_browserView) {
+        _browserView = [[AGPhotoBrowserView alloc] initWithFrame:self.view.bounds
+                                              fromViewController:self
+                                                         atIndex:self.selectedIndex];
+		_browserView.delegate = self;
+		_browserView.dataSource = self;
+	}
+	
+	return _browserView;
+}
+
+/*#pragma mark - Full Screen
 
 - (FullScreenPhotoViewController*)fullScreenViewController {
     if(!_fullScreenViewController) {
@@ -1038,7 +1092,7 @@ withDelegate:(PhotoCollectionViewController*)photoViewController
         _fullScreenViewController = [[FullScreenPhotoViewController alloc] initWithTitle:titre withPhotos:self.photos delegate:self];
     }
     return _fullScreenViewController;
-}
+}*/
 
 - (void)showFullScreen {
     
@@ -1046,12 +1100,15 @@ withDelegate:(PhotoCollectionViewController*)photoViewController
     //[[[UIApplication sharedApplication] keyWindow] addSubview:nav.view];
     
     // Google Analytics
-    [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Plein écran" value:nil];
+    /*[self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Plein écran" value:nil];
     
     shouldAnimate = NO;
     ((RotationNavigationControllerViewController*)self.navigationController).activeRotation = YES;
     [self.fullScreenViewController showPhoto:self.photos[self.selectedIndex]];
-    [self.navigationController pushViewController:self.fullScreenViewController animated:NO];
+    [self.navigationController pushViewController:self.fullScreenViewController animated:NO];*/
+    
+    [self.browserView.photoTableView reloadData];
+    [self.browserView showFromIndex:self.selectedIndex];
 }
 
 #pragma mark - MFMailComposeViewControllerDelegate

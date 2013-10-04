@@ -27,6 +27,8 @@
         frame.size.height = height;
         self.frame = frame;
         
+        self.backgroundColor = [UIColor clearColor];
+        
         // Set text
         self.emptyLabel.text = NSLocalizedString(@"InvitePresentsTableView_EmptyCell_emptyLabel", nil);
         self.emptyLabel.font = [[Config sharedInstance] defaultFontWithSize:15];

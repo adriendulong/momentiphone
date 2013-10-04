@@ -25,6 +25,7 @@
         
         // Label init
         self.texteLabel.font = [[Config sharedInstance] defaultFontWithSize:11];
+        self.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg_volet.png"]];
         
         switch (notification.type) {
             

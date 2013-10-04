@@ -33,6 +33,7 @@
 #import "TutorialViewController.h"
 #import "GAI.h"
 #import "FacebookManager.h"
+#import "UIImage+handling.h"
 
 @interface HomeViewController ()
 @end
@@ -66,6 +67,8 @@ static UIImageView *splashScreen = nil;
     self = [super initWithNibName:@"HomeViewController" bundle:nil];
     if(self) {
         _isShowFormLogin = NO;
+        
+        [self initAllComponents];
     }
     return self;
 }
@@ -98,6 +101,24 @@ static UIImageView *splashScreen = nil;
     
     // Actual View Controller
     [AppDelegate updateActualViewController:self];
+    
+    //Premier lancement de l'application
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    BOOL hasRunOnce = [defaults boolForKey:@"hasRunOnce"];
+    //NSLog(hasRunOnce ? @"Yes" : @"No");
+    if (!hasRunOnce)
+    {
+        [self showTutorialAnimated:YES];
+    }
+    
+    if ([VersionControl sharedInstance].supportIOS7) {
+        [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault
+                                                    animated:YES];
+        
+        [UIView animateWithDuration:0.3 animations:^{
+            [self setNeedsStatusBarAppearanceUpdate];
+        }];
+    }
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -139,15 +160,17 @@ static UIImageView *splashScreen = nil;
 {
     [super viewDidLoad];
     
-    //Premier lancement de l'application
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    BOOL hasRunOnce = [defaults boolForKey:@"hasRunOnce"];
-    //NSLog(hasRunOnce ? @"Yes" : @"No");
-    if (!hasRunOnce)
-    {
-        [self showTutorialAnimated:YES];
-    }
-    
+    [self showSplashScreen];
+}
+
+- (void)didReceiveMemoryWarning
+{
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+- (void)initAllComponents
+{
     // iPhone 5 support
     NSInteger allElementsHeight =  (self.boxView.frame.origin.y + self.boxView.frame.size.height) - self.logoView.frame.origin.y;
     NSInteger espacementTop = ([[VersionControl sharedInstance] screenHeight] - allElementsHeight)/2.0;
@@ -158,7 +181,7 @@ static UIImageView *splashScreen = nil;
     self.loginTextField.autocompleteType = TextFieldAutocompletionTypeEmail|TextFieldAutocompletionTypeEmailFavoris;
     self.loginTextField.autocompleteDisabled = NO;
     
-    // Move 
+    // Move
     [self moveView:self.logoView toYPosition:espacementTop];
     [self moveView:self.boxView toYPosition:(espacementTop + self.logoView.frame.size.height + espacementMiddle)];
     [self moveView:self.backButton toYPosition:(self.boxView.frame.origin.y + espacementBouton)];
@@ -174,62 +197,80 @@ static UIImageView *splashScreen = nil;
     // Texte du bouton Login   ==>  On accentue le 'C'
     //NSArray *ranges = @[[NSValue valueWithRange:NSMakeRange(3, 1)]];
     [_loginButton setButtonWithText:NSLocalizedString(@"HomeViewController_LoginButtonLabel", nil)];
-
-        
-    // top bar 
+    
+    
+    // top bar
     UIImageView* img = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"logo.png"]];
     self.navigationItem.titleView = img;
     
     //mettre le fond
-    self.view.backgroundColor = [[UIColor alloc] initWithPatternImage:[UIImage imageNamed:@"login-bg.png"]];
+    UIImage *backGround = [UIImage imageNamed:@"login-bg"];
+    
+    if ([VersionControl sharedInstance].supportIOS7) {
+        
+        if ([VersionControl sharedInstance].isIphone5) {
+            backGround = [UIImage imageWithImage:backGround scaledToHeight:[VersionControl sharedInstance].screenHeight];
+        }
+    }
+    //NSLog(@"login-bg = %@", NSStringFromCGSize(backGround.size));
+    self.view.backgroundColor = [[UIColor alloc] initWithPatternImage:backGround];
     
     //mettre le fond de la box
     UIImage *image = [UIImage imageNamed:@"bg-box.png"];
     //image = [image resizableImageWithCapInsets:UIEdgeInsetsMake(15, 5, 5, 5)];
     
     image = [[VersionControl sharedInstance] resizableImageFromImage:image withCapInsets:UIEdgeInsetsMake(15, 5, 5, 5)  stretchableImageWithLeftCapWidth:0 topCapHeight:15];
-        
+    
     _bgBox = [[UIImageView alloc] initWithImage:image];
     _bgBox.layer.zPosition = -2;
     [_boxView addSubview:_bgBox];
     
     //on resize la box
     [self caculateHeightBox];
-    
+}
+
+- (void)showSplashScreen
+{
     // ---------- Splash Screen Imitation ---------
     // On affiche le SpashScreen par dessus la vue pour de pas afficher la vue de connexion si il y a une connexion automatique
-    NSString *imageName = nil;
-    if([[VersionControl sharedInstance] screenHeight] == 568) {
-        imageName = @"Default-568h";
-    } else {
-        imageName = @"Default";
+    
+    UIImage *splashImage = [UIImage imageNamed:@"SplashScreen"];
+    //NSLog(@"splashImage.size = %@", NSStringFromCGSize(splashImage.size));
+    
+    if ([VersionControl sharedInstance].isIphone5) {
+        splashImage = [UIImage imageWithImage:splashImage scaledToHeight:[VersionControl sharedInstance].screenHeight];
     }
-    splashScreen = [[UIImageView alloc] initWithImage:[UIImage imageNamed:imageName]];
+    
+    
+    /*if([VersionControl sharedInstance].isIphone5) {
+     splashImage = [UIImage imageNamed:@"Default.png"];
+     } else {
+     splashImage = [UIImage imageNamed:@"Default"];
+     }*/
+    
+    CGSize screenSize = [VersionControl sharedInstance].screenSize;
+    
+    splashScreen = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, screenSize.width, screenSize.height)];
     CGRect frame = splashScreen.frame;
-    frame.origin = CGPointMake(0, -STATUS_BAR_HEIGHT);
+    
+    if (![VersionControl sharedInstance].supportIOS7) {
+        frame.origin = CGPointMake(0, -STATUS_BAR_HEIGHT);/*
+        frame.origin = CGPointMake(0, 0);
+    } else {
+        frame.origin = CGPointMake(0, -STATUS_BAR_HEIGHT);*/
+    }
     splashScreen.frame = frame;
+    
+    //NSLog(@"splashScreen.frame = %@", NSStringFromCGRect(splashScreen.frame));
+    
+    
+    
+    
+    [splashScreen setImage:splashImage];
+    
     [self.view addSubview:splashScreen];
-}
-
-- (void)viewDidUnload {
-    [self setBoxView:nil];
-    [self setInscriptionButton:nil];
-    [self setBgBox:nil];
-    [self setLoginButton:nil];
-    [self setLoginTextField:nil];
-    [self setPasswordTextField:nil];
-    [self setLogoView:nil];
-    [self setForgotPassword:nil];
-    [self setBackButton:nil];
-    [self setUser:nil];
-    [self setScrollView:nil];
-    [super viewDidUnload];
-}
-
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+    
+    
 }
 
 - (void)reinit
@@ -257,14 +298,19 @@ static UIImageView *splashScreen = nil;
 
 #pragma mark - Show Views
 - (void)showTutorialAnimated:(BOOL)animated
-{    
-    TutorialViewController *tutorial = [[TutorialViewController alloc] initWithNibName:@"TutorialViewController" bundle:nil];
-    [tutorial setWantsFullScreenLayout:YES];
-    [tutorial setModalPresentationStyle:UIModalPresentationFullScreen];
-    [self presentViewController:tutorial animated:YES completion:nil];
+{
+    TutorialViewController *tutorial = [[TutorialViewController alloc] initWithXib];
+    //self.definesPresentationContext = YES;
+    //[tutorial setModalPresentationStyle:UIModalPresentationFullScreen];
+    //tutorial.modalPresentationStyle = UIModalPresentationFullScreen;
+    
+    if (![VersionControl sharedInstance].supportIOS7) {
+        [tutorial setWantsFullScreenLayout:YES];
+    }
+    [self.navigationController presentViewController:tutorial animated:animated completion:nil];
 }
 
-- (void) entrerDansMomentAnimated:(BOOL)animated {
+- (void)entrerDansMomentAnimated:(BOOL)animated {
     
     // Loading
     MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
@@ -282,7 +328,8 @@ static UIImageView *splashScreen = nil;
         // create the content view controller
         RootTimeLineViewController *timeLineRoot = [[RootTimeLineViewController alloc]
                                                     initWithUser:[UserCoreData getCurrentUser]
-                                                    withSize:CGSizeMake(320, [VersionControl sharedInstance].screenHeight - TOPBAR_HEIGHT)
+                                                    //withSize:CGSizeMake(320, [VersionControl sharedInstance].screenHeight - TOPBAR_HEIGHT)
+                                                    withSize:CGSizeMake(320, [VersionControl sharedInstance].screenHeight)
                                                     withStyle:TimeLineStyleComplete
                                                     withNavigationController:nil
                                                     shouldReloadMoments:(!animated)

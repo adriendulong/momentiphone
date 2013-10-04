@@ -10,4 +10,6 @@
 
 @interface TutorialViewController : UIViewController <UIScrollViewDelegate>
 
+- (id)initWithXib;
+
 @end

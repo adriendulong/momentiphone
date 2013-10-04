@@ -53,11 +53,22 @@
     CGFloat screenHeight = [VersionControl sharedInstance].screenHeight - STATUS_BAR_HEIGHT;
     frame.size.height = screenHeight;
     self.view.frame = frame;
+    
+    if ([VersionControl sharedInstance].supportIOS7) {
+        frame.origin.y += STATUS_BAR_HEIGHT;
+    }
+    
     self.backgroundFilterView.frame = frame;
     self.backgroundImageView.frame = frame;
     frame = self.generalView.frame;
-    frame.origin.y = (screenHeight - frame.size.height)/2.0;
     frame.origin.x = (self.view.frame.size.width - frame.size.width)/2.0;
+    
+    if ([VersionControl sharedInstance].supportIOS7) {
+        frame.origin.y = (self.view.frame.size.height - frame.size.height)/2.0+STATUS_BAR_HEIGHT;
+    } else {
+        frame.origin.y = (self.view.frame.size.height - frame.size.height)/2.0;
+    }
+    
     self.generalView.frame = frame;
     [self.view addSubview:self.generalView];
     
@@ -101,9 +112,16 @@
     [UIView animateWithDuration:0.3 animations:^{
         self.backgroundFilterView.alpha = 0.5;
     } completion:^(BOOL finished) {
+        
         [UIView animateWithDuration:0.2 animations:^{
             self.generalView.alpha = 1;
         }];
+    }];
+    
+    [UIView animateWithDuration:0.3 animations:^{
+        if ([VersionControl sharedInstance].supportIOS7) {
+            self.view.backgroundColor = [UIColor colorWithRed:1 green:1 blue:1 alpha:0.5];
+        }
     }];
     
 }
@@ -112,25 +130,6 @@
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
-}
-
-- (void)viewDidUnload {
-    [self setBigLabel:nil];
-    [self setSmallLabel1:nil];
-    [self setSmallLabel2:nil];
-    [self setBackgroundFilterView:nil];
-    [self setGeneralView:nil];
-    [self setSwitchButton:nil];
-    [self setMoment:nil];
-    [self setTimeLine:nil];
-    [self setRootViewController:nil];
-    [self setBackgroundImageView:nil];
-    [self setPublicButton:nil];
-    [self setFriendsButton:nil];
-    [self setPrivateButton:nil];
-    [self setPrivacyTitleLabel:nil];
-    [self setPrivacyDetailsLabel:nil];
-    [super viewDidUnload];
 }
 
 - (IBAction)clicInviter {
@@ -152,6 +151,7 @@
             } completion:^(BOOL finished) {
                 [UIView animateWithDuration:0.2 animations:^{
                     self.backgroundFilterView.alpha = 0;
+                    self.view.backgroundColor = [UIColor whiteColor];
                 } completion:^(BOOL finished) {
                     
                     // Show Navigation Bar

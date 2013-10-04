@@ -39,6 +39,11 @@
     self = [super initWithNibName:@"MesReglagesViewController" bundle:nil];
     if(self) {
         self.delegate = delegate;
+        
+        self.view.backgroundColor = [[UIColor alloc] initWithPatternImage:[UIImage imageNamed:@"bg.png"]];
+        
+        [CustomNavigationController setBackButtonChevronWithViewController:self];
+        [CustomNavigationController setTitle:@"Paramètres" withColor:[Config sharedInstance].orangeColor withViewController:self];
     }
     return self;
 }
@@ -50,9 +55,6 @@
     [super viewDidLoad];
     // Google Analytics
     self.trackedViewName = @"Vue Paramètre";
-    
-    [CustomNavigationController setBackButtonChevronWithViewController:self];
-    [CustomNavigationController setTitle:@"Paramètres" withColor:[UIColor blackColor] withViewController:self];
     
     // iPhone 5
     CGRect frame = self.view.frame;
@@ -110,33 +112,6 @@
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
-}
-
-- (void)viewDidUnload {
-    [self setContentView:nil];
-    [self setDelegate:nil];
-    [self setFollowUsLabel:nil];
-    [self setMadeWithLoveLabel:nil];
-    [self setNotifInvitLabel:nil];
-    [self setTitreConnaitreMoment:nil];
-    [self setTitreNotificationLabel:nil];
-    [self setTitreProfilLabel:nil];
-    [self setTitreAproposLabel:nil];
-    [self setNotifPhotoLabel:nil];
-    [self setNotifMessageLabel:nil];
-    [self setNotifModifLabel:nil];
-    [self setVersionLabel:nil];
-    [self setNotifInviteButtonPush:nil];
-    [self setNotifInviteButtonEmail:nil];
-    [self setNotifPhotoButtonPush:nil];
-    [self setNotifPhotoButtonEmail:nil];
-    [self setNotifMessageButtonPush:nil];
-    [self setNotifMessageButtonEmail:nil];
-    [self setNotifModifButtonPush:nil];
-    [self setNotifModifButtonEmail:nil];
-    [self setLikeButton:nil];
-    [self setTitreFeedbackLabel:nil];
-    [super viewDidUnload];
 }
 
 #pragma mark - Actions
@@ -209,7 +184,7 @@
         [mc setMessageBody:NSLocalizedString(@"WebModalViewController_ConnaitreMoment_MessageBody", nil) isHTML:YES];
         
         // Present mail view controller on screen
-        [self presentViewController:mc animated:YES completion:nil];
+        [self.navigationController presentViewController:mc animated:YES completion:nil];
     }
     else
     {
@@ -236,15 +211,15 @@
     
     // Delegate
     controller.messageComposeDelegate = self;
-    [self presentViewController:controller animated:YES completion:nil];
+    [self.navigationController presentViewController:controller animated:YES completion:nil];
 }
 
 - (IBAction)clicTutoriel
 {
-    TutorialViewController *tutorial = [[TutorialViewController alloc] initWithNibName:@"TutorialViewController" bundle:nil];
+    TutorialViewController *tutorial = [[TutorialViewController alloc] initWithXib];
     [tutorial setWantsFullScreenLayout:YES];
     [tutorial setModalPresentationStyle:UIModalPresentationFullScreen];
-    [self presentViewController:tutorial animated:YES completion:nil];
+    [self.navigationController presentViewController:tutorial animated:YES completion:nil];
 }
 
 - (IBAction)clicEditProfil {
@@ -254,7 +229,7 @@
 
 - (IBAction)clicCGU {
     WebModalViewController *webView = [[WebModalViewController alloc] initWithURL:[NSURL URLWithString:kAppMomentCGU]];
-    [self presentViewController:webView animated:YES completion:nil];
+    [self.navigationController presentViewController:webView animated:YES completion:nil];
 }
 
 - (IBAction)clicContactUs {
@@ -295,7 +270,7 @@
      show];
     
     /*
-    [UserClass logoutCurrentUserWithEnded:^ {
+    [UserClass logoutCurrentUserWithRequestToServer:YES withEnded:^ {
         // Show Home
         [self.delegate showRootController:YES];
         [self.delegate.navigationController popToRootViewControllerAnimated:YES];
@@ -310,7 +285,7 @@
     // Déconnexion
     if(buttonIndex == 1)
     {
-        [UserClass logoutCurrentUserWithEnded:^ {
+        [UserClass logoutCurrentUserWithRequestToServer:YES withEnded:^ {
             // Show Home
             [self.delegate showRootController:YES];
             [self.delegate.navigationController popToRootViewControllerAnimated:YES];

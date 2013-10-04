@@ -77,7 +77,7 @@ static RedirectionManager *sharedInstance = nil;
 - (void)sendRedirectionToMomentWithId:(NSNumber *)momentId withType:(int)type andWithApplicationState:(UIApplicationState)state
 {
     
-    if (state != UIApplicationStateActive || state == -1) {
+    if (state != UIApplicationStateActive) {
         UIViewController *actualView = [AppDelegate actualViewController];
         
         [MomentClass getInfosMomentWithId:momentId.integerValue withEnded:^(NSDictionary *attributes) {
@@ -127,7 +127,7 @@ static RedirectionManager *sharedInstance = nil;
 #pragma mark Perform Redirection
 - (void)simpleRedirectionFromActualView:(UIViewController *)actualView withType:(int)type andMoment:(MomentClass *)moment
 {
-    if (actualView.modalViewController != nil) {
+    if (actualView.presentedViewController != nil) {
         [[UIApplication sharedApplication] setStatusBarHidden:NO];
         [actualView dismissViewControllerAnimated:NO completion:nil];
     }

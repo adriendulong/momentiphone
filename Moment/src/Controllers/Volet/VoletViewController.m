@@ -86,6 +86,17 @@ static VoletViewController *actualVoletViewController;
     return self;
 }
 
+-(void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    if ([VersionControl sharedInstance].supportIOS7) {
+        CGRect frame = self.view.frame;
+        frame.origin.y += 10;
+        [self.view setFrame:frame];
+    }
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -123,16 +134,22 @@ static VoletViewController *actualVoletViewController;
     
     // TableView
     frame = self.tableView.frame;
-    frame.size.height = self.buttonsView.frame.origin.y - frame.origin.y;
+    if ([VersionControl sharedInstance].supportIOS7) {
+        frame.size.height = self.buttonsView.frame.origin.y - frame.origin.y-STATUS_BAR_HEIGHT;
+    } else {
+        frame.size.height = self.buttonsView.frame.origin.y - frame.origin.y;
+    }
     self.tableView.frame = frame;
     
     // Background
     self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg_volet.png"]];
     self.view.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
     
+    self.buttonsView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg_volet.png"]];
+    
     // Section
     font = [[Config sharedInstance] defaultFontWithSize:13];
-    self.sectionView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg_section"]];
+    self.sectionView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg_section.png"]];
     self.sectionTitleLabel.font = font;
     self.sectionTitleLabel.text = NSLocalizedString(@"VoletViewController_Section_Notifications", nil);
     
@@ -147,7 +164,7 @@ static VoletViewController *actualVoletViewController;
     [self.invitationsButton addSubview:self.nbInvitationsView];
     [self.notificationsButton addSubview:self.nbNotificationsView];
     
-    UIImage *bgNotif = [UIImage imageNamed:@"bg_notif"];
+    UIImage *bgNotif = [UIImage imageNamed:@"bg_notif.png"];
     bgNotif = [[VersionControl sharedInstance] resizableImageFromImage:bgNotif withCapInsets:UIEdgeInsetsMake(2, 2, 2, 2) stretchableImageWithLeftCapWidth:2 topCapHeight:2];
     
     self.nbNotificationsBackground.image = bgNotif;
@@ -167,6 +184,11 @@ static VoletViewController *actualVoletViewController;
     
     // Load
     //[self loadNotifications];
+}
+
+- (UIStatusBarStyle)preferredStatusBarStyle
+{
+    return UIStatusBarStyleLightContent;
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -321,31 +343,6 @@ static VoletViewController *actualVoletViewController;
         
     }];
     
-}
-
-- (void)viewDidUnload {
-    [self setTableView:nil];
-    [self setNotificationsButton:nil];
-    [self setInvitationsButton:nil];
-    [self setButtonsView:nil];
-    [self setSectionView:nil];
-    [self setSectionTitleLabel:nil];
-    [self setTtSectionTitleLabel:nil];
-    [self setSegementShadow:nil];
-    [self setNomUserButton:nil];
-    [self setSearchTextField:nil];
-    [self setMesActualites:nil];
-    [self setMesMoments:nil];
-    [self setParametresButton:nil];
-    [self setNbNotificationsView:nil];
-    [self setNbNotificationsLabel:nil];
-    [self setNbNotificationsBackground:nil];
-    [self setNbInvitationsView:nil];
-    [self setNbInvitationsLabel:nil];
-    [self setNbInvitationsBackground:nil];
-    [self setEventMissingButton:nil];
-    [self setRevivreMomentButton:nil];
-    [super viewDidUnload];
 }
 
 #pragma mark - Google Analytics

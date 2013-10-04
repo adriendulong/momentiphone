@@ -386,11 +386,7 @@ static const CGFloat kDetailsLabelFontSize = 12.f;
 	detailsLabel.adjustsFontSizeToFitWidth = NO;
     
 	//detailsLabel.textAlignment = kCTTextAlignmentCenter;
-    if ([[VersionControl sharedInstance] supportIOS6]) {
-        detailsLabel.textAlignment = NSTextAlignmentCenter;
-    } else {
-        detailsLabel.textAlignment = UITextAlignmentCenter;
-    }
+    detailsLabel.textAlignment = NSTextAlignmentCenter;
 	detailsLabel.opaque = NO;
 	detailsLabel.backgroundColor = [UIColor clearColor];
 	detailsLabel.textColor = [UIColor whiteColor];

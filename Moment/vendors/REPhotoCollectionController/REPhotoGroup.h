@@ -30,8 +30,12 @@
 @property (nonatomic, readwrite) NSUInteger day;
 @property (nonatomic, readwrite) NSUInteger month;
 @property (nonatomic, readwrite) NSUInteger year;
+@property (nonatomic, readwrite) NSUInteger hour;
+@property (nonatomic, readwrite) NSUInteger minute;
 @property (nonatomic, strong) NSString *name;
 @property (nonatomic, strong) NSMutableArray *items;
 @property (nonatomic, strong) NSNumber *momentId;
+
+- (NSString *)description;
 
 @end

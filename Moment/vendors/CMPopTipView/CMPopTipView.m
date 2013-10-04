@@ -266,7 +266,7 @@
         CGRect titleFrame = [self contentFrame];
         [self.title drawInRect:titleFrame
                       withFont:self.titleFont
-                 lineBreakMode:UILineBreakModeClip
+                 lineBreakMode:NSLineBreakByClipping
                      alignment:self.titleAlignment];
     }
 	
@@ -278,12 +278,12 @@
         if (self.title) {
             textFrame.origin.y += [self.title sizeWithFont:self.titleFont
                                          constrainedToSize:CGSizeMake(textFrame.size.width, 99999.0)
-                                             lineBreakMode:UILineBreakModeClip].height;
+                                             lineBreakMode:NSLineBreakByClipping].height;
         }
         
         [self.message drawInRect:textFrame
                         withFont:textFont
-                   lineBreakMode:UILineBreakModeWordWrap
+                   lineBreakMode:NSLineBreakByWordWrapping
                        alignment:self.textAlignment];
     }
 }
@@ -342,7 +342,7 @@
     if (self.message!=nil) {
         textSize= [self.message sizeWithFont:textFont
                            constrainedToSize:CGSizeMake(rectWidth, 99999.0)
-                               lineBreakMode:UILineBreakModeWordWrap];
+                               lineBreakMode:NSLineBreakByClipping];
     }
     if (self.customView != nil) {
         textSize = self.customView.frame.size;
@@ -350,7 +350,7 @@
     if (self.title != nil) {
         textSize.height += [self.title sizeWithFont:self.titleFont
                                   constrainedToSize:CGSizeMake(rectWidth, 99999.0)
-                                      lineBreakMode:UILineBreakModeClip].height;
+                                      lineBreakMode:NSLineBreakByClipping].height;
     }
     
 	bubbleSize = CGSizeMake(textSize.width + cornerRadius*2, textSize.height + cornerRadius*2);
@@ -604,7 +604,7 @@
 		
 		self.textFont = [UIFont boldSystemFontOfSize:14.0];
 		self.textColor = [UIColor whiteColor];
-		self.textAlignment = UITextAlignmentCenter;
+		self.textAlignment = NSTextAlignmentCenter;
 		self.backgroundColor = [UIColor colorWithRed:62.0/255.0 green:60.0/255.0 blue:154.0/255.0 alpha:1.0];
         self.has3DStyle = YES;
         self.borderColor = [UIColor blackColor];
@@ -640,7 +640,7 @@
         
         self.titleFont = [UIFont boldSystemFontOfSize:16.0];
         self.titleColor = [UIColor whiteColor];
-        self.titleAlignment = UITextAlignmentCenter;
+        self.titleAlignment = NSTextAlignmentCenter;
         self.textFont = [UIFont systemFontOfSize:14.0];
 		self.textColor = [UIColor whiteColor];
 	}

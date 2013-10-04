@@ -110,14 +110,21 @@
 
     // Navigation bar
     [CustomNavigationController setBackButtonChevronWithViewController:self];
-    [CustomNavigationController setTitle:@"Importation" withColor:[UIColor blackColor] withViewController:self];
+    [CustomNavigationController setTitle:@"Importation" withColor:[Config sharedInstance].orangeColor withViewController:self];
     
     // iPhone 5
     CGRect frame = self.view.frame;
     frame.size.height = [VersionControl sharedInstance].screenHeight - TOPBAR_HEIGHT;
-    self.view.frame= frame;
+    
+    if ([VersionControl sharedInstance].supportIOS7) {
+        frame.origin.y += TOPBAR_HEIGHT;
+    }
+    
+    self.view.frame = frame;
     self.tableView.frame = frame;
     emptyCellSize = frame.size.height;
+    
+    self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg.png"]];
     
     // Load Events
     [self loadEvents];
@@ -127,13 +134,6 @@
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
-}
-
-- (void)viewDidUnload
-{
-    [self setEvents:nil];
-    [self setMoments:nil];
-    [super viewDidUnload];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -182,6 +182,7 @@
             frame.size.width = self.tableView.frame.size.width;
             frame.size.height = emptyCellSize;
             cell.frame = frame;
+            cell.backgroundColor = [UIColor clearColor];
             
             UILabel *emptyLabel = [[UILabel alloc] init];
             emptyLabel.text = NSLocalizedString(@"ImporterFBViewController_EmptyLabel", nil);
@@ -215,7 +216,12 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 140.0f;
+    
+    if (isEmpty) {
+        return self.tableView.frame.size.height;
+    } else {
+        return 140.0f;
+    }
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath

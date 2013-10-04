@@ -9,15 +9,16 @@
 #import "PhotoCollectionViewController.h"
 #import "PhotoCollectionPlusCell.h"
 #import "PhotoCollectionCell.h"
+#import "PhotosMultipleSelectionViewController.h"
 #import "MomentClass+Server.h"
 #import "ProfilViewController.h"
-#import "PhotoDownloader.h"
+#import "PhotoThumbnailDownloader.h"
 #import "RotationNavigationControllerViewController.h"
 #import "Config.h"
+#import <AssetsLibrary/AssetsLibrary.h>
 
 @interface PhotoCollectionViewController () {
     @private
-    //BOOL isFirstLoading;
     BOOL reachedEndPage;
     MTStatusBarOverlay *overlayStatusBar;
     CGSize viewSize;
@@ -38,7 +39,6 @@
 {
     self = [super initWithNibName:@"PhotoCollectionViewController" bundle:nil];
     if(self) {
-        
         self.rootViewController = (RootOngletsViewController*)rootViewController;
         self.pageNumber = 1;
         reachedEndPage = NO;
@@ -48,10 +48,12 @@
         overlayStatusBar = [MTStatusBarOverlay sharedInstance];
         overlayStatusBar.progress = 0.0;
         
+        self.photosToUpload = [NSMutableArray array];
+        
         // Loader photos
-        dispatch_async( dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        /*dispatch_async( dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             [self loadPhotosFromPage:self.pageNumber];
-        });
+        });*/
     }
     return self;
 }
@@ -64,6 +66,8 @@ withRootViewController:(UIViewController *)rootViewController
     if(self) {
         self.moment = moment;
         self.style = PhotoViewControllerStyleComplete;
+        
+        [self loadPhotosFromPage:self.pageNumber];
     }
     return self;
 }
@@ -159,10 +163,6 @@ withRootViewController:(UIViewController *)rootViewController
     return (interfaceOrientation != UIInterfaceOrientationPortrait);
 }
 
-- (void)viewDidUnload {
-    [super viewDidUnload];
-}
-
 #pragma mark - UICollectionView delegate
 
 -(NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView
@@ -189,7 +189,9 @@ withRootViewController:(UIViewController *)rootViewController
         [cell.plusButton setImage:normal forState:UIControlStateNormal];
         [cell.plusButton setImage:enfonce forState:UIControlStateSelected];
         [cell.plusButton setImage:enfonce forState:UIControlStateHighlighted];
-        [cell.plusButton addTarget:self action:@selector(showPhotoActionSheet) forControlEvents:UIControlEventTouchUpInside];
+        [cell.plusButton addTarget:self action:@selector(clicPlusButton) forControlEvents:UIControlEventTouchUpInside];
+        
+        cell.plusButton.enabled = ([self canShowPlusButton]) ? YES : NO;
         
         return cell;
         
@@ -270,10 +272,10 @@ withRootViewController:(UIViewController *)rootViewController
 // -------------------------------------------------------------------------------
 - (void)startIconDownload:(Photos *)photo forIndexPath:(NSIndexPath *)indexPath
 {
-    PhotoDownloader *photoDownloader = [self.imageDownloadsInProgress objectForKey:indexPath];
+    PhotoThumbnailDownloader *photoDownloader = [self.imageDownloadsInProgress objectForKey:indexPath];
     if (photoDownloader == nil)
     {
-        photoDownloader = [[PhotoDownloader alloc] init];
+        photoDownloader = [[PhotoThumbnailDownloader alloc] init];
         photoDownloader.photo = photo;
         [photoDownloader setCompletionHandler:^{
             
@@ -363,9 +365,7 @@ withRootViewController:(UIViewController *)rootViewController
 #pragma mark - Loading Photo pages
 
 - (void)loadPhotosFromPage:(int)pageNumber
-{    
-    //isLoadingPhotos = YES;
-    
+{
     // Loader soit à partir du moment soit à partir du user
     id loader = (self.style == PhotoViewControllerStyleComplete)? self.moment : self.user;
     
@@ -373,11 +373,9 @@ withRootViewController:(UIViewController *)rootViewController
         
         dispatch_queue_t loadingQueue = dispatch_queue_create("PhotosLoadingQueue", NULL);
         dispatch_async(loadingQueue, ^{
-            
-            //NSLog(@"moment: %i | photos: %i",self.moment.momentId.intValue, photos.count);
 
             if (photos && photos.count > 0) {
-                [self.photos addObjectsFromArray:photos];                
+                [self.photos addObjectsFromArray:photos];
                 
                 if (self.pageNumber > 1) {
                     // Augmenter taille de la scroll view de la big photo
@@ -396,7 +394,6 @@ withRootViewController:(UIViewController *)rootViewController
                 reachedEndPage = YES;
             }
         });
-        dispatch_release(loadingQueue);
         
         
         if(self.style == PhotoViewControllerStyleProfil) {
@@ -416,36 +413,48 @@ withRootViewController:(UIViewController *)rootViewController
 
 -(void)clicPlusButton
 {
-    // Si on est invité, on peux ajouter une photo
-    // User State
-    enum UserState state = self.moment.state.intValue;
-    if(state == 0) {
-        state = ([self.moment.owner.userId isEqualToNumber:[UserCoreData getCurrentUser].userId]) ? UserStateOwner : UserStateNoInvited;
-    }
-    if(
-       (
-        (
-         (self.moment.privacy.intValue == MomentPrivacyFriends)||(self.moment.privacy.intValue == MomentPrivacySecret))
-        && (state != UserStateNoInvited)
-        ) ||
-       (self.moment.privacy.intValue == MomentPrivacyOpen)
-       )
-    {
+    
+    if (self.photosInCache && self.photosInCache.count > 0) {
         
-        // Google Analytics
-        [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Ajout" value:nil];
+        UIAlertView *uploadAlreadyInProgress = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"PhotoViewController_AlertView_UploadAlreadyInProgress_Title", nil)
+                                                                          message:NSLocalizedString(@"PhotoViewController_AlertView_UploadAlreadyInProgress_Message", nil)
+                                                                         delegate:nil
+                                                                cancelButtonTitle:NSLocalizedString(@"AlertView_Button_OK", nil)
+                                                                otherButtonTitles:nil];
         
-        [self showPhotoActionSheet];
-    }
-    // Pas le droit d'ajouter une photo
-    else
-    {
-        [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"PhotoViewController_AlertView_NoPermissionAddPhoto_Title", nil)
-                                    message:NSLocalizedString(@"PhotoViewController_AlertView_NoPermissionAddPhoto_Message", nil)
-                                   delegate:nil
-                          cancelButtonTitle:NSLocalizedString(@"AlertView_Button_OK", nil)
-                          otherButtonTitles:nil]
-         show];
+        [uploadAlreadyInProgress show];
+    } else {
+        
+        // Si on est invité, on peux ajouter une photo
+        // User State
+        enum UserState state = self.moment.state.intValue;
+        if(state == 0) {
+            state = ([self.moment.owner.userId isEqualToNumber:[UserCoreData getCurrentUser].userId]) ? UserStateOwner : UserStateNoInvited;
+        }
+        if(
+           (
+            (
+             (self.moment.privacy.intValue == MomentPrivacyFriends)||(self.moment.privacy.intValue == MomentPrivacySecret))
+            && (state != UserStateNoInvited)
+            ) ||
+           (self.moment.privacy.intValue == MomentPrivacyOpen || self.moment.privacy.intValue == MomentPrivacySpecialEvent || self.moment.privacy.intValue == MomentPrivacySpecialEventLive))
+        {
+            
+            // Google Analytics
+            [self sendGoogleAnalyticsEvent:@"Clic Bouton" label:@"Clic Ajout" value:nil];
+            
+            [self showPhotoActionSheet];
+        }
+        // Pas le droit d'ajouter une photo
+        else
+        {
+            [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"PhotoViewController_AlertView_NoPermissionAddPhoto_Title", nil)
+                                        message:NSLocalizedString(@"PhotoViewController_AlertView_NoPermissionAddPhoto_Message", nil)
+                                       delegate:nil
+                              cancelButtonTitle:NSLocalizedString(@"AlertView_Button_OK", nil)
+                              otherButtonTitles:nil]
+             show];
+        }
     }
 }
 
@@ -492,6 +501,38 @@ withRootViewController:(UIViewController *)rootViewController
     return _bigPhotoViewController;
 }
 
+- (BOOL)canShowPlusButton
+{
+    // Privacy
+    // User State
+    enum UserState state = self.moment.state.intValue;
+    if(state == 0) {
+        state = ([self.moment.owner.userId isEqualToNumber:[UserCoreData getCurrentUser].userId]) ? UserStateOwner : UserStateNoInvited;
+    }
+    
+    enum MomentPrivacy privacy = self.moment.privacy.intValue;
+    
+    if (state == UserStateOwner || state == UserStateAdmin) {
+        
+        return  YES;
+    } else {
+        
+        switch (privacy) {
+            case MomentPrivacySpecialEvent:
+                return NO;
+                break;
+                
+            case MomentPrivacySpecialEventLive:
+                return YES;
+                break;
+                
+            default:
+                return YES;
+                break;
+        }
+    }
+}
+
 #pragma mark - UIActionSheet Delegate
 
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
@@ -507,23 +548,10 @@ withRootViewController:(UIViewController *)rootViewController
             // Google Analytics
             [self sendGoogleAnalyticsEvent:@"Clic ActionSheet" label:@"Choix Album" value:nil];
             
-            // Create the an album controller and image picker
-            
-            if (self.imagePicker == nil) {
-                ELCAlbumPickerController *albumController = [[ELCAlbumPickerController alloc] init];
-                ELCImagePickerController *imagePickerController = [[ELCImagePickerController alloc] initWithRootViewController:albumController];
-                imagePickerController.modalPresentationStyle = UIModalPresentationCurrentContext;
-                imagePickerController.navigationBar.barStyle = UIBarStyleBlackTranslucent;
-                albumController.parent = imagePickerController;
-                imagePickerController.delegate = self;
-                
-                self.imagePicker = imagePickerController;
-                
-                // Present modally
-                [self performSelector:@selector(getImagePickers:) withObject:@[self.imagePicker, self.rootViewController, @YES] afterDelay:0.1];
-            } else {
-                [self performSelector:@selector(dismissImagePickers:) withObject:@[self.rootViewController, @YES] afterDelay:0.1];
-            }
+            // Present modally
+            PhotosMultipleSelectionViewController *albums = [[PhotosMultipleSelectionViewController alloc] initWithMoment:self.moment];
+            albums.delegate = self;
+            [self.rootViewController.navigationController presentViewController:albums animated:YES completion:nil];
         }
             break;
             
@@ -535,108 +563,68 @@ withRootViewController:(UIViewController *)rootViewController
             
             if (self.picker == nil) {
                 UIImagePickerController *imagePickerController = [[UIImagePickerController alloc] init];
-                imagePickerController.modalPresentationStyle = UIModalPresentationCurrentContext;
                 imagePickerController.sourceType = UIImagePickerControllerSourceTypeCamera;
                 imagePickerController.delegate = self;
                 
                 self.picker = imagePickerController;
                 
-                [self performSelector:@selector(getImagePickers:) withObject:@[self.picker, self.rootViewController, @YES] afterDelay:0.1];
+                [self presentViewController:self.picker animated:YES completion:nil];
             } else {
-                [self performSelector:@selector(dismissImagePickers:) withObject:@[self.rootViewController, @YES] afterDelay:0.1];
+                [self dismissViewControllerAnimated:YES completion:nil];
             }
         }
             break;
     }
 }
 
-#pragma mark - Modal View methods
-
-- (void)getImagePickers:(NSArray *)parameters
-{
-    [parameters[1] presentViewController:parameters[0] animated:parameters[2] completion:nil];
-}
-
-- (void)dismissImagePickers:(NSArray *)parameters
-{
-    [parameters[0] dismissViewControllerAnimated:parameters[1] completion:nil];
-    
-    if ([self.picker isEqual:parameters[0]]) {
-        //NSLog(@"C'était un picker normal.");
-        self.picker = nil;
-    } else if ([self.imagePicker isEqual:parameters[0]]) {
-        //NSLog(@"C'était un picker ELC.");
-        self.imagePicker = nil;
-    }
-}
-
-#pragma mark - ELCImagePickerControllerDelegate
-
-- (void)elcImagePickerController:(ELCImagePickerController *)picker didFinishPickingMediaWithInfo:(NSArray *)info
-{
-    //NSLog(@"elcImagePickerController | didFinishPickingMediaWithInfo");
-    
-    [self performSelector:@selector(dismissImagePickers:) withObject:@[self.rootViewController, @YES]];
-    
-    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-    hud.labelText = NSLocalizedString(@"MBProgressHUD_UploadPreparing", nil);
-    
-    dismissUploadPreparingHUD = NO;
-    
-    self.mediaInfo = info.copy;
-    info = nil;
-    
-    //[NSThread detachNewThreadSelector:@selector(stackImages:) toTarget:self withObject:@[info, picker]];
-    
-    dispatch_async( dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        // Add code here to do background processing
-        //
-        //NSLog(@"stackImages in thread now...");
-        [self stackImages:@[self.mediaInfo, picker]];
-    });
-}
-- (void)elcImagePickerControllerDidCancel:(ELCImagePickerController *)picker
-{
-    //NSLog(@"elcImagePickerControllerDidCancel");
-    [self performSelector:@selector(dismissImagePickers:) withObject:@[self.rootViewController, @YES] afterDelay:0.1];
-}
-
 #pragma mark - ImagePickerControllerDelegate
 
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
-{
+{    
     // Dismiss
-    [self performSelector:@selector(dismissImagePickers:) withObject:@[self.rootViewController, @YES]];
+    [self dismissViewControllerAnimated:YES completion:nil];
     
-    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view.window animated:YES];
     hud.labelText = NSLocalizedString(@"MBProgressHUD_UploadPreparing", nil);
     
     dismissUploadPreparingHUD = NO;
     
-    self.mediaInfo = info.copy;
+    UIImage *photoToSave = info[@"UIImagePickerControllerOriginalImage"];
     info = nil;
     
-    NSLog(@"self.mediaInfo = %@", self.mediaInfo);
-    
-    //[NSThread detachNewThreadSelector:@selector(stackImages:) toTarget:self withObject:@[info, picker]];
-    
-    dispatch_async( dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        // Add code here to do background processing
-        //
-        //NSLog(@"stackImages in thread now...");
-        [self stackImages:@[self.mediaInfo, picker]];
-    });
+    ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
+    // Request to save the image to camera roll
+    [library writeImageToSavedPhotosAlbum:[photoToSave CGImage]
+                              orientation:(ALAssetOrientation)[photoToSave imageOrientation]
+                          completionBlock:^(NSURL *assetURL, NSError *error) {
+                              
+        if (!error) {
+            
+            Photo *photo = [[Photo alloc] init];
+            photo.assetUrl = assetURL;
+            photo.momentId = self.moment.momentId;
+            photo.isSelected = YES;
+            
+            [self.photosToUpload addObject:photo];
+            
+            dispatch_async( dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                [self stackImages];
+            });
+        } else {
+            NSLog(@"Image save error: %@", error.localizedDescription);
+        }  
+    }];
 }
 
-- (void)stackImages:(NSArray *)parameters
+//- (void)stackImagesWithPicker:(id)picker
+- (void)stackImages
 {
-    id mediaInfoArray = [parameters objectAtIndex:0];
-    id picker = [parameters objectAtIndex:1];
+ 
+    // Disable the idle timer
+    [[UIApplication sharedApplication] setIdleTimerDisabled:YES];
     
-    __block NSMutableArray *images = [NSMutableArray arrayWithCapacity:[mediaInfoArray count]];
     
-    
-    //NSLog(@"mediaInfoArray = %@",mediaInfoArray);
+    self.photosInCache = [NSMutableArray arrayWithCapacity:self.photosToUpload.count];
     
     
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
@@ -645,90 +633,56 @@ withRootViewController:(UIViewController *)rootViewController
     
     NSError *error = nil;
     if (![[NSFileManager defaultManager] fileExistsAtPath:photosPath])
-        [[NSFileManager defaultManager] createDirectoryAtPath:photosPath withIntermediateDirectories:NO attributes:nil error:&error]; //Create folder
+        [[NSFileManager defaultManager] createDirectoryAtPath:photosPath withIntermediateDirectories:NO attributes:nil error:&error];
+
     
-    
-    // Load From Library
-    if([picker isMemberOfClass:[ELCImagePickerController class]]) {
+    [self.photosToUpload enumerateObjectsUsingBlock:^(Photo *photo, NSUInteger idx, BOOL *stop) {
         
-        //NSLog(@"Library | N° of Photos = %i",[mediaInfoArray count]);
-        for( NSDictionary *attributes in mediaInfoArray ) {
-            
-            //NSLog(@"attributes = %@", attributes);
-            
-            // Resize Image
-            //[images addObject:[[Config sharedInstance] imageWithMaxSize:attributes[@"UIImagePickerControllerOriginalImage"] maxSize:PHOTO_MAX_SIZE]];
-            
-            //NSData *imageData = UIImagePNGRepresentation([[Config sharedInstance] imageWithMaxSize:attributes[@"UIImagePickerControllerOriginalImage"] maxSize:PHOTO_MAX_SIZE]);
-            NSData *imageData = UIImageJPEGRepresentation([[Config sharedInstance] imageWithMaxSize:attributes[@"UIImagePickerControllerOriginalImage"] maxSize:PHOTO_MAX_SIZE], 0.8);
-            
-            NSString *imageName = [NSString stringWithFormat:@"Photo_%f.png",[[NSDate date] timeIntervalSince1970]];
-            
-            NSString* fullPathToPhoto = [photosPath stringByAppendingPathComponent:imageName];
-            //NSLog(@"Library | fullPathToFile = %@",fullPathToPhoto);
-            
-            [imageData writeToFile:fullPathToPhoto atomically:NO];
-            imageData = nil;
-            [images addObject:fullPathToPhoto];
+        @autoreleasepool {
+            [[Config sharedInstance] getUIImageFromAssetURL:photo.assetUrl
+                                                     toPath:photosPath
+                                                  withEnded:^(NSString *fullPathToPhoto) {
+                                                      
+                if (fullPathToPhoto) {
+                    
+                    //NSLog(@"Photo n°%i/%i", idx+1, self.photosToUpload.count);
+                    
+                    if (![self.photosInCache containsObject:fullPathToPhoto]) {
+                        [self.photosInCache addObject:fullPathToPhoto];
+                        
+                        //nbPhotosCountdown += 1;
+                        
+                        //NSData *data = [NSKeyedArchiver archivedDataWithRootObject:self.photosInCache];
+                        //long size = [data length];
+                        
+                        //NSLog(@"Photos: %f Mb", size/1000000);
+                        //NSLog(@"Photo n°%i/%i: %f Mb", nbPhotosCountdown, self.mediaInfo.count, (CGFloat)size/1000000);
+                        //NSLog(@"Photo n°%i/%i", idx+1, self.photosToUpload.count);
+                        //[[MemoryViewer sharedInstance] showMemUsage];
+                    }
+                    
+                    if (self.photosInCache.count == self.photosToUpload.count) {
+                        
+                        dispatch_async( dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                            [self prepareForSendingToServer];
+                            
+                            [self.photosToUpload removeAllObjects];
+                        });
+                    }
+                }
+            }];
         }
         
-        mediaInfoArray = nil;
-        self.mediaInfo = nil;
-    }
-    // Load from Camera
-    else {
-        
-        UIImageWriteToSavedPhotosAlbum(mediaInfoArray[@"UIImagePickerControllerOriginalImage"], nil, nil, nil);
-        
-        NSLog(@"mediaInfoArray = %@",mediaInfoArray);
-        
-        // Get your image.
-        NSData *imageData = UIImageJPEGRepresentation([[Config sharedInstance] imageWithMaxSize:mediaInfoArray[@"UIImagePickerControllerOriginalImage"] maxSize:PHOTO_MAX_SIZE], 0.8);
-        
-        NSString *imageName = [NSString stringWithFormat:@"Camera_%f.png",[[NSDate date] timeIntervalSince1970]];
-        
-        NSString *fullPathToPhoto = [photosPath stringByAppendingPathComponent:imageName];
-        //NSLog(@"Camera | fullPathToFile = %@",fullPathToPhoto);
-        
-        [imageData writeToFile:fullPathToPhoto atomically:NO];
-        imageData = nil;
-        [images addObject:fullPathToPhoto];
-        
-        mediaInfoArray = nil;
-        self.mediaInfo = nil;
-    }
-    
-    if (images.count > 0) {
-        
-        dispatch_async( dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            // Add code here to do background processing
-            //
-            //NSLog(@"images count first = %i",images.count);
-            
-            [self prepareForSendingToServer:images];
-            
-            images = nil;
-        });
-    }
+    }];
 }
 
-- (void)prepareForSendingToServer:(NSMutableArray *)images
+- (void)prepareForSendingToServer
 {
-    
-    //NSLog(@"prepareForSendingToServer...");
-    //NSLog(@"images = %@",images);
-    //NSLog(@"images count = %i",images.count);
     
     // ----- Envoi au Server -----
     
-    // Disable the idle timer
-    [[UIApplication sharedApplication] setIdleTimerDisabled:YES];
+    int totalImages = self.photosInCache.count;
     
-    int totalImages = [images count];
-    //NSLog(@"totalImages = %i",totalImages);
-    
-    // Préload cadres des images
-    //NSInteger nouvelleTaille = [self.photos count] + totalImages + 1; // Anciennes + Nouvelle + PLUS_BUTTON
 #ifdef ACTIVE_PRINT_MODE
     //nouvelleTaille += (nouvelleTaille > PHOTOVIEW_PRINT_BUTTON_INDEX)? 1 : 0; // Si on atteint PRINT, on ajoute
 #endif
@@ -736,23 +690,19 @@ withRootViewController:(UIViewController *)rootViewController
     
     overlayStatusBar.progress = 0;
     __block NSInteger actualIndex = 0;
-    __block NSInteger actualIndexForViewManipulation = 0;
+    //__block NSInteger actualIndexForViewManipulation = 0;
     
     dismissUploadPreparingHUD = YES;
     
-    [self.moment sendArrayOfPhotos:images withStart:^(NSString *photoPath) {
+    [self.moment sendArrayOfPhotos:self.photosInCache withStart:^(NSString *photoPath) {
         
         // Message d'upload d'une unique photo
         if(totalImages == 1) {
-            //NSLog(@"Message d'upload d'une unique photo");
-            
             [overlayStatusBar postMessage:NSLocalizedString(@"StatusBarOverlay_Photo_Uploading", nil)];
             
         }
         // Premier Status d'un envoi multiple
-        else if([images indexOfObject:photoPath] == 0) {
-            //NSLog(@"Premier Status d'un envoi multiple");
-            
+        else if([self.photosInCache indexOfObject:photoPath] == 0) {
             [overlayStatusBar postMessage:
              [NSString stringWithFormat:@"%@ 1/%d", NSLocalizedString(@"StatusBarOverlay_Photo_Uploading", nil),totalImages]
              ];
@@ -760,26 +710,19 @@ withRootViewController:(UIViewController *)rootViewController
         
         runOnMainQueuePhotoCollectionWithoutDeadlocking(^{
             if (dismissUploadPreparingHUD) {
-                [MBProgressHUD hideHUDForView:self.view animated:YES];
+                [MBProgressHUD hideHUDForView:self.view.window animated:YES];
             }
         });
         
     } withProgression:^(CGFloat progress) {
         
         // Status Bar Progression d'une unique photo
-        //if(totalImages == 1)
         overlayStatusBar.progress = progress;
-        
-        // Status bar envoi partiel
-        //else {
-        //overlayStatusBar.progress = (actualIndex + (progress/totalImages))/totalImages;
-        //}
         
     } withTransition:^(Photos *photo) {
         
         // Erreur d'envoi
         if(!photo) {
-            //NSLog(@"Erreur d'envoi");
             [overlayStatusBar
              postImmediateErrorMessage:NSLocalizedString(@"Error_Send_Photo", nil)
              duration:2
@@ -804,53 +747,29 @@ withRootViewController:(UIViewController *)rootViewController
                 [overlayStatusBar postMessage:string];
             }
             
-            // Incrémentation de l'index
-            actualIndexForViewManipulation++;
-            
-            // Si on est sur la page de chargement de photo
-            /*UIViewController *actualViewController = [AppDelegate actualViewController];
-            if(actualViewController == self) {
-                // Scroll to top
-                UIScrollView *scrollView = self.imageShowCase.scrollView;
-                [scrollView scrollRectToVisible:CGRectMake(0, 0, 320, scrollView.frame.size.height) animated:YES];
-                
-            }*/
-            
-            // Save photo and update view
-            //[self.photos insertObject:photo atIndex:(actualIndexForViewManipulation-1)];
-            
-            //NSLog(@"loadImageThumbnailWithPhoto starting...");
-            /*[self loadImageThumbnailWithPhoto:photo withEnded:^(UIImage *image) {
-                
-                NSInteger index = [self convertIndexForCurrentStyle:actualIndexForViewManipulation];
-                
-                if (image) {
-                    // Update Photo View
-                    [self.imageShowCase addImage:image atIndex:index isPlusButton:NO isPrintButton:NO];
-                    
-                    // Augmenter taille de la scroll view de la big photo
-                    CGSize size = self.bigPhotoViewController.photoScrollView.contentSize;
-                    size.width = [self.photos count]*self.bigPhotoViewController.photoScrollView.frame.size.width;
-                    self.bigPhotoViewController.photoScrollView.contentSize = size;
-                    
-                    // Update BigPhoto Background
-                    [self.bigPhotoViewController updateBackground];
-                }
-            }];*/
-            
-            //NSLog(@"On reload la vue...");
             [self.rootViewController.infoMomentViewController reloadData];
         }
         
-    } withEnded:^ {
-        [images removeAllObjects];
-        
+    } withEnded:^ {        
         // Status Bar Finished
         [overlayStatusBar postFinishMessage:NSLocalizedString(@"StatusBarOverlay_Photo_UploadEnded", nil) duration:2];
-        [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackOpaque];
+        
+        if ([VersionControl sharedInstance].supportIOS7) {
+            [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault
+                                                        animated:YES];
+            
+            [UIView animateWithDuration:0.5 animations:^{
+                [self setNeedsStatusBarAppearanceUpdate];
+            }];
+        } else {
+            [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackOpaque
+                                                        animated:YES];
+        }
         
         // Activate the idle timer
         [[UIApplication sharedApplication] setIdleTimerDisabled:NO];
+        
+        [self.photosInCache removeAllObjects];
     }];
 }
 
@@ -866,6 +785,29 @@ void runOnMainQueuePhotoCollectionWithoutDeadlocking(void (^block)(void))
     {
         dispatch_sync(dispatch_get_main_queue(), block);
     }
+}
+
+#pragma mark - PhotosMultipleSelectionViewController delegate
+
+- (void)addPhotoToUpload:(Photo *)photo
+{
+    if (![self.photosToUpload containsObject:photo]) {
+        [self.photosToUpload addObject:photo];
+    }
+}
+
+- (void)removePhotoToUpload:(Photo *)photo
+{
+    if ([self.photosToUpload containsObject:photo]) {
+        [self.photosToUpload removeObject:photo];
+    }
+}
+
+- (void)didDismissAlbumViewController
+{
+    [self.rootViewController.navigationController dismissViewControllerAnimated:YES completion:nil];
+    
+    [self stackImages];
 }
 
 @end

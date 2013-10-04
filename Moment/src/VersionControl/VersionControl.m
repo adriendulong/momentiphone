@@ -10,8 +10,6 @@
 
 @implementation VersionControl
 
-@synthesize supportIOS6 = _supportIOS6;
-
 #pragma mark - Singleton
 
 static VersionControl *sharedInstance = nil;
@@ -46,35 +44,13 @@ static VersionControl *sharedInstance = nil;
     }
 }
 
-- (BOOL)supportIOS6
+- (BOOL)supportIOS7
 {
-    if(!_supportIOS6) {
-        _supportIOS6 = [[[UILabel alloc] init] respondsToSelector:@selector(setAttributedText:)];
-    }
-    return _supportIOS6;
-}
-
-- (NSInteger)alignment:(enum TextAlignment)align
-{
-    switch (align) {
-            
-        case TextAlignmentCenter:
-            return (self.supportIOS6)?kCTCenterTextAlignment:NSTextAlignmentCenter;
-            break;
-            
-        case TextAlignmentLeft:
-            return (self.supportIOS6)?kCTLeftTextAlignment:NSTextAlignmentLeft;
-            break;
-            
-        case TextAlignmentRight:
-            return (self.supportIOS6)?kCTRightTextAlignment:NSTextAlignmentRight;
-            break;
-            
-        default:
-            //NSLog(@"INVALID ALIGNMENT MODE - VERSION CONTROL");
-            return -1;
-            break;
-    }
+    NSUInteger version = [[UIDevice currentDevice].systemVersion substringToIndex:1].integerValue;
+    
+    //NSLog(@"iOS version = %i", version);
+    
+    return (version >= 7) ? YES : NO;
 }
 
 - (UIImage*)resizableImageFromImage:(UIImage*)image withCapInsets:(UIEdgeInsets)edge stretchableImageWithLeftCapWidth:(NSInteger)capWidth topCapHeight:(NSInteger)capHeight

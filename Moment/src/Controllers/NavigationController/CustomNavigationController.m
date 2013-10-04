@@ -8,6 +8,7 @@
 
 #import "CustomNavigationController.h"
 #import "Config.h"
+#import "CustomNavigationBarButton.h"
 
 @interface CustomNavigationController ()
 
@@ -37,13 +38,26 @@
         rootViewController.navigationItem.hidesBackButton = YES;
         rootViewController.navigationItem.backBarButtonItem = nil;
         
-        if ([self.navigationBar respondsToSelector:@selector(setBackgroundImage:forBarMetrics:)] ) {
-            UIImage *image = [UIImage imageNamed:@"topbar-bg.png"];
-            [self.navigationBar setBackgroundImage:image forBarMetrics:UIBarMetricsDefault];
+        if ([VersionControl sharedInstance].supportIOS7) {
+            //self.navigationBar.backgroundColor = [Config sharedInstance].orangeColor;
+            //self.navigationBar.barTintColor = [Config sharedInstance].orangeColor;
+            //self.navigationBar.barTintColor = [UIColor colorWithRed:255/255 green:169/255 blue:48/255 alpha:1.0];
+            //self.navigationBar.barTintColor = [UIColor colorWithHex:0xFFAA00];
+            self.navigationBar.backgroundColor = [UIColor colorWithRed:245/155 green:245/155 blue:245/155 alpha:1.0];
+            self.navigationBar.translucent = NO;
+            //self.navigationBar.backgroundColor = [[UIColor alloc] initWithPatternImage:[UIImage imageNamed:@"topbar-bg.png"]];
+            
+            [self.interactivePopGestureRecognizer setEnabled:NO];
+        } else {
+            if ([self.navigationBar respondsToSelector:@selector(setBackgroundImage:forBarMetrics:)] ) {
+                UIImage *image = [UIImage imageNamed:@"topbar-bg.png"];
+                [self.navigationBar setBackgroundImage:image forBarMetrics:UIBarMetricsDefault];
+            }
         }
         
-        self.view.backgroundColor = [[UIColor alloc] initWithPatternImage:[UIImage imageNamed:@"bg.png"]];
-        self.view.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
+        
+        //self.view.backgroundColor = [[UIColor alloc] initWithPatternImage:[UIImage imageNamed:@"bg.png"]];
+        //self.view.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
     }
     
     return self;
@@ -116,14 +130,33 @@
 
 + (void)setBackButtonChevronWithViewController:(UIViewController *)viewController withNewBackSelector:(SEL)selector
 {
-    UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
-    UIImage *img = [UIImage imageNamed:@"chevron-left-orange.png"];
+    /*UIImage *chevron = [UIImage imageNamed:@"UINavigationBarBackIndicatorDefault.png"
+                                withColor:[Config sharedInstance].orangeColor];*/
+    UIImage *chevron = [UIImage imageNamed:@"UINavigationBarBackIndicatorOrange.png"];
     
-    button.frame = CGRectMake(0, 0, 44, 44);
     
-    [button setImage:img forState:UIControlStateNormal];
-    [button setImage:img forState:UIControlStateSelected];
-    [button setImageEdgeInsets:UIEdgeInsetsMake(0, 0, 0, 15)];
+    UIButton *button = nil;
+    CGRect frame = CGRectMake(0, 0, 90, 40);
+    if ([VersionControl sharedInstance].supportIOS7) {
+        button = [[CustomNavigationBarButton alloc] initWithFrame:frame andIsLeftButton:YES];
+        [button setImageEdgeInsets:UIEdgeInsetsMake(0, 0, 0, 25)];
+    } else {
+        button = [[UIButton alloc] initWithFrame:frame];
+        [button setImageEdgeInsets:UIEdgeInsetsMake(0, 0, 0, 15)];
+    }
+    
+    //button.backgroundColor = [UIColor greenColor];
+    
+    [button setImage:chevron forState:UIControlStateNormal];
+    [button setImage:chevron forState:UIControlStateSelected];
+    
+    [button.titleLabel setFont:[UIFont systemFontOfSize:15]];
+    //[button.titleLabel setTextAlignment:NSTextAlignmentRight];
+    [button setTitle:@"Moments" forState:UIControlStateNormal];
+    [button setTitle:@"Moments" forState:UIControlStateSelected];
+    [button setTitleColor:[Config sharedInstance].orangeColor forState:UIControlStateNormal];
+    [button setTitleColor:[Config sharedInstance].orangeColor forState:UIControlStateSelected];
+    //[button.titleLabel setText:@"Moments"];
     
     if (!selector) {
         [button addTarget:viewController.navigationController action:@selector(popViewControllerAnimated:) forControlEvents:UIControlEventTouchUpInside];

@@ -172,7 +172,6 @@ static MomentClass *currentMoment = nil;
         }];
         
     });
-    dispatch_release(eventCreationQueue);
 }
 
 + (void)addNewEventFromMoment:(MomentClass*)moment

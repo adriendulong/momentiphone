@@ -96,38 +96,18 @@
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:text];
     
 #pragma CustomLabel
-    if( [[VersionControl sharedInstance] supportIOS6] )
-    {
-        // Attributs du label
-        NSRange range = NSMakeRange(0, 1);
-        [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:bigSize] range:range];
-        range = NSMakeRange(1, taille-1);
-        [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:smallSize] range:range];
-        [attributedString setTextColor:color];
-        
-        [label setAttributedText:attributedString];
-        label.textAlignment = kCTCenterTextAlignment;
-        //[label sizeToFit];
-        ttLabel.hidden = YES;
-    }
-    else
-    {
-        [ttLabel setText:text afterInheritingLabelAttributesAndConfiguringWithBlock:^NSMutableAttributedString *(NSMutableAttributedString *mutableAttributedString) {
-            
-            Config *cf = [Config sharedInstance];
-            
-            [cf updateTTTAttributedString:mutableAttributedString withFontSize:bigSize onRange:NSMakeRange(0, 1)];
-            [cf updateTTTAttributedString:mutableAttributedString withFontSize:smallSize onRange:NSMakeRange(1, taille-1)];
-            [cf updateTTTAttributedString:mutableAttributedString withColor:color onRange:NSMakeRange(0, taille)];
-            
-            return mutableAttributedString;
-        }];
-        
-        //[ttLabel sizeToFit];
-        //[label.superview addSubview:ttLabel];
-        label.hidden = YES;
-    }
-    
+    // Attributs du label
+    NSRange range = NSMakeRange(0, 1);
+    [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:bigSize] range:range];
+    range = NSMakeRange(1, taille-1);
+    [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:smallSize] range:range];
+    [attributedString setTextColor:color];
+ 
+    [label setAttributedText:attributedString];
+    label.textAlignment = kCTCenterTextAlignment;
+    //[label sizeToFit];
+    ttLabel.hidden = YES;
+ 
 }
 
 - (void)initLabels

@@ -133,18 +133,10 @@ enum ProfilOnglet {
     self.photoButton.titleLabel.adjustsFontSizeToFitWidth = YES;
     CGFloat minimumFontSize = 9.0f;
     CGFloat defaultFontSize = 13.0f;
-    if([[VersionControl sharedInstance] supportIOS6]) {
-        self.momentButton.titleLabel.minimumScaleFactor = minimumFontSize/defaultFontSize;
-        self.photoButton.titleLabel.minimumScaleFactor = minimumFontSize/defaultFontSize;
-        self.followerButton.titleLabel.minimumScaleFactor = minimumFontSize/defaultFontSize;
-        self.followButton.titleLabel.minimumScaleFactor = minimumFontSize/defaultFontSize;
-    }
-    else {
-        self.momentButton.titleLabel.minimumFontSize = minimumFontSize;
-        self.photoButton.titleLabel.minimumFontSize = minimumFontSize;
-        self.followerButton.titleLabel.minimumFontSize = minimumFontSize;
-        self.followButton.titleLabel.minimumFontSize = minimumFontSize;
-    }
+    self.momentButton.titleLabel.minimumScaleFactor = minimumFontSize/defaultFontSize;
+    self.photoButton.titleLabel.minimumScaleFactor = minimumFontSize/defaultFontSize;
+    self.followerButton.titleLabel.minimumScaleFactor = minimumFontSize/defaultFontSize;
+    self.followButton.titleLabel.minimumScaleFactor = minimumFontSize/defaultFontSize;
      */
     
     // Follow Bar
@@ -422,31 +414,6 @@ enum ProfilOnglet {
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
-}
-
-- (void)viewDidUnload {
-    [self setContentView:nil];
-    [self setMomentButton:nil];
-    [self setMomentLabel:nil];
-    [self setPhotoButton:nil];
-    [self setPhotoLabel:nil];
-    [self setFollowButton:nil];
-    [self setFollowLabel:nil];
-    [self setFollowerButton:nil];
-    [self setFollowerLabel:nil];
-    [self setHeadFollowButton:nil];
-    [self setTitreLabel:nil];
-    [self setDescriptionLabel:nil];
-    [self setLeftBarView:nil];
-    [self setTimeLineViewController:nil];
-    [self setPhotoViewController:nil];
-    [self setFollowTableViewController:nil];
-    [self setFollowerTableViewController:nil];
-    [self setPictureView:nil];
-    [self setButtonsView:nil];
-    [self setHeadFollowLabel:nil];
-    [self setBackgroundContentView:nil];
-    [super viewDidUnload];
 }
 
 - (void)updateNbPhotos:(NSInteger)nbPhotos

@@ -26,6 +26,7 @@
 
 #import "DDMenuController.h"
 #import "CustomNumberBadgeView.h"
+#import "CustomNavigationBarButton.h"
 
 #import "PushNotificationManager.h"
 #import "VoletViewController.h"
@@ -92,12 +93,6 @@
      name:notificationForceShowLeftController
      object:nil];
     
-}
-
-- (void)viewDidUnload {
-    [super viewDidUnload];
-    _tap = nil;
-    _pan = nil;
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation {
@@ -419,22 +414,28 @@
         /* --------------------------- NB NOTIFICATIONS BADGE --------------------------------- */
         /* ------------------------------------------------------------------------------------ */
         
+        id button = nil;
+        CGRect frame = CGRectMake(0, 0, 40, 40);
+        if ([VersionControl sharedInstance].supportIOS7) {
+            button = [[CustomNavigationBarButton alloc] initWithFrame:frame andIsLeftButton:YES];
+        } else {
+            button = [[UIButton alloc] initWithFrame:frame];
+        }
+        
         // Button
-        UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
         UIImage *imgLeft = [UIImage imageNamed:@"nav_menu_icon.png"];
         
         // Badge
         CustomNumberBadgeView *badge = [[CustomNumberBadgeView alloc] initWithDDMenuDelegate:self];
         
         // Init
-        button.frame = CGRectMake(0, 0, 40, 40);
         [button addSubview:badge];
         
         [button setImage:imgLeft forState:UIControlStateNormal];
         [button setImage:imgLeft forState:UIControlStateSelected];
         
         [button addTarget:self action:@selector(showLeft:) forControlEvents:UIControlEventTouchDown];
-        UIBarButtonItem *barButton= [[UIBarButtonItem alloc] initWithCustomView:button];
+        UIBarButtonItem *barButton = [[UIBarButtonItem alloc] initWithCustomView:button];
         topController.navigationItem.leftBarButtonItem = barButton;
         
         // Restore Number Notification Badge Number
@@ -511,6 +512,16 @@
     
     if (!animated) {
         [UIView setAnimationsEnabled:_enabled];
+    }    
+    
+    if ([VersionControl sharedInstance].supportIOS7) {
+        [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault
+                                                    animated:YES];
+        
+        [UIView animateWithDuration:0.3 animations:^{
+            [self.blackBackgroundStatusBar removeFromSuperview];
+            [self setNeedsStatusBarAppearanceUpdate];
+        }];
     }
     
 }
@@ -553,6 +564,20 @@
     
     if (!animated) {
         [UIView setAnimationsEnabled:_enabled];
+    }
+    
+    if ([VersionControl sharedInstance].supportIOS7) {
+        [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent
+                                                    animated:YES];
+        
+        [UIView animateWithDuration:0.3 animations:^{
+            self.blackBackgroundStatusBar = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, STATUS_BAR_HEIGHT)];
+            self.blackBackgroundStatusBar.backgroundColor = [UIColor blackColor];
+            
+            [self.view.window addSubview:self.blackBackgroundStatusBar];
+            
+            [self setNeedsStatusBarAppearanceUpdate];
+        }];
     }
     
 }

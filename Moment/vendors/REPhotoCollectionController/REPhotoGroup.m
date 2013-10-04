@@ -27,14 +27,16 @@
 
 @implementation REPhotoGroup
 
-@synthesize year, month, day, items = _items, name = _name, momentId = _momentId;
-
 - (id)init {
     self = [super init];
     if (self) {
         _items = [[NSMutableArray alloc] init];
     }
     return self;
+}
+
+- (NSString *)description {
+    return [NSString stringWithFormat:@"PHOTO GROUP :\n{\nNAME : %@\nMOMENT : %@\n}\n-----------\n", self.name, self.momentId];
 }
 
 @end

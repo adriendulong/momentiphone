@@ -8,6 +8,7 @@
 
 #import "CreationHomeViewController.h"
 #import "ImporterFBViewController.h"
+#import "Config.h"
 
 @interface CreationHomeViewController ()
 
@@ -27,6 +28,11 @@
     if (self) {
         self.user = user;
         self.timeLineViewContoller = timeLine;
+        
+        self.view.backgroundColor = [[UIColor alloc] initWithPatternImage:[UIImage imageNamed:@"bg.png"]];
+        
+        [CustomNavigationController setBackButtonChevronWithViewController:self];
+        [CustomNavigationController setTitle:@"Création" withColor:[Config sharedInstance].orangeColor withViewController:self];
     }
     return self;
 }
@@ -36,9 +42,6 @@
     [super viewDidLoad];
     // Google Analytics
     self.trackedViewName = @"Ajout Event";
-    
-    [CustomNavigationController setBackButtonChevronWithViewController:self];
-    [CustomNavigationController setTitle:@"Création" withColor:[UIColor blackColor] withViewController:self];
     
     // Centrer la vue
     CGRect frame = _contentView.frame;
@@ -65,6 +68,7 @@
     if([self.nomTextField.text length] > 0)
     {
         CreationFicheViewController *ficheViewController = [[CreationFicheViewController alloc] initWithUser:self.user withEventName:self.nomTextField.text withTimeLine:self.timeLineViewContoller];
+        
         [self.navigationController pushViewController:ficheViewController animated:YES];
     }
     else

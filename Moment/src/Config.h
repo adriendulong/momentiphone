@@ -76,6 +76,12 @@
 #pragma mark - Create UIImage programmatically
 - (UIImage *)imageFromText:(NSString *)text withColor:(UIColor *)color andFont:(UIFont *)font;
 
+#pragma mark - Upload Photos
+- (void)getUIImageFromAssetURL:(NSURL *)assetUrl toPath:(NSString *)path withEnded:(void (^) (NSString *fullPathToPhoto) )block;
+
+#pragma mark - Dates manipulation
++ (BOOL)date:(NSDate*)date isBetweenDate:(NSDate*)beginDate andDate:(NSDate*)endDate;
+
 #pragma mark - Create NSString directly with font
 - (NSString *)createStylizedStringFromString:(NSString *)string withFont:(UIFont *)font andColor:(UIColor *)color fromRect:(CGRect)rect;
 - (UIFont *)boldFontFromFont:(UIFont *)font;

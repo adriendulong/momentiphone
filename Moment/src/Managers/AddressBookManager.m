@@ -122,64 +122,50 @@
 
 + (void)accesAddressBookListWithCompletionHandler:(void (^) (NSArray* list))block
 {
-    ABAddressBookRef addressBook = nil;
+    ABAddressBookRef addressBook = ABAddressBookCreateWithOptions(NULL, NULL);
+    ABAuthorizationStatus authorisation = ABAddressBookGetAuthorizationStatus();
     
-    // iOS 6
-    if([[VersionControl sharedInstance] supportIOS6]) {
-        
-        addressBook = ABAddressBookCreateWithOptions(NULL, NULL);
-        ABAuthorizationStatus authorisation = ABAddressBookGetAuthorizationStatus();
-        
-        switch (authorisation) {
+    switch (authorisation) {
+            
+        case kABAuthorizationStatusNotDetermined:
+        {
+            ABAddressBookRequestAccessWithCompletion(addressBook, ^(bool granted, CFErrorRef error) {
+                // First time access has been granted, add the contact
                 
-            case kABAuthorizationStatusNotDetermined:
-            {
-                ABAddressBookRequestAccessWithCompletion(addressBook, ^(bool granted, CFErrorRef error) {
-                    // First time access has been granted, add the contact
-                    
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        if(granted) {
-                            if(block)
-                                block([self getAddressBookList:addressBook]);
-                        }
-                        else {
-                            //NSLog(@"Error acces addressBook : %@", error);
-                            if(block)
-                                block(nil);
-                        }
-                    });
-                    
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    if(granted) {
+                        if(block)
+                            block([self getAddressBookList:addressBook]);
+                    }
+                    else {
+                        //NSLog(@"Error acces addressBook : %@", error);
+                        if(block)
+                            block(nil);
+                    }
                 });
-            }
+                
+            });
+        }
             break;
             
-            case kABAuthorizationStatusAuthorized:
-                // The user has previously given access, add the contact
-                if(block)
-                    block([self getAddressBookList:addressBook]);
-                break;
-                
-            default:
-                // The user has previously denied access
-                // Send an alert telling user to change privacy setting in settings app
-                //NSLog(@"Acces to addressBook not authorized");
-                
-                [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"WebModalViewController_AuthorizationFailed_Title", nil)
-                                            message:NSLocalizedString(@"WebModalViewController_AuthorizationFailed_Message", nil)
-                                           delegate:nil
-                                  cancelButtonTitle:NSLocalizedString(@"AlertView_Button_OK", nil)
-                                  otherButtonTitles: nil]
-                 show];
-                break;
-        }
-        
-    }
-    // iOS 5
-    else {
-        addressBook = ABAddressBookCreate();
-        
-        if(block)
-            block([self getAddressBookList:addressBook]);
+        case kABAuthorizationStatusAuthorized:
+            // The user has previously given access, add the contact
+            if(block)
+                block([self getAddressBookList:addressBook]);
+            break;
+            
+        default:
+            // The user has previously denied access
+            // Send an alert telling user to change privacy setting in settings app
+            //NSLog(@"Acces to addressBook not authorized");
+            
+            [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"WebModalViewController_AuthorizationFailed_Title", nil)
+                                        message:NSLocalizedString(@"WebModalViewController_AuthorizationFailed_Message", nil)
+                                       delegate:nil
+                              cancelButtonTitle:NSLocalizedString(@"AlertView_Button_OK", nil)
+                              otherButtonTitles: nil]
+             show];
+            break;
     }
     
 }

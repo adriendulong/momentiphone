@@ -1791,12 +1791,9 @@ static FacebookManager *sharedInstance = nil;
             // Login impossible -> Facebook Refusé ?
             case FBErrorLoginFailedOrCancelled: {
                 
-                // Marche à suivre selon l'OS
-                NSString *localizedKey = [[VersionControl sharedInstance] supportIOS6] ?@"FacebookManager_ErrorLoginFailed_Message_iOS6" : @"FacebookManager_ErrorLoginFailed_Message";
-                
                 alertView = [[UIAlertView alloc]
                              initWithTitle:NSLocalizedString(@"FacebookManager_ErrorLoginFailed_Title", nil)
-                             message:NSLocalizedString(localizedKey, nil)
+                             message:NSLocalizedString(@"FacebookManager_ErrorLoginFailed_Message_iOS6", nil)
                              delegate:nil
                              cancelButtonTitle:NSLocalizedString(@"AlertView_Button_OK", nil)
                              otherButtonTitles:nil];

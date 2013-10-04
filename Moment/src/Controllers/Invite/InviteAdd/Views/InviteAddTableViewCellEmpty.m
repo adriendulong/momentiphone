@@ -29,6 +29,8 @@
         frame.size.height = height;
         self.frame = frame;
         
+        self.backgroundColor = [UIColor clearColor];
+        
         // Set text
         if(style == InviteAddTableViewControllerFavorisStyle) {
             self.noResultsLabel.text = NSLocalizedString(@"InviteAddTableViewController_EmptyCell_noResultsLabel_favoris", nil);

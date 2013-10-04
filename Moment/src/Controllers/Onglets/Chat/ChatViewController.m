@@ -133,7 +133,7 @@
     if(state == 0) {
         state = ([self.moment.owner.userId isEqualToNumber:[UserCoreData getCurrentUser].userId]) ? UserStateOwner : UserStateNoInvited;
     }
-     
+    
     if(
        (
         (
@@ -153,17 +153,9 @@
     [self loadMessagesAtPosition:ChatViewControllerMessagePositionBottom];
 }
 
-- (void)viewDidUnload
+- (void)changeStatusSendboxView
 {
-    [self setMessages:nil];
-    [self setMoment:nil];
-    [self setSendboxTextBackgroundView:nil];
-    [self setSendboxTextView:nil];
-    [self setSendboxView:nil];
-    [self setSendButton:nil];
-    [self setTableView:nil];
-    [self setDateFormatter:nil];
-    [super viewDidUnload];
+    self.sendboxView.hidden = ([self canShowSendboxView]) ? NO : YES;
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -280,6 +272,8 @@
 
 - (void)scrollToLastMessage
 {
+    
+#warning C'est ICI le crash: 'CALayerInvalidGeometry', reason: 'CALayer bounds contains NaN: [0 nan; 320 369]'
     [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:(self.messages.count-1) inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
 }
 
@@ -396,7 +390,6 @@
             
         }];
     });
-    dispatch_release(loadingQueue);
 }
 
 - (void)loadMessagesAtPosition:(enum ChatViewControllerMessagePosition)position {
@@ -505,6 +498,34 @@
 
 - (void)cancelTouch {
     [self.sendboxTextView resignFirstResponder];
+}
+
+#pragma mark - Update view to Privacy
+
+- (BOOL)canShowSendboxView
+{
+    // Privacy
+    // User State
+    enum UserState state = self.moment.state.intValue;
+    if(state == 0) {
+        state = ([self.moment.owner.userId isEqualToNumber:[UserCoreData getCurrentUser].userId]) ? UserStateOwner : UserStateNoInvited;
+    }
+    
+    enum MomentPrivacy privacy = self.moment.privacy.intValue;
+    
+    if (state == UserStateOwner || state == UserStateAdmin) {
+        
+        return  YES;
+    } else {
+        
+        if (privacy == MomentPrivacySpecialEvent || privacy == MomentPrivacySpecialEventLive) {
+            
+            return NO;
+        } else {
+            
+            return YES;
+        }
+    }
 }
 
 #pragma mark - Getters

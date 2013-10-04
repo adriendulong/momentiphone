@@ -473,7 +473,7 @@ static PushNotificationManager *sharedInstance = nil;
 
 - (void)sendRedirectionToMomentWithId:(NSNumber *)momentId withType:(int)type
 {
-    [[RedirectionManager sharedInstance] sendRedirectionToMomentWithId:momentId withType:type andWithApplicationState:-1];
+    [[RedirectionManager sharedInstance] sendRedirectionToMomentWithId:momentId withType:type andWithApplicationState:UIApplicationStateInactive];
 }
 
 #pragma mark - Photo

@@ -18,6 +18,7 @@
 #import "TTTAttributedLabel.h"
 #import "PopUpFinCreationViewController.h"
 #import "PlacesViewController.h"
+#import "CustomNavigationBarButton.h"
 
 @interface CreationFicheViewController () {
     @private
@@ -31,47 +32,6 @@
 @end
 
 @implementation CreationFicheViewController
-
-@synthesize timeLineViewContoller = _timeLineViewContoller;
-
-@synthesize user = _user;
-@synthesize moment = _moment;
-@synthesize nomEvent = _nomEvent;
-@synthesize coverImage = _coverImage;
-
-@synthesize globalScrollView = _globalScrollView;
-@synthesize currentStep = _currentStep;
-
-@synthesize step2ScrollView = _step2ScrollView;
-@synthesize quandLabel = _quandLabel;
-@synthesize etape1Label = _etape1Label;
-@synthesize coverView = _coverView;
-@synthesize titreMomentLabel = _titreMomentLabel;
-@synthesize changerCoverButton = _changerCoverButton;
-@synthesize pickerView = _pickerView;
-@synthesize startDateTextField = _startDateTextField;
-@synthesize endDateTextField = _endDateTextField;
-@synthesize startDateLabel = _startDateLabel;
-@synthesize endDateLabel = _endDateLabel;
-@synthesize dateFormatter = _dateFormatter;
-@synthesize dateDebut = _dateDebut;
-@synthesize dateFin = _dateFin;
-
-@synthesize step1ScrollView = _step1ScrollView;
-@synthesize ouLabel = _ouLabel;
-@synthesize etape2Label = _etape2Label;
-@synthesize infoLieuTextField = _infoLieuTextField;
-@synthesize hashtagTextField = _hashtagTextField;
-@synthesize adresseLabel = _adresseLabel;
-@synthesize adresseText = _adresseText;
-@synthesize infoLieuLabel = _infoLieuLabel;
-@synthesize descriptionLabel = _descriptionLabel;
-@synthesize hashtagLabel = _hashtagLabel;
-@synthesize infoHashtagLabel = _infoHashtagLabel;
-@synthesize switchButton = _switchButton;
-@synthesize switchControlState = _switchControlState;
-@synthesize backgroundDescriptionView = _backgroundDescriptionView;
-@synthesize descriptionTextView = _descriptionTextView;
 
 #pragma mark - Init
 
@@ -89,7 +49,9 @@
         BOOL secondButtonEnable = NO;
         
         // Second Button
-        UIButton *button = (UIButton*)[buttons[0] customView];
+        //UIButton *button = (UIButton*)[buttons[0] customView];
+        //CustomNavigationBarButton *button = [[CustomNavigationBarButton alloc] initWithFrame:[buttons[0] customView].frame andIsLeftButton:NO];
+        CustomNavigationBarButton *button = (CustomNavigationBarButton*)[buttons[0] customView];
         
         // Previous Button
         //UIButton *previousButton = (UIButton*)[buttons[1] customView];
@@ -145,9 +107,11 @@
             [previousButton setEnabled:YES];*/
             
             // Second Button enable
-            if( ((self.adresseLabel.text.length > 0)||(self.adresseText.length > 0)) && (self.descriptionTextView.text.length > 0) ) {
+            // Adresse et Description non obligatoire maintenant
+            /*if( ((self.adresseLabel.text.length > 0)||(self.adresseText.length > 0)) && (self.descriptionTextView.text.length > 0) ) {
                 secondButtonEnable = YES;
-            }
+            }*/
+            secondButtonEnable = YES;
             
             /*UIView *whiteLine = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 0.5, 42.5)];
             UIView *darkGrayLine = [[UIView alloc] initWithFrame:CGRectMake(0.5, 0, 0.5, 42.5)];
@@ -183,7 +147,7 @@
 - (void)setNavBarSecondButtonEnable:(BOOL)enable
 {
     NSArray *buttons = self.navigationItem.rightBarButtonItems;
-    UIButton *button = (UIButton*)[buttons[0] customView];
+    CustomNavigationBarButton *button = (CustomNavigationBarButton*)[buttons[0] customView];
     
     [button setEnabled:enable];
 }
@@ -226,7 +190,7 @@
 
 - (id)initWithUser:(UserClass*)user withTimeLine:(UIViewController <TimeLineDelegate> *)timeLine
 {
-    NSString *nibName = ([VersionControl sharedInstance].screenHeight == 480)? @"CreationFicheViewController_3_5" : @"CreationFicheViewController_4";
+    NSString *nibName = ([VersionControl sharedInstance].isIphone5)? @"CreationFicheViewController_4" : @"CreationFicheViewController_3_5";
     
     self = [super initWithNibName:nibName bundle:nil];
     if(self) {
@@ -238,6 +202,8 @@
         alreadyClicked = NO;
         
         self.switchControlState = YES;
+        
+        [self.view setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"bg.png"]]];
     }
     return self;
 }
@@ -248,6 +214,8 @@
     if(self) {
         self.nomEvent = eventName;
         isEdition = NO;
+        
+        [self initCover];
     }
     return self;
 }
@@ -258,6 +226,27 @@
     if(self) {
         self.moment = moment;
         isEdition = YES;
+        
+        
+        
+        // ---- Init With Moment ---
+        if(self.moment)
+        {
+            self.nomEvent = self.moment.titre;
+            self.dateDebut = self.moment.dateDebut;
+            self.dateFin = self.moment.dateFin;
+            self.startDateTextField.text = [self.dateFormatter stringFromDate:self.dateDebut];
+            self.endDateTextField.text = [self.dateFormatter stringFromDate:self.dateFin];
+            [self setAdresseText:self.moment.adresse];
+            self.descriptionTextView.text = self.moment.descriptionString;
+            self.coverImage = self.moment.uimage;
+            [self.coverView setImage:self.coverImage imageString:self.moment.imageString withSaveBlock:^(UIImage *image) {
+                self.coverImage = image;
+                self.moment.uimage = image;
+            }];
+        }
+        
+        [self initCover];
     }
     return self;
 }
@@ -277,7 +266,7 @@
     //[CustomNavigationController setBackButtonWithTitle:[NSString stringWithFormat:@"  %@", NSLocalizedString(@"Back", nil)] andColor:[UIColor grayColor] andFont:[[Config sharedInstance] defaultFontWithSize:16] withViewController:self withSelector:@selector(popViewControllerAnimated:) andWithTarget:nil];
     //[CustomNavigationController setBackButtonWithImage:[UIImage imageNamed:@"Navigation-Left.png"] withViewController:self withSelector:@selector(popViewControllerAnimated:) andWithTarget:nil];
     
-    [CustomNavigationController setTitle:@"Création" withColor:[UIColor blackColor] withViewController:self];
+    [CustomNavigationController setTitle:@"Création" withColor:[Config sharedInstance].orangeColor withViewController:self];
     
     CGRect frameButton = CGRectMake(0,0,43,43);
     
@@ -298,7 +287,8 @@
     ////UIBarButtonItem *buttonItemPrevious = [[UIBarButtonItem alloc] initWithCustomView:buttonPrevious];
     
     // 2e bouton
-    UIButton *secondButton = [[UIButton alloc] initWithFrame:frameButton];
+    //UIButton *secondButton = [[UIButton alloc] initWithFrame:frameButton];
+    CustomNavigationBarButton *secondButton = [[CustomNavigationBarButton alloc] initWithFrame:frameButton andIsLeftButton:NO];
     UIBarButtonItem *secondBarButton = [[UIBarButtonItem alloc] initWithCustomView:secondButton];
     
     // Set buttons
@@ -332,45 +322,14 @@
     {
         NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:texteLabel];
         
-        if( [[VersionControl sharedInstance] supportIOS6] )
-        {
-            // Attributs du label
-            NSRange range = NSMakeRange(0, 1);
-            [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:maxSize] range:range];
-            range = NSMakeRange(1, [attributedString length]-1);
-            [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:minSize] range:range];
-            [attributedString setTextColor:color];
-            
-            [label setAttributedText:attributedString];
-            
-            return label;
-        }
-        else
-        {
-            TTTAttributedLabel *tttLabel = [[TTTAttributedLabel alloc] initWithFrame:label.frame];
-            tttLabel.backgroundColor = [UIColor clearColor];
-            [tttLabel setText:texteLabel afterInheritingLabelAttributesAndConfiguringWithBlock:^NSMutableAttributedString *(NSMutableAttributedString *mutableAttributedString) {
-                
-                NSInteger taille = [texteLabel length];
-                Config *cf = [Config sharedInstance];
-                
-                // 1er Lettre Font
-                [cf updateTTTAttributedString:mutableAttributedString withFontSize:maxSize onRange:NSMakeRange(0, 1)];
-                
-                // Autres Lettres Font
-                [cf updateTTTAttributedString:mutableAttributedString withFontSize:minSize onRange:NSMakeRange(1, taille-1 )];
-                
-                // Couleurs
-                [cf updateTTTAttributedString:mutableAttributedString withColor:color onRange:NSMakeRange(0, taille)];
-                
-                return mutableAttributedString;
-            }];
-            
-            [label.superview addSubview:tttLabel];
-            label.hidden = YES;
-            
-            return tttLabel;
-        }
+        // Attributs du label
+        NSRange range = NSMakeRange(0, 1);
+        [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:maxSize] range:range];
+        range = NSMakeRange(1, [attributedString length]-1);
+        [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:minSize] range:range];
+        [attributedString setTextColor:color];
+        
+        [label setAttributedText:attributedString];
     }
     return label;
 }
@@ -383,51 +342,18 @@
     
     NSInteger maxSize = 18, minSize = 14;
     
-    if( [[VersionControl sharedInstance] supportIOS6] )
-    {
-        // Attributs du label
-        NSRange range = NSMakeRange(0, 1);
-        [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:maxSize] range:range];
-        [attributedString setTextColor:[Config sharedInstance].orangeColor range:range];
-        range = NSMakeRange(1, taille-2);
-        [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:minSize] range:range];
-        range = NSMakeRange(1, taille-1);
-        [attributedString setTextColor:[[Config sharedInstance] textColor] range:range];
-        range = NSMakeRange(taille-2, 1);
-        [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:maxSize] range:range];
-        
-        [label setAttributedText:attributedString];
-    }
-    else
-    {
-        TTTAttributedLabel *tttLabel = [[TTTAttributedLabel alloc] initWithFrame:label.frame];
-        tttLabel.backgroundColor = [UIColor clearColor];
-        [tttLabel setText:texteLabel afterInheritingLabelAttributesAndConfiguringWithBlock:^NSMutableAttributedString *(NSMutableAttributedString *mutableAttributedString) {
-            
-            Config *cf = [Config sharedInstance];
-            
-            // 1er Lettre Font
-            [cf updateTTTAttributedString:mutableAttributedString withFontSize:maxSize onRange:NSMakeRange(0, 1)];
-            
-            // Autres Lettres Font
-            [cf updateTTTAttributedString:mutableAttributedString withFontSize:minSize onRange:NSMakeRange(1, taille-2)];
-            
-            // Dernière lettre Font
-            [cf updateTTTAttributedString:mutableAttributedString withFontSize:maxSize onRange:NSMakeRange(taille-2, 1)];
-            
-            // 1er Lettre Couleur
-            [cf updateTTTAttributedString:mutableAttributedString withColor:[Config sharedInstance].orangeColor onRange:NSMakeRange(0, 1)];
-            
-            // Autres Lettes Couleur
-            [cf updateTTTAttributedString:mutableAttributedString withColor:[Config sharedInstance].textColor onRange:NSMakeRange(1, taille-1)];
-            
-            return mutableAttributedString;
-        }];
-        
-        [label.superview addSubview:tttLabel];
-        label.hidden = YES;
-    }
-
+    // Attributs du label
+    NSRange range = NSMakeRange(0, 1);
+    [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:maxSize] range:range];
+    [attributedString setTextColor:[Config sharedInstance].orangeColor range:range];
+    range = NSMakeRange(1, taille-2);
+    [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:minSize] range:range];
+    range = NSMakeRange(1, taille-1);
+    [attributedString setTextColor:[[Config sharedInstance] textColor] range:range];
+    range = NSMakeRange(taille-2, 1);
+    [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:maxSize] range:range];
+    
+    [label setAttributedText:attributedString];
 }
 
 #pragma mark View Init - Step 1
@@ -516,94 +442,34 @@
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:self.hashtagLabel.text];
     NSInteger taille = [self.hashtagLabel.text length];
 
-    if( [[VersionControl sharedInstance] supportIOS6] )
-    {
-        // Attributs du label
-        NSRange range = NSMakeRange(0, 1);
-        [attributedString setTextColor:orangeColor range:range];
-        range = NSMakeRange(0, 3);
-        [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:maxSize] range:range];
-        range = NSMakeRange(1, taille-1);
-        [attributedString setTextColor:textColor range:range];
-        range = NSMakeRange(3, taille-3);
-        [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:minSize] range:range];
-        
-        [self.hashtagLabel setAttributedText:attributedString];
-    }
-    else
-    {
-        TTTAttributedLabel *tttLabel = [[TTTAttributedLabel alloc] initWithFrame:self.hashtagLabel.frame];
-        tttLabel.backgroundColor = [UIColor clearColor];
-        [tttLabel setText:self.hashtagLabel.text afterInheritingLabelAttributesAndConfiguringWithBlock:^NSMutableAttributedString *(NSMutableAttributedString *mutableAttributedString) {
-            
-            Config *cf = [Config sharedInstance];
-            
-            // 3 first Lettre Font
-            [cf updateTTTAttributedString:mutableAttributedString withFontSize:maxSize onRange:NSMakeRange(0, 3)];
-            
-            // Autres Lettres Font
-            [cf updateTTTAttributedString:mutableAttributedString withFontSize:minSize onRange:NSMakeRange(3, taille-3 )];
-            
-            // 3 first Lettre Couleurs
-            [cf updateTTTAttributedString:mutableAttributedString withColor:orangeColor onRange:NSMakeRange(0, 1)];
-            
-            // Autres Lettres Couleurs
-            [cf updateTTTAttributedString:mutableAttributedString withColor:textColor onRange:NSMakeRange(1, taille-1)];
-            
-            return mutableAttributedString;
-        }];
-        
-        [self.hashtagLabel.superview addSubview:tttLabel];
-        self.hashtagLabel.hidden = YES;
-        
-    }
+    // Attributs du label
+    NSRange range = NSMakeRange(0, 1);
+    [attributedString setTextColor:orangeColor range:range];
+    range = NSMakeRange(0, 3);
+    [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:maxSize] range:range];
+    range = NSMakeRange(1, taille-1);
+    [attributedString setTextColor:textColor range:range];
+    range = NSMakeRange(3, taille-3);
+    [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:minSize] range:range];
     
-    // Info HashTag Label    
+    [self.hashtagLabel setAttributedText:attributedString];
+    
+    // Info HashTag Label
     attributedString = [[NSMutableAttributedString alloc] initWithString:self.infoHashtagLabel.text];
     taille = [self.infoHashtagLabel.text length];
     minSize = 8;
     maxSize = 10;
     
-    if( [[VersionControl sharedInstance] supportIOS6] )
-    {
-        // Attributs du label
-        NSRange range = NSMakeRange(0, 52);
-        [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:minSize] range:range];
-        range = NSMakeRange(52, 1);
-        [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:maxSize] range:range];
-        range = NSMakeRange(53, taille - 53);
-        [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:minSize] range:range];
-        [attributedString setTextColor:textColor];
-        
-        [self.infoHashtagLabel setAttributedText:attributedString];
-    }
-    else
-    {
-        TTTAttributedLabel *tttLabel = [[TTTAttributedLabel alloc] initWithFrame:self.infoHashtagLabel.frame];
-        tttLabel.backgroundColor = [UIColor clearColor];
-        tttLabel.numberOfLines = 9999;
-        [tttLabel setText:self.infoHashtagLabel.text afterInheritingLabelAttributesAndConfiguringWithBlock:^NSMutableAttributedString *(NSMutableAttributedString *mutableAttributedString) {
-            
-            Config *cf = [Config sharedInstance];
-            
-            // first Lettre Font
-            [cf updateTTTAttributedString:mutableAttributedString withFontSize:minSize onRange:NSMakeRange(0, 52)];
-            
-            // #
-            [cf updateTTTAttributedString:mutableAttributedString withFontSize:maxSize onRange:NSMakeRange(52, 1 )];
-            
-            // Autres Lettre Font
-            [cf updateTTTAttributedString:mutableAttributedString withFontSize:minSize onRange:NSMakeRange(53, taille-53 )];
-            
-            // Couleur
-            [cf updateTTTAttributedString:mutableAttributedString withColor:textColor onRange:NSMakeRange(0, taille)];
-            
-            return mutableAttributedString;
-        }];
-        [self.infoHashtagLabel.superview addSubview:tttLabel];
-        self.infoHashtagLabel.hidden = YES;
-        
-    }
+    // Attributs du label
+    NSRange range = NSMakeRange(0, 52);
+    [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:minSize] range:range];
+    range = NSMakeRange(52, 1);
+    [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:maxSize] range:range];
+    range = NSMakeRange(53, taille - 53);
+    [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:minSize] range:range];
+    [attributedString setTextColor:textColor];
+    
+    [self.infoHashtagLabel setAttributedText:attributedString];
 #else
     self.hashtagLabel.hidden = YES;
     self.hashtagTextField.hidden = YES;
@@ -618,31 +484,19 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    if ([VersionControl sharedInstance].supportIOS7) {
+        CGRect frame = self.view.frame;
+        frame.origin.y += STATUS_BAR_HEIGHT;
+        self.view.frame = frame;
+        
+        viewHeight += STATUS_BAR_HEIGHT;
+    }
+    
     self.currentStep = 1;
     self.globalScrollView.contentSize = CGSizeMake(320, 2*viewHeight);
     
-    // ---- CustomNavigationBar init ----
-    [self initNavigationBar];
-    
-    // ---- Init With Moment ---
-    if(self.moment)
-    {        
-        self.nomEvent = self.moment.titre;
-        self.dateDebut = self.moment.dateDebut;
-        self.dateFin = self.moment.dateFin;
-        self.startDateTextField.text = [self.dateFormatter stringFromDate:self.dateDebut];
-        self.endDateTextField.text = [self.dateFormatter stringFromDate:self.dateFin];
-        [self setAdresseText:self.moment.adresse];
-        self.descriptionTextView.text = self.moment.descriptionString;
-        self.coverImage = self.moment.uimage;
-        [self.coverView setImage:self.coverImage imageString:self.moment.imageString withSaveBlock:^(UIImage *image) {
-            self.coverImage = image;
-            self.moment.uimage = image;
-        }];
-    }
-    
     // ---- Step 1 ----
-    [self initCover];
     [self initTitreStep1];
     [self initStep1Labels];
     [self initDatePicker];
@@ -658,7 +512,6 @@
     self.descriptionTextView.placeholder = @"Description";
     [self.globalScrollView addSubview:_step2ScrollView];
     
-    
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -673,19 +526,26 @@
     [[[GAI sharedInstance] defaultTracker] sendView:@"Création Event 1"];
 }
 
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    // ---- CustomNavigationBar init ----
+    [self initNavigationBar];
+}
 #pragma mark - Util
 
 - (BOOL)formIsValid
 {
-    if( self.dateDebut && self.dateFin &&
-        (self.adresseText.length > 0) && (self.descriptionTextView.text.length > 0) )
+    if( self.dateDebut && self.dateFin )
+    //&& (self.adresseText.length > 0) && (self.descriptionTextView.text.length > 0) ) // Adresse et Description NON obligatoire maintenant
     {
         return YES;
     }
     else
     {
         [[[UIAlertView alloc] initWithTitle:@"Champs invalides"
-                                    message:@"Veuillez remplir tous les champs"
+                                    message:@"Veuillez remplir tous les champs obligatoires"
                                    delegate:nil cancelButtonTitle:@"OK"
                           otherButtonTitles:nil]
          show];
@@ -710,7 +570,11 @@
     // Cacher clavier
     [self.view endEditing:YES];
     
-    [self.globalScrollView scrollRectToVisible:CGRectMake(0, self.currentStep*viewHeight, 320, viewHeight) animated:YES];
+    if ([VersionControl sharedInstance].supportIOS7) {
+        [self.globalScrollView scrollRectToVisible:CGRectMake(0, self.currentStep*viewHeight-STATUS_BAR_HEIGHT, 320, viewHeight) animated:YES];
+    } else {
+        [self.globalScrollView scrollRectToVisible:CGRectMake(0, self.currentStep*viewHeight, 320, viewHeight) animated:YES];
+    }
     self.currentStep++;
         
     [self updateNavBarForStep:self.currentStep];
@@ -764,12 +628,13 @@
         {
             
             NSMutableDictionary *attributes = @{
-                                                @"adresse":_adresseLabel.text,
                                                 @"titre":_nomEvent,
                                                 @"dateDebut":_dateDebut,
                                                 @"dateFin":_dateFin,
                                                 }.mutableCopy;
             
+            if([_adresseLabel.text length] > 0)
+                attributes[@"adresse"] = _adresseLabel.text;
             if([_infoLieuTextField.text length] > 0)
                 attributes[@"infoLieu"] = _infoLieuTextField.text;
             if([_descriptionTextView.text length] > 0)
@@ -779,7 +644,7 @@
                 attributes[@"hashtag"] = _hashtagTextField.text;
 #endif
             if(self.moment && self.moment.facebookId)
-                attributes[@"facebbokId"] = self.moment.facebookId;
+                attributes[@"facebookId"] = self.moment.facebookId;
             if(modifiedCover)
                 attributes[@"dataImage"] = modifiedCover;
             
@@ -826,6 +691,7 @@
             // Création d'un moment
             else
             {
+                
                 [MomentClass createMomentWithAttributes:attributes withEnded:^(MomentClass* moment) {
                     
                     if(moment) {
@@ -1202,9 +1068,4 @@
     
 }
 
-- (void)viewDidUnload {
-    [self setAdresseButton:nil];
-    [self setSwitchBackground:nil];
-    [super viewDidUnload];
-}
 @end

@@ -138,31 +138,6 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (void)viewDidUnload {
-    [self setHeaderView:nil];
-    [self setTableView:nil];
-    [self setBandeauView:nil];
-    [self setBandeauLabel:nil];
-    [self setCoverImage:nil];
-    [self setOrganisePourLabel:nil];
-    [self setCagnotteLabel:nil];
-    [self setDescriptionBackgroundView:nil];
-    [self setDescriptionLabel:nil];
-    [self setArgentImage:nil];
-    [self setArgentLabel:nil];
-    [self setArgentInfoLabel:nil];
-    [self setParticipantsImage:nil];
-    [self setParticipantsLabel:nil];
-    [self setParticipantsInfoLabel:nil];
-    [self setTempsImage:nil];
-    [self setTempsLabel:nil];
-    [self setTempsInfoLabel:nil];
-    [self setParticipeButton:nil];
-    [self setRecupereButton:nil];
-    [self setShadowView:nil];
-    [super viewDidUnload];
-}
-
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView

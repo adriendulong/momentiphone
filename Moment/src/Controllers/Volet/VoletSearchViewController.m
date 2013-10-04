@@ -165,6 +165,12 @@
 {
     [super viewDidAppear:animated];
     [self.searchBarTextField becomeFirstResponder];
+    
+    if ([VersionControl sharedInstance].supportIOS7) {
+        CGRect frame = self.view.frame;
+        frame.origin.y += 20;
+        [self.view setFrame:frame];
+    }
 }
 
 
@@ -172,26 +178,6 @@
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
-}
-
-- (void)viewDidUnload
-{
-    [self setMoments:nil];
-    [self setUtilisateurs:nil];
-    [self setButtonsView:nil];
-    [self setSegementShadow:nil];
-    [self setUtilisateursButton:nil];
-    [self setMomentsButton:nil];
-    [self setNbMomentsBackground:nil];
-    [self setNbMomentsLabel:nil];
-    [self setNbMomentsView:nil];
-    [self setNbUtilisateursBackground:nil];
-    [self setNbUtilisateursLabel:nil];
-    [self setNbUtilisateursView:nil];
-    [self setAnnulerButton:nil];
-    [self setSearchBarTextField:nil];
-    [self setTableView:nil];
-    [super viewDidUnload];
 }
 
 #pragma mark - Table view data source

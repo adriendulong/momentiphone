@@ -29,6 +29,8 @@ static NSDateFormatter *dateFormatter = nil;
         [self addSubview:screens[0]];
         [self setSelectionStyle:UITableViewCellSelectionStyleNone];
         
+        self.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg_volet.png"]];
+        
         // Set image
         self.medallion.borderWidth = 1.5;
         //self.medallion.borderColor = [Config sharedInstance].orangeColor;

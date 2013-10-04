@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "REPhotoObjectProtocol.h"
 
-@interface Photo : NSObject <REPhotoObjectProtocol>
+@interface Photo : NSObject <NSMutableCopying, REPhotoObjectProtocol>
 
 @property (nonatomic, strong) UIImage *thumbnail;
 @property (nonatomic, strong) NSString *photoCachePath;
@@ -18,5 +18,8 @@
 
 @property (nonatomic, strong) NSURL *assetUrl;
 @property (nonatomic) BOOL isSelected;
+
+- (NSString *)description;
+- (id)mutableCopyWithZone:(NSZone *)zone;
 
 @end

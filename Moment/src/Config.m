@@ -8,6 +8,7 @@
 
 #import "Config.h"
 #import "TTTAttributedLabel.h"
+#import "Photos.h"
 
 // Base URL du server
 static NSString * const kAFBaseURLString;
@@ -315,6 +316,64 @@ static Config *sharedInstance = nil;
     UIGraphicsEndImageContext();
     
     return image;
+}
+
+#pragma mark - Upload Photos
+
+- (void)getUIImageFromAssetURL:(NSURL *)assetUrl toPath:(NSString *)path withEnded:(void (^) (NSString *fullPathToPhoto) )block
+{
+    if (block) {
+        
+        ALAssetsLibrary *assetsLibrary = [[ALAssetsLibrary alloc] init];
+        [assetsLibrary assetForURL:assetUrl resultBlock: ^(ALAsset *asset) {
+            
+            if (asset) {
+                
+                @autoreleasepool {
+                    ALAssetRepresentation *representation = [asset defaultRepresentation];
+                    
+                    UIImage *img = [UIImage imageWithCGImage:representation.fullResolutionImage
+                                                       scale:representation.scale
+                                                 orientation:representation.orientation];
+                    
+                    UIImage *croppedImg = [[Config sharedInstance] imageWithMaxSize:img maxSize:PHOTO_MAX_SIZE];
+                    img = nil;
+                    
+                    NSData *photoData = UIImageJPEGRepresentation(croppedImg, 0.8);
+                    croppedImg = nil;
+                    
+                    NSString *imageName = [NSString stringWithFormat:@"Photo_%f.png",[[NSDate date] timeIntervalSince1970]];
+                    
+                    NSString *fullPathToPhoto = [path stringByAppendingPathComponent:imageName];
+                    
+                    [photoData writeToFile:fullPathToPhoto atomically:NO];
+                    photoData = nil;
+                    
+                    //NSLog(@"fullPathToPhoto = %@", fullPathToPhoto);
+                    
+                    block(fullPathToPhoto);
+                }
+            }
+            
+        } failureBlock:^(NSError *error) {
+            NSLog(@"Error: %@", error.localizedDescription);
+            
+            block(nil);
+        }];
+    }
+}
+
+#pragma mark - Dates manipulation
+
++ (BOOL)date:(NSDate*)date isBetweenDate:(NSDate*)beginDate andDate:(NSDate*)endDate
+{
+    if ([date compare:beginDate] == NSOrderedAscending)
+    	return NO;
+    
+    if ([date compare:endDate] == NSOrderedDescending)
+    	return NO;
+    
+    return YES;
 }
 
 #pragma mark - Create NSString directly with font

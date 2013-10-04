@@ -6,10 +6,9 @@
 //  Copyright (c) 2013 Moment. All rights reserved.
 //
 
-#import "Three20/Three20.h"
 #import "MomentClass.h"
 
-@interface PhotoSet : TTURLRequest <TTPhotoSource>
+@interface PhotoSet : NSObject//TTURLRequest <TTPhotoSource>
 
 @property (nonatomic, copy) NSString *title;
 @property (nonatomic, retain) NSArray *photos;

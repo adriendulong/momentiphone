@@ -187,7 +187,7 @@
 }
 
 - (NSString*)description {
-    return [NSString stringWithFormat:@"MOMENT %@ :\n{\ntitre = %@\ndebut = %@\nfin = %@\nimageString = %@\nadresse = %@\nfbID = %@\ndescription = \n-----\n%@\n-----\nowner : \n-----\n%@\n-----\n}\n", self.momentId, self.titre, self.dateDebut, self.dateFin, self.imageString, self.adresse, self.facebookId, self.descriptionString, self.owner];
+    return [NSString stringWithFormat:@"MOMENT %@ :\n{\ntitre = %@\ndebut = %@\nfin = %@\nimageString = %@\nadresse = %@\nfbID = %@\ndescription = \n-----\n%@\n-----\nowner : \n-----\n%@\n-----\n}\nprivacy = %@\n", self.momentId, self.titre, self.dateDebut, self.dateFin, self.imageString, self.adresse, self.facebookId, self.descriptionString, self.owner, self.privacy];
 }
 
 @end

@@ -26,7 +26,7 @@
 + (void)loginUserWithUsername:(NSString *)username withPassword:(NSString *)password withEnded:(void (^)(NSInteger status))block;
 
 // Logout
-+ (void)logoutCurrentUserWithEnded:(void (^) (void))block;
++ (void)logoutCurrentUserWithRequestToServer:(BOOL)status withEnded:(void (^) (void))block;
 
 // Lost Password
 + (void)requestNewPasswordAtEmail:(NSString*)email withEnded:(void (^) (BOOL success))block;

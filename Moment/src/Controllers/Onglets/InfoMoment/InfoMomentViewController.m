@@ -24,7 +24,6 @@
 
 #import "Cagnotte1ViewController.h"
 
-#import "DEFacebookComposeViewController.h"
 #import <Twitter/Twitter.h>
 #import <Social/Social.h>
 #import "FacebookManager.h"
@@ -452,51 +451,15 @@ static CGFloat DescriptionBoxHeightMax = 100;
         NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:texteLabel];
         
 #pragma CustomLabel
-        if( [[VersionControl sharedInstance] supportIOS6] )
-        {
-            // Attributs du label
-            NSRange range = NSMakeRange(0, 1);
-            [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:InfoMomentFontSizeBig] range:range];
-            [attributedString setTextColor:[Config sharedInstance].orangeColor range:range];
-            range = NSMakeRange(1, [attributedString length]-1);
-            [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:InfoMomentFontSizeMedium] range:range];
-            [attributedString setTextColor:[Config sharedInstance].textColor range:range];
-            
-            [self.titreLabel setAttributedText:attributedString];
-        }
-        else
-        {
-            if(!self.ttTitreLabel)
-                self.ttTitreLabel = [[TTTAttributedLabel alloc] initWithFrame:self.titreLabel.frame];
-            self.ttTitreLabel.backgroundColor = [UIColor clearColor];
-            [self.ttTitreLabel setText:texteLabel afterInheritingLabelAttributesAndConfiguringWithBlock:^NSMutableAttributedString *(NSMutableAttributedString *mutableAttributedString) {
-                
-                NSInteger taille = [texteLabel length];
-                Config *cf = [Config sharedInstance];
-                
-                // 1er Lettre Font
-                [cf updateTTTAttributedString:mutableAttributedString withFontSize:InfoMomentFontSizeBig onRange:NSMakeRange(0, 1)];
-                
-                // Autres Lettres Font
-                [cf updateTTTAttributedString:mutableAttributedString withFontSize:InfoMomentFontSizeMedium onRange:NSMakeRange(1, taille-1 )];
-                
-                // 1er Lettre Couleur
-                [cf updateTTTAttributedString:mutableAttributedString withColor:cf.orangeColor onRange:NSMakeRange(0, 1)];
-                
-                // Autres lettres couleurs
-                [cf updateTTTAttributedString:mutableAttributedString withColor:cf.textColor onRange:NSMakeRange(1, taille-1)];
-                
-                return mutableAttributedString;
-            }];
-            
-            self.titreLabel.textAlignment = [[VersionControl sharedInstance] alignment:TextAlignmentLeft];
-            [self.ttTitreLabel removeFromSuperview];
-            [self.titreLabel.superview addSubview:self.ttTitreLabel];
-            self.titreLabel.hidden = YES;
-            
-            //[self.titreLabel setAttributedTextFromString:texteLabel withFontSize:InfoMomentFontSizeMedium];
-            //self.titreLabel.textAlignment = NSTextAlignmentLeft;
-        }
+        // Attributs du label
+        NSRange range = NSMakeRange(0, 1);
+        [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:InfoMomentFontSizeBig] range:range];
+        [attributedString setTextColor:[Config sharedInstance].orangeColor range:range];
+        range = NSMakeRange(1, [attributedString length]-1);
+        [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:InfoMomentFontSizeMedium] range:range];
+        [attributedString setTextColor:[Config sharedInstance].textColor range:range];
+        
+        [self.titreLabel setAttributedText:attributedString];
         
         if(firstLoad) {
             
@@ -612,7 +575,7 @@ static CGFloat DescriptionBoxHeightMax = 100;
                 seeMoreButton.userInteractionEnabled = YES;
                 [seeMoreButton setTitle:NSLocalizedString(@"InfoMomentViewController_View_More", nil) forState:UIControlStateNormal];
                 [seeMoreButton setTitleColor:[Config sharedInstance].textColor forState:UIControlStateNormal];
-                seeMoreButton.titleLabel.textAlignment = [[VersionControl sharedInstance] alignment:TextAlignmentCenter];
+                seeMoreButton.titleLabel.textAlignment = NSTextAlignmentCenter;
                 seeMoreButton.titleLabel.font = [[Config sharedInstance] defaultFontWithSize:13];
                 [seeMoreButton addTarget:self action:@selector(clicExpandDescriptionView) forControlEvents:UIControlEventTouchUpInside];
                 [seeMoreButton sizeToFit];
@@ -673,82 +636,83 @@ static CGFloat DescriptionBoxHeightMax = 100;
 
 - (void) initMapView
 {
-    if(self.moment.adresse)
+    
+    if((self.moment.adresse && self.moment.adresse.length > 0))
     {
-        // Indicateur de chargement
-        UIActivityIndicatorView *activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-        [activityIndicator startAnimating];
         
-        // On centre l'indicateur
-        CGRect frame = activityIndicator.frame;
-        frame.origin.x = (self.mapView.frame.size.width - frame.size.width)/2.0;
-        frame.origin.y = (self.mapView.frame.size.height - frame.size.height)/2.0;
-        activityIndicator.frame = frame;
-        
-        [self.mapView addSubview:activityIndicator];
-        
-        // ---- Chargement de la vue map ----
-        dispatch_queue_t geocoderQueue = dispatch_queue_create("GeocoderQueue", NULL);
-        dispatch_async(geocoderQueue, ^{
+        if (![self.moment.adresse isEqualToString:@"Unknwon"]) {
             
-            CLGeocoder *geocoder = [[CLGeocoder alloc] init];
-            [geocoder geocodeAddressString:self.moment.adresse completionHandler:^(NSArray *placemarks, NSError *error) {
+            // Indicateur de chargement
+            UIActivityIndicatorView *activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+            [activityIndicator startAnimating];
+            
+            // On centre l'indicateur
+            CGRect frame = activityIndicator.frame;
+            frame.origin.x = (self.mapView.frame.size.width - frame.size.width)/2.0;
+            frame.origin.y = (self.mapView.frame.size.height - frame.size.height)/2.0;
+            activityIndicator.frame = frame;
+            
+            [self.mapView addSubview:activityIndicator];
+            
+            // ---- Chargement de la vue map ----
+            dispatch_queue_t geocoderQueue = dispatch_queue_create("GeocoderQueue", NULL);
+            dispatch_async(geocoderQueue, ^{
                 
-                // Si l'adresse a été trouvée
-                if ([placemarks count] > 0) {
+                CLGeocoder *geocoder = [[CLGeocoder alloc] init];
+                [geocoder geocodeAddressString:self.moment.adresse completionHandler:^(NSArray *placemarks, NSError *error) {
                     
-                    CLPlacemark *placemark = placemarks[0];
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        self.coordonateMap = placemark.location.coordinate;
-                        [self.mapView setCenterCoordinate:self.coordonateMap zoomLevel:12 animated:YES];
-                        [activityIndicator stopAnimating];
-                    });
-                    
-                }
-                else
-                {
+                    // Si l'adresse a été trouvée
+                    if ([placemarks count] > 0) {
+                        
+                        CLPlacemark *placemark = placemarks[0];
+                        dispatch_async(dispatch_get_main_queue(), ^{
+                            self.coordonateMap = placemark.location.coordinate;
+                            [self.mapView setCenterCoordinate:self.coordonateMap zoomLevel:12 animated:YES];
+                            [activityIndicator stopAnimating];
+                        });
+                        
+                    }
+                    else
+                    {
 #warning afficher ui indiquant que la localisation a échoué
-                    //NSLog(@"InfoMoment MapView Geocoder fail");
-                    
-                    
-                    // Try Google API
-                    [self geolocalisationFromGoogleMaps:self.moment.adresse withEnded:^(BOOL success, double lat, double lng) {
+                        //NSLog(@"InfoMoment MapView Geocoder fail");
                         
-                        if(success) {
-                            
-                            //NSLog(@"Google Map Success");
-                            CLLocationCoordinate2D coord = CLLocationCoordinate2DMake(lat, lng);
-                            dispatch_async(dispatch_get_main_queue(), ^{
-                                self.coordonateMap = coord;
-                                [self.mapView setCenterCoordinate:self.coordonateMap zoomLevel:12 animated:YES];
-                                [activityIndicator stopAnimating];
-                            });
-                            
-                        }
-                        else  {
-
-                            dispatch_async(dispatch_get_main_queue(), ^{
-                                [activityIndicator stopAnimating];
-                            });
-                            
-                        }
                         
-                    }];
+                        // Try Google API
+                        [self geolocalisationFromGoogleMaps:self.moment.adresse withEnded:^(BOOL success, double lat, double lng) {
+                            
+                            if(success) {
+                                
+                                //NSLog(@"Google Map Success");
+                                CLLocationCoordinate2D coord = CLLocationCoordinate2DMake(lat, lng);
+                                dispatch_async(dispatch_get_main_queue(), ^{
+                                    self.coordonateMap = coord;
+                                    [self.mapView setCenterCoordinate:self.coordonateMap zoomLevel:12 animated:YES];
+                                    [activityIndicator stopAnimating];
+                                });
+                                
+                            }
+                            else  {
+                                
+                                dispatch_async(dispatch_get_main_queue(), ^{
+                                    [activityIndicator stopAnimating];
+                                });
+                                
+                            }
+                            
+                        }];
+                        
+                    }
                     
-                }
+                }];
                 
-            }];
+            });
             
-        });
-        dispatch_release(geocoderQueue);
-        
-
+            
 #pragma CustomLabel
-        // ---- Attributed string for CustomLabel ----
-        int taille = [self.moment.adresse length];
-        if(taille > 0)
-        {
-            if( [[VersionControl sharedInstance] supportIOS6] )
+            // ---- Attributed string for CustomLabel ----
+            int taille = [self.moment.adresse length];
+            if(taille > 0)
             {
                 self.adresseLabel.hidden = NO;
                 
@@ -769,85 +733,49 @@ static CGFloat DescriptionBoxHeightMax = 100;
             }
             else
             {
-                if(!self.ttAdresseLabel)
-                    self.ttAdresseLabel = [[TTTAttributedLabel alloc] initWithFrame:self.adresseLabel.frame];
-                
-                self.ttAdresseLabel.hidden = NO;
-                
-                self.ttAdresseLabel.backgroundColor = [UIColor clearColor];
-                [self.ttAdresseLabel setText:self.moment.adresse afterInheritingLabelAttributesAndConfiguringWithBlock:^NSMutableAttributedString *(NSMutableAttributedString *mutableAttributedString) {
-                    
-                    Config *cf = [Config sharedInstance];
-                    
-                    // Couleur
-                    [cf updateTTTAttributedString:mutableAttributedString withColor:cf.textColor onRange:NSMakeRange(0, taille)];
-                    
-                    // 1er Lettre
-                    [cf updateTTTAttributedString:mutableAttributedString withFontSize:InfoMomentFontSizeMedium onRange:NSMakeRange(0, 1) ];
-                    
-                    if(taille > 1) {
-                        // Autres lettres
-                        [cf updateTTTAttributedString:mutableAttributedString withFontSize:InfoMomentFontSizeLittle onRange:NSMakeRange(1, taille-1) ];
-                    }
-                    
-                    return mutableAttributedString;
-                }];
-                
-                [self.ttAdresseLabel removeFromSuperview];
-                [self.adresseLabel.superview addSubview:self.ttAdresseLabel];
                 self.adresseLabel.hidden = YES;
+                self.ttAdresseLabel.hidden = YES;
+            }
+            
+            
+            // ---- Nom Lieu ----
+            if([self.moment.nomLieu length] > 0)
+            {
+                self.nomLieuLabel.textColor = [Config sharedInstance].textColor;
+                self.nomLieuLabel.text = [self.moment.nomLieu uppercaseString];
+                self.nomLieuLabel.font = [[Config sharedInstance] defaultFontWithSize:InfoMomentFontSizeMedium];
+                self.nomLieuLabel.alpha = 0.7;
+                self.nomLieuView.alpha = 0.4;
+            }
+            else {
+                self.nomLieuView.alpha = 0;
+                self.nomLieuLabel.alpha = 0;
+            }
+            
+            static InfoMomentSeparateurView *separator = nil;
+            
+            if(firstLoad) {
+                if(separator) {
+                    [separator removeFromSuperview];
+                }
                 
-                /*
-                 self.adresseLabel.text = adresse;
-                 self.adresseLabel.textAlignment = NSTextAlignmentCenter;
-                 self.adresseLabel.textColor = [Config sharedInstance].textColor;
-                 self.adresseLabel.font = [[Config sharedInstance] defaultFontWithSize:InfoMomentFontSizeMedium];
-                 */
-            }
-        }
-        else
-        {
-            self.adresseLabel.hidden = YES;
-            self.ttAdresseLabel.hidden = YES;
-        }
-        
-        
-        // ---- Nom Lieu ----
-        if([self.moment.nomLieu length] > 0)
-        {
-            self.nomLieuLabel.textColor = [Config sharedInstance].textColor;
-            self.nomLieuLabel.text = [self.moment.nomLieu uppercaseString];
-            self.nomLieuLabel.font = [[Config sharedInstance] defaultFontWithSize:InfoMomentFontSizeMedium];
-            self.nomLieuLabel.alpha = 0.7;
-            self.nomLieuView.alpha = 0.4;
-        }
-        else {
-            self.nomLieuView.alpha = 0;
-            self.nomLieuLabel.alpha = 0;
-        }
-        
-        static InfoMomentSeparateurView *separator = nil;
-        
-        if(firstLoad) {
-            if(separator) {
-                [separator removeFromSuperview];
+                // ---- Separateur ----
+                separator = [[InfoMomentSeparateurView alloc] initAtPosition:(99 + 5)];
+                [self.generalMapView addSubview:separator];
+                
+                
+                // Frame
+                frame = self.generalMapView.frame;
+                frame.size.height = separator.frame.origin.y + separator.frame.size.height + 5;
+                self.generalMapView.frame = frame;
+                
+                // Tap Gesture
+                UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(clicMapView)];
+                [self.mapView addGestureRecognizer:tap];
+                
+                [self addSubviewAtAutomaticPosition:self.generalMapView];
             }
             
-            // ---- Separateur ----
-            separator = [[InfoMomentSeparateurView alloc] initAtPosition:(99 + 5)];
-            [self.generalMapView addSubview:separator];
-            
-            
-            // Frame
-            frame = self.generalMapView.frame;
-            frame.size.height = separator.frame.origin.y + separator.frame.size.height + 5;
-            self.generalMapView.frame = frame;
-            
-            // Tap Gesture
-            UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(clicMapView)];
-            [self.mapView addGestureRecognizer:tap];
-            
-            [self addSubviewAtAutomaticPosition:self.generalMapView];
         }
         
     }
@@ -870,46 +798,14 @@ static CGFloat DescriptionBoxHeightMax = 100;
         [texte appendString:[NSString stringWithFormat: @" %@", NSLocalizedString(@"Guest_Singular", nil)]];
     }
     
-    if( [[VersionControl sharedInstance] supportIOS6] )
-    {
-        NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:texte];
-        [attributedString setTextColor:color];
-        
-        [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:InfoMomentFontSizeMedium] range:NSMakeRange(0, taille)];
-        [attributedString setFont:smallFont range:NSMakeRange(taille, [texte length] - taille)];
-        
-        // Invités labels
-        self.nbInvitesLabel.attributedText = attributedString;
-    }
-    else
-    {
-        if(!self.ttNbInvitesLabel)
-            self.ttNbInvitesLabel = [[TTTAttributedLabel alloc] initWithFrame:self.nbInvitesLabel.frame];
-        self.ttNbInvitesLabel.backgroundColor = [UIColor clearColor];
-        [self.ttNbInvitesLabel setText:texte afterInheritingLabelAttributesAndConfiguringWithBlock:^NSMutableAttributedString *(NSMutableAttributedString *mutableAttributedString) {
-            
-            Config *cf = [Config sharedInstance];
-            
-            // Couleur
-            [cf updateTTTAttributedString:mutableAttributedString withColor:cf.textColor onRange:NSMakeRange(0, [texte length])];
-            
-            [cf updateTTTAttributedString:mutableAttributedString withFontSize:InfoMomentFontSizeMedium onRange:NSMakeRange(0, taille)];
-            
-            [cf updateTTTAttributedString:mutableAttributedString withFontSize:InfoMomentFontSizeLittle onRange:NSMakeRange(taille, [texte length] - taille )];
-            
-            return mutableAttributedString;
-        }];
-        
-        [self.ttNbInvitesLabel removeFromSuperview];
-        [self.nbInvitesLabel.superview addSubview:self.ttNbInvitesLabel];
-        self.nbInvitesLabel.hidden = YES;
-        
-        /*
-         self.nbInvitesLabel.text = texte;
-         self.nbInvitesLabel.textColor = color;
-         self.nbInvitesLabel.font = smallFont;
-         */
-    }
+    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:texte];
+    [attributedString setTextColor:color];
+    
+    [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:InfoMomentFontSizeMedium] range:NSMakeRange(0, taille)];
+    [attributedString setFont:smallFont range:NSMakeRange(taille, [texte length] - taille)];
+    
+    // Invités labels
+    self.nbInvitesLabel.attributedText = attributedString;
     
     self.nbInvitesRefusesLabel.text = [NSString stringWithFormat:@"%d", self.moment.guests_not_coming.intValue];
     //self.nbInvitesValidesLabel.text = [NSString stringWithFormat:@"%d", nb - taille - [self.moment.usersWaiting count]];
@@ -961,49 +857,21 @@ static CGFloat DescriptionBoxHeightMax = 100;
 
 - (void) initDateView
 {
-    if( [[VersionControl sharedInstance] supportIOS6] )
-    {
-        // Création des textes
-        if(self.moment.dateDebut) {
-            self.dateDebutLabel.attributedText = [self createClassicAttributedStringForDate:self.moment.dateDebut];
-            self.heureDebutLabel.attributedText = [self createClassicAttributedStringForHour:self.moment.dateDebut];
-        }
-        if(self.moment.dateFin) {
-            self.dateFinLabel.attributedText = [self createClassicAttributedStringForDate:self.moment.dateFin];
-            self.heureFinLabel.attributedText = [self createClassicAttributedStringForHour:self.moment.dateFin];
-        }
-        
-        // Alignement
-        [self.dateDebutLabel setTextAlignment:kCTTextAlignmentLeft];
-        [self.dateFinLabel setTextAlignment:NSTextAlignmentRight];
-        [self.heureDebutLabel setTextAlignment:kCTTextAlignmentLeft];
-        [self.heureFinLabel setTextAlignment:NSTextAlignmentRight];
+    // Création des textes
+    if(self.moment.dateDebut) {
+        self.dateDebutLabel.attributedText = [self createClassicAttributedStringForDate:self.moment.dateDebut];
+        self.heureDebutLabel.attributedText = [self createClassicAttributedStringForHour:self.moment.dateDebut];
     }
-    else
-    {
-        if(self.moment.dateDebut)
-        {
-            if(!self.ttDateDebutLabel)
-                self.ttDateDebutLabel = [[TTTAttributedLabel alloc] initWithFrame:self.dateDebutLabel.frame];
-            [self setTTTAttributedStringForDate:self.moment.dateDebut forLabel:self.dateDebutLabel withTTLabel:self.ttDateDebutLabel withTextAlignment:NSTextAlignmentLeft];
-            
-            if(!self.ttHeureDebutLabel)
-                self.ttHeureDebutLabel = [[TTTAttributedLabel alloc] initWithFrame:self.heureDebutLabel.frame];
-            [self setTTTAttributedStringForHour:self.moment.dateDebut forLabel:self.heureDebutLabel withTTLabel:self.ttHeureDebutLabel withTextAlignment:NSTextAlignmentLeft];
-        }
-        
-        if(self.moment.dateFin)
-        {
-            if(!self.ttDateFinLabel)
-                self.ttDateFinLabel = [[TTTAttributedLabel alloc] initWithFrame:self.dateFinLabel.frame];
-            [self setTTTAttributedStringForDate:self.moment.dateFin forLabel:self.dateFinLabel withTTLabel:self.ttDateFinLabel withTextAlignment:NSTextAlignmentRight];
-            
-            if(!self.ttHeureFinLabel)
-                self.ttHeureFinLabel = [[TTTAttributedLabel alloc] initWithFrame:self.heureFinLabel.frame];
-            [self setTTTAttributedStringForHour:self.moment.dateFin forLabel:self.heureFinLabel withTTLabel:self.ttHeureFinLabel withTextAlignment:NSTextAlignmentRight];
-        }
-        
+    if(self.moment.dateFin) {
+        self.dateFinLabel.attributedText = [self createClassicAttributedStringForDate:self.moment.dateFin];
+        self.heureFinLabel.attributedText = [self createClassicAttributedStringForHour:self.moment.dateFin];
     }
+    
+    // Alignement
+    [self.dateDebutLabel setTextAlignment:kCTTextAlignmentLeft];
+    [self.dateFinLabel setTextAlignment:NSTextAlignmentRight];
+    [self.heureDebutLabel setTextAlignment:kCTTextAlignmentLeft];
+    [self.heureFinLabel setTextAlignment:NSTextAlignmentRight];
     
     static InfoMomentSeparateurView *separator = nil;
     
@@ -1284,6 +1152,11 @@ static CGFloat DescriptionBoxHeightMax = 100;
 {
     [super viewDidLoad];
     
+    [AppDelegate updateActualViewController:self];
+    
+    [self reloadData];
+    [self sendGoogleAnalyticsView];
+    
     viewIsLoading = YES;
     
     // View
@@ -1415,92 +1288,14 @@ static CGFloat DescriptionBoxHeightMax = 100;
     viewIsLoading = NO;
 }
 
-- (void)viewDidAppear:(BOOL)animated
-{
-    [super viewDidAppear:animated];
-    [self reloadData];
-    [self sendGoogleAnalyticsView];
-}
-
-- (void)viewWillAppear:(BOOL)animated
-{
-    [super viewWillAppear:animated];
-    
-    [AppDelegate updateActualViewController:self];
-}
-
-- (void)viewDidUnload
-{
-    [self setMoment:nil];
-    [self setForegroundView:nil];
-    [self setTopImageView:nil];
-    [self setOwnerDescripionView:nil];
-    [self setOwnerNameLabel:nil];
-    [self setHashtagLabel:nil];
-    [self setExpandButton:nil];
-    [self setMomentImageView:nil];
-    [self setDescriptionView:nil];
-    [self setTitreLabel:nil];
-    [self setDescriptionLabel:nil];
-    [self setBackgroundDescripionView:nil];
-    [self setGeneralMapView:nil];
-    [self setMapView:nil];
-    [self setAdresseLabel:nil];
-    [self setNomLieuView:nil];
-    [self setNomLieuLabel:nil];
-    [self setInvitesView:nil];
-    [self setNbInvitesLabel:nil];
-    [self setNbInvitesValidesLabel:nil];
-    [self setNbInvitesRefusesLabel:nil];
-    [self setDateView:nil];
-    [self setDateDebutLabel:nil];
-    [self setHeureDebutLabel:nil];
-    [self setDateFinLabel:nil];
-    [self setHeureFinLabel:nil];
-    [self setPhotosView:nil];
-    [self setBadgesView:nil];
-    [self setMetroView:nil];
-    [self setMetroLabel:nil];
-    [self setInfoLieuView:nil];
-    [self setInfoLieuLabel:nil];
-    [self setTtNbInvitesLabel:nil];
-    [self setTtMetroLabel:nil];
-    [self setTtHeureFinLabel:nil];
-    [self setTtHeureDebutLabel:nil];
-    [self setTtTitreLabel:nil];
-    [self setTtDateFinLabel:nil];
-    [self setTtDateDebutLabel:nil];
-    [self setTtAdresseLabel:nil];
-    [self setInviteButton:nil];
-    [self setInvitesBackgroundView:nil];
-    [self setValideImageView:nil];
-    [self setSeeInviteButton:nil];
-    [self setValideImageView:nil];
-    [self setRefusedImageView:nil];
-    [self setParallaxView:nil];
-    [self setTitreView:nil];
-    [self setCagnotteView:nil];
-    [self setComingSoonCagnotteLabels:nil];
-    [self setCagnotteCourseLabel:nil];
-    [self setCagnotteCagnotteLabel:nil];
-    [self setCagnotteCompteLabel:nil];
-    [self setRsvpView:nil];
-    [self setRsvpLabel:nil];
-    [self setRsvpMaybeButton:nil];
-    [self setRsvpYesButton:nil];
-    [self setRsvpNoButton:nil];
-    [self setManagementView:nil];
-    [self setAddPhotosView:nil];
-    [self setPhotosImageView:nil];
-    [self setManageMomentButton:nil];
-    [super viewDidUnload];
-}
-
 - (void)reloadData
 {
+    
     [self.moment updateMomentFromServerWithEnded:^(BOOL success) {
+        
         if(success)
         {
+            
             // Force Reload Image
             self.moment.uimage = nil;
             self.moment.dataImage = nil;
@@ -1531,6 +1326,12 @@ static CGFloat DescriptionBoxHeightMax = 100;
             // View
             firstLoad = NO;
             self.parallaxView.scrollView.contentSize = CGSizeMake(self.view.frame.size.width, 150 + hauteur);
+            
+            self.rootViewController.photoViewController.moment = self.moment;
+            self.rootViewController.chatViewController.moment = self.moment;
+            
+            [self.rootViewController.photoViewController.collectionView reloadData];
+            [self.rootViewController.chatViewController changeStatusSendboxView];
         }
     }];
     
@@ -1864,32 +1665,6 @@ static CGFloat DescriptionBoxHeightMax = 100;
         
         [self presentViewController:fbSheet animated:YES completion:nil];
     }
-    // iOS 5
-    else
-    {
-        /*
-         DEFacebookComposeViewControllerCompletionHandler completionHandler = ^(DEFacebookComposeViewControllerResult result) {
-         switch (result) {
-         case DEFacebookComposeViewControllerResultCancelled:
-         NSLog(@"Facebook Result: Cancelled - iOS 5");
-         break;
-         case DEFacebookComposeViewControllerResultDone:
-         NSLog(@"Facebook Result: Sent - iOS 5");
-         break;
-         }
-         
-         [self dismissModalViewControllerAnimated:YES];
-         };
-         */
-        
-        DEFacebookComposeViewController *facebookViewComposer = [[DEFacebookComposeViewController alloc] init];
-        self.modalPresentationStyle = UIModalPresentationCurrentContext;
-        [facebookViewComposer setInitialText:initialText];
-        if(self.moment.uniqueURL)
-            [facebookViewComposer addURL:[NSURL URLWithString:self.moment.uniqueURL]];
-        //facebookViewComposer.completionHandler = completionHandler;
-        [self presentViewController:facebookViewComposer animated:YES completion:nil];
-    }
     
 }
 
@@ -1915,17 +1690,6 @@ static CGFloat DescriptionBoxHeightMax = 100;
         [tweetSheet addURL:[NSURL URLWithString:self.moment.uniqueURL]];
         
         [self presentViewController:tweetSheet animated:YES completion:nil];
-    }
-    // iOS 5 -> Twitter Framework
-    else
-    {
-        TWTweetComposeViewController *twitterViewComposer = [[TWTweetComposeViewController alloc] init];
-        self.modalPresentationStyle = UIModalPresentationCurrentContext;
-        [twitterViewComposer setInitialText:initialText];
-        //if(self.moment.uniqueURL)
-        [twitterViewComposer addURL:[NSURL URLWithString:self.moment.uniqueURL]];
-        
-        [self presentViewController:twitterViewComposer animated:YES completion:nil];
     }
     
 }

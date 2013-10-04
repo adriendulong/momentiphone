@@ -31,10 +31,8 @@ enum TextAlignment {
 - (BOOL)isIphone5;
 
 // Custom Label Support
-@property (nonatomic, readonly) BOOL supportIOS6;
+@property (nonatomic, readonly) BOOL supportIOS7;
 
 - (UIImage*)resizableImageFromImage:(UIImage*)image withCapInsets:(UIEdgeInsets)edge stretchableImageWithLeftCapWidth:(NSInteger)capWidth topCapHeight:(NSInteger)capHeight;
-
-- (NSInteger)alignment:(enum TextAlignment)align;
 
 @end

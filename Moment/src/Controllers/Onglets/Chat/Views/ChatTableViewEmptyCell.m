@@ -21,6 +21,8 @@
         frame.size.width = 320;
         self.frame = frame;
         
+        self.backgroundColor = [UIColor clearColor];
+        
         NSString *texte = NSLocalizedString(@"ChatViewController_EmptyCell_label", nil);
         UIFont *font = [[Config sharedInstance] defaultFontWithSize:14];
         //CGSize size = [texte sizeWithFont:font];
@@ -28,7 +30,7 @@
         UILabel *label = [[UILabel alloc] init];
         label.text = texte;
         label.numberOfLines = 0;
-        label.lineBreakMode = UILineBreakModeTailTruncation;
+        label.lineBreakMode = NSLineBreakByTruncatingTail;
         label.textAlignment = NSTextAlignmentCenter;
         label.textColor = [Config sharedInstance].textColor;
         label.font = font;

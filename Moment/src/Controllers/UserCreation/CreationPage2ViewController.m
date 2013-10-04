@@ -9,6 +9,7 @@
 #import "CreationPage2ViewController.h"
 #import "Config.h"
 #import "UserClass+Server.h"
+#import "UIImage+handling.h"
 
 @interface CreationPage2ViewController ()
 
@@ -49,7 +50,15 @@
     self.trackedViewName = @"Vue Inscription tel";
     
     //mettre le fond
-    self.view.backgroundColor = [[UIColor alloc] initWithPatternImage:[UIImage imageNamed:@"login-bg.png"]];
+    UIImage *backGround = [UIImage imageNamed:@"login-bg"];
+    
+    if ([VersionControl sharedInstance].supportIOS7) {
+        
+        if ([VersionControl sharedInstance].isIphone5) {
+            backGround = [UIImage imageWithImage:backGround scaledToHeight:[VersionControl sharedInstance].screenHeight];
+        }
+    }
+    self.view.backgroundColor = [[UIColor alloc] initWithPatternImage:backGround];
     
     //mettre le fond de la box
     // bg-box.png
@@ -68,6 +77,11 @@
     // iPhone 5
     frame = self.view.frame;
     frame.size.height = [VersionControl sharedInstance].screenHeight - TOPBAR_HEIGHT;
+    
+    if ([VersionControl sharedInstance].supportIOS7) {
+        frame.origin.y += TOPBAR_HEIGHT;
+    }
+    
     self.view.frame = frame;
     
     // Centrer
@@ -93,17 +107,6 @@
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
-}
-
-- (void)viewDidUnload {
-    [self setBgBox:nil];
-    [self setDescriptionLabel1:nil];
-    [self setDescriptionLabel2:nil];
-    [self setPhoneTextField:nil];
-    [self setScrollView:nil];
-    [self setBoxView:nil];
-    [self setBoutonValider:nil];
-    [super viewDidUnload];
 }
 
 #pragma mark - UITextField Delegate

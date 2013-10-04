@@ -90,13 +90,19 @@
 
 #pragma mark - NavigationBar
 
-- (void) initNavigationBar
+- (void)initNavigationBar
 {
     [CustomNavigationController setBackButtonChevronWithViewController:self];
     
     // Remove space at right
     UIBarButtonItem *negativeSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:nil action:nil];
-    negativeSpace.width = -5;
+    
+    if ([VersionControl sharedInstance].supportIOS7) {
+        negativeSpace.width = -16;
+    } else {
+        
+        negativeSpace.width = -5;
+    }
     
     // Add customView
     UIBarButtonItem *buttons = [[UIBarButtonItem alloc] initWithCustomView:self.navBarRigthButtonsView];
@@ -333,14 +339,6 @@
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
-- (void)viewDidUnload
-{
-    [super viewDidUnload];
-    // Release any retained subviews of the main view.
-    // e.g. self.myOutlet = nil;
-}
-
-
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
@@ -349,7 +347,7 @@
         InviteAddViewController *inviteViewController = [[InviteAddViewController alloc] initWithOwner:self.user withMoment:self.moment];
         [self.navigationController pushViewController:inviteViewController animated:NO];
     }
-    [self.infoMomentViewController reloadData];
+    //[self.infoMomentViewController reloadData];
 }
 
 - (void)viewWillDisappear:(BOOL)animated

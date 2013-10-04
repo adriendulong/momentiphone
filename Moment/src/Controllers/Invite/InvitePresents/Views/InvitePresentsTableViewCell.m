@@ -98,6 +98,13 @@ enum InviteAddTTLabel {
             self.adminSelected = NO;
         }
         
+        if (self.medaillon.frame.size.height != self.medaillon.frame.size.width) {
+            CGRect medaillonFrameTemp = self.medaillon.frame;
+            medaillonFrameTemp.size.height = 59;
+            medaillonFrameTemp.size.width = 59;
+            self.medaillon.frame = medaillonFrameTemp;
+        }
+        
         // Set image
         self.medaillon.borderWidth = 2.0;
         self.medaillon.defaultStyle = MedallionStyleProfile;
@@ -185,53 +192,21 @@ enum InviteAddTTLabel {
     NSInteger tailleNom = [nom length];
     
 #pragma CustomLabel
-    if( [[VersionControl sharedInstance] supportIOS6] )
-    {
-        // Attributs du label
-        NSRange range = NSMakeRange(0, 1);
-        [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:InviteAddFontSizeBig] range:range];
-        range = NSMakeRange(1, taillePrenom);
+    // Attributs du label
+    NSRange range = NSMakeRange(0, 1);
+    [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:InviteAddFontSizeBig] range:range];
+    range = NSMakeRange(1, taillePrenom);
+    [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:InviteAddFontSizeSmall] range:range];
+    range = NSMakeRange(taillePrenom+1, 1);
+    [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:InviteAddFontSizeBig] range:range];
+    
+    if(taillePrenom > 1) {
+        range = NSMakeRange(taillePrenom+2, tailleNom-1);
         [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:InviteAddFontSizeSmall] range:range];
-        range = NSMakeRange(taillePrenom+1, 1);
-        [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:InviteAddFontSizeBig] range:range];
-        
-        if(taillePrenom > 1) {
-            range = NSMakeRange(taillePrenom+2, tailleNom-1);
-            [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:InviteAddFontSizeSmall] range:range];
-        }
-        
-        [self.nomLabel setAttributedText:attributedString];
-        self.nomLabel.textAlignment = kCTLeftTextAlignment;
     }
-    else
-    {
-        
-        TTTAttributedLabel *ttLabel = [[TTTAttributedLabel alloc] initWithFrame:self.nomLabel.frame];
-        ttLabel.backgroundColor = [UIColor clearColor];
-        [ttLabel setText:total afterInheritingLabelAttributesAndConfiguringWithBlock:^NSMutableAttributedString *(NSMutableAttributedString *mutableAttributedString) {
-            
-            Config *cf = [Config sharedInstance];
-            
-            [cf updateTTTAttributedString:mutableAttributedString withFontSize:InviteAddFontSizeBig onRange:NSMakeRange(0, 1)];
-            [cf updateTTTAttributedString:mutableAttributedString withFontSize:InviteAddFontSizeSmall onRange:NSMakeRange(1, taillePrenom)];
-            [cf updateTTTAttributedString:mutableAttributedString withFontSize:InviteAddFontSizeBig onRange:NSMakeRange(taillePrenom+1, 1)];
-            
-            if(taillePrenom > 1) {
-                [cf updateTTTAttributedString:mutableAttributedString withFontSize:InviteAddFontSizeSmall onRange:NSMakeRange(taillePrenom+2, tailleNom-1)];
-            }
-            
-            [cf updateTTTAttributedString:mutableAttributedString withColor:color onRange:NSMakeRange(0, [total length])];
-            
-            return mutableAttributedString;
-        }];
-        
-        [self.nomLabel.superview addSubview:ttLabel];
-        self.nomLabel.hidden = YES;
-        if(self.ttNomLabel) {
-            [self.ttNomLabel removeFromSuperview];
-        }
-        self.ttNomLabel = ttLabel;
-    }
+    
+    [self.nomLabel setAttributedText:attributedString];
+    self.nomLabel.textAlignment = kCTLeftTextAlignment;
 }
 
 - (void)setCustomLabelText:(UILabel*)label withTTLabel:(enum InviteAddTTLabel)ttLabelStyle withColor:(UIColor*)color withText:(NSString*)texteLabel withBigSize:(NSInteger)bigSize withSmallSize:(NSInteger)smallSize
@@ -240,50 +215,14 @@ enum InviteAddTTLabel {
     NSInteger taille = [texteLabel length];
     
 #pragma CustomLabel
-    if( [[VersionControl sharedInstance] supportIOS6] )
-    {
-        // Attributs du label
-        NSRange range = NSMakeRange(0, 1);
-        [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:bigSize] range:range];
-        range = NSMakeRange(1, taille-1);
-        [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:smallSize] range:range];
-        
-        [label setAttributedText:attributedString];
-        label.textAlignment = kCTLeftTextAlignment;
-    }
-    else
-    {
-        TTTAttributedLabel *tttLabel = [[TTTAttributedLabel alloc] initWithFrame:label.frame];
-        tttLabel.backgroundColor = [UIColor clearColor];
-        [tttLabel setText:texteLabel afterInheritingLabelAttributesAndConfiguringWithBlock:^NSMutableAttributedString *(NSMutableAttributedString *mutableAttributedString) {
-            
-            Config *cf = [Config sharedInstance];
-            
-            [cf updateTTTAttributedString:mutableAttributedString withFontSize:bigSize onRange:NSMakeRange(0, 1)];
-            [cf updateTTTAttributedString:mutableAttributedString withFontSize:smallSize onRange:NSMakeRange(1, taille-1)];
-            
-            [cf updateTTTAttributedString:mutableAttributedString withColor:color onRange:NSMakeRange(0, taille)];
-            
-            return mutableAttributedString;
-        }];
-        
-        [label.superview addSubview:tttLabel];
-        label.hidden = YES;
-        
-        if(ttLabelStyle == InviteAddTTLabelNom) {
-            
-            if(self.ttNomLabel) {
-                [self.ttNomLabel removeFromSuperview];
-            }
-            self.ttNomLabel = tttLabel;
-        } else {
-            
-            if(self.ttAdresseLabel) {
-                [self.ttAdresseLabel removeFromSuperview];
-            }
-            self.ttAdresseLabel = tttLabel;
-        }
-    }
+    // Attributs du label
+    NSRange range = NSMakeRange(0, 1);
+    [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:bigSize] range:range];
+    range = NSMakeRange(1, taille-1);
+    [attributedString setFont:[[Config sharedInstance] defaultFontWithSize:smallSize] range:range];
+    
+    [label setAttributedText:attributedString];
+    label.textAlignment = kCTLeftTextAlignment;
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated
