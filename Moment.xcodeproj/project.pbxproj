@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		320AF8492C47A4D819F7C451 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 320AF8492C47A4D819F7C450 /* QuartzCore.framework */; };
+		3FFFCBFC180BE92E007E8964 /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3FFFCBFB180BE92E007E8964 /* FacebookSDK.framework */; };
+		3FFFCC04180BEA95007E8964 /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3FFFCC03180BEA95007E8964 /* Crashlytics.framework */; };
 		5B0055DA16E86CD800C45A3D /* RootTimeLineViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5B0055D916E86CD800C45A3D /* RootTimeLineViewController.xib */; };
 		5B0055DF16E86F1A00C45A3D /* timeLine_bouton_private.png in Resources */ = {isa = PBXBuildFile; fileRef = 5B0055DB16E86F1A00C45A3D /* timeLine_bouton_private.png */; };
 		5B0055E016E86F1A00C45A3D /* timeLine_bouton_private@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5B0055DC16E86F1A00C45A3D /* timeLine_bouton_private@2x.png */; };
@@ -710,7 +712,6 @@
 		6E0A3EB717BA6F3400660A87 /* background_page4-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6E0A3EAB17BA6F3400660A87 /* background_page4-568h@2x.png */; };
 		6E0A3EB817BA6F3400660A87 /* background_page4.png in Resources */ = {isa = PBXBuildFile; fileRef = 6E0A3EAC17BA6F3400660A87 /* background_page4.png */; };
 		6E0A3EB917BA6F3400660A87 /* background_page4@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6E0A3EAD17BA6F3400660A87 /* background_page4@2x.png */; };
-		6E0D86E017DA06360093B1C1 /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E0D86DF17DA06360093B1C1 /* FacebookSDK.framework */; };
 		6E14120117E9F7BE00877648 /* PhotoCollectionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E1411FF17E9F7BE00877648 /* PhotoCollectionViewController.m */; };
 		6E14120217E9F7BE00877648 /* PhotoCollectionViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6E14120017E9F7BE00877648 /* PhotoCollectionViewController.xib */; };
 		6E14120E17E9F7E100877648 /* PhotoCollectionCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E14120C17E9F7E100877648 /* PhotoCollectionCell.m */; };
@@ -785,7 +786,6 @@
 		6E6FC08E17F321D80006996D /* RevivrePhotosCollectionViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6E6FC08C17F321D80006996D /* RevivrePhotosCollectionViewController.xib */; };
 		6E6FC09217F327780006996D /* PhotosCollectionCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E6FC09117F327780006996D /* PhotosCollectionCell.m */; };
 		6E6FC09417F328FF0006996D /* PhotosCollectionCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6E6FC09317F328FF0006996D /* PhotosCollectionCell.xib */; };
-		6E7DB527178E923900CEC1BD /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E7DB526178E923900CEC1BD /* Crashlytics.framework */; };
 		6E80BEC21765CCF400E6041F /* MesReglagesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E80BEBD1765CCF400E6041F /* MesReglagesViewController.m */; };
 		6E80BEC31765CCF400E6041F /* MesReglagesViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6E80BEBE1765CCF400E6041F /* MesReglagesViewController.xib */; };
 		6E80BEC41765CCF400E6041F /* ModifierUserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E80BEC01765CCF400E6041F /* ModifierUserViewController.m */; };
@@ -854,6 +854,8 @@
 
 /* Begin PBXFileReference section */
 		320AF8492C47A4D819F7C450 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.frameworks; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		3FFFCBFB180BE92E007E8964 /* FacebookSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FacebookSDK.framework; sourceTree = "<group>"; };
+		3FFFCC03180BEA95007E8964 /* Crashlytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Crashlytics.framework; sourceTree = "<group>"; };
 		5B0055D916E86CD800C45A3D /* RootTimeLineViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RootTimeLineViewController.xib; sourceTree = "<group>"; };
 		5B0055DB16E86F1A00C45A3D /* timeLine_bouton_private.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = timeLine_bouton_private.png; sourceTree = "<group>"; };
 		5B0055DC16E86F1A00C45A3D /* timeLine_bouton_private@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "timeLine_bouton_private@2x.png"; sourceTree = "<group>"; };
@@ -1729,7 +1731,6 @@
 		6E0A3EAB17BA6F3400660A87 /* background_page4-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "background_page4-568h@2x.png"; sourceTree = "<group>"; };
 		6E0A3EAC17BA6F3400660A87 /* background_page4.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = background_page4.png; sourceTree = "<group>"; };
 		6E0A3EAD17BA6F3400660A87 /* background_page4@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "background_page4@2x.png"; sourceTree = "<group>"; };
-		6E0D86DF17DA06360093B1C1 /* FacebookSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FacebookSDK.framework; sourceTree = "<group>"; };
 		6E1411FE17E9F7BE00877648 /* PhotoCollectionViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhotoCollectionViewController.h; sourceTree = "<group>"; };
 		6E1411FF17E9F7BE00877648 /* PhotoCollectionViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhotoCollectionViewController.m; sourceTree = "<group>"; };
 		6E14120017E9F7BE00877648 /* PhotoCollectionViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PhotoCollectionViewController.xib; sourceTree = "<group>"; };
@@ -1833,7 +1834,6 @@
 		6E6FC09017F327780006996D /* PhotosCollectionCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhotosCollectionCell.h; sourceTree = "<group>"; };
 		6E6FC09117F327780006996D /* PhotosCollectionCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhotosCollectionCell.m; sourceTree = "<group>"; };
 		6E6FC09317F328FF0006996D /* PhotosCollectionCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PhotosCollectionCell.xib; sourceTree = "<group>"; };
-		6E7DB526178E923900CEC1BD /* Crashlytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Crashlytics.framework; sourceTree = "<group>"; };
 		6E80BEBC1765CCF400E6041F /* MesReglagesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MesReglagesViewController.h; sourceTree = "<group>"; };
 		6E80BEBD1765CCF400E6041F /* MesReglagesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MesReglagesViewController.m; sourceTree = "<group>"; };
 		6E80BEBE1765CCF400E6041F /* MesReglagesViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MesReglagesViewController.xib; sourceTree = "<group>"; };
@@ -1917,6 +1917,7 @@
 				6E4B5D4E17FEB89F00F7896C /* libTestFlight.a in Frameworks */,
 				6E4B5D4D17FEB88F00F7896C /* libGoogleAnalytics.a in Frameworks */,
 				5BCCDE7516A1DC6D00C86579 /* MobileCoreServices.framework in Frameworks */,
+				3FFFCBFC180BE92E007E8964 /* FacebookSDK.framework in Frameworks */,
 				6EDCE97F17A12F21005B83BA /* ImageIO.framework in Frameworks */,
 				5B95C1F916D1BA1E00EE556D /* AssetsLibrary.framework in Frameworks */,
 				6EE9B16E1793F9D200C6686B /* libsqlite3.dylib in Frameworks */,
@@ -1938,11 +1939,10 @@
 				5BF03135169C987F00232E75 /* CoreLocation.framework in Frameworks */,
 				5BF03131169C962900232E75 /* MapKit.framework in Frameworks */,
 				5BF0312F169C961400232E75 /* CoreData.framework in Frameworks */,
+				3FFFCC04180BEA95007E8964 /* Crashlytics.framework in Frameworks */,
 				5BF02E78169C8F7400232E75 /* UIKit.framework in Frameworks */,
 				5BF02E7A169C8F7400232E75 /* Foundation.framework in Frameworks */,
 				5BF02E7C169C8F7400232E75 /* CoreGraphics.framework in Frameworks */,
-				6E7DB527178E923900CEC1BD /* Crashlytics.framework in Frameworks */,
-				6E0D86E017DA06360093B1C1 /* FacebookSDK.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3036,12 +3036,12 @@
 		5BF02E76169C8F7400232E75 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				3FFFCC03180BEA95007E8964 /* Crashlytics.framework */,
 				6E4B5D4217FEB38B00F7896C /* TestFlightSDK2.0.2 */,
 				5B4E91A0175E0A53006A08F6 /* GoogleAnalyticsiOS_2.0beta4 */,
-				6E0D86DF17DA06360093B1C1 /* FacebookSDK.framework */,
+				3FFFCBFB180BE92E007E8964 /* FacebookSDK.framework */,
 				6EDCE97E17A12F21005B83BA /* ImageIO.framework */,
 				6EE9B16D1793F9D200C6686B /* libsqlite3.dylib */,
-				6E7DB526178E923900CEC1BD /* Crashlytics.framework */,
 				6EB9C53B178553A700976CFC /* AudioToolbox.framework */,
 				6EB9C532178553A100976CFC /* AVFoundation.framework */,
 				6E21188D17730FB4009931F8 /* libz.dylib */,
@@ -5129,11 +5129,12 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Remi Bardoux (4K5V48D5N8)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)\"",
-					"\"$(SRCROOT)/Moment\"",
-					"\"$(SRCROOT)/../../../FacebookSDK\"",
-					"\"$(SRCROOT)/GoogleAnalyticsiOS_2.0beta4\"",
-					"\"$(SRCROOT)/TestFlightSDK2.0.2\"",
+					"$(SRCROOT)",
+					"\\\"$(SRCROOT)/Moment\\\"",
+					"\\\"$(SRCROOT)/../../../FacebookSDK\\\"",
+					"\\\"$(SRCROOT)/GoogleAnalyticsiOS_2.0beta4\\\"",
+					"\\\"$(SRCROOT)/TestFlightSDK2.0.2\\\"",
+					"/Users/jeremy/Documents/Appmoment/dev-iOS7/momentiphone",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Moment/Moment-Prefix.pch";
@@ -5142,8 +5143,8 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"/Users/SkeletonGamer/Documents/Appmoment/dev-iOS7/momentiphone/GoogleAnalyticsiOS_2.0beta4",
-					"/Users/SkeletonGamer/Documents/Appmoment/dev-iOS7/momentiphone/TestFlightSDK2.0.2",
+					"/Users/jeremy/Documents/Appmoment/dev-iOS7/momentiphone/GoogleAnalyticsiOS_2.0beta4",
+					"/Users/jeremy/Documents/Appmoment/dev-iOS7/momentiphone/TestFlightSDK2.0.2",
 				);
 				OTHER_LDFLAGS = (
 					"-lsqlite3.0",
@@ -5169,11 +5170,12 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Remi Bardoux (4K5V48D5N8)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)\"",
-					"\"$(SRCROOT)/Moment\"",
-					"\"$(SRCROOT)/../../../FacebookSDK\"",
-					"\"$(SRCROOT)/GoogleAnalyticsiOS_2.0beta4\"",
-					"\"$(SRCROOT)/TestFlightSDK2.0.2\"",
+					"$(SRCROOT)",
+					"\\\"$(SRCROOT)/Moment\\\"",
+					"\\\"$(SRCROOT)/../../../FacebookSDK\\\"",
+					"\\\"$(SRCROOT)/GoogleAnalyticsiOS_2.0beta4\\\"",
+					"\\\"$(SRCROOT)/TestFlightSDK2.0.2\\\"",
+					"/Users/jeremy/Documents/Appmoment/dev-iOS7/momentiphone",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Moment/Moment-Prefix.pch";
@@ -5182,8 +5184,8 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"/Users/SkeletonGamer/Documents/Appmoment/dev-iOS7/momentiphone/GoogleAnalyticsiOS_2.0beta4",
-					"/Users/SkeletonGamer/Documents/Appmoment/dev-iOS7/momentiphone/TestFlightSDK2.0.2",
+					"/Users/jeremy/Documents/Appmoment/dev-iOS7/momentiphone/GoogleAnalyticsiOS_2.0beta4",
+					"/Users/jeremy/Documents/Appmoment/dev-iOS7/momentiphone/TestFlightSDK2.0.2",
 				);
 				OTHER_LDFLAGS = (
 					"-lsqlite3.0",
